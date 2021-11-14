@@ -1,0 +1,39 @@
+# based on https://github.com/alexkaratarakis/gitattributes/blob/master/Web.gitattributes
+
+* text=auto eol=lf
+
+*.css             text
+*.htm             text diff=html
+*.html            text diff=html
+*.js              text
+*.json            text
+*.jsx             text
+*.less            text
+*.map             text -diff
+*.sass            text
+*.scss            text diff=css
+*.ts              text
+*.tsx             text
+*.xml             text
+
+*.md              text
+*.txt             text
+
+.env              text
+.env.*            text
+.git*             text
+
+package-lock.json text -diff
+
+*.gif             binary
+*.ico             binary
+*.jpg             binary
+*.jpeg            binary
+*.png             binary
+*.svg             text
+
+*.ttf             binary
+*.eot             binary
+*.otf             binary
+*.woff            binary
+*.woff2           binary
