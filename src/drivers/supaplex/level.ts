@@ -95,6 +95,10 @@ export class SupaplexLevel implements ISupaplexLevel {
     return new SupaplexLevel(this.#data);
   }
 
+  get raw() {
+    return new Uint8Array(this.#data);
+  }
+
   get width() {
     return LEVEL_WIDTH;
   }

@@ -1,6 +1,7 @@
 import { FC } from "react";
 
 export interface IBaseTile {
+  title: string;
   Component: FC;
 }
 
@@ -20,6 +21,9 @@ export interface IBaseLevelset<L extends IBaseLevel> {
   readonly maxLevelsCount: number | null;
   getLevels(): Iterable<L>;
   getLevel(index: number): L;
+  /**
+   * @deprecated Potential reference problems. Probably, this should be deleted.
+   */
   setLevel(index: number, level: L): void;
   appendLevel(level: L): void;
   insertLevel(index: number, level: L): void;

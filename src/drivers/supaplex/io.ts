@@ -1,4 +1,4 @@
-import { ISupaplexLevelset, ISupaplexReader } from "./types";
+import { ISupaplexLevelset, ISupaplexReader, ISupaplexWriter } from "./types";
 import { LEVEL_BYTES_LENGTH, SupaplexLevel } from "./level";
 import { SupaplexLevelset } from "./levelset";
 
@@ -13,9 +13,23 @@ function* levelsFromBuffer(buffer: ArrayBuffer) {
   }
 }
 
+function* levelsToRaw(levelset: ISupaplexLevelset) {
+  for (const level of levelset.getLevels()) {
+    yield level.raw;
+  }
+}
+
 export const readLevelset = async (file: Blob): Promise<ISupaplexLevelset> =>
   new SupaplexLevelset(levelsFromBuffer(await file.arrayBuffer()));
 
+export const writeLevelset = async (
+  levelset: ISupaplexLevelset,
+): Promise<Blob> => new Blob([...levelsToRaw(levelset)]);
+
 export const reader: ISupaplexReader = {
   readLevelset,
+};
+
+export const writer: ISupaplexWriter = {
+  writeLevelset,
 };

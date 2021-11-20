@@ -4,6 +4,12 @@ import { SupaplexLevel } from "./level";
 
 describe("levelset", () => {
   describe("constructor", () => {
+    it("throw", () => {
+      expect(() => new SupaplexLevelset(-2)).toThrow(
+        new RangeError("Invalid levels count -2"),
+      );
+    });
+
     it("number", () => {
       const levelset = new SupaplexLevelset(3);
 
@@ -13,6 +19,8 @@ describe("levelset", () => {
       for (const level of levelset.getLevels()) {
         expect(dumpLevel(level)).toEqual(empty);
       }
+
+      expect(new SupaplexLevelset().levelsCount).toBe(111);
     });
   });
 
