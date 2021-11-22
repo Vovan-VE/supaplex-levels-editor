@@ -2,7 +2,7 @@
  * Chars map
  *
  * Based on [Grom PE]'s level tool. Link to editor in:
- * https://discord.com/channels/688303837257138197/692085680477831199/692086076696690780
+ * <https://discord.com/channels/688303837257138197/692085680477831199/692086076696690780>
  *
  * ```
  * map = " o.@&*#ED>v<^)u(n!YTR|-+%:[]0123Z56789/\?W"
@@ -19,6 +19,50 @@
  * ;              k         k         r       tz m
  * ```
  */
+import { ISupaplexTile } from "./types";
+import {
+  TBase,
+  TBug,
+  TChip,
+  TChipBottom,
+  TChipLeft,
+  TChipRight,
+  TChipTop,
+  TElectron,
+  TExit,
+  THardware,
+  THwCap,
+  THwCircular,
+  THwLampBlue,
+  THwLampGreen,
+  THwLampRed,
+  THwRes,
+  THwResHorz,
+  THwResVar,
+  THwResVert,
+  THwStripes,
+  TInfotron,
+  TInvisWall,
+  TMurphy,
+  TOrangeDisk,
+  TPortCross,
+  TPortDown,
+  TPortHorizontal,
+  TPortLeft,
+  TPortRight,
+  TPortUp,
+  TPortVertical,
+  TRedDisk,
+  TSnikSnak,
+  TSpecPortDown,
+  TSpecPortLeft,
+  TSpecPortRight,
+  TSpecPortUp,
+  TTerminal,
+  TYellowDisk,
+  TZonk,
+} from "./tiles-svg";
+
 //            " o.@&*#ED>v<^)u(n!YTR|-+%:[]0123Z56789/\?W"
 const chars = " o·@&▢▓ED>v<^⊃∪⊂∩✂YTR|-+✧⚡⊏⊐0123▧56789⊓⊔⬚";
 // 00 space ───┘│││┆┆┆┆││││┆┆┆┆││││┆┆┆┆││││┆┆┆┆││││┆┆┆┆││
@@ -108,10 +152,90 @@ export const TILE_HW_RES_HORZ = 0x25;
 export const TILE_CHIP_T = 0x26;
 export const TILE_CHIP_B = 0x27;
 export const TILE_INVIS_WALL = 0x28;
-export const TILE__UNKNOWN = 0x29;
+// export const TILE__UNKNOWN = 0x29;
 
 export const isSpecPort = (tile: number) =>
   tile === TILE_SP_PORT_R ||
   tile === TILE_SP_PORT_D ||
   tile === TILE_SP_PORT_L ||
   tile === TILE_SP_PORT_U;
+
+export const tiles: readonly ISupaplexTile[] = [
+  { value: TILE_SPACE, title: "Space" },
+  { value: TILE_ZONK, title: "Zonk", Component: TZonk },
+  { value: TILE_BASE, title: "Base", Component: TBase },
+  { value: TILE_MURPHY, title: "Murphy", Component: TMurphy },
+  { value: TILE_INFOTRON, title: "Infotron", Component: TInfotron },
+  { value: TILE_CHIP, title: "Chip", Component: TChip },
+  { value: TILE_HARDWARE, title: "Hardware", Component: THardware },
+  { value: TILE_EXIT, title: "Exit", Component: TExit },
+  { value: TILE_DISK_O, title: "Orange Disk", Component: TOrangeDisk },
+  { value: TILE_PORT_R, title: "Port Right", Component: TPortRight },
+  { value: TILE_PORT_D, title: "Port Down", Component: TPortDown },
+  { value: TILE_PORT_L, title: "Port Left", Component: TPortLeft },
+  { value: TILE_PORT_U, title: "Port Up", Component: TPortUp },
+  {
+    value: TILE_SP_PORT_R,
+    title: "Special Port Right",
+    Component: TSpecPortRight,
+  },
+  {
+    value: TILE_SP_PORT_D,
+    title: "Special Port Down",
+    Component: TSpecPortDown,
+  },
+  {
+    value: TILE_SP_PORT_L,
+    title: "Special Port Left",
+    Component: TSpecPortLeft,
+  },
+  { value: TILE_SP_PORT_U, title: "Special Port Up", Component: TSpecPortUp },
+  { value: TILE_SNIK_SNAK, title: "Snik-Snak", Component: TSnikSnak },
+  { value: TILE_DISK_Y, title: "Yellow Disk", Component: TYellowDisk },
+  { value: TILE_TERMINAL, title: "Terminal", Component: TTerminal },
+  { value: TILE_DISK_R, title: "Red Disk", Component: TRedDisk },
+  { value: TILE_PORT_V, title: "Port Vertical", Component: TPortVertical },
+  { value: TILE_PORT_H, title: "Port Horizontal", Component: TPortHorizontal },
+  { value: TILE_PORT_X, title: "Port Cross", Component: TPortCross },
+  { value: TILE_ELECTRON, title: "Electron", Component: TElectron },
+  { value: TILE_BUG, title: "Bug", Component: TBug },
+  { value: TILE_CHIP_L, title: "Chip Left", Component: TChipLeft },
+  { value: TILE_CHIP_R, title: "Chip Right", Component: TChipRight },
+  {
+    value: TILE_HW_CIRCULAR,
+    title: "Hardware Circular",
+    Component: THwCircular,
+  },
+  {
+    value: TILE_HW_LAMP_G,
+    title: "Hardware Lamp Green",
+    Component: THwLampGreen,
+  },
+  {
+    value: TILE_HW_LAMP_B,
+    title: "Hardware Lamp Blue",
+    Component: THwLampBlue,
+  },
+  { value: TILE_HW_LAMP_R, title: "Hardware Lamp Red", Component: THwLampRed },
+  { value: TILE_HW_STRIPES, title: "Hardware Stripes", Component: THwStripes },
+  { value: TILE_HW_RES, title: "Hardware Resistor", Component: THwRes },
+  { value: TILE_HW_CAP, title: "Hardware Capacitor", Component: THwCap },
+  {
+    value: TILE_HW_RES_VAR,
+    title: "Hardware Resistors various",
+    Component: THwResVar,
+  },
+  {
+    value: TILE_HW_RES_VERT,
+    title: "Hardware Resistors vertical",
+    Component: THwResVert,
+  },
+  {
+    value: TILE_HW_RES_HORZ,
+    title: "Hardware Resistors horizontal",
+    Component: THwResHorz,
+  },
+  { value: TILE_CHIP_T, title: "Chip Top", Component: TChipTop },
+  { value: TILE_CHIP_B, title: "Chip Bottom", Component: TChipBottom },
+  { value: TILE_INVIS_WALL, title: "Invisible Wall", Component: TInvisWall },
+];

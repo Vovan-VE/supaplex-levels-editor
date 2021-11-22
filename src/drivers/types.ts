@@ -1,10 +1,5 @@
 import { FC } from "react";
 
-export interface IBaseTile {
-  title: string;
-  Component: FC;
-}
-
 export interface IBaseLevel {
   width: number;
   height: number;
@@ -38,8 +33,24 @@ export interface IBaseWriter<S extends IBaseLevelset<any>> {
   writeLevelset(levelset: S): Promise<Blob>;
 }
 
-export interface IBaseDriver<S extends IBaseLevelset<any>> {
-  tiles: readonly IBaseTile[];
+export interface IBaseTileInteraction<L extends IBaseLevel> {
+  // TODO: return actions[]?
+  onContextMenu?: (x: number, y: number, level: L) => void;
+}
+
+export interface IBaseTile<L extends IBaseLevel> {
+  value?: number;
+  title: string;
+  Component?: FC;
+  interaction?: IBaseTileInteraction<L>;
+  // TODO: limits like spec ports counts, Murphy presence
+  //   and like notices for infotrons % 256 in case of 'all'
+}
+
+export interface IBaseDriver<L extends IBaseLevel, S extends IBaseLevelset<L>> {
+  title: string;
+  tiles: readonly IBaseTile<L>[];
+  unknownTile?: FC;
   reader?: IBaseReader<S>;
   writer?: IBaseWriter<S>;
 }

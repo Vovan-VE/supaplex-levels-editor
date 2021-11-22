@@ -1,4 +1,11 @@
-import { IBaseLevel, IBaseLevelset, IBaseReader, IBaseWriter } from "../types";
+import {
+  IBaseDriver,
+  IBaseLevel,
+  IBaseLevelset,
+  IBaseReader,
+  IBaseTile,
+  IBaseWriter,
+} from "../types";
 
 export interface ISupaplexSpecPortProps {
   setsGravity: boolean;
@@ -24,6 +31,11 @@ export interface ISupaplexLevel extends IBaseLevel {
   deleteSpecPort(x: number, y: number): void;
 }
 
+export interface ISupaplexTile extends IBaseTile<ISupaplexLevel> {}
+
 export interface ISupaplexLevelset extends IBaseLevelset<ISupaplexLevel> {}
 export interface ISupaplexReader extends IBaseReader<ISupaplexLevelset> {}
 export interface ISupaplexWriter extends IBaseWriter<ISupaplexLevelset> {}
+
+export interface ISupaplexDriver
+  extends IBaseDriver<ISupaplexLevel, ISupaplexLevelset> {}
