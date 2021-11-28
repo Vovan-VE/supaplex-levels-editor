@@ -1,27 +1,7 @@
-import {
-  LEVEL_BYTES_LENGTH,
-  specPortCoordsToOffset,
-  specPortOffsetToCoords,
-  SupaplexLevel,
-} from "./level";
+import { LEVEL_BYTES_LENGTH, SupaplexLevel } from "./level";
 import { dumpLevel } from "./helpers.dev";
 import { TILE_SP_PORT_U, TILE_ZONK } from "./tiles";
 import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./types";
-
-it("spec port coords", () => {
-  expect(specPortCoordsToOffset(0, 0)).toEqual([0, 0]);
-  expect(specPortOffsetToCoords(0, 0)).toEqual([0, 0]);
-
-  expect(specPortOffsetToCoords(...specPortCoordsToOffset(0, 59))).toEqual([
-    0, 59,
-  ]);
-  expect(specPortOffsetToCoords(...specPortCoordsToOffset(23, 59))).toEqual([
-    23, 59,
-  ]);
-  expect(specPortOffsetToCoords(...specPortCoordsToOffset(23, 0))).toEqual([
-    23, 0,
-  ]);
-});
 
 describe("level", () => {
   const testLevelData = Uint8Array.of(
@@ -124,39 +104,9 @@ describe("level", () => {
 
     expect(level.getCell(16, 23)).toBe(0x29);
     expect(level.getCell(17, 23)).toBe(0x2a);
-
-    const e = /^Cell coords \(-?\d+, -?\d+\) are out of range$/;
-    expect(() => level.getCell(-2, 0)).toThrow(e);
-    expect(() => level.getCell(-1, 0)).toThrow(e);
-    expect(() => level.getCell(60, 0)).toThrow(e);
-    expect(() => level.getCell(61, 0)).toThrow(e);
-    expect(() => level.getCell(0, -2)).toThrow(e);
-    expect(() => level.getCell(0, -1)).toThrow(e);
-    expect(() => level.getCell(0, 24)).toThrow(e);
-    expect(() => level.getCell(0, 25)).toThrow(e);
   });
 
   describe("setCell", () => {
-    it("validate", () => {
-      const level = new SupaplexLevel(testLevelData);
-
-      const e1 = /^Cell coords \(-?\d+, -?\d+\) are out of range$/;
-      expect(() => level.setCell(-2, 0, 0)).toThrow(e1);
-      expect(() => level.setCell(-1, 0, 0)).toThrow(e1);
-      expect(() => level.setCell(60, 0, 0)).toThrow(e1);
-      expect(() => level.setCell(61, 0, 0)).toThrow(e1);
-      expect(() => level.setCell(0, -2, 0)).toThrow(e1);
-      expect(() => level.setCell(0, -1, 0)).toThrow(e1);
-      expect(() => level.setCell(0, 24, 0)).toThrow(e1);
-      expect(() => level.setCell(0, 25, 0)).toThrow(e1);
-
-      const e2 = /^Invalid byte -?\d+$/;
-      expect(() => level.setCell(0, 0, -2)).toThrow(e2);
-      expect(() => level.setCell(0, 0, -1)).toThrow(e2);
-      expect(() => level.setCell(0, 0, 256)).toThrow(e2);
-      expect(() => level.setCell(0, 0, 257)).toThrow(e2);
-    });
-
     it("usual", () => {
       const level = new SupaplexLevel(testLevelData);
       level.setCell(10, 2, 7);
@@ -212,178 +162,12 @@ describe("level", () => {
     });
   });
 
-  it("initialGravity", () => {
-    const level = new SupaplexLevel(testLevelData);
-
-    expect(level.initialGravity).toBe(true);
-
-    level.initialGravity = false;
-    expect(level.initialGravity).toBe(false);
-
-    level.initialGravity = true;
-    expect(level.initialGravity).toBe(true);
-  });
-
-  it("title", () => {
-    const level = new SupaplexLevel(testLevelData);
-
-    expect(level.title).toBe("-- Lorem ipsum --      ");
-
-    level.title = "==== Foo bar ====";
-    expect(level.title).toBe("==== Foo bar ====      ");
-
-    level.title = "Lorem ipsum dolor sit a";
-    expect(level.title).toBe("Lorem ipsum dolor sit a");
-
-    level.title = "";
-    expect(level.title).toBe("                       ");
-
-    expect(() => {
-      level.title = "123456789012345678901234";
-    }).toThrow(new RangeError("Title length exceeds limit"));
-
-    expect(() => {
-      level.title = "-- foo \n bar --";
-    }).toThrow(new Error("Unsupported characters found"));
-    expect(() => {
-      level.title = "-- foo \x80 bar --";
-    }).toThrow(new Error("Unsupported characters found"));
-    expect(() => {
-      level.title = "-- foo \xFF bar --";
-    }).toThrow(new Error("Unsupported characters found"));
-    expect(() => {
-      level.title = "-- foo \u00A0 bar --";
-    }).toThrow(new Error("Unsupported characters found"));
-  });
-
-  it("initialFreezeZonks", () => {
-    const level = new SupaplexLevel(testLevelData);
-
-    expect(level.initialFreezeZonks).toBe(true);
-
-    level.initialFreezeZonks = false;
-    expect(level.initialFreezeZonks).toBe(false);
-
-    level.initialFreezeZonks = true;
-    expect(level.initialFreezeZonks).toBe(true);
-  });
-
-  it("infotronsNeed", () => {
-    const level = new SupaplexLevel(testLevelData);
-    expect(level.infotronsNeed).toBe(42);
-
-    level.infotronsNeed = 37;
-    expect(level.infotronsNeed).toBe(37);
-
-    level.infotronsNeed = "all";
-    expect(level.infotronsNeed).toBe("all");
-
-    expect(() => {
-      level.infotronsNeed = 0;
-    }).toThrow(
-      new RangeError("Value cannot be 0 since it has special meaning"),
-    );
-    expect(() => {
-      level.infotronsNeed = 256;
-    }).toThrow(/^Invalid byte -?\d+$/);
-    expect(() => {
-      level.infotronsNeed = 257;
-    }).toThrow(/^Invalid byte -?\d+$/);
-  });
-
-  it("clearSpecPorts", () => {
-    const level = new SupaplexLevel(testLevelData);
-
-    level.clearSpecPorts();
-    expect(level.specPortsCount).toBe(0);
-  });
-
   it("findSpecPort", () => {
     const level = new SupaplexLevel(testLevelData);
-
     expect(level.findSpecPort(12, 12)).toEqual<ISupaplexSpecPortProps>({
       setsGravity: true,
       setsFreezeZonks: true,
       setsFreezeEnemies: true,
-    });
-    expect(level.findSpecPort(13, 12)).toBeUndefined();
-  });
-
-  describe("setSpecPort", () => {
-    it("overflow", () => {
-      const level = new SupaplexLevel(testLevelData);
-
-      level.setSpecPort(2, 1);
-      level.setSpecPort(3, 1);
-      level.setSpecPort(4, 1);
-      level.setSpecPort(5, 1);
-      level.setSpecPort(6, 1);
-      level.setSpecPort(7, 1);
-      level.setSpecPort(8, 1);
-      level.setSpecPort(9, 1);
-      level.setSpecPort(10, 1);
-      expect(level.specPortsCount).toBe(10);
-      expect(() => level.setSpecPort(11, 1)).toThrow(
-        new RangeError("Cannot add more spec ports"),
-      );
-    });
-
-    it("no op", () => {
-      const level = new SupaplexLevel(testLevelData);
-
-      level.setSpecPort(12, 12);
-
-      expect(level.specPortsCount).toBe(1);
-      expect([...level.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
-        {
-          x: 12,
-          y: 12,
-          setsGravity: true,
-          setsFreezeZonks: true,
-          setsFreezeEnemies: true,
-        },
-      ]);
-    });
-  });
-
-  describe("deleteSpecPort", () => {
-    it("no op", () => {
-      const level = new SupaplexLevel(testLevelData);
-
-      level.deleteSpecPort(10, 1);
-
-      expect(level.specPortsCount).toBe(1);
-      expect([...level.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
-        {
-          x: 12,
-          y: 12,
-          setsGravity: true,
-          setsFreezeZonks: true,
-          setsFreezeEnemies: true,
-        },
-      ]);
-    });
-
-    it("mid", () => {
-      const level = new SupaplexLevel(testLevelData);
-
-      level.setSpecPort(10, 1, {
-        setsGravity: true,
-        setsFreezeZonks: false,
-        setsFreezeEnemies: true,
-      });
-      level.deleteSpecPort(12, 12);
-
-      expect(level.specPortsCount).toBe(1);
-      expect([...level.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
-        {
-          x: 10,
-          y: 1,
-          setsGravity: true,
-          setsFreezeZonks: false,
-          setsFreezeEnemies: true,
-        },
-      ]);
     });
   });
 });

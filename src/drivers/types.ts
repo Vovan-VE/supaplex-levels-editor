@@ -5,6 +5,7 @@ export interface IBaseLevel {
   height: number;
   getCell(x: number, y: number): number;
   setCell(x: number, y: number, value: number): void;
+  // REFACT: size limits
   readonly isResizable: boolean;
   title: string;
   readonly maxTitleLength: number;
@@ -26,11 +27,11 @@ export interface IBaseLevelset<L extends IBaseLevel> {
 }
 
 export interface IBaseReader<S extends IBaseLevelset<any>> {
-  readLevelset(file: Blob): Promise<S>;
+  readLevelset(file: ArrayBuffer): S;
 }
 
 export interface IBaseWriter<S extends IBaseLevelset<any>> {
-  writeLevelset(levelset: S): Promise<Blob>;
+  writeLevelset(levelset: S): ArrayBuffer;
 }
 
 export interface IBaseTileInteraction<L extends IBaseLevel> {
@@ -43,7 +44,7 @@ export interface IBaseTile<L extends IBaseLevel> {
   title: string;
   Component?: FC;
   interaction?: IBaseTileInteraction<L>;
-  // TODO: limits like spec ports counts, Murphy presence
+  // TODO: limits like spec ports counts and coords<=>offset, Murphy presence
   //   and like notices for infotrons % 256 in case of 'all'
 }
 

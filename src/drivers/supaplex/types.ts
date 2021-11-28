@@ -25,9 +25,11 @@ export interface ISupaplexLevel extends IBaseLevel {
   infotronsNeed: number | "all";
   readonly specPortsCount: number;
   getSpecPorts(): Iterable<ISupaplexSpecPort>;
+  /** @deprecated Useless outside */
   clearSpecPorts(): void;
   findSpecPort(x: number, y: number): ISupaplexSpecPortProps | undefined;
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps): void;
+  /** @deprecated Useless outside */
   deleteSpecPort(x: number, y: number): void;
 }
 

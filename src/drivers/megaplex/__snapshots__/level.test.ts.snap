@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`level constructor data 1`] = `
+Object {
+  "cells": Array [
+    " ∩&",
+    "o@▢",
+  ],
+  "demo": null,
+  "height": 2,
+  "infotronsNeed": 42,
+  "initialFreezeZonks": true,
+  "initialGravity": true,
+  "isResizable": true,
+  "maxTitleLength": 23,
+  "specialPorts": Array [
+    Object {
+      "setsFreezeEnemies": true,
+      "setsFreezeZonks": true,
+      "setsGravity": true,
+      "x": 1,
+      "y": 0,
+    },
+  ],
+  "title": "-- Lorem ipsum --      ",
+  "width": 3,
+}
+`;

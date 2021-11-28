@@ -1,5 +1,6 @@
 import { ISupaplexLevel, ISupaplexLevelset } from "./types";
 import { SupaplexLevel } from "./level";
+import { IBaseLevelset } from "../types";
 
 const validateLevelsCount =
   process.env.NODE_ENV === "production"
@@ -19,24 +20,12 @@ const validateLevelsIndex =
         }
       };
 
-export class SupaplexLevelset implements ISupaplexLevelset {
-  readonly #levels: ISupaplexLevel[];
+export class Levelset<L extends ISupaplexLevel> implements IBaseLevelset<L> {
+  readonly #levels: L[];
 
-  constructor(
-    levels: readonly ISupaplexLevel[] | Iterable<ISupaplexLevel> | number = 111,
-  ) {
-    this.#levels = [];
-    if (typeof levels === "number") {
-      validateLevelsCount?.(levels);
-      for (let i = levels; i-- > 0; ) {
-        this.#levels.push(new SupaplexLevel());
-      }
-    } else {
-      for (const level of levels) {
-        this.#levels.push(level);
-      }
-      validateLevelsCount?.(this.#levels.length);
-    }
+  constructor(levels: readonly L[] | Iterable<L>) {
+    this.#levels = [...levels];
+    validateLevelsCount?.(this.#levels.length);
   }
 
   get levelsCount() {
@@ -47,7 +36,7 @@ export class SupaplexLevelset implements ISupaplexLevelset {
     return 1;
   }
 
-  get maxLevelsCount() {
+  get maxLevelsCount(): number | null {
     return null;
   }
 
@@ -60,21 +49,46 @@ export class SupaplexLevelset implements ISupaplexLevelset {
     return this.#levels[index];
   }
 
-  setLevel(index: number, level: ISupaplexLevel) {
+  setLevel(index: number, level: L) {
     validateLevelsIndex?.(index, this.levelsCount);
     // TODO: dupe reference check, copy from input or remove method?
     this.#levels[index] = level;
   }
 
-  appendLevel(level: ISupaplexLevel) {
-    // TODO
+  appendLevel(level: L) {
+    this.#levels.push(level);
   }
 
-  insertLevel(index: number, level: ISupaplexLevel) {
-    // TODO
+  insertLevel(index: number, level: L) {
+    validateLevelsIndex?.(index, this.levelsCount);
+    this.#levels.splice(index, 0, level);
   }
 
   removeLevel(index: number) {
-    // TODO
+    validateLevelsIndex?.(index, this.levelsCount);
+    if (process.env.NODE_ENV !== "production" && this.levelsCount === 1) {
+      throw new RangeError(`Cannot remove the last one level`);
+    }
+    this.#levels.splice(index, 1);
+  }
+}
+
+const newLevels = (count: number) => {
+  validateLevelsCount?.(count);
+  const result: ISupaplexLevel[] = [];
+  for (let i = count; i-- > 0; ) {
+    result.push(new SupaplexLevel());
+  }
+  return result;
+};
+
+export class SupaplexLevelset
+  extends Levelset<ISupaplexLevel>
+  implements ISupaplexLevelset
+{
+  constructor(
+    levels: readonly ISupaplexLevel[] | Iterable<ISupaplexLevel> | number = 111,
+  ) {
+    super(typeof levels === "number" ? newLevels(levels) : levels);
   }
 }

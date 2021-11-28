@@ -52,4 +52,71 @@ describe("levelset", () => {
     expect(levelset.getLevel(0).title).toMatch(/^2nd /);
     expect(levelset.getLevel(1).title).toMatch(/^1st /);
   });
+
+  it("appendLevel", () => {
+    const levelset = new SupaplexLevelset(2);
+
+    const a = levelset.getLevel(0);
+    const b = levelset.getLevel(1);
+    a.title = "1st";
+    b.title = "2nd";
+
+    const c = new SupaplexLevel();
+    c.title = "3rd";
+    levelset.appendLevel(c);
+
+    expect(levelset.levelsCount).toBe(3);
+    expect([...levelset.getLevels()]).toEqual([a, b, c]);
+  });
+
+  it("insertLevel", () => {
+    const levelset = new SupaplexLevelset(2);
+
+    const a = levelset.getLevel(0);
+    const c = levelset.getLevel(1);
+    a.title = "1st";
+    c.title = "3rd";
+
+    const b = new SupaplexLevel();
+    b.title = "2nd";
+
+    expect(() => levelset.removeLevel(2)).toThrow(
+      new RangeError(`Invalid level index 2`),
+    );
+    expect(() => levelset.removeLevel(3)).toThrow(
+      new RangeError(`Invalid level index 3`),
+    );
+    levelset.insertLevel(1, c);
+
+    expect(levelset.levelsCount).toBe(3);
+    expect([...levelset.getLevels()]).toEqual([a, b, c]);
+  });
+
+  it("removeLevel", () => {
+    const levelset = new SupaplexLevelset(3);
+
+    const a = levelset.getLevel(0);
+    const b = levelset.getLevel(1);
+    const c = levelset.getLevel(2);
+    a.title = "1st";
+    b.title = "2nd";
+    c.title = "3rd";
+
+    levelset.removeLevel(1);
+
+    expect(levelset.levelsCount).toBe(2);
+    expect([...levelset.getLevels()]).toEqual([a, c]);
+
+    levelset.removeLevel(0);
+
+    expect(levelset.levelsCount).toBe(1);
+    expect([...levelset.getLevels()]).toEqual([c]);
+
+    expect(() => levelset.removeLevel(0)).toThrow(
+      new RangeError(`Cannot remove the last one level`),
+    );
+    expect(() => levelset.removeLevel(1)).toThrow(
+      new RangeError(`Invalid level index 1`),
+    );
+  });
 });
