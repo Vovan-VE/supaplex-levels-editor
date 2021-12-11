@@ -1,12 +1,18 @@
 import { FC } from "react";
 
+interface ISizeLimit {
+  readonly minWidth?: number;
+  readonly minHeight?: number;
+  readonly maxWidth?: number;
+  readonly maxHeight?: number;
+}
+
 export interface IBaseLevel {
   width: number;
   height: number;
   getCell(x: number, y: number): number;
   setCell(x: number, y: number, value: number): void;
-  // REFACT: size limits
-  readonly isResizable: boolean;
+  readonly resizable?: ISizeLimit;
   title: string;
   readonly maxTitleLength: number;
 }

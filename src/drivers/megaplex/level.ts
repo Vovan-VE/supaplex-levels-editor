@@ -49,8 +49,11 @@ export class MegaplexLevel extends LevelFooter implements IMegaplexLevel {
     return this.#box.height;
   }
 
-  get isResizable() {
-    return true;
+  get resizable() {
+    return {
+      maxWidth: 0x7fff,
+      maxHeight: 0x7fff,
+    };
   }
 
   getCell(x: number, y: number) {

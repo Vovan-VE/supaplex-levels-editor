@@ -58,10 +58,6 @@ export class SupaplexLevel extends LevelFooter implements ISupaplexLevel {
     return LEVEL_HEIGHT;
   }
 
-  get isResizable() {
-    return false;
-  }
-
   getCell(x: number, y: number) {
     return this.#body.getCell(x, y);
   }

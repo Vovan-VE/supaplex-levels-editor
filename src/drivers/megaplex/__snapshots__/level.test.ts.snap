@@ -11,8 +11,11 @@ Object {
   "infotronsNeed": 42,
   "initialFreezeZonks": true,
   "initialGravity": true,
-  "isResizable": true,
   "maxTitleLength": 23,
+  "resizable": Object {
+    "maxHeight": 32767,
+    "maxWidth": 32767,
+  },
   "specialPorts": Array [
     Object {
       "setsFreezeEnemies": true,

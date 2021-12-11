@@ -12,7 +12,7 @@ export const dumpLevel = (level: ISupaplexLevel) => ({
   infotronsNeed: level.infotronsNeed,
   initialGravity: level.initialGravity,
   initialFreezeZonks: level.initialFreezeZonks,
-  isResizable: level.isResizable,
+  resizable: level.resizable,
   maxTitleLength: level.maxTitleLength,
   title: level.title,
   specialPorts: [...level.getSpecPorts()],
