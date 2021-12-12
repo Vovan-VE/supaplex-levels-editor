@@ -3,9 +3,9 @@ import { LevelBody } from "../supaplex/body";
 import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "../supaplex/footer";
 import { isSpecPort } from "../supaplex/tiles";
 import { ISupaplexSpecPortProps } from "../supaplex/types";
+import { AnyBox } from "./box";
 import { LevelFooter } from "./footer";
 import { IMegaplexLevel } from "./types";
-import { AnyBox } from "./box";
 
 const sliceFooter = (width: number, height: number, data?: Uint8Array) => {
   if (data) {
@@ -21,8 +21,8 @@ const sliceFooter = (width: number, height: number, data?: Uint8Array) => {
 };
 
 export class MegaplexLevel extends LevelFooter implements IMegaplexLevel {
-  #box: AnyBox;
-  #body: ILevelBody;
+  readonly #box: AnyBox;
+  readonly #body: ILevelBody;
 
   constructor(width: number, height: number, data?: Uint8Array) {
     super(width, sliceFooter(width, height, data));
@@ -54,6 +54,10 @@ export class MegaplexLevel extends LevelFooter implements IMegaplexLevel {
       maxWidth: 0x7fff,
       maxHeight: 0x7fff,
     };
+  }
+
+  copy() {
+    return new MegaplexLevel(this.#box.width, this.#box.height, this.raw);
   }
 
   getCell(x: number, y: number) {

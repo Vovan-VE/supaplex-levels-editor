@@ -8,13 +8,14 @@ interface ISizeLimit {
 }
 
 export interface IBaseLevel {
-  width: number;
-  height: number;
+  readonly width: number;
+  readonly height: number;
   getCell(x: number, y: number): number;
   setCell(x: number, y: number, value: number): void;
   readonly resizable?: ISizeLimit;
   title: string;
   readonly maxTitleLength: number;
+  copy(): IBaseLevel;
 }
 
 export interface IBaseLevelset<L extends IBaseLevel> {

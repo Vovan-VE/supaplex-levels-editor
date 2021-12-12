@@ -19,6 +19,7 @@ export interface ISupaplexSpecPort extends ISupaplexSpecPortProps {
 }
 
 export interface ISupaplexLevel extends IBaseLevel {
+  copy(): ISupaplexLevel;
   readonly raw: Uint8Array;
   initialGravity: boolean;
   initialFreezeZonks: boolean;

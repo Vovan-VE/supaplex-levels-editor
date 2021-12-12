@@ -4,6 +4,7 @@ import { IWithDemo } from "./internal";
 
 export interface IMegaplexLevel extends ISupaplexLevel, IWithDemo {
   readonly length: number;
+  copy(): IMegaplexLevel;
 }
 export interface IMegaplexLevelset extends IBaseLevelset<IMegaplexLevel> {}
 

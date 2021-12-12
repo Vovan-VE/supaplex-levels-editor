@@ -75,6 +75,21 @@ describe("level", () => {
     expect(level.raw).toEqual(testLevelData);
   });
 
+  it("copy", () => {
+    const a = new MegaplexLevel(3, 2);
+    a.title = "First level title";
+    a.setCell(1, 0, 6);
+
+    const b = a.copy();
+    expect(dumpLevel(b)).toEqual(dumpLevel(a));
+
+    b.title = "Copy level title";
+    b.setCell(1, 0, 1);
+    let dump = dumpLevel(b);
+    expect(dump).not.toEqual(dumpLevel(a));
+    expect(dump).toMatchSnapshot();
+  });
+
   it("getCell", () => {
     const level = new MegaplexLevel(3, 2, testLevelData);
 
