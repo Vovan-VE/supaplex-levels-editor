@@ -1,7 +1,7 @@
 import { ILevelBody } from "../supaplex/internal";
 import { LevelBody } from "../supaplex/body";
 import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "../supaplex/footer";
-import { isSpecPort } from "../supaplex/tiles";
+import { isSpecPort, TILE_SPACE } from "../supaplex/tiles";
 import { ISupaplexSpecPortProps } from "../supaplex/types";
 import { AnyBox } from "./box";
 import { LevelFooter } from "./footer";
@@ -58,6 +58,40 @@ export class MegaplexLevel extends LevelFooter implements IMegaplexLevel {
 
   copy() {
     return new MegaplexLevel(this.#box.width, this.#box.height, this.raw);
+  }
+
+  resize(width: number, height: number) {
+    const origSpecPorts = [...this.getSpecPorts()];
+
+    let src: MegaplexLevel = this;
+    // reducing any dimension with spec port deletion
+    if (
+      (width < this.#box.width && origSpecPorts.some((p) => p.x >= width)) ||
+      (height < this.#box.height && origSpecPorts.some((p) => p.y >= height))
+    ) {
+      src = this.copy();
+      // delete spec ports entry
+      for (let p of origSpecPorts) {
+        if (
+          (width < this.#box.width && p.x >= width) ||
+          (height < this.#box.height && p.y >= height)
+        ) {
+          src.setCell(p.x, p.y, TILE_SPACE);
+        }
+      }
+    }
+
+    const temp = new Uint8Array(width * height + src.length - src.#box.length);
+    temp.set(src.getRaw(width), width * height);
+    const ret = new MegaplexLevel(width, height, temp);
+
+    for (let y = Math.min(height, this.#box.height); y-- > 0; ) {
+      for (let x = Math.min(width, this.#box.width); x-- > 0; ) {
+        ret.setCell(x, y, src.getCell(x, y));
+      }
+    }
+
+    return ret;
   }
 
   getCell(x: number, y: number) {

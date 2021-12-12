@@ -1,7 +1,13 @@
 import { MegaplexLevel } from "./level";
 import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "../supaplex/footer";
 import { dumpLevel } from "./helpers.dev";
-import { TILE_SP_PORT_U, TILE_ZONK } from "../supaplex/tiles";
+import {
+  TILE_INFOTRON,
+  TILE_SP_PORT_D,
+  TILE_SP_PORT_R,
+  TILE_SP_PORT_U,
+  TILE_ZONK,
+} from "../supaplex/tiles";
 import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "../supaplex/types";
 
 describe("level", () => {
@@ -88,6 +94,34 @@ describe("level", () => {
     let dump = dumpLevel(b);
     expect(dump).not.toEqual(dumpLevel(a));
     expect(dump).toMatchSnapshot();
+  });
+
+  describe("resize", () => {
+    it("simple", () => {
+      const a = new MegaplexLevel(3, 2, testLevelData);
+
+      const b = a.resize(5, 4);
+      expect(dumpLevel(b)).toMatchSnapshot();
+
+      b.setCell(3, 0, TILE_INFOTRON);
+      b.setCell(4, 0, TILE_SP_PORT_R);
+      b.setCell(0, 2, TILE_ZONK);
+      b.setCell(0, 3, TILE_SP_PORT_D);
+      b.setSpecPort(4, 0, {
+        setsGravity: true,
+        setsFreezeZonks: false,
+        setsFreezeEnemies: true,
+      });
+      b.setSpecPort(0, 3, {
+        setsGravity: false,
+        setsFreezeZonks: true,
+        setsFreezeEnemies: true,
+      });
+      expect(dumpLevel(b)).toMatchSnapshot();
+
+      const c = b.resize(3, 2);
+      expect(dumpLevel(c)).toEqual(dumpLevel(a));
+    });
   });
 
   it("getCell", () => {
