@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { tiles } from "./tiles";
-import { TUnknown } from "./tiles-svg";
+import { svg } from "./tiles-svg";
 
 it("tiles", () => {
   for (const { value, Component } of tiles) {
@@ -11,6 +11,6 @@ it("tiles", () => {
     }
   }
 
-  const u = render(<TUnknown />);
+  const u = render(<svg.unknown />);
   u.unmount();
 });

@@ -1,0 +1,60 @@
+<svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    xmlns="http://www.w3.org/2000/svg"
+>
+  <path fill="#008251" class="sp-color-green-dark" d="M0,0h16v16h-16z"/>
+  <path
+      fill="#00B261"
+      class="sp-color-green-light"
+      d="M1,3h1v7h1v3h-2z M14,3h1v9h-1z"
+  />
+  <path
+      fill="#929292"
+      class="sp-color-grey-light"
+      d="M2,3h6v1h-6z M2,5h6v1h-6z"
+  />
+  <path
+      fill="#616161"
+      class="sp-color-grey-xdark"
+      d="M5,2h2v7h-2z M8,1h1v7h-1z M10,2h2v7h-2z M13,3h1v1h-1z M13,7h1v1h-1z M3,12h12v1h-2v1h-8v-1h-2z"
+  />
+  <path
+      fill="#717171"
+      class="sp-color-grey-dark"
+      d="M13,2h1v1h-1z M13,6h1v1h-1z"
+  />
+  <path
+      fill="#B2B2B2"
+      class="sp-color-grey-xlight"
+      d="M12,3h1v1h-1z M12,7h1v1h-1z M2,11h12v1h-12z"
+  />
+  <path fill="#E3E300" class="sp-color-yellow" d="M4,10h8v2h-8z"/>
+  <path
+      fill="#F3F3F3"
+      class="sp-color-white"
+      d="M12,2h1v1h-1z M12,6h1v1h-1z M4,10h1v1h-1z"
+  />
+  <path
+      fill="#F39241"
+      class="sp-color-orange"
+      d="M4,12h8v1h-8z M8,10h1v2h-1z"
+  />
+  <path
+      fill="#E31010"
+      class="sp-color-red-light"
+      d="M8,12h1v1h-1z M8,2h1v5h-1z"
+  />
+  <path fill="#B20000" class="sp-color-red-dark" d="M9,1h1v7h-1z"/>
+  <path
+      fill="#7192E3"
+      class="sp-color-blue-light"
+      d="M7,10h1v2h-1z M3,2h1v5h-1z"
+  />
+  <path
+      fill="#5151D3"
+      class="sp-color-blue-dark"
+      d="M7,12h1v1h-1z M4,1h1v7h-1z"
+  />
+</svg>

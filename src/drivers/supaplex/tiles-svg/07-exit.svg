@@ -1,0 +1,20 @@
+<svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    xmlns="http://www.w3.org/2000/svg"
+>
+  <path fill="#F39241" class="sp-color-orange" d="M0,0h16v16h-16z"/>
+  <path fill="#E3E300" class="sp-color-yellow" d="M0,0h15v1h-14v14h-1z"/>
+  <path fill="#E31010" class="sp-color-red-light" d="M15,1h1v15h-15v-1h14z"/>
+  <path
+      fill="#000000"
+      class="sp-color-black"
+      d="M4,4h10v2h-8v2h6v2h-6v2h8v2h-10z"
+  />
+  <path
+      fill="#F3F3F3"
+      class="sp-color-white"
+      d="M3,3h10v2h-8v2h6v2h-6v2h8v2h-10z"
+  />
+</svg>

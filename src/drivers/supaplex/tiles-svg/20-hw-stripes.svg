@@ -1,0 +1,24 @@
+<svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    xmlns="http://www.w3.org/2000/svg"
+>
+  <path fill="#717171" class="sp-color-grey-dark" d="M0,0h16v16h-16z"/>
+  <path
+      fill="#616161"
+      class="sp-color-grey-xdark"
+      d="M1,15h1v-1h12v-12h1v-1h1v15h-15"
+  />
+  <path
+      fill="#929292"
+      class="sp-color-grey-light"
+      d="M0,0h15v1h-1v1h-12v12h-1v1h-1z"
+  />
+  <path fill="#E3E300" class="sp-color-yellow" d="M2,2h12v12h-12z"/>
+  <path
+      fill="#000000"
+      class="sp-color-black"
+      d="M3,2h3v1h-1v1h-1v1h-1v1h-1v-3h1z M9,2h3v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v-3h1v-1h1v-1h1v-1h1v-1h1v-1h1v-1h1z M4,14v-1h1v-1h1v-1h1v-1h1v-1h1v-1h1v-1h1v-1h1v-1h1v-1h1v3h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1z M10,14v-1h1v-1h1v-1h1v-1h1v3h-1v1z"
+  />
+</svg>
