@@ -11,6 +11,7 @@
     "typescript": "tsc"
   },
   "dependencies": {
+    "@cubux/types": "^1.0.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@types/file-saver": "^2.0.5",
@@ -63,5 +64,8 @@
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md,html}": [
       "prettier --write"
     ]
+  },
+  "prettier": {
+    "trailingComma": "all"
   }
 }

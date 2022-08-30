@@ -1,0 +1,35 @@
+@use "../themes";
+
+@mixin scrollbar-custom($color-bar, $color-track, $width: 12px) {
+  scrollbar-color: $color-bar $color-track;
+  //scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: $width;
+    height: $width;
+    background-color: $color-track;
+    border-radius: 0;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border: $color-bar solid 1px;
+    &:horizontal {
+      border-left: none;
+      border-right: none;
+    }
+    &:vertical {
+      border-top: none;
+      border-bottom: none;
+    }
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $color-bar;
+    border-radius: 0;
+  }
+}
+
+@mixin default-scrollbar() {
+  @include scrollbar-custom(themes.$color-default, themes.$color-default-bg);
+}

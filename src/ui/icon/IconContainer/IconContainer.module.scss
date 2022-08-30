@@ -1,0 +1,13 @@
+.root {
+  display: inline-block;
+  vertical-align: middle;
+  width: auto;
+  height: 1em;
+
+  > svg {
+    display: block;
+    fill: currentColor;
+    width: auto;
+    height: 100%;
+  }
+}

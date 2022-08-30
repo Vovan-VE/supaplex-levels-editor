@@ -1,0 +1,14 @@
+@use "../input/config" as i;
+
+$padding-y: i.$padding-y;
+$padding-x: i.$padding-x;
+$font-size: i.$font-size;
+$line-height: i.$line-height;
+
+$focus-width: i.$focus-width;
+$disabled-opacity: 0.65;
+
+$border-width: i.$border-width;
+
+$btn-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+  border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
