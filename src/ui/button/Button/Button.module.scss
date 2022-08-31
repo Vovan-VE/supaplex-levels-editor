@@ -15,6 +15,9 @@
 
 .button {
   @extend %button;
+  &._asLink {
+    @extend %button-link;
+  }
 }
 .textButton {
   @extend %button, %button-link;

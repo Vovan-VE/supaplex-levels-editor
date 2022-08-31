@@ -74,7 +74,7 @@
   }
 
   &:active,
-  &._active {
+  &:global(._active) {
     color: var(--btn-active-color);
     background-color: var(--btn-active-bg);
     border-color: var(--btn-active-border-color);
@@ -85,7 +85,7 @@
   }
 
   &:disabled,
-  &._disabled {
+  &:global(._disabled) {
     color: var(--btn-disabled-color);
     background-color: var(--btn-disabled-bg);
     border-color: var(--btn-disabled-border-color);

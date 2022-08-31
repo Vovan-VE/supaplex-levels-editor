@@ -2,13 +2,8 @@ import { ForwardedRef, ReactElement } from "react";
 import cn from "classnames";
 import { deleteButtonProps, deleteLinkProps, isLinkProps } from "./attributes";
 import { renderContent } from "./renderContent";
-import { ButtonCoreProps, IconPosition } from "./types";
+import { ButtonCoreProps } from "./types";
 import cl from "./ButtonCore.module.scss";
-
-const CL_ICON_POS: Record<IconPosition, string | undefined> = {
-  [IconPosition.START]: cl._iconStart,
-  [IconPosition.END]: cl._iconEnd,
-};
 
 export const buttonCoreRender = (
   { icon, iconPosition, loading, uiColor, children, ...props }: ButtonCoreProps,
@@ -18,6 +13,7 @@ export const buttonCoreRender = (
     { icon, iconPosition, loading, uiColor },
     children,
     {
+      wrapClassName: cl.wrap,
       iconClassName: cl.icon,
       textClassName: cl.text,
       loaderClassName: cl.loader,
@@ -26,7 +22,7 @@ export const buttonCoreRender = (
 
   const className = cn(
     cl.root,
-    icon && [cl._withIcon, CL_ICON_POS[iconPosition ?? IconPosition.START]],
+    icon && cl._withIcon,
     loading && cl._loading,
     props.className,
   );

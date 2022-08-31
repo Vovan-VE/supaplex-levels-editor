@@ -13,10 +13,10 @@ const CL_COLOR: Partial<Record<ColorType, string>> = {
   [ColorType.DANGER]: cl._danger,
 };
 
+type RefElement = HTMLAnchorElement | HTMLButtonElement;
+
 const makeButtonRender =
-  (
-    rootClassName?: string,
-  ): ForwardRefRenderFunction<HTMLAnchorElement | HTMLButtonElement, Props> =>
+  (rootClassName?: string): ForwardRefRenderFunction<RefElement, Props> =>
   (props, ref) =>
     buttonCoreRender(
       {
@@ -24,12 +24,38 @@ const makeButtonRender =
         className: cn(
           rootClassName,
           CL_COLOR[props.uiColor ?? ColorType.PRIMARY],
+          props.className,
         ),
       },
       ref,
     );
 
-export const Button = forwardRef(makeButtonRender(cl.button));
+const withOptions =
+  <T,>(
+    renderer: ForwardRefRenderFunction<RefElement, Props>,
+    handle: (props: Props & T) => Props,
+  ): ForwardRefRenderFunction<RefElement, Props & T> =>
+  (props, ref) =>
+    renderer(handle(props), ref);
+
+interface ButtonOptions {
+  /**
+   * Prefer to use `TextButton` instead. This option is for dynamic case to
+   * prevent remount between `Button` and `TextButton`.
+   */
+  asLink?: boolean;
+}
+
+export const Button = forwardRef(
+  withOptions(
+    makeButtonRender(cl.button),
+    ({ asLink = false, className, ...props }: ButtonOptions & Props) => ({
+      ...props,
+      className: cn(className, asLink && cl._asLink),
+    }),
+  ),
+);
+
 export const TextButton = forwardRef(makeButtonRender(cl.textButton));
 
 if (process.env.NODE_ENV !== "production") {

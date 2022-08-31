@@ -1,3 +1,5 @@
+import { HTMLAttributes } from "react";
+
 export const enum ColorType {
   DEFAULT = "",
   MUTE = "m",
@@ -6,3 +8,9 @@ export const enum ColorType {
   WARN = "w",
   DANGER = "d",
 }
+
+export interface ContainerProps
+  extends Pick<
+    HTMLAttributes<any>,
+    "className" | "draggable" | "style" | "tabIndex" | "role"
+  > {}

@@ -27,6 +27,7 @@ $theme-dark: (
   #{vars.$color-default-bg}: sp.$color-black,
   #{vars.$color-mute}: sp.$color-grey,
   #{vars.$color-mute-bg}: sp.$color-grey-xdark,
+  #{vars.$color-panel-bg}: sp.$color-grey-xdark,
   #{vars.$color-primary}: sp.$color-blue-light,
   #{vars.$color-primary-bg}: $_dark-primary-bg,
   #{vars.$color-primary-hover}: _hover(sp.$color-blue-light),

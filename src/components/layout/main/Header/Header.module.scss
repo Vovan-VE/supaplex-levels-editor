@@ -1,0 +1,16 @@
+.root {
+  font-size: 1.2rem;
+  display: grid;
+  grid-gap: 0.5rem;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: "toolbar tabs";
+  align-items: center;
+}
+
+.toolbar {
+  grid-area: toolbar;
+}
+
+.tabs {
+  grid-area: tabs;
+}

@@ -1,0 +1,28 @@
+@use "styles/themes";
+
+$pad: 0.3rem;
+$space: 0.2rem;
+$space-half: calc($space / 2);
+$pad-out: $pad - $space-half;
+
+.root {
+  padding: $pad-out;
+  white-space: nowrap;
+
+  > * {
+    display: inline-block;
+    vertical-align: middle;
+    margin: $space-half;
+  }
+}
+._withBG {
+  background: themes.$color-panel-bg;
+}
+
+.separator {
+  display: inline-block;
+  height: 1.8em;
+  border-left: themes.$color-mute solid 0.15rem;
+  margin-left: $pad-out;
+  margin-right: $pad-out;
+}

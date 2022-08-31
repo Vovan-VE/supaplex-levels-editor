@@ -1,8 +1,26 @@
 @use "../themes";
 
-@mixin scrollbar-custom($color-bar, $color-track, $width: 12px) {
+@function _w($thin: null) {
+  @if $thin {
+    @return 6px;
+  }
+  @return 12px;
+}
+
+@mixin scrollbar-custom(
+  $color-bar,
+  $color-track,
+  $thin: null,
+  $show-track: null
+) {
   scrollbar-color: $color-bar $color-track;
-  //scrollbar-width: thin;
+  @if $thin {
+    scrollbar-width: thin;
+  } @else {
+    scrollbar-width: auto;
+  }
+
+  $width: _w($thin);
 
   &::-webkit-scrollbar {
     width: $width;
@@ -11,16 +29,20 @@
     border-radius: 0;
   }
 
-  &::-webkit-scrollbar-track {
-    background: transparent;
-    border: $color-bar solid 1px;
-    &:horizontal {
-      border-left: none;
-      border-right: none;
-    }
-    &:vertical {
-      border-top: none;
-      border-bottom: none;
+  @if $show-track {
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      border: $color-bar solid 1px;
+
+      &:horizontal {
+        border-left: none;
+        border-right: none;
+      }
+
+      &:vertical {
+        border-top: none;
+        border-bottom: none;
+      }
     }
   }
 
@@ -30,6 +52,11 @@
   }
 }
 
-@mixin default-scrollbar() {
-  @include scrollbar-custom(themes.$color-default, themes.$color-default-bg);
+@mixin default-scrollbar($thin: null, $show-track: null) {
+  @include scrollbar-custom(
+    themes.$color-default,
+    themes.$color-default-bg,
+    $thin,
+    $show-track
+  );
 }

@@ -1,0 +1,26 @@
+html,
+body {
+  overflow: hidden;
+}
+
+.root {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "head"
+    "main"
+    "foot";
+}
+
+.header {
+  grid-area: head;
+}
+.main {
+  grid-area: main;
+}
+.footer {
+  grid-area: foot;
+}
