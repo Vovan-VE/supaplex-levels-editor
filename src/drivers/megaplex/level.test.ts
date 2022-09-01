@@ -54,8 +54,8 @@ describe("level", () => {
       expect(level.height).toBe(2);
       expect(level.length).toBe(6 + FOOTER_BYTE_LENGTH);
 
-      expect(level.getCell(0, 0)).toEqual(0);
-      expect(level.getCell(2, 1)).toEqual(0);
+      expect(level.getTile(0, 0)).toEqual(0);
+      expect(level.getTile(2, 1)).toEqual(0);
       expect(level.title).toBe("".padEnd(TITLE_LENGTH));
     });
 
@@ -82,15 +82,14 @@ describe("level", () => {
   });
 
   it("copy", () => {
-    const a = new MegaplexLevel(3, 2);
-    a.title = "First level title";
-    a.setCell(1, 0, 6);
+    const a = new MegaplexLevel(3, 2)
+      .setTitle("First level title")
+      .setTile(1, 0, 6);
 
-    const b = a.copy();
+    let b = a.copy();
     expect(dumpLevel(b)).toEqual(dumpLevel(a));
 
-    b.title = "Copy level title";
-    b.setCell(1, 0, 1);
+    b = b.setTitle("Copy level title").setTile(1, 0, 1);
     let dump = dumpLevel(b);
     expect(dump).not.toEqual(dumpLevel(a));
     expect(dump).toMatchSnapshot();
@@ -100,23 +99,24 @@ describe("level", () => {
     it("simple", () => {
       const a = new MegaplexLevel(3, 2, testLevelData);
 
-      const b = a.resize(5, 4);
+      let b = a.resize(5, 4);
       expect(dumpLevel(b)).toMatchSnapshot();
 
-      b.setCell(3, 0, TILE_INFOTRON);
-      b.setCell(4, 0, TILE_SP_PORT_R);
-      b.setCell(0, 2, TILE_ZONK);
-      b.setCell(0, 3, TILE_SP_PORT_D);
-      b.setSpecPort(4, 0, {
-        setsGravity: true,
-        setsFreezeZonks: false,
-        setsFreezeEnemies: true,
-      });
-      b.setSpecPort(0, 3, {
-        setsGravity: false,
-        setsFreezeZonks: true,
-        setsFreezeEnemies: true,
-      });
+      b = b
+        .setTile(3, 0, TILE_INFOTRON)
+        .setTile(4, 0, TILE_SP_PORT_R)
+        .setTile(0, 2, TILE_ZONK)
+        .setTile(0, 3, TILE_SP_PORT_D)
+        .setSpecPort(4, 0, {
+          setsGravity: true,
+          setsFreezeZonks: false,
+          setsFreezeEnemies: true,
+        })
+        .setSpecPort(0, 3, {
+          setsGravity: false,
+          setsFreezeZonks: true,
+          setsFreezeEnemies: true,
+        });
       expect(dumpLevel(b)).toMatchSnapshot();
 
       const c = b.resize(3, 2);
@@ -124,31 +124,35 @@ describe("level", () => {
     });
   });
 
-  it("getCell", () => {
+  it("getTile", () => {
     const level = new MegaplexLevel(3, 2, testLevelData);
 
-    expect(level.getCell(0, 0)).toEqual(0);
-    expect(level.getCell(1, 0)).toEqual(TILE_SP_PORT_U);
-    expect(level.getCell(2, 0)).toEqual(4);
-    expect(level.getCell(0, 1)).toEqual(1);
-    expect(level.getCell(1, 1)).toEqual(3);
-    expect(level.getCell(2, 1)).toEqual(5);
+    expect(level.getTile(0, 0)).toEqual(0);
+    expect(level.getTile(1, 0)).toEqual(TILE_SP_PORT_U);
+    expect(level.getTile(2, 0)).toEqual(4);
+    expect(level.getTile(0, 1)).toEqual(1);
+    expect(level.getTile(1, 1)).toEqual(3);
+    expect(level.getTile(2, 1)).toEqual(5);
   });
 
-  describe("setCell", () => {
+  describe("setTile", () => {
     it("usual", () => {
       const level = new MegaplexLevel(3, 2, testLevelData);
-      level.setCell(2, 0, 7);
-      expect(level.getCell(2, 0)).toBe(7);
+      const copy = level.setTile(2, 0, 7);
+      expect(level.getTile(2, 0)).toBe(4);
       expect(level.specPortsCount).toBe(1);
+      expect(copy.getTile(2, 0)).toBe(7);
+      expect(copy.specPortsCount).toBe(1);
     });
 
     it("add spec port", () => {
       const level = new MegaplexLevel(3, 2, testLevelData);
-      level.setCell(2, 0, TILE_SP_PORT_U);
-      expect(level.getCell(2, 0)).toBe(TILE_SP_PORT_U);
-      expect(level.specPortsCount).toBe(2);
-      expect([...level.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
+      const copy = level.setTile(2, 0, TILE_SP_PORT_U);
+      expect(level.getTile(2, 0)).toBe(4);
+      expect(level.specPortsCount).toBe(1);
+      expect(copy.getTile(2, 0)).toBe(TILE_SP_PORT_U);
+      expect(copy.specPortsCount).toBe(2);
+      expect([...copy.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
         {
           x: 1,
           y: 0,
@@ -168,10 +172,12 @@ describe("level", () => {
 
     it("keep spec port", () => {
       const level = new MegaplexLevel(3, 2, testLevelData);
-      level.setCell(1, 0, TILE_SP_PORT_U);
-      expect(level.getCell(1, 0)).toBe(TILE_SP_PORT_U);
+      const copy = level.setTile(1, 0, TILE_SP_PORT_R);
+      expect(level.getTile(1, 0)).toBe(TILE_SP_PORT_U);
       expect(level.specPortsCount).toBe(1);
-      expect([...level.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
+      expect(copy.getTile(1, 0)).toBe(TILE_SP_PORT_R);
+      expect(copy.specPortsCount).toBe(1);
+      expect([...copy.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
         {
           x: 1,
           y: 0,
@@ -184,10 +190,10 @@ describe("level", () => {
 
     it("remove spec port", () => {
       const level = new MegaplexLevel(3, 2, testLevelData);
-      level.setCell(1, 0, TILE_ZONK);
-      expect(level.getCell(1, 0)).toBe(TILE_ZONK);
-      expect(level.specPortsCount).toBe(0);
-      expect([...level.getSpecPorts()]).toEqual([]);
+      const copy = level.setTile(1, 0, TILE_ZONK);
+      expect(copy.getTile(1, 0)).toBe(TILE_ZONK);
+      expect(copy.specPortsCount).toBe(0);
+      expect([...copy.getSpecPorts()]).toEqual([]);
     });
   });
 

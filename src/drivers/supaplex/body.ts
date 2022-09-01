@@ -27,29 +27,32 @@ export class LevelBody implements ILevelBody {
     }
   }
 
+  copy(): this {
+    return new LevelBody(this.#box, this.#raw) as this;
+  }
+
   get length() {
     return this.#box.length;
   }
 
   get raw() {
-    return this.#raw;
+    return new Uint8Array(this.#raw);
   }
 
-  getCell(x: number, y: number) {
+  getTile(x: number, y: number) {
     this.#box.validateCoords?.(x, y);
     return this.#raw[this.#box.coordsToOffset(x, y)];
   }
 
-  setCell(
-    x: number,
-    y: number,
-    value: number,
-    beforeUpdate?: (prev: number) => void,
-  ) {
+  setTile(x: number, y: number, value: number) {
     this.#box.validateCoords?.(x, y);
     validateByte?.(value);
     const offset = this.#box.coordsToOffset(x, y);
-    beforeUpdate?.(this.#raw[offset]);
-    this.#raw[offset] = value;
+    if (this.#raw[offset] === value) {
+      return this;
+    }
+    const copy = this.copy();
+    copy.#raw[offset] = value;
+    return copy;
   }
 }

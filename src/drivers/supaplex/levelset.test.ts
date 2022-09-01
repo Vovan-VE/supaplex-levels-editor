@@ -41,10 +41,8 @@ describe("levelset", () => {
   it("setLevel", () => {
     const levelset = new SupaplexLevelset(3);
 
-    const a = levelset.getLevel(0);
-    const b = levelset.getLevel(1);
-    a.title = "1st";
-    b.title = "2nd";
+    const a = levelset.getLevel(0).setTitle("1st");
+    const b = levelset.getLevel(1).setTitle("2nd");
 
     levelset.setLevel(0, b);
     levelset.setLevel(1, a);
@@ -58,11 +56,8 @@ describe("levelset", () => {
 
     const a = levelset.getLevel(0);
     const b = levelset.getLevel(1);
-    a.title = "1st";
-    b.title = "2nd";
 
-    const c = new SupaplexLevel();
-    c.title = "3rd";
+    const c = new SupaplexLevel().setTitle("3rd");
     levelset.appendLevel(c);
 
     expect(levelset.levelsCount).toBe(3);
@@ -74,11 +69,8 @@ describe("levelset", () => {
 
     const a = levelset.getLevel(0);
     const c = levelset.getLevel(1);
-    a.title = "1st";
-    c.title = "3rd";
 
-    const b = new SupaplexLevel();
-    b.title = "2nd";
+    const b = new SupaplexLevel().setTitle("2nd");
 
     expect(() => levelset.removeLevel(2)).toThrow(
       new RangeError(`Invalid level index 2`),
@@ -86,7 +78,7 @@ describe("levelset", () => {
     expect(() => levelset.removeLevel(3)).toThrow(
       new RangeError(`Invalid level index 3`),
     );
-    levelset.insertLevel(1, c);
+    levelset.insertLevel(1, b);
 
     expect(levelset.levelsCount).toBe(3);
     expect([...levelset.getLevels()]).toEqual([a, b, c]);
@@ -96,11 +88,7 @@ describe("levelset", () => {
     const levelset = new SupaplexLevelset(3);
 
     const a = levelset.getLevel(0);
-    const b = levelset.getLevel(1);
     const c = levelset.getLevel(2);
-    a.title = "1st";
-    b.title = "2nd";
-    c.title = "3rd";
 
     levelset.removeLevel(1);
 

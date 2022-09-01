@@ -27,7 +27,7 @@ export class SupaplexLevel extends LevelFooter implements ISupaplexLevel {
     );
   }
 
-  readonly #body: LevelBody;
+  #body: LevelBody;
 
   constructor(data?: Uint8Array) {
     super(LEVEL_WIDTH, sliceFooter(data));
@@ -35,8 +35,8 @@ export class SupaplexLevel extends LevelFooter implements ISupaplexLevel {
     this.#body = new LevelBody(supaplexBox, data?.slice(0, BODY_LENGTH));
   }
 
-  copy() {
-    return new SupaplexLevel(this.raw);
+  copy(): this {
+    return new SupaplexLevel(this.raw) as this;
   }
 
   get length() {
@@ -58,22 +58,27 @@ export class SupaplexLevel extends LevelFooter implements ISupaplexLevel {
     return LEVEL_HEIGHT;
   }
 
-  getCell(x: number, y: number) {
-    return this.#body.getCell(x, y);
+  getTile(x: number, y: number) {
+    return this.#body.getTile(x, y);
   }
 
-  setCell(x: number, y: number, value: number) {
-    this.#body.setCell(x, y, value, (prev) => {
-      if (isSpecPort(prev)) {
-        if (!isSpecPort(value)) {
-          this.deleteSpecPort(x, y);
-        }
-      } else {
-        if (isSpecPort(value)) {
-          this.setSpecPort(x, y);
-        }
+  setTile(x: number, y: number, value: number) {
+    const nextBody = this.#body.setTile(x, y, value);
+    if (nextBody === this.#body) {
+      return this;
+    }
+    let next = this.copy();
+    next.#body = nextBody;
+    if (isSpecPort(this.#body.getTile(x, y))) {
+      if (!isSpecPort(value)) {
+        next = next.deleteSpecPort(x, y);
       }
-    });
+    } else {
+      if (isSpecPort(value)) {
+        next = next.setSpecPort(x, y);
+      }
+    }
+    return next;
   }
 
   get maxTitleLength() {
@@ -87,11 +92,11 @@ export class SupaplexLevel extends LevelFooter implements ISupaplexLevel {
 
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps) {
     supaplexBox.validateCoords?.(x, y);
-    super.setSpecPort(x, y, props);
+    return super.setSpecPort(x, y, props);
   }
 
   deleteSpecPort(x: number, y: number) {
     supaplexBox.validateCoords?.(x, y);
-    super.deleteSpecPort(x, y);
+    return super.deleteSpecPort(x, y);
   }
 }

@@ -1,6 +1,6 @@
 import { LEVEL_BYTES_LENGTH, SupaplexLevel } from "./level";
 import { dumpLevel } from "./helpers.dev";
-import { TILE_SP_PORT_U, TILE_ZONK } from "./tiles";
+import { TILE_SP_PORT_R, TILE_SP_PORT_U, TILE_ZONK } from "./tiles";
 import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./types";
 
 describe("level", () => {
@@ -71,55 +71,60 @@ describe("level", () => {
     it("buffer", () => {
       const level = new SupaplexLevel(testLevelData);
       expect(dumpLevel(level)).toMatchSnapshot();
-
-      // it operates on copy
-      level.setCell(0, 0, 20);
-      // and origin was not changed
-      expect(testLevelData[0]).toBe(1);
     });
   });
 
   it("copy", () => {
-    const a = new SupaplexLevel();
-    a.title = "First level title";
-    a.setCell(10, 15, 6);
+    const a = new SupaplexLevel()
+      .setTitle("First level title")
+      .setTile(10, 15, 6);
 
-    const b = a.copy();
+    let b = a.copy();
     expect(dumpLevel(b)).toEqual(dumpLevel(a));
 
-    b.title = "Copy level title";
-    b.setCell(10, 15, 1);
+    b = b.setTitle("Copy level title").setTile(10, 15, 1);
     let dump = dumpLevel(b);
     expect(dump).not.toEqual(dumpLevel(a));
     expect(dump).toMatchSnapshot();
   });
 
-  it("getCell", () => {
+  it("getTile", () => {
     const level = new SupaplexLevel(testLevelData);
 
-    expect(level.getCell(0, 0)).toBe(1);
-    expect(level.getCell(1, 1)).toBe(2);
-    expect(level.getCell(2, 2)).toBe(3);
-    expect(level.getCell(23, 23)).toBe(24);
+    expect(level.getTile(0, 0)).toBe(1);
+    expect(level.getTile(1, 1)).toBe(2);
+    expect(level.getTile(2, 2)).toBe(3);
+    expect(level.getTile(23, 23)).toBe(24);
 
-    expect(level.getCell(16, 23)).toBe(0x29);
-    expect(level.getCell(17, 23)).toBe(0x2a);
+    expect(level.getTile(16, 23)).toBe(0x29);
+    expect(level.getTile(17, 23)).toBe(0x2a);
   });
 
-  describe("setCell", () => {
+  describe("setTile", () => {
+    it("no-op", () => {
+      const level = new SupaplexLevel(testLevelData);
+      expect(level.setTile(0, 0, 1)).toBe(level);
+      expect(level.setTile(1, 1, 2)).toBe(level);
+      expect(level.setTile(23, 23, 24)).toBe(level);
+    });
+
     it("usual", () => {
       const level = new SupaplexLevel(testLevelData);
-      level.setCell(10, 2, 7);
-      expect(level.getCell(10, 2)).toBe(7);
+      const copy = level.setTile(10, 2, 7);
+      expect(copy.getTile(10, 2)).toBe(7);
+      expect(copy.specPortsCount).toBe(1);
+      expect(level.getTile(10, 2)).toBe(0);
       expect(level.specPortsCount).toBe(1);
     });
 
     it("add spec port", () => {
       const level = new SupaplexLevel(testLevelData);
-      level.setCell(10, 2, TILE_SP_PORT_U);
-      expect(level.getCell(10, 2)).toBe(TILE_SP_PORT_U);
-      expect(level.specPortsCount).toBe(2);
-      expect([...level.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
+      const copy = level.setTile(10, 2, TILE_SP_PORT_U);
+      expect(level.getTile(10, 2)).toBe(0);
+      expect(level.specPortsCount).toBe(1);
+      expect(copy.getTile(10, 2)).toBe(TILE_SP_PORT_U);
+      expect(copy.specPortsCount).toBe(2);
+      expect([...copy.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
         {
           x: 12,
           y: 12,
@@ -139,10 +144,12 @@ describe("level", () => {
 
     it("keep spec port", () => {
       const level = new SupaplexLevel(testLevelData);
-      level.setCell(12, 12, TILE_SP_PORT_U);
-      expect(level.getCell(12, 12)).toBe(TILE_SP_PORT_U);
+      const copy = level.setTile(12, 12, TILE_SP_PORT_U);
+      expect(level.getTile(12, 12)).toBe(TILE_SP_PORT_R);
       expect(level.specPortsCount).toBe(1);
-      expect([...level.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
+      expect(copy.getTile(12, 12)).toBe(TILE_SP_PORT_U);
+      expect(copy.specPortsCount).toBe(1);
+      expect([...copy.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
         {
           x: 12,
           y: 12,
@@ -155,10 +162,12 @@ describe("level", () => {
 
     it("remove spec port", () => {
       const level = new SupaplexLevel(testLevelData);
-      level.setCell(12, 12, TILE_ZONK);
-      expect(level.getCell(12, 12)).toBe(TILE_ZONK);
-      expect(level.specPortsCount).toBe(0);
-      expect([...level.getSpecPorts()]).toEqual([]);
+      const copy = level.setTile(12, 12, TILE_ZONK);
+      expect(level.getTile(12, 12)).toBe(TILE_SP_PORT_R);
+      expect(level.specPortsCount).toBe(1);
+      expect(copy.getTile(12, 12)).toBe(TILE_ZONK);
+      expect(copy.specPortsCount).toBe(0);
+      expect([...copy.getSpecPorts()]).toEqual([]);
     });
   });
 

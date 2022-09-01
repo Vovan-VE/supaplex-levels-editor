@@ -11,26 +11,25 @@ export interface IBox {
 export interface ILevelBody {
   readonly length: number;
   readonly raw: Uint8Array;
-  getCell(x: number, y: number): number;
-  setCell(
-    x: number,
-    y: number,
-    value: number,
-    beforeUpdate?: (prev: number) => void,
-  ): void;
+  getTile(x: number, y: number): number;
+  setTile(x: number, y: number, value: number): this;
 }
 
 export interface ILevelFooter {
   readonly length: number;
   getRaw(width: number): Uint8Array;
-  title: string;
-  initialGravity: boolean;
-  initialFreezeZonks: boolean;
-  infotronsNeed: number | "all";
+  readonly title: string;
+  setTitle(title: string): this;
+  readonly initialGravity: boolean;
+  setInitialGravity(on: boolean): this;
+  readonly initialFreezeZonks: boolean;
+  setInitialFreezeZonks(on: boolean): this;
+  readonly infotronsNeed: number;
+  setInfotronsNeed(value: number): this;
   readonly specPortsCount: number;
   getSpecPorts(): Iterable<ISupaplexSpecPort>;
-  clearSpecPorts(): void;
+  clearSpecPorts(): this;
   findSpecPort(x: number, y: number): ISupaplexSpecPortProps | undefined;
-  setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps): void;
-  deleteSpecPort(x: number, y: number): void;
+  setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps): this;
+  deleteSpecPort(x: number, y: number): this;
 }

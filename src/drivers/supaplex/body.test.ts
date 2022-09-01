@@ -27,68 +27,60 @@ describe("LevelBody", () => {
     });
   });
 
-  it("getCell", () => {
+  it("getTile", () => {
     const body = new LevelBody(supaplexBox, data);
 
-    expect(body.getCell(0, 0)).toBe(0);
-    expect(body.getCell(1, 0)).toBe(1);
-    expect(body.getCell(2, 0)).toBe(2);
-    expect(body.getCell(58, 0)).toBe(58);
-    expect(body.getCell(59, 0)).toBe(59);
-    expect(body.getCell(0, 1)).toBe(60);
-    expect(body.getCell(1, 1)).toBe(61);
-    expect(body.getCell(2, 1)).toBe(62);
-    expect(body.getCell(3, 1)).toBe(63);
-    expect(body.getCell(4, 1)).toBe(64);
-    expect(body.getCell(5, 1)).toBe(0);
-    expect(body.getCell(6, 1)).toBe(0);
+    expect(body.getTile(0, 0)).toBe(0);
+    expect(body.getTile(1, 0)).toBe(1);
+    expect(body.getTile(2, 0)).toBe(2);
+    expect(body.getTile(58, 0)).toBe(58);
+    expect(body.getTile(59, 0)).toBe(59);
+    expect(body.getTile(0, 1)).toBe(60);
+    expect(body.getTile(1, 1)).toBe(61);
+    expect(body.getTile(2, 1)).toBe(62);
+    expect(body.getTile(3, 1)).toBe(63);
+    expect(body.getTile(4, 1)).toBe(64);
+    expect(body.getTile(5, 1)).toBe(0);
+    expect(body.getTile(6, 1)).toBe(0);
 
     const e = /^Cell coords \(-?\d+, -?\d+\) are out of range$/;
-    expect(() => body.getCell(-2, 0)).toThrow(e);
-    expect(() => body.getCell(-1, 0)).toThrow(e);
-    expect(() => body.getCell(60, 0)).toThrow(e);
-    expect(() => body.getCell(61, 0)).toThrow(e);
-    expect(() => body.getCell(0, -2)).toThrow(e);
-    expect(() => body.getCell(0, -1)).toThrow(e);
-    expect(() => body.getCell(0, 24)).toThrow(e);
-    expect(() => body.getCell(0, 25)).toThrow(e);
+    expect(() => body.getTile(-2, 0)).toThrow(e);
+    expect(() => body.getTile(-1, 0)).toThrow(e);
+    expect(() => body.getTile(60, 0)).toThrow(e);
+    expect(() => body.getTile(61, 0)).toThrow(e);
+    expect(() => body.getTile(0, -2)).toThrow(e);
+    expect(() => body.getTile(0, -1)).toThrow(e);
+    expect(() => body.getTile(0, 24)).toThrow(e);
+    expect(() => body.getTile(0, 25)).toThrow(e);
   });
 
-  it("setCell", () => {
+  it("setTile", () => {
     const body = new LevelBody(supaplexBox, data);
 
-    body.setCell(1, 2, 95);
-    expect(body.getCell(1, 2)).toBe(95);
-    const offset = supaplexBox.coordsToOffset(1, 2);
-    expect(body.raw[offset]).toBe(95);
-    expect(data[offset]).toBe(0);
+    expect(body.setTile(2, 1, 62)).toBe(body);
 
-    const prev = jest.fn();
-    body.setCell(1, 2, 41, prev);
-    expect(prev).toHaveBeenCalledWith(95);
-    expect(body.getCell(1, 2)).toBe(41);
-
-    expect(() =>
-      body.setCell(1, 2, 23, () => {
-        throw new Error("Boo");
-      }),
-    ).toThrow(new Error("Boo"));
-    expect(body.getCell(1, 2)).toBe(41);
+    const body1 = body.setTile(2, 1, 95);
+    expect(body1.getTile(2, 1)).toBe(95);
+    expect(body.getTile(2, 1)).toBe(62);
+    const offset = supaplexBox.coordsToOffset(2, 1);
+    expect(body1.raw[offset]).toBe(95);
+    expect(body.raw[offset]).toBe(62);
+    expect(data[offset]).toBe(62);
 
     const e1 = /^Cell coords \(-?\d+, -?\d+\) are out of range$/;
-    expect(() => body.setCell(-2, 0, 0)).toThrow(e1);
-    expect(() => body.setCell(-1, 0, 0)).toThrow(e1);
-    expect(() => body.setCell(60, 0, 0)).toThrow(e1);
-    expect(() => body.setCell(61, 0, 0)).toThrow(e1);
-    expect(() => body.setCell(0, -2, 0)).toThrow(e1);
-    expect(() => body.setCell(0, -1, 0)).toThrow(e1);
-    expect(() => body.setCell(0, 24, 0)).toThrow(e1);
-    expect(() => body.setCell(0, 25, 0)).toThrow(e1);
+    expect(() => body.setTile(-2, 0, 0)).toThrow(e1);
+    expect(() => body.setTile(-1, 0, 0)).toThrow(e1);
+    expect(() => body.setTile(60, 0, 0)).toThrow(e1);
+    expect(() => body.setTile(61, 0, 0)).toThrow(e1);
+    expect(() => body.setTile(0, -2, 0)).toThrow(e1);
+    expect(() => body.setTile(0, -1, 0)).toThrow(e1);
+    expect(() => body.setTile(0, 24, 0)).toThrow(e1);
+    expect(() => body.setTile(0, 25, 0)).toThrow(e1);
 
     const e2 = /^Invalid byte -?\d+$/;
-    expect(() => body.setCell(0, 0, -2)).toThrow(e2);
-    expect(() => body.setCell(0, 0, -1)).toThrow(e2);
-    expect(() => body.setCell(0, 0, 256)).toThrow(e2);
-    expect(() => body.setCell(0, 0, 257)).toThrow(e2);
+    expect(() => body.setTile(0, 0, -2)).toThrow(e2);
+    expect(() => body.setTile(0, 0, -1)).toThrow(e2);
+    expect(() => body.setTile(0, 0, 256)).toThrow(e2);
+    expect(() => body.setTile(0, 0, 257)).toThrow(e2);
   });
 });

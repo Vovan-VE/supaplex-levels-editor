@@ -38,7 +38,7 @@ Object {
   ],
   "demo": null,
   "height": 2,
-  "infotronsNeed": "all",
+  "infotronsNeed": 0,
   "initialFreezeZonks": false,
   "initialGravity": false,
   "maxTitleLength": 23,

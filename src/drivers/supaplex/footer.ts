@@ -55,16 +55,10 @@ export const specPortCoordsToOffset = (
 };
 
 export class LevelFooter implements ILevelFooter {
-  initialGravity: boolean;
-  initialFreezeZonks: boolean;
-
-  #title: string;
-  #infotronsNeed: number;
-  readonly #specPorts: ISupaplexSpecPort[] = [];
-  readonly #src: Uint8Array;
+  #width: number;
+  #src: Uint8Array;
 
   constructor(width: number, data?: Uint8Array) {
-    const isNew = !data;
     if (data) {
       if (
         process.env.NODE_ENV !== "production" &&
@@ -74,35 +68,23 @@ export class LevelFooter implements ILevelFooter {
           `Invalid buffer length ${data.length}, expected at least ${FOOTER_BYTE_LENGTH}`,
         );
       }
+      data = new Uint8Array(data);
     } else {
       data = new Uint8Array(FOOTER_BYTE_LENGTH);
+      data.set(
+        ""
+          .padEnd(TITLE_LENGTH)
+          .split("")
+          .map((ch) => ch.charCodeAt(0)),
+        TITLE_OFFSET,
+      );
     }
+    this.#width = width;
     this.#src = data;
+  }
 
-    this.initialGravity = data[GRAVITY_OFFSET] === 1;
-    this.initialFreezeZonks = data[FREEZE_ZONKS_OFFSET] === 2;
-    this.#title = isNew
-      ? "".padEnd(TITLE_LENGTH)
-      : String.fromCharCode(
-          ...data.slice(TITLE_OFFSET, TITLE_OFFSET + TITLE_LENGTH),
-        );
-    this.#infotronsNeed = data[INFOTRONS_NEED_OFFSET];
-
-    for (
-      let i = 0,
-        L = Math.min(data[SPEC_PORT_COUNT_OFFSET], SPEC_PORT_MAX_COUNT);
-      i < L;
-      i++
-    ) {
-      const offset = specPortRawOffset(i);
-      const raw = data.slice(offset, offset + SPEC_PORT_ITEM_LENGTH);
-      const [x, y] = specPortOffsetToCoords(raw[0], raw[1], width);
-      this.#specPorts.push({
-        x,
-        y,
-        ...getSpecPortProps(raw),
-      });
-    }
+  copy(): this {
+    return new LevelFooter(this.#width, this.#src) as this;
   }
 
   get length() {
@@ -110,45 +92,16 @@ export class LevelFooter implements ILevelFooter {
   }
 
   getRaw(width: number) {
-    const ret = new Uint8Array(this.#src);
-    ret[GRAVITY_OFFSET] = this.initialGravity ? 1 : 0;
-    ret[FREEZE_ZONKS_OFFSET] = this.initialFreezeZonks ? 2 : 0;
-    ret.set(
-      this.#title.split("").map((ch) => {
-        const byte = ch.charCodeAt(0);
-        validateByte?.(byte);
-        return byte;
-      }),
-      TITLE_OFFSET,
-    );
-    ret[INFOTRONS_NEED_OFFSET] = this.#infotronsNeed;
-
-    ret[SPEC_PORT_COUNT_OFFSET] = this.#specPorts.length;
-    ret.fill(
-      0,
-      SPEC_PORT_DB_OFFSET,
-      SPEC_PORT_DB_OFFSET + SPEC_PORT_MAX_COUNT * SPEC_PORT_ITEM_LENGTH,
-    );
-    for (const [i, p] of this.#specPorts.entries()) {
-      const [b0, b1] = specPortCoordsToOffset(p.x, p.y, width);
-      ret.set(
-        Uint8Array.of(
-          b0,
-          b1,
-          p.setsGravity ? 1 : 0,
-          p.setsFreezeZonks ? 2 : 0,
-          p.setsFreezeEnemies ? 1 : 0,
-        ),
-        specPortRawOffset(i),
-      );
-    }
-    return ret;
+    return new Uint8Array(this.#src);
   }
 
   get title() {
-    return this.#title;
+    return String.fromCharCode(
+      ...this.#src.slice(TITLE_OFFSET, TITLE_OFFSET + TITLE_LENGTH),
+    );
   }
-  set title(title) {
+
+  setTitle(title: string) {
     if (process.env.NODE_ENV !== "production" && title.length > TITLE_LENGTH) {
       throw new RangeError("Title length exceeds limit");
     }
@@ -156,73 +109,156 @@ export class LevelFooter implements ILevelFooter {
       throw new Error("Unsupported characters found");
     }
 
-    this.#title = title.padEnd(TITLE_LENGTH);
+    title = title.padEnd(TITLE_LENGTH);
+    if (this.title === title) {
+      return this;
+    }
+
+    const copy = this.copy();
+    copy.#src.set(
+      title.split("").map((ch) => ch.charCodeAt(0)),
+      TITLE_OFFSET,
+    );
+    return copy;
+  }
+
+  get initialGravity() {
+    return this.#src[GRAVITY_OFFSET] === 1;
+  }
+  setInitialGravity(on: boolean) {
+    if (this.initialGravity === on) {
+      return this;
+    }
+    const copy = this.copy();
+    copy.#src[GRAVITY_OFFSET] = on ? 1 : 0;
+    return copy;
+  }
+
+  get initialFreezeZonks() {
+    return this.#src[FREEZE_ZONKS_OFFSET] === 2;
+  }
+  setInitialFreezeZonks(on: boolean) {
+    if (this.initialFreezeZonks === on) {
+      return this;
+    }
+    const copy = this.copy();
+    copy.#src[FREEZE_ZONKS_OFFSET] = on ? 2 : 0;
+    return copy;
   }
 
   get infotronsNeed() {
-    return this.#infotronsNeed || "all";
+    return this.#src[INFOTRONS_NEED_OFFSET];
   }
-  set infotronsNeed(inf) {
-    if (inf === "all") {
-      this.#infotronsNeed = 0;
-    } else {
-      validateByte?.(inf);
-      if (process.env.NODE_ENV !== "production" && inf === 0) {
-        throw new RangeError("Value cannot be 0 since it has special meaning");
-      }
-      this.#infotronsNeed = inf;
+  setInfotronsNeed(value: number) {
+    validateByte?.(value);
+    if (this.infotronsNeed === value) {
+      return this;
     }
+    const copy = this.copy();
+    copy.#src[INFOTRONS_NEED_OFFSET] = value;
+    return copy;
   }
 
   get specPortsCount() {
-    return this.#specPorts.length;
+    return Math.min(this.#src[SPEC_PORT_COUNT_OFFSET], SPEC_PORT_MAX_COUNT);
   }
 
   *getSpecPorts(): Generator<ISupaplexSpecPort, void, void> {
-    for (const port of this.#specPorts) {
-      yield { ...port };
+    for (let i = 0, L = this.specPortsCount; i < L; i++) {
+      const offset = specPortRawOffset(i);
+      const raw = this.#src.slice(offset, offset + SPEC_PORT_ITEM_LENGTH);
+      const [x, y] = specPortOffsetToCoords(raw[0], raw[1], this.#width);
+      yield { x, y, ...getSpecPortProps(raw) };
     }
   }
 
   clearSpecPorts() {
-    this.#specPorts.splice(0);
+    if (!this.specPortsCount) {
+      return this;
+    }
+    const copy = this.copy();
+    copy.#src[SPEC_PORT_COUNT_OFFSET] = 0;
+    const zeroItem = new Uint8Array(SPEC_PORT_ITEM_LENGTH);
+    for (let i = 0; i < SPEC_PORT_MAX_COUNT; i++) {
+      copy.#src.set(zeroItem, specPortRawOffset(i));
+    }
+    return copy;
   }
 
   findSpecPort(x: number, y: number) {
-    const port = this.#specPorts.find((p) => p.x === x && p.y === y);
-    if (!port) {
-      return undefined;
+    for (const port of this.getSpecPorts()) {
+      if (port.x === x && port.y === y) {
+        const { x: _1, y: _2, ...props } = port;
+        return props;
+      }
     }
-    const { x: _1, y: _2, ...props } = port;
-    return props;
   }
 
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps) {
-    let index = this.#specPorts.findIndex((p) => p.x === x && p.y === y);
+    const list = [...this.getSpecPorts()];
+    let index = list.findIndex((p) => p.x === x && p.y === y);
+    let newCount = this.specPortsCount;
     if (index >= 0) {
-      if (props) {
-        this.#specPorts[index] = { x, y, ...props };
+      if (!props) {
+        return this;
+      }
+      const prev = list[index];
+      if (
+        props.setsGravity === prev.setsGravity &&
+        props.setsFreezeZonks === prev.setsFreezeZonks &&
+        props.setsFreezeEnemies === prev.setsFreezeEnemies
+      ) {
+        return this;
       }
     } else {
-      if (this.#specPorts.length >= SPEC_PORT_MAX_COUNT) {
+      index = this.specPortsCount;
+      if (index >= SPEC_PORT_MAX_COUNT) {
         throw new RangeError("Cannot add more spec ports");
       }
-      this.#specPorts.push({
-        x,
-        y,
-        ...(props ?? {
-          setsGravity: false,
-          setsFreezeZonks: false,
-          setsFreezeEnemies: false,
-        }),
-      });
+      newCount++;
+      props ??= {
+        setsGravity: false,
+        setsFreezeZonks: false,
+        setsFreezeEnemies: false,
+      };
     }
+
+    const result = this.copy();
+    const [b0, b1] = specPortCoordsToOffset(x, y, this.#width);
+    result.#src.set(
+      Uint8Array.of(
+        b0,
+        b1,
+        props.setsGravity ? 1 : 0,
+        props.setsFreezeZonks ? 2 : 0,
+        props.setsFreezeEnemies ? 1 : 0,
+      ),
+      specPortRawOffset(index),
+    );
+    result.#src[SPEC_PORT_COUNT_OFFSET] = newCount;
+    return result;
   }
 
   deleteSpecPort(x: number, y: number) {
-    const index = this.#specPorts.findIndex((p) => p.x === x && p.y === y);
-    if (index >= 0) {
-      this.#specPorts.splice(index, 1);
+    const list = [...this.getSpecPorts()];
+    const index = list.findIndex((p) => p.x === x && p.y === y);
+    if (index < 0) {
+      return this;
     }
+    const last = this.specPortsCount - 1;
+    const copy = this.copy();
+    for (let i = index; i < last; i++) {
+      const from = specPortRawOffset(i + 1);
+      copy.#src.set(
+        this.#src.slice(from, from + SPEC_PORT_ITEM_LENGTH),
+        specPortRawOffset(i),
+      );
+    }
+    copy.#src.set(
+      new Uint8Array(SPEC_PORT_ITEM_LENGTH),
+      specPortRawOffset(last),
+    );
+    copy.#src[SPEC_PORT_COUNT_OFFSET] = this.specPortsCount - 1;
+    return copy;
   }
 }

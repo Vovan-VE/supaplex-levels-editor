@@ -6,7 +6,7 @@ export const dumpLevel = (level: ISupaplexLevel) => ({
   height: level.height,
   cells: Array.from({ length: level.height }).map((_, y) =>
     Array.from({ length: level.width })
-      .map((_, x) => toChar(level.getCell(x, y)))
+      .map((_, x) => toChar(level.getTile(x, y)))
       .join(""),
   ),
   infotronsNeed: level.infotronsNeed,

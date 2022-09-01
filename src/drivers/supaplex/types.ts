@@ -19,19 +19,21 @@ export interface ISupaplexSpecPort extends ISupaplexSpecPortProps {
 }
 
 export interface ISupaplexLevel extends IBaseLevel {
-  copy(): ISupaplexLevel;
   readonly raw: Uint8Array;
-  initialGravity: boolean;
-  initialFreezeZonks: boolean;
-  infotronsNeed: number | "all";
+  readonly initialGravity: boolean;
+  setInitialGravity(on: boolean): this;
+  readonly initialFreezeZonks: boolean;
+  setInitialFreezeZonks(on: boolean): this;
+  readonly infotronsNeed: number;
+  setInfotronsNeed(value: number): this;
   readonly specPortsCount: number;
   getSpecPorts(): Iterable<ISupaplexSpecPort>;
   /** @deprecated Useless outside */
-  clearSpecPorts(): void;
+  clearSpecPorts(): this;
   findSpecPort(x: number, y: number): ISupaplexSpecPortProps | undefined;
-  setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps): void;
+  setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps): this;
   /** @deprecated Useless outside */
-  deleteSpecPort(x: number, y: number): void;
+  deleteSpecPort(x: number, y: number): this;
 }
 
 export interface ISupaplexTile extends IBaseTile<ISupaplexLevel> {}
