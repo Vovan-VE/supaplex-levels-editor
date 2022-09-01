@@ -1,9 +1,17 @@
 import { createEvent, Store } from "effector";
 import { PersistentStoreDriverAll } from "../store";
 
+interface Options {
+  /**
+   * Debounce subsequent store updates and flush only after latest change
+   */
+  flushDelay?: number;
+}
+
 export const withPersistMap = <V>(
   store: Store<ReadonlyMap<string, V>>,
   driver: PersistentStoreDriverAll<V> | Promise<PersistentStoreDriverAll<V>>,
+  { flushDelay = 5000 }: Options = {},
 ) => {
   (async () => {
     const drv = await driver;
@@ -19,13 +27,22 @@ export const withPersistMap = <V>(
       console.error("Failed to read all from persistent", e);
     }
 
-    store.watch(async (map) => {
-      try {
-        await drv.setAll(map);
-      } catch (e) {
-        console.error("Failed to sync store into persistent", e);
+    {
+      async function save(map: ReadonlyMap<string, V>) {
+        try {
+          await drv.setAll(map);
+        } catch (e) {
+          console.error("Failed to sync store into persistent", e);
+        }
       }
-    });
+
+      let tId: ReturnType<typeof setTimeout>;
+
+      store.watch((map) => {
+        clearTimeout(tId);
+        tId = setTimeout(() => save(map), flushDelay);
+      });
+    }
   })();
 
   return store;

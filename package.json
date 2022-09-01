@@ -11,6 +11,7 @@
     "typescript": "tsc"
   },
   "dependencies": {
+    "@cubux/readonly-map": "^1.0.0",
     "@cubux/types": "^1.0.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
