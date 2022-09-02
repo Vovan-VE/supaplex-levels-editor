@@ -44,11 +44,10 @@ describe("levelset", () => {
     const a = levelset.getLevel(0).setTitle("1st");
     const b = levelset.getLevel(1).setTitle("2nd");
 
-    levelset.setLevel(0, b);
-    levelset.setLevel(1, a);
+    const copy = levelset.setLevel(0, b).setLevel(1, a);
 
-    expect(levelset.getLevel(0).title).toMatch(/^2nd /);
-    expect(levelset.getLevel(1).title).toMatch(/^1st /);
+    expect(copy.getLevel(0).title).toMatch(/^2nd /);
+    expect(copy.getLevel(1).title).toMatch(/^1st /);
   });
 
   it("appendLevel", () => {
@@ -58,10 +57,10 @@ describe("levelset", () => {
     const b = levelset.getLevel(1);
 
     const c = new SupaplexLevel().setTitle("3rd");
-    levelset.appendLevel(c);
+    const copy = levelset.appendLevel(c);
 
-    expect(levelset.levelsCount).toBe(3);
-    expect([...levelset.getLevels()]).toEqual([a, b, c]);
+    expect(copy.levelsCount).toBe(3);
+    expect([...copy.getLevels()]).toEqual([a, b, c]);
   });
 
   it("insertLevel", () => {
@@ -72,16 +71,19 @@ describe("levelset", () => {
 
     const b = new SupaplexLevel().setTitle("2nd");
 
-    expect(() => levelset.removeLevel(2)).toThrow(
+    expect(() => levelset.insertLevel(-1, b)).toThrow(
+      new RangeError(`Invalid level index -1`),
+    );
+    expect(() => levelset.insertLevel(2, b)).toThrow(
       new RangeError(`Invalid level index 2`),
     );
-    expect(() => levelset.removeLevel(3)).toThrow(
+    expect(() => levelset.insertLevel(3, b)).toThrow(
       new RangeError(`Invalid level index 3`),
     );
-    levelset.insertLevel(1, b);
+    const copy = levelset.insertLevel(1, b);
 
-    expect(levelset.levelsCount).toBe(3);
-    expect([...levelset.getLevels()]).toEqual([a, b, c]);
+    expect(copy.levelsCount).toBe(3);
+    expect([...copy.getLevels()]).toEqual([a, b, c]);
   });
 
   it("removeLevel", () => {
@@ -90,21 +92,24 @@ describe("levelset", () => {
     const a = levelset.getLevel(0);
     const c = levelset.getLevel(2);
 
-    levelset.removeLevel(1);
+    let copy = levelset.removeLevel(1);
 
-    expect(levelset.levelsCount).toBe(2);
-    expect([...levelset.getLevels()]).toEqual([a, c]);
+    expect(copy.levelsCount).toBe(2);
+    expect([...copy.getLevels()]).toEqual([a, c]);
 
-    levelset.removeLevel(0);
+    copy = copy.removeLevel(0);
 
-    expect(levelset.levelsCount).toBe(1);
-    expect([...levelset.getLevels()]).toEqual([c]);
+    expect(copy.levelsCount).toBe(1);
+    expect([...copy.getLevels()]).toEqual([c]);
 
-    expect(() => levelset.removeLevel(0)).toThrow(
+    expect(() => copy.removeLevel(0)).toThrow(
       new RangeError(`Cannot remove the last one level`),
     );
-    expect(() => levelset.removeLevel(1)).toThrow(
+    expect(() => copy.removeLevel(1)).toThrow(
       new RangeError(`Invalid level index 1`),
+    );
+    expect(() => copy.removeLevel(-1)).toThrow(
+      new RangeError(`Invalid level index -1`),
     );
   });
 });

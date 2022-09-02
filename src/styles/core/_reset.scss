@@ -61,8 +61,7 @@ pre,
 code,
 kbd,
 samp {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  @extend %font-family-mono;
   font-size: 1em;
 }
 

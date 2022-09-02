@@ -28,6 +28,10 @@ export class Levelset<L extends ISupaplexLevel> implements IBaseLevelset<L> {
     validateLevelsCount?.(this.#levels.length);
   }
 
+  copy(): this {
+    return new Levelset(this.#levels) as this;
+  }
+
   get levelsCount() {
     return this.#levels.length;
   }
@@ -51,17 +55,22 @@ export class Levelset<L extends ISupaplexLevel> implements IBaseLevelset<L> {
 
   setLevel(index: number, level: L) {
     validateLevelsIndex?.(index, this.levelsCount);
-    // TODO: dupe reference check, copy from input or remove method?
-    this.#levels[index] = level;
+    const copy = this.copy();
+    copy.#levels[index] = level;
+    return copy;
   }
 
   appendLevel(level: L) {
-    this.#levels.push(level);
+    const copy = this.copy();
+    copy.#levels.push(level);
+    return copy;
   }
 
   insertLevel(index: number, level: L) {
     validateLevelsIndex?.(index, this.levelsCount);
-    this.#levels.splice(index, 0, level);
+    const copy = this.copy();
+    copy.#levels.splice(index, 0, level);
+    return copy;
   }
 
   removeLevel(index: number) {
@@ -69,7 +78,9 @@ export class Levelset<L extends ISupaplexLevel> implements IBaseLevelset<L> {
     if (process.env.NODE_ENV !== "production" && this.levelsCount === 1) {
       throw new RangeError(`Cannot remove the last one level`);
     }
-    this.#levels.splice(index, 1);
+    const copy = this.copy();
+    copy.#levels.splice(index, 1);
+    return copy;
   }
 }
 
@@ -90,5 +101,9 @@ export class SupaplexLevelset
     levels: readonly ISupaplexLevel[] | Iterable<ISupaplexLevel> | number = 111,
   ) {
     super(typeof levels === "number" ? newLevels(levels) : levels);
+  }
+
+  copy(): this {
+    return new SupaplexLevelset(this.getLevels()) as this;
   }
 }

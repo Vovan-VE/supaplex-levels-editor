@@ -20,6 +20,10 @@ export class MegaplexLevelset
     super(typeof levels === "number" ? newLevels(levels) : levels);
   }
 
+  copy(): this {
+    return new MegaplexLevelset(this.getLevels()) as this;
+  }
+
   get maxLevelsCount(): number | null {
     return 0x7fff;
   }

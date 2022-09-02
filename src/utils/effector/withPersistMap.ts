@@ -1,5 +1,6 @@
 import { createEvent, Store } from "effector";
 import { PersistentStoreDriverAll } from "../store";
+import { flushDelayed } from "./flushDelayed";
 
 interface Options {
   /**
@@ -27,22 +28,17 @@ export const withPersistMap = <V>(
       console.error("Failed to read all from persistent", e);
     }
 
-    {
-      async function save(map: ReadonlyMap<string, V>) {
+    flushDelayed({
+      source: store,
+      flushDelay,
+      target: async (map: ReadonlyMap<string, V>) => {
         try {
           await drv.setAll(map);
         } catch (e) {
           console.error("Failed to sync store into persistent", e);
         }
-      }
-
-      let tId: ReturnType<typeof setTimeout>;
-
-      store.watch((map) => {
-        clearTimeout(tId);
-        tId = setTimeout(() => save(map), flushDelay);
-      });
-    }
+      },
+    });
   })();
 
   return store;

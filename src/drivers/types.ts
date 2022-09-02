@@ -25,13 +25,10 @@ export interface IBaseLevelset<L extends IBaseLevel> {
   readonly maxLevelsCount: number | null;
   getLevels(): Iterable<L>;
   getLevel(index: number): L;
-  /**
-   * @deprecated Potential reference problems. Probably, this should be deleted.
-   */
-  setLevel(index: number, level: L): void;
-  appendLevel(level: L): void;
-  insertLevel(index: number, level: L): void;
-  removeLevel(index: number): void;
+  setLevel(index: number, level: L): this;
+  appendLevel(level: L): this;
+  insertLevel(index: number, level: L): this;
+  removeLevel(index: number): this;
 }
 
 export interface IBaseReader<S extends IBaseLevelset<any>> {
@@ -56,10 +53,14 @@ export interface IBaseTile<L extends IBaseLevel> {
   //   and like notices for infotrons % 256 in case of 'all'
 }
 
-export interface IBaseDriver<L extends IBaseLevel, S extends IBaseLevelset<L>> {
+export interface IBaseDriver<
+  L extends IBaseLevel = IBaseLevel,
+  S extends IBaseLevelset<L> = IBaseLevelset<L>,
+> {
   title: string;
   tiles: readonly IBaseTile<L>[];
   unknownTile?: FC;
   reader?: IBaseReader<S>;
   writer?: IBaseWriter<S>;
+  createLevelset: (levels?: readonly L[] | Iterable<L>) => S;
 }

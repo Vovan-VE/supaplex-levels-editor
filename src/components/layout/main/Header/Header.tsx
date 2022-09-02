@@ -13,8 +13,12 @@ interface Props extends ContainerProps {}
 export const Header: FC<Props> = ({ className, ...rest }) => (
   <header {...rest} className={cn(cl.root, className)}>
     <Toolbar className={cl.toolbar}>
-      <Button icon={<svgs.FileBlank />} />
-      <Button icon={<svgs.DirOpen />} onClick={handleOpenClick} />
+      <Button icon={<svgs.FileBlank />} title="Create new levelset..." />
+      <Button
+        icon={<svgs.DirOpen />}
+        onClick={handleOpenClick}
+        title="Open files..."
+      />
     </Toolbar>
     <EditorTabs className={cl.tabs} />
   </header>

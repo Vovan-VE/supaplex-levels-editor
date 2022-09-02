@@ -1,0 +1,33 @@
+@use "styles/components";
+@use "styles/mixins";
+
+.root {
+  display: grid;
+  grid-gap: 0.5rem;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: "start tabs end";
+  align-items: center;
+}
+
+.start {
+  grid-area: start;
+}
+.tabs {
+  grid-area: tabs;
+}
+.end {
+  grid-area: end;
+}
+
+.selSelect {
+  @extend %button, %button-primary;
+  max-width: 7rem;
+  @extend %font-family-mono;
+
+  option {
+    @extend %font-family-mono;
+    text-align: left;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+}
