@@ -1,50 +1,86 @@
-import { combine, createEvent, createStore } from "effector";
+import {
+  combine,
+  createEffect,
+  createEvent,
+  createStore,
+  sample,
+} from "effector";
 import * as RoMap from "@cubux/readonly-map";
+import { getDriver } from "drivers";
 import { generateKey } from "utils/strings";
-import { LevelsetFile, LevelsetKeyAndFile } from "./types";
+import { LevelsetFile, LevelsetFileKey, LevelsetFileSource } from "./types";
 
 /**
  * Add new file from whatever source
  */
-export const addLevelsetFile = createEvent<LevelsetFile>();
+export const addLevelsetFileFx = createEffect(
+  async (source: LevelsetFileSource): Promise<LevelsetFile> => {
+    const driver = getDriver(source.driverName);
+    if (!driver) {
+      throw new Error("Invalid driver name: " + source.driverName);
+    }
+    const reader = driver.reader;
+    if (!reader) {
+      throw new Error("No reader in driver: " + source.driverName);
+    }
+    let ab: ArrayBuffer;
+    try {
+      ab = await source.file.arrayBuffer();
+    } catch (e) {
+      console.error(e);
+      throw new Error(
+        "Could not read data from blob: " +
+          (e instanceof Error ? e.message : "unknown error"),
+      );
+    }
+    return {
+      ...source,
+      key: generateKey() as LevelsetFileKey,
+      levels: [...reader.readLevelset(ab).getLevels()],
+    };
+  },
+);
+addLevelsetFileFx.fail.watch(({ params, error }) => {
+  // TODO: UI toast
+  console.log("Could not load file", params, error);
+});
 /**
  * Close file and forget everything about it
  */
-export const removeLevelsetFile = createEvent<string>();
+export const removeCurrentLevelsetFile = createEvent<any>();
 /**
  * Update loaded file in memory
  */
-export const updateLevelsetFile = createEvent<LevelsetKeyAndFile>();
-
-const _addLevelsetFileInternal = addLevelsetFile.map<LevelsetKeyAndFile>(
-  (file) => ({
-    file,
-    key: generateKey(),
-  }),
-);
-
-/**
- * Loaded files in memory
- */
-export const $levelsets = createStore<ReadonlyMap<string, LevelsetFile>>(
-  new Map(),
-)
-  .on([updateLevelsetFile, _addLevelsetFileInternal], (map, { key, file }) =>
-    RoMap.set(map, key, file),
-  )
-  .on(removeLevelsetFile, RoMap.remove);
+export const updateLevelsetFile = createEvent<LevelsetFile>();
 
 /**
  * Switch currently selected file
  */
-export const setCurrentLevelset = createEvent<string>();
+export const setCurrentLevelset = createEvent<LevelsetFileKey>();
 /**
  * Key of current selected file within `$levelsets`
  */
-export const $currentKey = createStore<string | null>(null)
+export const $currentKey = createStore<LevelsetFileKey | null>(null)
   .on(setCurrentLevelset, (_, c) => c)
-  .on(_addLevelsetFileInternal, (_, { key }) => key)
-  .on(removeLevelsetFile, (c, del) => (del === c ? null : undefined));
+  .on(addLevelsetFileFx.doneData, (_, { key }) => key);
+
+const _removeLevelsetFile = sample({
+  clock: removeCurrentLevelsetFile,
+  source: $currentKey,
+  filter: Boolean,
+});
+$currentKey.on(_removeLevelsetFile, (c, del) => (del === c ? null : undefined));
+
+/**
+ * Loaded files in memory
+ */
+export const $levelsets = createStore<
+  ReadonlyMap<LevelsetFileKey, LevelsetFile>
+>(new Map())
+  .on([updateLevelsetFile, addLevelsetFileFx.doneData], (map, file) =>
+    RoMap.set(map, file.key, file),
+  )
+  .on(_removeLevelsetFile, RoMap.remove);
 
 /**
  * Reference to current file and key together
@@ -52,13 +88,5 @@ export const $currentKey = createStore<string | null>(null)
 export const $currentLevelsetFile = combine(
   $levelsets,
   $currentKey,
-  (map, key): LevelsetKeyAndFile | null => {
-    if (key) {
-      const file = map.get(key);
-      if (file) {
-        return { key, file };
-      }
-    }
-    return null;
-  },
+  (map, key) => (key && map.get(key)) || null,
 );

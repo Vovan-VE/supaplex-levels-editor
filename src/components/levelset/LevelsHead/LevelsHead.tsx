@@ -14,7 +14,6 @@ import { ContainerProps } from "ui/types";
 import cl from "./LevelsHead.module.scss";
 
 const handleClose = () => closeLevel();
-const handleLevelTabClick = (key: string) => setCurrentLevel(Number(key));
 
 const fmtLevelNumber = (index: number, maxDigits: number) =>
   String(index + 1).padStart(maxDigits, "0");
@@ -41,8 +40,8 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
   const tabs = useMemo(
     () =>
       openedIndices?.map(
-        (n): TabItem => ({
-          key: String(n),
+        (n): TabItem<number> => ({
+          key: n,
           text: fmtLevelShort(
             n,
             levelsCountDigits,
@@ -78,12 +77,8 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
 
       <TabsButtons
         tabs={tabs}
-        current={
-          levelset.currentIndex !== undefined
-            ? String(levelset.currentIndex)
-            : undefined
-        }
-        onClick={handleLevelTabClick}
+        current={levelset.currentIndex}
+        onClick={setCurrentLevel}
         className={cl.tabs}
       />
 

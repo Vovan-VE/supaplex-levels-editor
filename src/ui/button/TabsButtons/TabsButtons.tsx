@@ -1,28 +1,29 @@
 import { FC, ReactNode, useEffect, useMemo, useRef } from "react";
+import { AnyKey } from "@cubux/types";
 import cn from "classnames";
 import { ContainerProps } from "../../types";
 import { Button } from "../Button";
 import { Toolbar } from "../Toolbar";
 import cl from "./TabsButtons.module.scss";
 
-export interface TabItem {
-  key: string;
+export interface TabItem<K extends AnyKey = AnyKey> {
+  key: K;
   text: ReactNode;
 }
 
-interface Props extends ContainerProps {
-  tabs: readonly TabItem[];
-  current?: string;
-  onClick?: (key: string) => void;
+interface Props<K extends AnyKey> extends ContainerProps {
+  tabs: readonly TabItem<K>[];
+  current?: K;
+  onClick?: (key: K) => void;
 }
 
-export const TabsButtons: FC<Props> = ({
+export const TabsButtons = <K extends AnyKey = AnyKey>({
   tabs,
   current,
   onClick,
   className,
   ...rest
-}) => {
+}: Props<K>): ReturnType<FC> => {
   const refCur = useRef<HTMLButtonElement | null>(null);
   useEffect(() => {
     refCur.current?.scrollIntoView({

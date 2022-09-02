@@ -1,17 +1,21 @@
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
+import { CodeOf } from "@cubux/types";
 import { IBaseLevel } from "drivers";
 import { UndoQueue } from "utils/data";
 
-export interface LevelsetFile {
+export type LevelsetFileKey = CodeOf<"LevelsetFile">;
+
+export type IBaseLevelsList = readonly IBaseLevel[];
+
+export interface LevelsetFileSource {
   file: Blob;
   name: string;
   driverName: string;
 }
-
-export interface LevelsetKeyAndFile {
-  key: string;
-  file: LevelsetFile;
+export interface LevelsetFile extends LevelsetFileSource {
+  key: LevelsetFileKey;
+  levels: IBaseLevelsList;
 }
 
 export interface LevelBuffer<L> {
@@ -20,6 +24,9 @@ export interface LevelBuffer<L> {
   // currentTile?: number;
 }
 
+export const isEqualLevels = <L>(a: readonly L[], b: readonly L[]) =>
+  a.length === b.length && a.every((v, i) => v === b[i]);
+
 export type LevelsetBuffer<L> = readonly LevelBuffer<L>[];
 
 export interface LevelsetBuffers<L> {
@@ -27,12 +34,15 @@ export interface LevelsetBuffers<L> {
   currentIndex?: number;
 }
 
-export type LevelsetsBuffers = ReadonlyMap<string, LevelsetBuffers<IBaseLevel>>;
+export type LevelsetsBuffers = ReadonlyMap<
+  LevelsetFileKey,
+  LevelsetBuffers<IBaseLevel>
+>;
 
 export interface LevelsetFlushBuffer {
-  key: string;
+  key: LevelsetFileKey;
   driverName: string;
-  buffer: LevelsetBuffers<IBaseLevel>;
+  levels: IBaseLevelsList;
 }
 
 export const readToBuffer = <L extends IBaseLevel>(level: L) => ({
@@ -42,13 +52,9 @@ export const readToBuffers = <L extends IBaseLevel>(
   levels: readonly L[],
 ): LevelsetBuffers<L> => ({ levels: levels.map(readToBuffer) });
 
-export const writeFromBuffers = <L extends IBaseLevel>(
-  buf: LevelsetBuffers<L>,
-) => buf.levels.map((b) => b.undoQueue.current);
-
 export const updateBufferLevel = (
   map: LevelsetsBuffers,
-  key: string,
+  key: LevelsetFileKey,
   index: number | undefined,
   updater: (level: LevelBuffer<IBaseLevel>) => LevelBuffer<IBaseLevel>,
 ) =>

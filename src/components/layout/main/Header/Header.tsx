@@ -1,8 +1,13 @@
 import { FC } from "react";
 import cn from "classnames";
+import { useStore } from "effector-react";
 import { detectDriver } from "drivers";
-import { addLevelsetFile } from "models/levelsets";
-import { Button, Toolbar } from "ui/button";
+import {
+  $currentLevelsetFile,
+  addLevelsetFileFx,
+  removeCurrentLevelsetFile,
+} from "models/levelsets";
+import { Button, TextButton, Toolbar } from "ui/button";
 import { svgs } from "ui/icon";
 import { ContainerProps } from "ui/types";
 import { EditorTabs } from "./EditorTabs";
@@ -10,19 +15,35 @@ import cl from "./Header.module.scss";
 
 interface Props extends ContainerProps {}
 
-export const Header: FC<Props> = ({ className, ...rest }) => (
-  <header {...rest} className={cn(cl.root, className)}>
-    <Toolbar className={cl.toolbar}>
-      <Button icon={<svgs.FileBlank />} title="Create new levelset..." />
-      <Button
-        icon={<svgs.DirOpen />}
-        onClick={handleOpenClick}
-        title="Open files..."
-      />
-    </Toolbar>
-    <EditorTabs className={cl.tabs} />
-  </header>
-);
+export const Header: FC<Props> = ({ className, ...rest }) => {
+  const currentFile = useStore($currentLevelsetFile);
+
+  return (
+    <header {...rest} className={cn(cl.root, className)}>
+      <Toolbar className={cl.start}>
+        <Button icon={<svgs.FileBlank />} title="Create new levelset..." />
+        <Button
+          icon={<svgs.DirOpen />}
+          onClick={handleOpenClick}
+          title="Open files..."
+        />
+      </Toolbar>
+      <EditorTabs className={cl.tabs} />
+      <Toolbar className={cl.end}>
+        <TextButton
+          icon={<svgs.Trash />}
+          disabled={!currentFile}
+          title={
+            currentFile
+              ? `Remove levelset "${currentFile.name}" from memory`
+              : undefined
+          }
+          onClick={removeCurrentLevelsetFile}
+        />
+      </Toolbar>
+    </header>
+  );
+};
 
 function handleOpenClick() {
   const d = window.document;
@@ -51,7 +72,7 @@ function handleOpenClick() {
           if (item.status === "fulfilled") {
             const [file, driverName] = item.value;
             if (driverName) {
-              addLevelsetFile({
+              addLevelsetFileFx({
                 file,
                 driverName,
                 name: file.name,

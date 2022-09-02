@@ -2,15 +2,17 @@
   font-size: 1.2rem;
   display: grid;
   grid-gap: 0.5rem;
-  grid-template-columns: auto 1fr;
-  grid-template-areas: "toolbar tabs";
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: "start tabs end";
   align-items: center;
 }
 
-.toolbar {
-  grid-area: toolbar;
+.start {
+  grid-area: start;
 }
-
 .tabs {
   grid-area: tabs;
+}
+.end {
+  grid-area: end;
 }

@@ -1,7 +1,12 @@
 import { FC, useMemo } from "react";
 import cn from "classnames";
 import { useStore } from "effector-react";
-import { $currentKey, $levelsets, setCurrentLevelset } from "models/levelsets";
+import {
+  $currentKey,
+  $levelsets,
+  LevelsetFileKey,
+  setCurrentLevelset,
+} from "models/levelsets";
 import { TabItem, TabsButtons } from "ui/button";
 import { ContainerProps } from "ui/types";
 import cl from "./EditorTabs.module.scss";
@@ -14,7 +19,10 @@ export const EditorTabs: FC<Props> = ({ className, ...rest }) => {
 
   const tabs = useMemo(
     () =>
-      [...levelsets].map<TabItem>(([key, { name }]) => ({ key, text: name })),
+      [...levelsets].map<TabItem<LevelsetFileKey>>(([key, { name }]) => ({
+        key,
+        text: name,
+      })),
     [levelsets],
   );
 
