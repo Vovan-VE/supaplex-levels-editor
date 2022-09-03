@@ -5,12 +5,15 @@ import {
   $currentBuffer,
   $currentLevel,
   $currentOpenedIndices,
+  appendLevel,
   closeLevel,
+  deleteCurrentLevel,
+  insertAtCurrentLevel,
   setCurrentLevel,
 } from "models/levelsets";
-import { TabItem, TabsButtons, TextButton, Toolbar } from "ui/button";
+import { Button, TabItem, TabsButtons, Toolbar } from "ui/button";
 import { svgs } from "ui/icon";
-import { ContainerProps } from "ui/types";
+import { ColorType, ContainerProps } from "ui/types";
 import cl from "./LevelsHead.module.scss";
 
 const handleClose = () => closeLevel();
@@ -83,7 +86,44 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
       />
 
       <Toolbar className={cl.end}>
-        <TextButton
+        <Button
+          icon={<svgs.InsertRow />}
+          disabled={!level}
+          title={
+            level
+              ? `Insert new level at ${fmtLevelNumber(
+                  level.index,
+                  levelsCountDigits,
+                )} and shift existing forward`
+              : ""
+          }
+          onClick={insertAtCurrentLevel}
+        />
+        <Button
+          icon={<svgs.AppendRow />}
+          title={`Append new level ${fmtLevelNumber(
+            levelsCount,
+            levelsCountDigits,
+          )}`}
+          onClick={appendLevel}
+        />
+        <Button
+          uiColor={ColorType.DANGER}
+          icon={<svgs.DeleteRow />}
+          disabled={!level}
+          // TODO: confirm
+          onClick={deleteCurrentLevel}
+          title={
+            level
+              ? `Delete level ${fmtLevelFull(
+                  level.index,
+                  levelsCountDigits,
+                  level.level.undoQueue.current.title,
+                )}`
+              : ""
+          }
+        />
+        <Button
           icon={<svgs.Cross />}
           disabled={!level}
           onClick={handleClose}

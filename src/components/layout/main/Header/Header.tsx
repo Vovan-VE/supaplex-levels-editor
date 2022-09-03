@@ -7,9 +7,9 @@ import {
   addLevelsetFileFx,
   removeCurrentLevelsetFile,
 } from "models/levelsets";
-import { Button, TextButton, Toolbar } from "ui/button";
+import { Button, Toolbar } from "ui/button";
 import { svgs } from "ui/icon";
-import { ContainerProps } from "ui/types";
+import { ColorType, ContainerProps } from "ui/types";
 import { EditorTabs } from "./EditorTabs";
 import cl from "./Header.module.scss";
 
@@ -28,9 +28,22 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
           title="Open files..."
         />
       </Toolbar>
+
       <EditorTabs className={cl.tabs} />
+
       <Toolbar className={cl.end}>
-        <TextButton
+        <Button
+          uiColor={ColorType.SUCCESS}
+          icon={<svgs.Download />}
+          disabled={!currentFile}
+          title={
+            currentFile
+              ? `Download file "${currentFile.name}" from memory`
+              : undefined
+          }
+        />
+        <Button
+          uiColor={ColorType.DANGER}
           icon={<svgs.Trash />}
           disabled={!currentFile}
           title={
@@ -38,6 +51,7 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
               ? `Remove levelset "${currentFile.name}" from memory`
               : undefined
           }
+          // TODO: confirm
           onClick={removeCurrentLevelsetFile}
         />
       </Toolbar>

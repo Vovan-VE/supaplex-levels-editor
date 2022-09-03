@@ -2,6 +2,7 @@ import { ISupaplexDriver } from "./types";
 import { tiles } from "./tiles";
 import { svg } from "./tiles-svg";
 import { reader, writer } from "./io";
+import { SupaplexLevel } from "./level";
 import { SupaplexLevelset } from "./levelset";
 
 export const SupaplexDriver: ISupaplexDriver = {
@@ -11,4 +12,5 @@ export const SupaplexDriver: ISupaplexDriver = {
   reader,
   writer,
   createLevelset: (levels) => new SupaplexLevelset(levels),
+  createLevel: () => new SupaplexLevel(),
 };

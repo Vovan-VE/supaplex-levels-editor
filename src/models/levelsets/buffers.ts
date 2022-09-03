@@ -5,6 +5,7 @@ import {
   Event,
   forward,
   sample,
+  Store,
 } from "effector";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
@@ -15,14 +16,20 @@ import { $currentKey, $currentLevelsetFile, $levelsets } from "./files";
 import {
   IBaseLevelsList,
   isEqualLevels,
+  LevelsetFile,
   LevelsetFileKey,
   LevelsetFlushBuffer,
   LevelsetsBuffers,
-  LevelWithIndex,
   readToBuffer,
   readToBuffers,
   updateBufferLevel,
 } from "./types";
+
+/**
+ * Delay to flush changes to in-memory files after a changes was made. More
+ * changes in sequence within this delay cause flush to delay more.
+ */
+const AUTO_FLUSH_DELAY = 30 * 1000;
 
 /**
  * Switch level with the given index in current levelset to opened state
@@ -38,17 +45,17 @@ export const closeLevel = createEvent<number | undefined>();
 export const setCurrentLevel = createEvent<number>();
 forward({ from: setCurrentLevel, to: openLevel });
 /**
- * Insert new level at the given index in current levelset
+ * Insert new level in current level index in current levelset
  */
-export const insertLevel = createEvent<LevelWithIndex>();
+export const insertAtCurrentLevel = createEvent<any>();
 /**
  * Append new level in current levelset
  */
-export const appendLevel = createEvent<IBaseLevel>();
+export const appendLevel = createEvent<any>();
 /**
- * Delete level with the given index in current levelset
+ * Delete current level in current levelset
  */
-export const deleteLevel = createEvent<number>();
+export const deleteCurrentLevel = createEvent<any>();
 /**
  * Update current level in current levelset
  */
@@ -70,15 +77,26 @@ export const flushBuffer = createEvent<LevelsetFileKey>();
  */
 export const flushBuffers = createEvent<any>();
 
-const _withCurrentKey = <T>(
-  clock: Event<T>,
-): Event<{ key: LevelsetFileKey; value: T }> =>
-  sample({
-    clock,
-    source: $currentKey,
-    filter: isNotNull,
-    fn: (key, value) => ({ key: key!, value }),
-  });
+const _withCurrent =
+  <S>(current: Store<S | null>) =>
+  <T>(clock: Event<T>) =>
+    sample({
+      clock,
+      source: current,
+      filter: isNotNull,
+      fn: (current, value) => ({ current: current!, value }),
+    });
+
+const _withCurrentKey = _withCurrent($currentKey);
+const _withCurrentFile = _withCurrent($currentLevelsetFile);
+
+const createLevelForFile = (file: LevelsetFile) => {
+  const d = getDriver(file.driverName);
+  if (!d) {
+    throw new Error("Invalid driver name");
+  }
+  return d.createLevel();
+};
 
 const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
   // remove buffers when a file closed
@@ -92,11 +110,11 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     }
   })
   // switch per-level "is opened" state
-  .on(_withCurrentKey(openLevel), (map, { key, value: index }) =>
+  .on(_withCurrentKey(openLevel), (map, { current: key, value: index }) =>
     updateBufferLevel(map, key, index, (b) => ({ ...b, isOpened: true })),
   )
   // switch per-level "is opened" state
-  .on(_withCurrentKey(closeLevel), (map, { key, value: index }) => {
+  .on(_withCurrentKey(closeLevel), (map, { current: key, value: index }) => {
     const next = updateBufferLevel(map, key, index, (b) => ({
       ...b,
       isOpened: false,
@@ -111,65 +129,67 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     return next;
   })
   // switch current level in the given levelset
-  .on(_withCurrentKey(setCurrentLevel), (map, { key, value: index }) =>
+  .on(_withCurrentKey(setCurrentLevel), (map, { current: key, value: index }) =>
     RoMap.update(map, key, (buf) =>
       index >= 0 && index < buf.levels.length
         ? { ...buf, currentIndex: index }
         : buf,
     ),
   )
-  // insert new level into current levelset
-  .on(_withCurrentKey(insertLevel), (map, { key, value: { index, level } }) =>
-    RoMap.update(map, key, (buf) => ({
-      ...buf,
-      levels: RoArray.insert(buf.levels, index, readToBuffer(level)),
-      // no current level OR inserted after current
-      ...(buf.currentIndex === undefined || index > buf.currentIndex
-        ? // no op
-          null
-        : // otherwise: inserted was before current or current, so shift current
-          { currentIndex: buf.currentIndex + 1 }),
-    })),
+  // insert new level at current level index into current levelset
+  .on(_withCurrentFile(insertAtCurrentLevel), (map, { current: file }) =>
+    RoMap.update(map, file.key, (buf) =>
+      buf.currentIndex === undefined
+        ? buf
+        : {
+            ...buf,
+            levels: RoArray.insert(buf.levels, buf.currentIndex, {
+              ...readToBuffer(createLevelForFile(file)),
+              isOpened: true,
+            }),
+          },
+    ),
   )
   // append new level into current levelset
-  .on(_withCurrentKey(appendLevel), (map, { key, value: level }) =>
-    RoMap.update(map, key, (buf) => ({
+  .on(_withCurrentFile(appendLevel), (map, { current: file }) =>
+    RoMap.update(map, file.key, (buf) => ({
       ...buf,
-      levels: [...buf.levels, readToBuffer(level)],
+      levels: [
+        ...buf.levels,
+        { ...readToBuffer(createLevelForFile(file)), isOpened: true },
+      ],
+      currentIndex: buf.levels.length,
     })),
   )
   // delete the level from current levelset
-  .on(_withCurrentKey(deleteLevel), (map, { key, value: index }) =>
-    RoMap.update(map, key, (buf) => ({
-      ...buf,
-      levels: RoArray.remove(buf.levels, index),
-      // no current level OR deleted was after current
-      ...(buf.currentIndex === undefined || index > buf.currentIndex
-        ? // no op
-          null
-        : // deleted was current
-        buf.currentIndex === index
-        ? // unset current
-          { currentIndex: undefined }
-        : // otherwise: deleted was before current, so shift current
-          { currentIndex: buf.currentIndex - 1 }),
-    })),
+  .on(_withCurrentKey(deleteCurrentLevel), (map, { current: key }) =>
+    RoMap.update(map, key, (buf) =>
+      buf.currentIndex === undefined
+        ? buf
+        : {
+            ...buf,
+            levels: RoArray.remove(buf.levels, buf.currentIndex),
+            currentIndex: undefined,
+          },
+    ),
   )
   // operations with current levels in current levelset
-  .on(_withCurrentKey(updateCurrentLevel), (map, { key, value: level }) =>
-    updateBufferLevel(map, key, undefined, (b) => ({
-      ...b,
-      undoQueue: b.undoQueue.done(level),
-    })),
+  .on(
+    _withCurrentKey(updateCurrentLevel),
+    (map, { current: key, value: level }) =>
+      updateBufferLevel(map, key, undefined, (b) => ({
+        ...b,
+        undoQueue: b.undoQueue.done(level),
+      })),
   )
   // undo in current level in current levelset
-  .on(_withCurrentKey(undoCurrentLevel), (map, { key }) =>
+  .on(_withCurrentKey(undoCurrentLevel), (map, { current: key }) =>
     updateBufferLevel(map, key, undefined, (b) =>
       b.undoQueue.canUndo ? { ...b, undoQueue: b.undoQueue.undo() } : b,
     ),
   )
   // redo in current level in current levelset
-  .on(_withCurrentKey(redoCurrentLevel), (map, { key }) =>
+  .on(_withCurrentKey(redoCurrentLevel), (map, { current: key }) =>
     updateBufferLevel(map, key, undefined, (b) =>
       b.undoQueue.canRedo ? { ...b, undoQueue: b.undoQueue.redo() } : b,
     ),
@@ -201,7 +221,7 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
   // auto trigger flush for all after buffers changed
   flushDelayed({
     source: _$changedLevelsets,
-    flushDelay: 60 * 1000,
+    flushDelay: AUTO_FLUSH_DELAY,
     target: _flushBuffers,
   });
   // trigger flush for the given levelset
@@ -229,28 +249,31 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
       clock: _flushBuffers,
       source: $levelsets,
       fn: (files, levelsels) =>
-        [...levelsels].reduce<{ key: LevelsetFileKey; ab: ArrayBuffer }[]>(
-          (list, [key, levels]) => {
-            const file = files.get(key);
-            if (file) {
-              const ab = _writeBuffersToFile({
-                key,
-                driverName: file.driverName,
-                levels,
-              });
-              if (ab) {
-                list.push({ key, ab });
-              }
+        [...levelsels].reduce<
+          { key: LevelsetFileKey; ab: ArrayBuffer; levels: IBaseLevelsList }[]
+        >((list, [key, levels]) => {
+          const file = files.get(key);
+          if (file) {
+            const ab = _writeBuffersToFile({
+              key,
+              driverName: file.driverName,
+              levels,
+            });
+            if (ab) {
+              list.push({ key, ab, levels });
             }
-            return list;
-          },
-          [],
-        ),
+          }
+          return list;
+        }, []),
     }),
     (files, result) =>
       result.reduce(
-        (files, { key, ab }) =>
-          RoMap.update(files, key, (f) => ({ ...f, file: new Blob([ab]) })),
+        (files, { key, ab, levels }) =>
+          RoMap.update(files, key, (f) => ({
+            ...f,
+            file: new Blob([ab]),
+            levels,
+          })),
         files,
       ),
   );

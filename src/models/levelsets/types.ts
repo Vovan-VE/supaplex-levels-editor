@@ -45,7 +45,9 @@ export interface LevelsetFlushBuffer {
   levels: IBaseLevelsList;
 }
 
-export const readToBuffer = <L extends IBaseLevel>(level: L) => ({
+export const readToBuffer = <L extends IBaseLevel>(
+  level: L,
+): LevelBuffer<L> => ({
   undoQueue: new UndoQueue(level),
 });
 export const readToBuffers = <L extends IBaseLevel>(
@@ -68,8 +70,3 @@ export const updateBufferLevel = (
       levels: RoArray.update(buf.levels, i, updater),
     };
   });
-
-export interface LevelWithIndex {
-  level: IBaseLevel;
-  index: number;
-}

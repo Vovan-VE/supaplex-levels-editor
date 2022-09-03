@@ -63,4 +63,5 @@ export interface IBaseDriver<
   reader?: IBaseReader<S>;
   writer?: IBaseWriter<S>;
   createLevelset: (levels?: readonly L[] | Iterable<L>) => S;
+  createLevel: () => L;
 }
