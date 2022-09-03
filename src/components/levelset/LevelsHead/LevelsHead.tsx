@@ -127,15 +127,15 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
           icon={<svgs.Cross />}
           disabled={!level}
           onClick={handleClose}
-          title={`Close level tab${
+          title={
             level
-              ? ` (${fmtLevelShort(
+              ? `Close level tab (${fmtLevelFull(
                   level.index,
                   levelsCountDigits,
                   level.level.undoQueue.current.title,
                 )})`
               : ""
-          }`}
+          }
         />
       </Toolbar>
     </div>

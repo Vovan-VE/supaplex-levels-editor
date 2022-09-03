@@ -45,6 +45,11 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
           onClick={downloadCurrentFile}
         />
         <Button
+          icon={<svgs.Rename />}
+          disabled={!currentFile}
+          title="Rename file"
+        />
+        <Button
           uiColor={ColorType.DANGER}
           icon={<svgs.Trash />}
           disabled={!currentFile}
