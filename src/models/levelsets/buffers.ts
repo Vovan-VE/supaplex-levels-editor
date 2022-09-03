@@ -1,6 +1,5 @@
 import {
   combine,
-  createEffect,
   createEvent,
   createStore,
   Event,
@@ -72,7 +71,9 @@ export const flushBuffer = createEvent<LevelsetFileKey>();
  */
 export const flushBuffers = createEvent<any>();
 
-const _withCurrentKey = <T>(clock: Event<T>) =>
+const _withCurrentKey = <T>(
+  clock: Event<T>,
+): Event<{ key: LevelsetFileKey; value: T }> =>
   sample({
     clock,
     source: $currentKey,
@@ -182,17 +183,12 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
   );
 
 {
-  const writeBuffersToFileFx = createEffect(
-    async ({ driverName, levels }: LevelsetFlushBuffer) => {
-      const d = getDriver(driverName);
-      return (d && d.writer?.writeLevelset(d.createLevelset(levels))) || null;
-    },
-  );
-  writeBuffersToFileFx.fail.watch(({ params, error }) => {
-    // TODO: UI toast
-    console.log("Could flush changes back to file in memory", params, error);
-  });
+  const _writeBuffersToFile = ({ driverName, levels }: LevelsetFlushBuffer) => {
+    const d = getDriver(driverName);
+    return (d && d.writer?.writeLevelset(d.createLevelset(levels))) || null;
+  };
 
+  // internal intermediate event to actually flush specific buffers
   const _flushBuffers =
     createEvent<ReadonlyMap<LevelsetFileKey, IBaseLevelsList>>();
 
@@ -209,7 +205,7 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
           files.has(key) && !isEqualLevels(levels, files.get(key)!.levels),
       ),
   );
-  // auto trigger flush after buffers changed
+  // auto trigger flush for all after buffers changed
   flushDelayed({
     source: _$changedLevelsets,
     flushDelay: 60 * 1000,
@@ -234,36 +230,36 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     source: _$changedLevelsets,
     target: _flushBuffers,
   });
-  // forward buffers to async effect
-  sample({
-    clock: _flushBuffers,
-    source: $levelsets,
-    fn: (files, levelsels) =>
-      [...levelsels].map(
-        ([key, levels]): LevelsetFlushBuffer => ({
-          key,
-          driverName: files.get(key)?.driverName ?? "",
-          levels,
-        }),
-      ),
-  }).watch((toFlush) => {
-    for (const params of toFlush) {
-      if (params.driverName) {
-        writeBuffersToFileFx(params);
-      }
-    }
-  });
-  // update blob files on flush success
+  // update blob files on flush
   $levelsets.on(
-    writeBuffersToFileFx.done,
-    (files, { params: { key }, result: ab }) => {
-      if (ab) {
-        return RoMap.update(files, key, (f) => ({
-          ...f,
-          file: new Blob([ab]),
-        }));
-      }
-    },
+    sample({
+      clock: _flushBuffers,
+      source: $levelsets,
+      fn: (files, levelsels) =>
+        [...levelsels].reduce<{ key: LevelsetFileKey; ab: ArrayBuffer }[]>(
+          (list, [key, levels]) => {
+            const file = files.get(key);
+            if (file) {
+              const ab = _writeBuffersToFile({
+                key,
+                driverName: file.driverName,
+                levels,
+              });
+              if (ab) {
+                list.push({ key, ab });
+              }
+            }
+            return list;
+          },
+          [],
+        ),
+    }),
+    (files, result) =>
+      result.reduce(
+        (files, { key, ab }) =>
+          RoMap.update(files, key, (f) => ({ ...f, file: new Blob([ab]) })),
+        files,
+      ),
   );
 }
 
