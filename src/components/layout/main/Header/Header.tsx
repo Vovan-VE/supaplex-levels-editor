@@ -5,6 +5,7 @@ import { detectDriver } from "drivers";
 import {
   $currentLevelsetFile,
   addLevelsetFileFx,
+  downloadCurrentFile,
   removeCurrentLevelsetFile,
 } from "models/levelsets";
 import { Button, Toolbar } from "ui/button";
@@ -41,6 +42,7 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
               ? `Download file "${currentFile.name}" from memory`
               : undefined
           }
+          onClick={downloadCurrentFile}
         />
         <Button
           uiColor={ColorType.DANGER}

@@ -7,11 +7,11 @@ import {
   sample,
   Store,
 } from "effector";
+import { saveAs } from "file-saver";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
 import { getDriver, IBaseLevel } from "drivers";
 import { flushDelayed } from "utils/effector";
-import { isNotNull } from "utils/fn";
 import { $currentKey, $currentLevelsetFile, $levelsets } from "./files";
 import {
   IBaseLevelsList,
@@ -76,6 +76,10 @@ export const flushBuffer = createEvent<LevelsetFileKey>();
  * Flush changes for all levelset to blob
  */
 export const flushBuffers = createEvent<any>();
+/**
+ * Download current levelset file
+ */
+export const downloadCurrentFile = createEvent<any>();
 
 const _withCurrent =
   <S>(current: Store<S | null>) =>
@@ -83,8 +87,8 @@ const _withCurrent =
     sample({
       clock,
       source: current,
-      filter: isNotNull,
-      fn: (current, value) => ({ current: current!, value }),
+      filter: Boolean,
+      fn: (current, value) => ({ current, value }),
     });
 
 const _withCurrentKey = _withCurrent($currentKey);
@@ -194,6 +198,22 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
       b.undoQueue.canRedo ? { ...b, undoQueue: b.undoQueue.redo() } : b,
     ),
   );
+
+sample({
+  clock: downloadCurrentFile,
+  source: $currentKey,
+  filter: Boolean,
+  target: flushBuffer,
+}).watch((key) => {
+  // https://effector.dev/docs/advanced-guide/computation-priority
+  // Since `watch` classified as "side effect" (and actually it is so here),
+  // this `.watch()` handler will be called after all store updates with updated
+  // file after flush ends.
+  const file = $levelsets.getState().get(key);
+  if (file) {
+    saveAs(file.file, file.name);
+  }
+});
 
 {
   const _writeBuffersToFile = ({ driverName, levels }: LevelsetFlushBuffer) => {
