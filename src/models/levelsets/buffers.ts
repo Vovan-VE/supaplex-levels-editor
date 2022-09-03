@@ -4,7 +4,6 @@ import {
   createStore,
   Event,
   forward,
-  merge,
   sample,
 } from "effector";
 import * as RoArray from "@cubux/readonly-array";
@@ -93,30 +92,24 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     }
   })
   // switch per-level "is opened" state
-  .on(
-    _withCurrentKey(
-      merge<{ index?: number; open: boolean }>([
-        openLevel.map((index) => ({ index, open: true })),
-        closeLevel.map((index) => ({ index, open: false })),
-      ]),
-    ),
-    (map, { key, value: { index, open } }) => {
-      const next = updateBufferLevel(map, key, index, (b) => ({
-        ...b,
-        isOpened: open,
-      }));
-      if (
-        !open &&
-        (index === undefined || index === map.get(key)?.currentIndex)
-      ) {
-        return RoMap.update(next, key, (buf) => ({
-          ...buf,
-          currentIndex: undefined,
-        }));
-      }
-      return next;
-    },
+  .on(_withCurrentKey(openLevel), (map, { key, value: index }) =>
+    updateBufferLevel(map, key, index, (b) => ({ ...b, isOpened: true })),
   )
+  // switch per-level "is opened" state
+  .on(_withCurrentKey(closeLevel), (map, { key, value: index }) => {
+    const next = updateBufferLevel(map, key, index, (b) => ({
+      ...b,
+      isOpened: false,
+    }));
+    if (index === undefined || index === map.get(key)?.currentIndex) {
+      // when closing current level, unset current index
+      return RoMap.update(next, key, (buf) => ({
+        ...buf,
+        currentIndex: undefined,
+      }));
+    }
+    return next;
+  })
   // switch current level in the given levelset
   .on(_withCurrentKey(setCurrentLevel), (map, { key, value: index }) =>
     RoMap.update(map, key, (buf) =>
