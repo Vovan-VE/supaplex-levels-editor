@@ -3,8 +3,10 @@ import { Context } from "./context";
 
 type Props = ComponentProps<"div">;
 
-let lastIndex = 0;
-const nextIndex = () => ++lastIndex;
+const nextIndex = (() => {
+  let lastIndex = 0;
+  return () => ++lastIndex;
+})();
 
 export const PopupContainer: FC<Props> = ({ children, id, ...rest }) => {
   const [element, setElement] = useState<HTMLDivElement | null>(null);

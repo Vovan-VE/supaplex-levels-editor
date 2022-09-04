@@ -1,4 +1,10 @@
-import { FC, PropsWithChildren, ReactNode } from "react";
+import {
+  FC,
+  FormHTMLAttributes,
+  PropsWithChildren,
+  ReactNode,
+  Suspense,
+} from "react";
 import cn from "classnames";
 import { PopupPortal } from "utils/react";
 import { TextButton } from "ui/button";
@@ -12,24 +18,33 @@ const CL_SIZE: Record<DialogSize, string | undefined> = {
   full: cl._full,
 };
 
-interface Props {
+type FormProps = Omit<FormHTMLAttributes<HTMLFormElement>, "children">;
+
+const WrapFormMaybe: FC<PropsWithChildren<{ form?: FormProps }>> = ({
+  form,
+  children,
+}) => (form ? <form {...form}>{children}</form> : <>{children}</>);
+
+export interface DialogProps {
   open?: boolean;
   // modal?: boolean;
   closeButton?: boolean;
   unmountOnClose?: boolean;
   size?: DialogSize;
   title?: ReactNode;
+  wrapForm?: FormProps;
   buttons?: ReactNode;
   onClose?: () => void;
 }
 
-export const Dialog: FC<PropsWithChildren<Props>> = ({
+export const Dialog: FC<PropsWithChildren<DialogProps>> = ({
   open = false,
   // modal = true,
   closeButton = true,
   unmountOnClose = true,
   size,
   title,
+  wrapForm,
   buttons,
   onClose,
   children,
@@ -46,13 +61,21 @@ export const Dialog: FC<PropsWithChildren<Props>> = ({
           />
         )}
         {(open || !unmountOnClose) && (
-          <>
-            {title !== undefined && <div className={cl.title}>{title}</div>}
-            <div className={cl.body}>{children}</div>
-            {buttons !== undefined && (
-              <div className={cn(cl.footer, cl._buttons)}>{buttons}</div>
+          <WrapFormMaybe form={wrapForm}>
+            {title !== undefined && (
+              <div className={cl.title}>
+                <Suspense>{title}</Suspense>
+              </div>
             )}
-          </>
+            <div className={cl.body}>
+              <Suspense>{children}</Suspense>
+            </div>
+            {buttons !== undefined && (
+              <div className={cn(cl.footer, cl._buttons)}>
+                <Suspense>{buttons}</Suspense>
+              </div>
+            )}
+          </WrapFormMaybe>
         )}
       </dialog>
     </div>

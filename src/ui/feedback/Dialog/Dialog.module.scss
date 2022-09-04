@@ -88,7 +88,7 @@ $pad: 1rem;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
 
     $sp: 0.25rem;
     padding: #{$pad - $sp};
