@@ -13,7 +13,7 @@ $active-lighter-bg: 15%;
 @function _active($color, $lighter: $active-lighter) {
   @return color.adjust($color, $lightness: $lighter);
 }
-@function _focus($color, $alpha: 0.4) {
+@function _focus($color, $alpha: -0.4) {
   @return color.adjust($color, $alpha: $alpha);
 }
 
@@ -28,6 +28,7 @@ $theme-dark: (
   #{vars.$color-mute}: sp.$color-grey,
   #{vars.$color-mute-bg}: sp.$color-grey-xdark,
   #{vars.$color-panel-bg}: sp.$color-grey-xdark,
+  #{vars.$color-shadow}: sp.$color-white,
   #{vars.$color-primary}: sp.$color-blue-light,
   #{vars.$color-primary-bg}: $_dark-primary-bg,
   #{vars.$color-primary-hover}: _hover(sp.$color-blue-light),

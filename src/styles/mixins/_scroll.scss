@@ -25,7 +25,11 @@
   &::-webkit-scrollbar {
     width: $width;
     height: $width;
-    background-color: $color-track;
+    @if $show-track {
+      background-color: $color-track;
+    } @else {
+      background-color: transparent;
+    }
     border-radius: 0;
   }
 
