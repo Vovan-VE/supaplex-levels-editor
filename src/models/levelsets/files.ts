@@ -5,7 +5,9 @@ import {
   createStore,
   sample,
 } from "effector";
+import { withPersistentMap } from "@cubux/effector-persistent";
 import * as RoMap from "@cubux/readonly-map";
+import { createIndexedDBDriver, createNullDriver } from "@cubux/storage-driver";
 import { getDriver } from "drivers";
 import { generateKey } from "utils/strings";
 import { LevelsetFile, LevelsetFileKey, LevelsetFileSource } from "./types";
@@ -74,9 +76,16 @@ $currentKey.on(_removeLevelsetFile, (c, del) => (del === c ? null : undefined));
 /**
  * Loaded files in memory
  */
-export const $levelsets = createStore<
-  ReadonlyMap<LevelsetFileKey, LevelsetFile>
->(new Map())
+export const $levelsets = withPersistentMap(
+  createStore<ReadonlyMap<LevelsetFileKey, LevelsetFile>>(new Map()),
+  process.env.NODE_ENV === "test"
+    ? createNullDriver()
+    : createIndexedDBDriver({
+        dbName: "sp-ed",
+        dbVersion: 1,
+        table: "levelset-files",
+      }),
+)
   .on([updateLevelsetFile, addLevelsetFileFx.doneData], (map, file) =>
     RoMap.set(map, file.key, file),
   )

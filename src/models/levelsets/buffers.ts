@@ -8,10 +8,10 @@ import {
   Store,
 } from "effector";
 import { saveAs } from "file-saver";
+import { flushDelayed } from "@cubux/effector-persistent";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
 import { getDriver, IBaseLevel } from "drivers";
-import { flushDelayed } from "utils/effector";
 import { $currentKey, $currentLevelsetFile, $levelsets } from "./files";
 import {
   IBaseLevelsList,
