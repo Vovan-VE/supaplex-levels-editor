@@ -1,0 +1,45 @@
+@use "sass:color";
+@use "styles/themes";
+@use "./config";
+
+%input-box {
+  display: block;
+  width: 100%;
+  padding: config.$padding-y config.$padding-x;
+  font-size: config.$font-size;
+  line-height: config.$line-height;
+
+  border: themes.$color-mute solid config.$border-width;
+  background-color: themes.$color-default-bg;
+  color: themes.$color-default;
+  border-radius: 0;
+
+  :global(.input-invalid) & {
+    border-color: themes.$color-danger;
+  }
+
+  :global(.input-valid) & {
+    border-color: themes.$color-mute;
+  }
+
+  &:focus {
+    border-color: themes.$color-default;
+    background-color: themes.$color-default-bg;
+    color: themes.$color-default;
+    outline: 0;
+  }
+
+  &::placeholder {
+    color: themes.$color-mute;
+    opacity: 1;
+  }
+
+  &:disabled {
+    border-color: themes.$color-mute-bg;
+    opacity: 1;
+    &,
+    &::placeholder {
+      color: themes.$color-mute-bg;
+    }
+  }
+}

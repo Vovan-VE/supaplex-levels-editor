@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { Button } from "ui/button";
-import { Field } from "ui/input";
+import { Field, Input } from "ui/input";
 import { ColorType } from "ui/types";
 import { Dialog } from "../../Dialog";
 import { renderPrompt, RenderPromptProps } from "../renderPrompt";
@@ -128,7 +128,7 @@ export const PromptString: FC<Props> = ({
       onClose={onCancel}
     >
       <Field label={label} error={error}>
-        <input {...rest} value={value} onChange={handleInputChange} autoFocus />
+        <Input {...rest} value={value} onChange={handleInputChange} autoFocus />
       </Field>
     </Dialog>
   );

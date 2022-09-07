@@ -8,10 +8,11 @@
     .error {
       color: themes.$color-danger;
     }
-    //input {
-    //  border-color: themes.$color-danger;
-    //}
   }
+}
+
+label.labelElement {
+  display: block;
 }
 
 .label {

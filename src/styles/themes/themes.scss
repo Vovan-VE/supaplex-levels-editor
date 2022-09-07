@@ -25,9 +25,10 @@ $_dark-danger-bg: color.adjust(sp.$color-red-dark, $lightness: -10%);
 $theme-dark: (
   #{vars.$color-default}: sp.$color-grey-xlight,
   #{vars.$color-default-bg}: sp.$color-black,
+  #{vars.$color-default-focus}: _focus(sp.$color-grey-xlight),
   #{vars.$color-mute}: sp.$color-grey,
   #{vars.$color-mute-bg}: sp.$color-grey-xdark,
-  #{vars.$color-panel-bg}: sp.$color-grey-xdark,
+  #{vars.$color-panel-bg}: color.adjust(sp.$color-grey-xdark, $lightness: -10%),
   #{vars.$color-shadow}: sp.$color-white,
   #{vars.$color-primary}: sp.$color-blue-light,
   #{vars.$color-primary-bg}: $_dark-primary-bg,

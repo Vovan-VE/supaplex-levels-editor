@@ -29,18 +29,27 @@ export const Field: FC<PropsWithChildren<Props>> = ({
   return (
     <div
       {...rest}
-      className={cn(cl.root, className, Boolean(error) && cl._isError)}
+      className={cn(
+        cl.root,
+        className,
+        Boolean(error) ? [cl._isError, "input-invalid"] : "input-valid",
+      )}
     >
       {label ? (
         labelFor ? (
           <>
-            <label htmlFor={labelFor} className={labelClass}>
+            <label
+              htmlFor={labelFor}
+              className={cn(labelClass, cl.labelElement)}
+            >
               {label}
             </label>
             {control}
           </>
         ) : (
-          <LabelElement>
+          <LabelElement
+            className={cn(LabelElement === "label" && cl.labelElement)}
+          >
             <div className={labelClass}>{label}</div>
             {control}
           </LabelElement>
