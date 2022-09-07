@@ -15,7 +15,7 @@ export interface LevelsetFileSource {
 }
 export interface LevelsetFile extends LevelsetFileSource {
   key: LevelsetFileKey;
-  levels: IBaseLevelsList;
+  levels?: IBaseLevelsList;
 }
 
 export interface LevelBuffer<L> {

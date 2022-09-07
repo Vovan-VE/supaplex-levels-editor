@@ -110,7 +110,7 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
   // init on file read done
   .on($currentLevelsetFile, (map, current) => {
     if (current && !map.has(current.key)) {
-      return RoMap.set(map, current.key, readToBuffers(current.levels));
+      return RoMap.set(map, current.key, readToBuffers(current.levels ?? []));
     }
   })
   // switch per-level "is opened" state
@@ -234,8 +234,13 @@ sample({
         RoMap.map(buffers, ({ levels }) =>
           levels.map((b) => b.undoQueue.current),
         ),
-        (levels, key) =>
-          files.has(key) && !isEqualLevels(levels, files.get(key)!.levels),
+        (levels, key) => {
+          if (files.has(key)) {
+            const fileLevels = files.get(key)!.levels;
+            return !fileLevels || !isEqualLevels(levels, fileLevels);
+          }
+          return false;
+        },
       ),
   );
   // auto trigger flush for all after buffers changed
