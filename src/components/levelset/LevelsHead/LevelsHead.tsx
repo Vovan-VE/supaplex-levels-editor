@@ -13,6 +13,7 @@ import {
 } from "models/levelsets";
 import { Button, TabItem, TabsButtons, Toolbar } from "ui/button";
 import { svgs } from "ui/icon";
+import { ask } from "ui/feedback";
 import { ColorType, ContainerProps } from "ui/types";
 import cl from "./LevelsHead.module.scss";
 
@@ -40,6 +41,14 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
   const levelsCount = levelset.levels.length;
   const levelsCountDigits = String(levelsCount).length;
 
+  const levelFullReference =
+    level &&
+    fmtLevelFull(
+      level.index,
+      levelsCountDigits,
+      level.level.undoQueue.current.title,
+    );
+
   const tabs = useMemo(
     () =>
       openedIndices?.map(
@@ -59,6 +68,45 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
     ({ target }: ChangeEvent<HTMLSelectElement>) =>
       setCurrentLevel(Number(target.value)),
     [],
+  );
+
+  const handleDeleteClick = useMemo(
+    () =>
+      levelFullReference
+        ? async () => {
+            if (
+              await ask(
+                <>
+                  Are you sure to delete level "
+                  <code>{levelFullReference}</code>" from the levelset?
+                  <br />
+                  This will cause all the levels following to shift backward.
+                  <br />
+                  <b>This action would not be undone.</b>
+                </>,
+                {
+                  buttons: {
+                    okText: (
+                      <>
+                        Delete <code>"{levelFullReference}"</code>
+                      </>
+                    ),
+                    ok: {
+                      uiColor: ColorType.DANGER,
+                      autoFocus: false,
+                    },
+                    cancel: {
+                      autoFocus: true,
+                    },
+                  },
+                },
+              )
+            ) {
+              deleteCurrentLevel();
+            }
+          }
+        : undefined,
+    [levelFullReference],
   );
 
   if (!levelset) {
@@ -111,30 +159,15 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
           uiColor={ColorType.DANGER}
           icon={<svgs.DeleteRow />}
           disabled={!level}
-          // TODO: confirm
-          onClick={deleteCurrentLevel}
-          title={
-            level
-              ? `Delete level ${fmtLevelFull(
-                  level.index,
-                  levelsCountDigits,
-                  level.level.undoQueue.current.title,
-                )}`
-              : ""
-          }
+          onClick={handleDeleteClick}
+          title={levelFullReference ? `Delete level ${levelFullReference}` : ""}
         />
         <Button
           icon={<svgs.Cross />}
           disabled={!level}
           onClick={handleClose}
           title={
-            level
-              ? `Close level tab (${fmtLevelFull(
-                  level.index,
-                  levelsCountDigits,
-                  level.level.undoQueue.current.title,
-                )})`
-              : ""
+            levelFullReference ? `Close level tab (${levelFullReference})` : ""
           }
         />
       </Toolbar>

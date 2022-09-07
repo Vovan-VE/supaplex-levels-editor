@@ -46,15 +46,19 @@ interface ButtonOptions {
   asLink?: boolean;
 }
 
+export interface ButtonProps extends Props, ButtonOptions {}
+
 export const Button = forwardRef(
   withOptions(
     makeButtonRender(cl.button),
-    ({ asLink = false, className, ...props }: ButtonOptions & Props) => ({
+    ({ asLink = false, className, ...props }: ButtonProps) => ({
       ...props,
       className: cn(className, asLink && cl._asLink),
     }),
   ),
 );
+
+export interface TextButtonProps extends Props {}
 
 export const TextButton = forwardRef(makeButtonRender(cl.textButton));
 

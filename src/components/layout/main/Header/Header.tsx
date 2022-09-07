@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import cn from "classnames";
 import { useStore } from "effector-react";
 import { detectDriver } from "drivers";
@@ -9,6 +9,7 @@ import {
   removeCurrentLevelsetFile,
 } from "models/levelsets";
 import { Button, Toolbar } from "ui/button";
+import { ask } from "ui/feedback";
 import { svgs } from "ui/icon";
 import { ColorType, ContainerProps } from "ui/types";
 import { EditorTabs } from "./EditorTabs";
@@ -18,6 +19,42 @@ interface Props extends ContainerProps {}
 
 export const Header: FC<Props> = ({ className, ...rest }) => {
   const currentFile = useStore($currentLevelsetFile);
+
+  const filename = currentFile?.name;
+  const handleRemoveClick = useMemo(
+    () =>
+      filename
+        ? async () => {
+            if (
+              await ask(
+                <>
+                  Are you sure to remove file "<b>{filename}</b>" from memory?
+                  <br />
+                  You will loss all changes in the file. Consider download it
+                  first to backup.
+                  <br />
+                  <b>This action would not be undone.</b>
+                </>,
+                {
+                  buttons: {
+                    okText: <>Forgot "{filename}"</>,
+                    ok: {
+                      uiColor: ColorType.DANGER,
+                      autoFocus: false,
+                    },
+                    cancel: {
+                      autoFocus: true,
+                    },
+                  },
+                },
+              )
+            ) {
+              removeCurrentLevelsetFile();
+            }
+          }
+        : undefined,
+    [filename],
+  );
 
   return (
     <header {...rest} className={cn(cl.root, className)}>
@@ -38,9 +75,7 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
           icon={<svgs.Download />}
           disabled={!currentFile}
           title={
-            currentFile
-              ? `Download file "${currentFile.name}" from memory`
-              : undefined
+            filename ? `Download file "${filename}" from memory` : undefined
           }
           onClick={downloadCurrentFile}
         />
@@ -54,12 +89,9 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
           icon={<svgs.Trash />}
           disabled={!currentFile}
           title={
-            currentFile
-              ? `Remove levelset "${currentFile.name}" from memory`
-              : undefined
+            filename ? `Remove levelset "${filename}" from memory` : undefined
           }
-          // TODO: confirm
-          onClick={removeCurrentLevelsetFile}
+          onClick={handleRemoveClick}
         />
       </Toolbar>
     </header>
