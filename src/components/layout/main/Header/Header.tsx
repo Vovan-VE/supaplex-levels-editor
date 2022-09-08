@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { FC, ReactNode, useMemo } from "react";
 import cn from "classnames";
 import { useStore } from "effector-react";
 import { detectDriver } from "drivers";
@@ -7,9 +7,10 @@ import {
   addLevelsetFileFx,
   downloadCurrentFile,
   removeCurrentLevelsetFile,
+  renameCurrentLevelset,
 } from "models/levelsets";
 import { Button, Toolbar } from "ui/button";
-import { ask } from "ui/feedback";
+import { ask, msgBox, promptString } from "ui/feedback";
 import { svgs } from "ui/icon";
 import { ColorType, ContainerProps } from "ui/types";
 import { EditorTabs } from "./EditorTabs";
@@ -21,36 +22,53 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
   const currentFile = useStore($currentLevelsetFile);
 
   const filename = currentFile?.name;
-  const handleRemoveClick = useMemo(
+  const handleFile = useMemo(
     () =>
       filename
-        ? async () => {
-            if (
-              await ask(
-                <>
-                  Are you sure to remove file "<b>{filename}</b>" from memory?
-                  <br />
-                  You will loss all changes in the file. Consider download it
-                  first to backup.
-                  <br />
-                  <b>This action would not be undone.</b>
-                </>,
-                {
-                  buttons: {
-                    okText: <>Forgot "{filename}"</>,
-                    ok: {
-                      uiColor: ColorType.DANGER,
-                      autoFocus: false,
-                    },
-                    cancel: {
-                      autoFocus: true,
+        ? {
+            rename: async () => {
+              const newName = await promptString({
+                title: (
+                  <>
+                    Rename file "<b>{filename}</b>" in memory
+                  </>
+                ),
+                label: "New filename",
+                defaultValue: filename,
+                required: true,
+              });
+              if (newName !== undefined) {
+                renameCurrentLevelset(newName);
+              }
+            },
+            remove: async () => {
+              if (
+                await ask(
+                  <>
+                    Are you sure to remove file "<b>{filename}</b>" from memory?
+                    <br />
+                    You will loss all changes in the file. Consider download it
+                    first to backup.
+                    <br />
+                    <b>This action would not be undone.</b>
+                  </>,
+                  {
+                    buttons: {
+                      okText: <>Forgot "{filename}"</>,
+                      ok: {
+                        uiColor: ColorType.DANGER,
+                        autoFocus: false,
+                      },
+                      cancel: {
+                        autoFocus: true,
+                      },
                     },
                   },
-                },
-              )
-            ) {
-              removeCurrentLevelsetFile();
-            }
+                )
+              ) {
+                removeCurrentLevelsetFile();
+              }
+            },
           }
         : undefined,
     [filename],
@@ -83,6 +101,7 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
           icon={<svgs.Rename />}
           disabled={!currentFile}
           title="Rename file"
+          onClick={handleFile?.rename}
         />
         <Button
           uiColor={ColorType.DANGER}
@@ -91,7 +110,7 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
           title={
             filename ? `Remove levelset "${filename}" from memory` : undefined
           }
-          onClick={handleRemoveClick}
+          onClick={handleFile?.remove}
         />
       </Toolbar>
     </header>
@@ -116,12 +135,14 @@ function handleOpenClick() {
 
     if (files) {
       (async () => {
-        for (const item of await Promise.allSettled(
+        const detected = await Promise.allSettled(
           Array.from(files).map(
             async (file) =>
               [file, detectDriver(await file.arrayBuffer())] as const,
           ),
-        )) {
+        );
+        const errors: ReactNode[] = [];
+        for (const [i, item] of detected.entries()) {
           if (item.status === "fulfilled") {
             const [file, driverName] = item.value;
             if (driverName) {
@@ -131,11 +152,30 @@ function handleOpenClick() {
                 name: file.name,
               });
             } else {
-              console.warn("Cannot detect file format", file);
+              errors.push(<>"{file.name}": Unsupported file format.</>);
             }
           } else {
+            errors.push(
+              <>
+                "{files[i].name}": Couldn't read file:{" "}
+                {item.reason instanceof Error
+                  ? item.reason.message
+                  : "unknown reason"}
+                .
+              </>,
+            );
             console.error("Cannot read file", item.reason);
           }
+        }
+        if (errors.length) {
+          // TODO: typography component to add intro text with apply uiColor
+          msgBox(
+            <ul>
+              {errors.map((err, i) => (
+                <li key={i}>{err}</li>
+              ))}
+            </ul>,
+          );
         }
       })();
     }

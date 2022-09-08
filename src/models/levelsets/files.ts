@@ -61,6 +61,10 @@ export const removeCurrentLevelsetFile = createEvent<any>();
  * Update loaded file in memory
  */
 export const updateLevelsetFile = createEvent<LevelsetFile>();
+/**
+ * Rename currently selected file
+ */
+export const renameCurrentLevelset = createEvent<string>();
 
 /**
  * Switch currently selected file
@@ -98,6 +102,16 @@ export const $levelsets = withPersistentMap(
 )
   .on([updateLevelsetFile, addLevelsetFileFx.doneData], (map, file) =>
     RoMap.set(map, file.key, file),
+  )
+  .on(
+    sample({
+      clock: renameCurrentLevelset,
+      source: $currentKey,
+      filter: Boolean,
+      fn: (key, name) => ({ key, name }),
+    }),
+    (map, { key, name }) =>
+      RoMap.update(map, key, (file) => ({ ...file, name })),
   )
   .on(_removeLevelsetFile, RoMap.remove);
 
