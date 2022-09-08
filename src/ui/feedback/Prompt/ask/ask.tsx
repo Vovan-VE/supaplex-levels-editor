@@ -1,24 +1,9 @@
-import { ReactElement, ReactNode } from "react";
-import { Button, ButtonProps } from "ui/button";
+import { ReactNode } from "react";
+import { Button } from "ui/button";
 import { ColorType } from "ui/types";
-import { Dialog, DialogProps } from "../Dialog";
-import { renderPrompt, RenderPromptProps } from "./renderPrompt";
-
-export interface AskButtonsDefaultProps {
-  ok?: Omit<ButtonProps, "onClick">;
-  okText?: ReactNode;
-  cancel?: Omit<ButtonProps, "onClick">;
-  cancelText?: ReactNode;
-}
-
-export interface AskButtonsRenderProps<V>
-  extends Omit<RenderPromptProps<V>, "show"> {
-  defaults: (props?: AskButtonsDefaultProps) => ReactElement;
-}
-
-export interface AskButtonsRender<V> {
-  (props: AskButtonsRenderProps<V>): ReactElement;
-}
+import { Dialog } from "../../Dialog";
+import { renderPrompt } from "../renderPrompt";
+import { AskButtonsDefaultProps, AskOptions } from "./types";
 
 const createDefaultButtonsRenderer =
   (onOk: () => void, onCancel: () => void) =>
@@ -34,13 +19,9 @@ const createDefaultButtonsRenderer =
       </>
     );
 
-interface Options<V> extends Omit<DialogProps, "open" | "buttons" | "onClose"> {
-  buttons?: AskButtonsRender<V> | AskButtonsDefaultProps;
-}
-
 export function ask<V = true>(
   content: ReactNode,
-  { buttons, ...options }: Options<V> = {},
+  { buttons, ...options }: AskOptions<V> = {},
 ) {
   return renderPrompt(({ show, onSubmit, onCancel }) => {
     const defaultButtonsRenderer = createDefaultButtonsRenderer(

@@ -128,7 +128,7 @@ export const PromptString: FC<Props> = ({
       onClose={onCancel}
     >
       <Field label={label} error={error}>
-        <Input {...rest} value={value} onChange={handleInputChange} autoFocus />
+        <Input autoFocus {...rest} value={value} onChange={handleInputChange} />
       </Field>
     </Dialog>
   );
