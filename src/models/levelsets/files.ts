@@ -5,9 +5,13 @@ import {
   createStore,
   sample,
 } from "effector";
-import { withPersistentMap } from "@cubux/effector-persistent";
+import { withPersistent, withPersistentMap } from "@cubux/effector-persistent";
 import * as RoMap from "@cubux/readonly-map";
-import { createIndexedDBDriver, createNullDriver } from "@cubux/storage-driver";
+import {
+  createIndexedDBDriver,
+  createLocalStorageDriver,
+  createNullDriver,
+} from "@cubux/storage-driver";
 import { getDriver } from "drivers";
 import { generateKey } from "utils/strings";
 import { LevelsetFile, LevelsetFileKey, LevelsetFileSource } from "./types";
@@ -70,10 +74,19 @@ export const renameCurrentLevelset = createEvent<string>();
  * Switch currently selected file
  */
 export const setCurrentLevelset = createEvent<LevelsetFileKey>();
+
+const lsDriver = createLocalStorageDriver({
+  prefix: "sp-ed",
+});
+
 /**
  * Key of current selected file within `$levelsets`
  */
-export const $currentKey = createStore<LevelsetFileKey | null>(null)
+export const $currentKey = withPersistent(
+  createStore<LevelsetFileKey | null>(null),
+  lsDriver,
+  "currentFile",
+)
   .on(setCurrentLevelset, (_, c) => c)
   .on(addLevelsetFileFx.doneData, (_, { key }) => key);
 
@@ -84,21 +97,36 @@ const _removeLevelsetFile = sample({
 });
 $currentKey.on(_removeLevelsetFile, (c, del) => (del === c ? null : undefined));
 
+interface _DbLevelsetFile extends Omit<LevelsetFile, "file" | "levels"> {
+  fileBuffer: ArrayBuffer;
+}
 /**
  * Loaded files in memory
  */
 export const $levelsets = withPersistentMap(
   createStore<ReadonlyMap<LevelsetFileKey, LevelsetFile>>(new Map()),
   process.env.NODE_ENV === "test"
-    ? createNullDriver()
-    : createIndexedDBDriver<LevelsetFileKey, LevelsetFile>({
+    ? createNullDriver<LevelsetFileKey, _DbLevelsetFile>()
+    : createIndexedDBDriver<LevelsetFileKey, _DbLevelsetFile>({
         dbName: "sp-ed",
         dbVersion: 1,
         table: "levelset-files",
-        serialize: ({ levels, ...file }) => file,
-        // TODO: async unserialize
-        // unserialize: (file) => ({...file, levels: }),
       }),
+  {
+    serialize: async ({ file, name, driverName, key }: LevelsetFile) => ({
+      name,
+      driverName,
+      key,
+      fileBuffer: await file.arrayBuffer(),
+    }),
+    unserialize: ({ name, driverName, key, fileBuffer }: _DbLevelsetFile) =>
+      fulfillFileLevels({
+        file: new Blob([fileBuffer]),
+        name,
+        driverName,
+        key,
+      }),
+  },
 )
   .on([updateLevelsetFile, addLevelsetFileFx.doneData], (map, file) =>
     RoMap.set(map, file.key, file),
@@ -115,27 +143,14 @@ export const $levelsets = withPersistentMap(
   )
   .on(_removeLevelsetFile, RoMap.remove);
 
-{
-  // While `createIndexedDBDriver()` driver cannot perform async unserialize,
-  // we load levels later with code below
-
-  const _fixFilesWithoutLevelsFx = createEffect(fulfillFileLevels);
-  _fixFilesWithoutLevelsFx.fail.watch(({ params, error }) => {
-    // TODO: UI toast
-    console.log("Could not read levels file", params, error);
-  });
-  $levelsets
-    .on(_fixFilesWithoutLevelsFx.doneData, (map, file) =>
-      RoMap.set(map, file.key, file),
-    )
-    .watch((files) => {
-      for (const file of files.values()) {
-        if (!file.levels) {
-          _fixFilesWithoutLevelsFx(file);
-        }
-      }
-    });
-}
+// reset current file key when is refers to non-existing file
+$currentKey.reset(
+  sample({
+    clock: $levelsets,
+    source: { key: $currentKey, files: $levelsets },
+    filter: ({ key, files }) => typeof key === "string" && !files.has(key),
+  }),
+);
 
 /**
  * Reference to current file and key together

@@ -11,10 +11,10 @@
     "typescript": "tsc"
   },
   "dependencies": {
-    "@cubux/effector-persistent": "^0.1.0",
+    "@cubux/effector-persistent": "^0.2.0",
     "@cubux/readonly-array": "^1.0.0",
     "@cubux/readonly-map": "^1.0.0",
-    "@cubux/storage-driver": "^0.2.0",
+    "@cubux/storage-driver": "^0.3.1",
     "@cubux/types": "^1.0.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -24,7 +24,6 @@
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
     "classnames": "^2.3.1",
-    "cross-env": "^7.0.3",
     "effector": "^22.3.0",
     "effector-react": "^22.1.6",
     "file-saver": "^2.0.5",
@@ -36,6 +35,7 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "prettier": "2.7.1"

@@ -29,7 +29,7 @@ import {
  * Delay to flush changes to in-memory files after a changes was made. More
  * changes in sequence within this delay cause flush to delay more.
  */
-const AUTO_FLUSH_DELAY = 30 * 1000;
+const AUTO_FLUSH_DELAY = 3 * 1000;
 
 /**
  * Switch level with the given index in current levelset to opened state
@@ -311,6 +311,13 @@ export const $currentBuffer = combine(
   _$buffersMap,
   $currentKey,
   (map, key) => (key && map.get(key)) || null,
+);
+
+/**
+ * Whether a current level is selected in current levelset
+ */
+export const $currentLevelIsSelected = $currentBuffer.map(
+  (b) => b?.currentIndex !== undefined,
 );
 
 /**
