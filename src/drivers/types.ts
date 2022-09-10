@@ -23,7 +23,7 @@ export interface IBaseLevelset<L extends IBaseLevel> {
   readonly levelsCount: number;
   readonly minLevelsCount: number;
   readonly maxLevelsCount: number | null;
-  getLevels(): Iterable<L>;
+  getLevels(): readonly L[];
   getLevel(index: number): L;
   setLevel(index: number, level: L): this;
   appendLevel(level: L): this;

@@ -44,8 +44,8 @@ export class Levelset<L extends ISupaplexLevel> implements IBaseLevelset<L> {
     return null;
   }
 
-  *getLevels() {
-    yield* this.#levels;
+  getLevels() {
+    return [...this.#levels];
   }
 
   getLevel(index: number) {

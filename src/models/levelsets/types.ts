@@ -1,7 +1,7 @@
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
 import { CodeOf } from "@cubux/types";
-import { IBaseLevel } from "drivers";
+import { IBaseLevel, IBaseLevelset } from "drivers";
 import { UndoQueue } from "utils/data";
 
 export type LevelsetFileKey = CodeOf<"LevelsetFile">;
@@ -13,9 +13,11 @@ export interface LevelsetFileSource {
   name: string;
   driverName: string;
 }
-export interface LevelsetFile extends LevelsetFileSource {
+export interface LevelsetFileData extends LevelsetFileSource {
   key: LevelsetFileKey;
-  levels?: IBaseLevelsList;
+}
+export interface LevelsetFile extends LevelsetFileData {
+  levelset: IBaseLevelset<IBaseLevel>;
 }
 
 export interface LevelBuffer<L> {

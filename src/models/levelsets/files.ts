@@ -7,17 +7,19 @@ import {
 } from "effector";
 import { withPersistent, withPersistentMap } from "@cubux/effector-persistent";
 import * as RoMap from "@cubux/readonly-map";
-import {
-  createIndexedDBDriver,
-  createLocalStorageDriver,
-  createNullDriver,
-} from "@cubux/storage-driver";
+import { createIndexedDBDriver, createNullDriver } from "@cubux/storage-driver";
 import { getDriver } from "drivers";
 import { generateKey } from "utils/strings";
-import { LevelsetFile, LevelsetFileKey, LevelsetFileSource } from "./types";
+import { localStorageDriver } from "../_utils/persistent";
+import {
+  LevelsetFile,
+  LevelsetFileData,
+  LevelsetFileKey,
+  LevelsetFileSource,
+} from "./types";
 
 const fulfillFileLevels = async (
-  input: LevelsetFile,
+  input: LevelsetFileData,
 ): Promise<LevelsetFile> => {
   const driver = getDriver(input.driverName);
   if (!driver) {
@@ -39,7 +41,7 @@ const fulfillFileLevels = async (
   }
   return {
     ...input,
-    levels: [...reader.readLevelset(ab).getLevels()],
+    levelset: reader.readLevelset(ab),
   };
 };
 
@@ -75,16 +77,12 @@ export const renameCurrentLevelset = createEvent<string>();
  */
 export const setCurrentLevelset = createEvent<LevelsetFileKey>();
 
-const lsDriver = createLocalStorageDriver({
-  prefix: "sp-ed",
-});
-
 /**
  * Key of current selected file within `$levelsets`
  */
 export const $currentKey = withPersistent(
   createStore<LevelsetFileKey | null>(null),
-  lsDriver,
+  localStorageDriver,
   "currentFile",
 )
   .on(setCurrentLevelset, (_, c) => c)
@@ -97,7 +95,7 @@ const _removeLevelsetFile = sample({
 });
 $currentKey.on(_removeLevelsetFile, (c, del) => (del === c ? null : undefined));
 
-interface _DbLevelsetFile extends Omit<LevelsetFile, "file" | "levels"> {
+interface _DbLevelsetFile extends Omit<LevelsetFileData, "file"> {
   fileBuffer: ArrayBuffer;
 }
 /**
@@ -113,7 +111,12 @@ export const $levelsets = withPersistentMap(
         table: "levelset-files",
       }),
   {
-    serialize: async ({ file, name, driverName, key }: LevelsetFile) => ({
+    serialize: async ({
+      file,
+      name,
+      driverName,
+      key,
+    }: LevelsetFile): Promise<_DbLevelsetFile> => ({
       name,
       driverName,
       key,

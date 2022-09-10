@@ -4,6 +4,7 @@ import { useStore } from "effector-react";
 import {
   $currentBuffer,
   $currentLevel,
+  $currentLevelsetFile,
   $currentOpenedIndices,
   appendLevel,
   closeLevel,
@@ -34,6 +35,7 @@ const fmtLevelFull = (index: number, maxDigits: number, title: string) =>
 interface Props extends ContainerProps {}
 
 export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
+  const file = useStore($currentLevelsetFile)!;
   const levelset = useStore($currentBuffer)!;
   const level = useStore($currentLevel);
   const openedIndices = useStore($currentOpenedIndices);
@@ -113,6 +115,17 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
     throw new Error("Logic error");
   }
 
+  const fileLevelset = file.levelset;
+  const cannotAddLevelMessage =
+    fileLevelset.maxLevelsCount !== null &&
+    levelsCount >= fileLevelset.maxLevelsCount
+      ? `Cannot add more level than ${fileLevelset.maxLevelsCount}`
+      : undefined;
+  const cannotRemoveLevelMessage =
+    levelsCount <= fileLevelset.minLevelsCount
+      ? `Cannot remove level because it's already minimum ${fileLevelset.minLevelsCount}`
+      : undefined;
+
   return (
     <div {...rest} className={cn(cl.root, className)}>
       <Toolbar className={cl.start}>
@@ -136,10 +149,11 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
       <Toolbar className={cl.end}>
         <Button
           icon={<svgs.InsertRow />}
-          disabled={!level}
+          disabled={!level || Boolean(cannotAddLevelMessage)}
           title={
             level
-              ? `Insert new level at ${fmtLevelNumber(
+              ? cannotAddLevelMessage ||
+                `Insert new level at ${fmtLevelNumber(
                   level.index,
                   levelsCountDigits,
                 )} and shift existing forward`
@@ -149,18 +163,22 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
         />
         <Button
           icon={<svgs.AppendRow />}
-          title={`Append new level ${fmtLevelNumber(
-            levelsCount,
-            levelsCountDigits,
-          )}`}
+          disabled={Boolean(cannotAddLevelMessage)}
+          title={
+            cannotAddLevelMessage ||
+            `Append new level ${fmtLevelNumber(levelsCount, levelsCountDigits)}`
+          }
           onClick={appendLevel}
         />
         <Button
           uiColor={ColorType.DANGER}
           icon={<svgs.DeleteRow />}
-          disabled={!level}
+          disabled={!level || Boolean(cannotRemoveLevelMessage)}
           onClick={handleDeleteClick}
-          title={levelFullReference ? `Delete level ${levelFullReference}` : ""}
+          title={
+            cannotRemoveLevelMessage ||
+            (levelFullReference ? `Delete level ${levelFullReference}` : "")
+          }
         />
         <Button
           icon={<svgs.Cross />}

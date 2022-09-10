@@ -110,7 +110,11 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
   // init on file read done
   .on($currentLevelsetFile, (map, current) => {
     if (current && !map.has(current.key)) {
-      return RoMap.set(map, current.key, readToBuffers(current.levels ?? []));
+      return RoMap.set(
+        map,
+        current.key,
+        readToBuffers(current.levelset.getLevels()),
+      );
     }
   })
   // switch per-level "is opened" state
@@ -143,7 +147,8 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
   // insert new level at current level index into current levelset
   .on(_withCurrentFile(insertAtCurrentLevel), (map, { current: file }) =>
     RoMap.update(map, file.key, (buf) =>
-      buf.currentIndex === undefined
+      buf.currentIndex === undefined ||
+      buf.levels.length >= (file.levelset.maxLevelsCount ?? Infinity)
         ? buf
         : {
             ...buf,
@@ -156,19 +161,24 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
   )
   // append new level into current levelset
   .on(_withCurrentFile(appendLevel), (map, { current: file }) =>
-    RoMap.update(map, file.key, (buf) => ({
-      ...buf,
-      levels: [
-        ...buf.levels,
-        { ...readToBuffer(createLevelForFile(file)), isOpened: true },
-      ],
-      currentIndex: buf.levels.length,
-    })),
+    RoMap.update(map, file.key, (buf) =>
+      buf.levels.length >= (file.levelset.maxLevelsCount ?? Infinity)
+        ? buf
+        : {
+            ...buf,
+            levels: [
+              ...buf.levels,
+              { ...readToBuffer(createLevelForFile(file)), isOpened: true },
+            ],
+            currentIndex: buf.levels.length,
+          },
+    ),
   )
   // delete the level from current levelset
-  .on(_withCurrentKey(deleteCurrentLevel), (map, { current: key }) =>
-    RoMap.update(map, key, (buf) =>
-      buf.currentIndex === undefined
+  .on(_withCurrentFile(deleteCurrentLevel), (map, { current: file }) =>
+    RoMap.update(map, file.key, (buf) =>
+      buf.currentIndex === undefined ||
+      buf.levels.length <= file.levelset.minLevelsCount
         ? buf
         : {
             ...buf,
@@ -234,13 +244,9 @@ sample({
         RoMap.map(buffers, ({ levels }) =>
           levels.map((b) => b.undoQueue.current),
         ),
-        (levels, key) => {
-          if (files.has(key)) {
-            const fileLevels = files.get(key)!.levels;
-            return !fileLevels || !isEqualLevels(levels, fileLevels);
-          }
-          return false;
-        },
+        (levels, key) =>
+          files.has(key) &&
+          !isEqualLevels(levels, files.get(key)!.levelset.getLevels()),
       ),
   );
   // auto trigger flush for all after buffers changed

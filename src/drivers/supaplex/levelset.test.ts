@@ -60,7 +60,7 @@ describe("levelset", () => {
     const copy = levelset.appendLevel(c);
 
     expect(copy.levelsCount).toBe(3);
-    expect([...copy.getLevels()]).toEqual([a, b, c]);
+    expect(copy.getLevels()).toEqual([a, b, c]);
   });
 
   it("insertLevel", () => {
@@ -83,7 +83,7 @@ describe("levelset", () => {
     const copy = levelset.insertLevel(1, b);
 
     expect(copy.levelsCount).toBe(3);
-    expect([...copy.getLevels()]).toEqual([a, b, c]);
+    expect(copy.getLevels()).toEqual([a, b, c]);
   });
 
   it("removeLevel", () => {
@@ -95,12 +95,12 @@ describe("levelset", () => {
     let copy = levelset.removeLevel(1);
 
     expect(copy.levelsCount).toBe(2);
-    expect([...copy.getLevels()]).toEqual([a, c]);
+    expect(copy.getLevels()).toEqual([a, c]);
 
     copy = copy.removeLevel(0);
 
     expect(copy.levelsCount).toBe(1);
-    expect([...copy.getLevels()]).toEqual([c]);
+    expect(copy.getLevels()).toEqual([c]);
 
     expect(() => copy.removeLevel(0)).toThrow(
       new RangeError(`Cannot remove the last one level`),
