@@ -8,10 +8,11 @@ import {
   Store,
 } from "effector";
 import { saveAs } from "file-saver";
-import { flushDelayed } from "@cubux/effector-persistent";
+import { flushDelayed, withPersistent } from "@cubux/effector-persistent";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
 import { getDriver, IBaseLevel } from "drivers";
+import { localStorageDriver } from "../_utils/persistent";
 import { $currentKey, $currentLevelsetFile, $levelsets } from "./files";
 import {
   IBaseLevelsList,
@@ -102,21 +103,44 @@ const createLevelForFile = (file: LevelsetFile) => {
   return d.createLevel();
 };
 
+interface _OpenedIndicesWakeUp {
+  opened: ReadonlySet<number>;
+  current?: number;
+}
+type _OpenedIndicesWakeUpMap = ReadonlyMap<
+  LevelsetFileKey,
+  _OpenedIndicesWakeUp
+>;
+// temporary storage since page load until underlying file activated
+const _$wakeUpOpenedIndices = createStore<_OpenedIndicesWakeUpMap>(new Map());
+
 const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
   // remove buffers when a file closed
   .on($levelsets, (map, existing) =>
     RoMap.filter(map, (_, key) => existing.has(key)),
   )
   // init on file read done
-  .on($currentLevelsetFile, (map, current) => {
-    if (current && !map.has(current.key)) {
-      return RoMap.set(
-        map,
-        current.key,
-        readToBuffers(current.levelset.getLevels()),
-      );
-    }
-  })
+  .on(
+    sample({
+      clock: $currentLevelsetFile,
+      source: _$wakeUpOpenedIndices,
+      fn: (opened, current) => ({
+        current,
+        opened: current && opened.get(current.key),
+      }),
+    }),
+    (map, { current, opened }) => {
+      if (current && !map.has(current.key)) {
+        return RoMap.set(map, current.key, {
+          ...readToBuffers(
+            current.levelset.getLevels(),
+            opened?.opened || undefined,
+          ),
+          currentIndex: opened?.current,
+        });
+      }
+    },
+  )
   // switch per-level "is opened" state
   .on(_withCurrentKey(openLevel), (map, { current: key, value: index }) =>
     updateBufferLevel(map, key, index, (b) => ({ ...b, isOpened: true })),
@@ -208,6 +232,66 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
       b.undoQueue.canRedo ? { ...b, undoQueue: b.undoQueue.redo() } : b,
     ),
   );
+
+const _$openedIndices = _$buffersMap.map((map) =>
+  RoMap.map(
+    map,
+    (buf): _OpenedIndicesWakeUp => ({
+      opened: buf.levels.reduce(
+        (set, b, i) => (b.isOpened ? set.add(i) : set),
+        new Set<number>(),
+      ),
+      current: buf.currentIndex,
+    }),
+  ),
+);
+
+// persistent store indices for opened levels
+type _OpenedIndicesSerialized = readonly [
+  key: LevelsetFileKey,
+  opened: readonly number[],
+  current?: number | null,
+];
+type _OpenedIndicesSerializedList = readonly _OpenedIndicesSerialized[];
+withPersistent<string, _OpenedIndicesWakeUpMap, _OpenedIndicesSerializedList>(
+  _$openedIndices,
+  localStorageDriver,
+  "openedLevels",
+  {
+    wakeUp: _$wakeUpOpenedIndices,
+    serialize: (map: _OpenedIndicesWakeUpMap) =>
+      [...map]
+        .map<_OpenedIndicesSerialized>(([key, item]) => [
+          key,
+          [...item.opened].map((i) => i + 1),
+          item.current !== undefined ? item.current + 1 : undefined,
+        ])
+        .filter(([, list]) => list.length),
+    unserialize: (list) =>
+      new Map(
+        list.map(([key, list, c]) => [
+          key,
+          {
+            opened: new Set(list.map((i) => i - 1)),
+            current: typeof c === "number" ? c - 1 : undefined,
+          },
+        ]),
+      ),
+  },
+);
+
+// remove from `_$wakeUpOpenedIndices` those which are presented in `_$buffersMap`
+_$wakeUpOpenedIndices.on(
+  // keys in `_$buffersMap` which are present in `_$wakeUpOpenedIndices`
+  sample({
+    clock: _$buffersMap.map((files) => new Set([...files.keys()])),
+    source: _$wakeUpOpenedIndices,
+    fn: (wakeUp, loaded) =>
+      new Set([...wakeUp.keys()].filter((key) => loaded.has(key))),
+    target: createEvent<ReadonlySet<LevelsetFileKey>>(),
+  }),
+  (map, keys) => RoMap.filter(map, (_, k) => !keys.has(k)),
+);
 
 sample({
   clock: downloadCurrentFile,

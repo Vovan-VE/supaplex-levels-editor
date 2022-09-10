@@ -54,7 +54,13 @@ export const readToBuffer = <L extends IBaseLevel>(
 });
 export const readToBuffers = <L extends IBaseLevel>(
   levels: readonly L[],
-): LevelsetBuffers<L> => ({ levels: levels.map(readToBuffer) });
+  opened?: ReadonlySet<number>,
+): LevelsetBuffers<L> => ({
+  levels: levels.map((l, i) => ({
+    ...readToBuffer(l),
+    isOpened: opened?.has(i),
+  })),
+});
 
 export const updateBufferLevel = (
   map: LevelsetsBuffers,
