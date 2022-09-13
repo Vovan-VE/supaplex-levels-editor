@@ -92,9 +92,7 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
           uiColor={ColorType.SUCCESS}
           icon={<svgs.Download />}
           disabled={!currentFile}
-          title={
-            filename ? `Download file "${filename}" from memory` : undefined
-          }
+          title={filename ? `Save file "${filename}" from memory` : undefined}
           onClick={downloadCurrentFile}
         />
         <Button

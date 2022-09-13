@@ -1,2 +1,24 @@
+@use "styles/components";
+@use "styles/themes";
+
 .root {
+  @extend %panel-colors;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.text {
+  padding: 0.25rem 0.5rem;
+}
+
+.icon {
+  --btn-pad-x: 0.25rem;
+  --btn-pad-y: 0.25rem;
+  margin: 0 0.25rem;
+}
+
+.space {
+  flex: 1 1 0;
 }

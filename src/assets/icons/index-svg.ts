@@ -4,6 +4,7 @@ export { ReactComponent as DeleteRow } from "./DeleteRow.svg";
 export { ReactComponent as DirOpen } from "./DirOpen.svg";
 export { ReactComponent as Download } from "./Download.svg";
 export { ReactComponent as FileBlank } from "./FileBlank.svg";
+export { ReactComponent as Info } from "./Info.svg";
 export { ReactComponent as InsertRow } from "./InsertRow.svg";
 export { ReactComponent as Rename } from "./Rename.svg";
 export { ReactComponent as Trash } from "./Trash.svg";

@@ -1,21 +1,17 @@
 import { FC } from "react";
 import { LevelsetEditor } from "components/levelset";
 import { MainLayout } from "components/layout";
+import { ErrorBoundary } from "components/page";
 import { PromptContainer } from "ui/feedback";
 import { PopupContainer } from "utils/react";
 
 export const App: FC = () => (
-  <PopupContainer>
-    <MainLayout>
-      <LevelsetEditor />
-
-      {/*<div className={cl.testTiles}>*/}
-      {/*  {SupaplexDriver.tiles.map(*/}
-      {/*    (tile) => tile.Component && <tile.Component key={tile.value} />,*/}
-      {/*  )}*/}
-      {/*  {SupaplexDriver.unknownTile && <SupaplexDriver.unknownTile />}*/}
-      {/*</div>*/}
-    </MainLayout>
-    <PromptContainer />
-  </PopupContainer>
+  <ErrorBoundary>
+    <PopupContainer>
+      <MainLayout>
+        <LevelsetEditor />
+      </MainLayout>
+      <PromptContainer />
+    </PopupContainer>
+  </ErrorBoundary>
 );

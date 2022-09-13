@@ -2,6 +2,23 @@
   "name": "sp-ed",
   "version": "0.1.0",
   "private": true,
+  "description": "Supaplex levels editor in browser.",
+  "keywords": [
+    "supaplex",
+    "megaplex"
+  ],
+  "author": {
+    "name": "Vovan-VE",
+    "email": "vovan-ve@yandex.ru"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vovan-VE/sp-ed-dev.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Vovan-VE/sp-ed-dev/issues"
+  },
   "scripts": {
     "prepare": "npm ls husky > /dev/null && husky install || exit 0",
     "start": "react-scripts start",
