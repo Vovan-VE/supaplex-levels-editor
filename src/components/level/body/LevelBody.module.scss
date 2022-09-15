@@ -1,0 +1,39 @@
+@use "styles/colors/sp";
+@use "styles/mixins";
+
+.root {
+  overflow: auto;
+  @include mixins.default-scrollbar;
+  padding: 0.5rem;
+
+  --tile-size: 1.5rem;
+  --tiles-x: 1;
+  --tiles-y: 1;
+
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.canvas {
+  position: relative;
+  margin: 0 auto;
+  width: calc(var(--tiles-x) * var(--tile-size));
+  height: calc(var(--tiles-y) * var(--tile-size));
+  box-shadow: 0 0 0.5rem 0.2rem #{sp.$color-orange};
+}
+
+.tiles,
+.cover {
+  position: absolute;
+  inset: 0 0 0 0;
+}
+
+.cover {
+}
+
+.tiles {
+  display: grid;
+  grid-gap: 0;
+  grid-template-columns: repeat(var(--tiles-x), var(--tile-size));
+  grid-template-rows: repeat(var(--tiles-y), var(--tile-size));
+}

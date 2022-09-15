@@ -3,6 +3,7 @@ import { useStore } from "effector-react";
 import { Loading } from "components/page";
 import { $currentBuffer, $currentKey, flushBuffers } from "models/levelsets";
 import { LevelsHead } from "../LevelsHead";
+import { LevelEditor } from "../LevelEditor";
 import cl from "./LevelsetEditor.module.scss";
 
 export const LevelsetEditor: FC = () => {
@@ -44,8 +45,7 @@ export const LevelsetEditor: FC = () => {
   return (
     <div className={cl.root}>
       <LevelsHead key={key} className={cl.levels} />
-      <div className={cl.editor}></div>
-      <div className={cl.status}></div>
+      <LevelEditor className={cl.editor} />
     </div>
   );
 };

@@ -1,0 +1,21 @@
+@use "styles/colors/sp";
+
+.root {
+  white-space: normal;
+}
+
+.btn {
+  --btn-pad-x: 0.15rem;
+  --btn-pad-y: 0.15rem;
+  margin: 0;
+
+  i {
+    display: inline-block;
+    width: 1.75rem;
+    height: 1.75rem;
+    background-color: sp.$color-black;
+    background-position: center;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+}

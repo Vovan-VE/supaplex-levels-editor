@@ -1,0 +1,12 @@
+@use "styles/components/input/config" as i;
+@use "styles/mixins";
+
+.root {
+}
+
+.title {
+  @extend %font-family-mono;
+  display: inline-block;
+  width: calc(24ch + #{i.$all-extras-x});
+  max-width: calc(100vw - 3rem);
+}

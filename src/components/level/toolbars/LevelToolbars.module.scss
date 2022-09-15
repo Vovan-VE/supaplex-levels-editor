@@ -1,0 +1,25 @@
+@use "styles/components";
+
+.root {
+  @extend %panel-colors;
+  display: grid;
+  grid-gap: 0.5rem;
+
+  grid-template-columns: auto minmax(10rem, 1fr);
+  grid-template-areas:
+    "config tiles"
+    "tools  tiles";
+  align-items: center;
+}
+
+.config {
+  grid-area: config;
+}
+
+.tools {
+  grid-area: tools;
+}
+
+.tiles {
+  grid-area: tiles;
+}

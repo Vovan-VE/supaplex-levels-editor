@@ -1,3 +1,5 @@
+import { ISupaplexTile } from "./types";
+
 /**
  * Chars map
  *
@@ -19,8 +21,6 @@
  * ;              k         k         r       tz m
  * ```
  */
-import { ISupaplexTile } from "./types";
-import { svg } from "./tiles-svg";
 
 //            " o.@&*#ED>v<^)u(n!YTR|-+%:[]0123Z56789/\?W"
 const chars = " o·@&▢▓ED>v<^⊃∪⊂∩✂YTR|-+✧⚡⊏⊐0123▧56789⊓⊔⬚";
@@ -121,108 +121,44 @@ export const isSpecPort = (tile: number) =>
 
 export const tiles: readonly ISupaplexTile[] = [
   { value: TILE_SPACE, title: "Space" },
-  { value: TILE_ZONK, title: "Zonk", Component: svg._01_zonk },
-  { value: TILE_BASE, title: "Base", Component: svg._02_base },
-  { value: TILE_MURPHY, title: "Murphy", Component: svg._03_murphy },
-  { value: TILE_INFOTRON, title: "Infotron", Component: svg._04_infotron },
-  { value: TILE_CHIP, title: "Chip", Component: svg._05_chip },
-  { value: TILE_HARDWARE, title: "Hardware", Component: svg._06_hardware },
-  { value: TILE_EXIT, title: "Exit", Component: svg._07_exit },
-  { value: TILE_DISK_O, title: "Orange Disk", Component: svg._08_orange_disk },
-  { value: TILE_PORT_R, title: "Port Right", Component: svg._09_port_r },
-  { value: TILE_PORT_D, title: "Port Down", Component: svg._0a_port_d },
-  { value: TILE_PORT_L, title: "Port Left", Component: svg._0b_port_l },
-  { value: TILE_PORT_U, title: "Port Up", Component: svg._0c_port_u },
-  {
-    value: TILE_SP_PORT_R,
-    title: "Special Port Right",
-    Component: svg._0d_spec_port_r,
-  },
-  {
-    value: TILE_SP_PORT_D,
-    title: "Special Port Down",
-    Component: svg._0e_spec_port_d,
-  },
-  {
-    value: TILE_SP_PORT_L,
-    title: "Special Port Left",
-    Component: svg._0f_spec_port_l,
-  },
-  {
-    value: TILE_SP_PORT_U,
-    title: "Special Port Up",
-    Component: svg._10_spec_port_u,
-  },
-  { value: TILE_SNIK_SNAK, title: "Snik-Snak", Component: svg._11_snik_snak },
-  { value: TILE_DISK_Y, title: "Yellow Disk", Component: svg._12_yellow_disk },
-  { value: TILE_TERMINAL, title: "Terminal", Component: svg._13_terminal },
-  { value: TILE_DISK_R, title: "Red Disk", Component: svg._14_red_disk },
-  {
-    value: TILE_PORT_V,
-    title: "Port Vertical",
-    Component: svg._15_port_vertical,
-  },
-  {
-    value: TILE_PORT_H,
-    title: "Port Horizontal",
-    Component: svg._16_port_horizontal,
-  },
-  { value: TILE_PORT_X, title: "Port Cross", Component: svg._17_port_cross },
-  { value: TILE_ELECTRON, title: "Electron", Component: svg._18_electron },
-  { value: TILE_BUG, title: "Bug", Component: svg._19_bug },
-  { value: TILE_CHIP_L, title: "Chip Left", Component: svg._1a_chip_left },
-  { value: TILE_CHIP_R, title: "Chip Right", Component: svg._1b_chip_right },
-  {
-    value: TILE_HW_CIRCULAR,
-    title: "Hardware Circular",
-    Component: svg._1c_hw_circular,
-  },
-  {
-    value: TILE_HW_LAMP_G,
-    title: "Hardware Lamp Green",
-    Component: svg._1d_hw_g_lamp,
-  },
-  {
-    value: TILE_HW_LAMP_B,
-    title: "Hardware Lamp Blue",
-    Component: svg._1e_hw_b_lamp,
-  },
-  {
-    value: TILE_HW_LAMP_R,
-    title: "Hardware Lamp Red",
-    Component: svg._1f_hw_r_lamp,
-  },
-  {
-    value: TILE_HW_STRIPES,
-    title: "Hardware Stripes",
-    Component: svg._20_hw_stripes,
-  },
-  { value: TILE_HW_RES, title: "Hardware Resistor", Component: svg._21_hw_res },
-  {
-    value: TILE_HW_CAP,
-    title: "Hardware Capacitor",
-    Component: svg._22_hw_cap,
-  },
-  {
-    value: TILE_HW_RES_VAR,
-    title: "Hardware Resistors various",
-    Component: svg._23_hw_res_var,
-  },
-  {
-    value: TILE_HW_RES_VERT,
-    title: "Hardware Resistors vertical",
-    Component: svg._24_hw_res_vert,
-  },
-  {
-    value: TILE_HW_RES_HORZ,
-    title: "Hardware Resistors horizontal",
-    Component: svg._25_hw_res_horz,
-  },
-  { value: TILE_CHIP_T, title: "Chip Top", Component: svg._26_chip_top },
-  { value: TILE_CHIP_B, title: "Chip Bottom", Component: svg._27_chip_bottom },
-  {
-    value: TILE_INVIS_WALL,
-    title: "Invisible Wall",
-    Component: svg._28_invis_wall,
-  },
+  { value: TILE_ZONK, title: "Zonk" },
+  { value: TILE_BASE, title: "Base" },
+  { value: TILE_MURPHY, title: "Murphy" },
+  { value: TILE_INFOTRON, title: "Infotron" },
+  { value: TILE_CHIP, title: "Chip" },
+  { value: TILE_HARDWARE, title: "Hardware" },
+  { value: TILE_EXIT, title: "Exit" },
+  { value: TILE_DISK_O, title: "Orange Disk" },
+  { value: TILE_PORT_R, title: "Port Right" },
+  { value: TILE_PORT_D, title: "Port Down" },
+  { value: TILE_PORT_L, title: "Port Left" },
+  { value: TILE_PORT_U, title: "Port Up" },
+  { value: TILE_SP_PORT_R, title: "Special Port Right" },
+  { value: TILE_SP_PORT_D, title: "Special Port Down" },
+  { value: TILE_SP_PORT_L, title: "Special Port Left" },
+  { value: TILE_SP_PORT_U, title: "Special Port Up" },
+  { value: TILE_SNIK_SNAK, title: "Snik-Snak" },
+  { value: TILE_DISK_Y, title: "Yellow Disk" },
+  { value: TILE_TERMINAL, title: "Terminal" },
+  { value: TILE_DISK_R, title: "Red Disk" },
+  { value: TILE_PORT_V, title: "Port Vertical" },
+  { value: TILE_PORT_H, title: "Port Horizontal" },
+  { value: TILE_PORT_X, title: "Port Cross" },
+  { value: TILE_ELECTRON, title: "Electron" },
+  { value: TILE_BUG, title: "Bug" },
+  { value: TILE_CHIP_L, title: "Chip Left" },
+  { value: TILE_CHIP_R, title: "Chip Right" },
+  { value: TILE_HW_CIRCULAR, title: "Hardware Circular" },
+  { value: TILE_HW_LAMP_G, title: "Hardware Lamp Green" },
+  { value: TILE_HW_LAMP_B, title: "Hardware Lamp Blue" },
+  { value: TILE_HW_LAMP_R, title: "Hardware Lamp Red" },
+  { value: TILE_HW_STRIPES, title: "Hardware Stripes" },
+  { value: TILE_HW_RES, title: "Hardware Resistor" },
+  { value: TILE_HW_CAP, title: "Hardware Capacitor" },
+  { value: TILE_HW_RES_VAR, title: "Hardware Resistors various" },
+  { value: TILE_HW_RES_VERT, title: "Hardware Resistors vertical" },
+  { value: TILE_HW_RES_HORZ, title: "Hardware Resistors horizontal" },
+  { value: TILE_CHIP_T, title: "Chip Top" },
+  { value: TILE_CHIP_B, title: "Chip Bottom" },
+  { value: TILE_INVIS_WALL, title: "Invisible Wall" },
 ];

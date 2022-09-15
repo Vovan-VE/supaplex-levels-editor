@@ -47,10 +47,13 @@ export interface IBaseTileInteraction<L extends IBaseLevel> {
 export interface IBaseTile<L extends IBaseLevel> {
   value?: number;
   title: string;
-  Component?: FC;
   interaction?: IBaseTileInteraction<L>;
   // TODO: limits like spec ports counts and coords<=>offset, Murphy presence
   //   and like notices for infotrons % 256 in case of 'all'
+}
+
+export interface TileRenderProps {
+  tile?: number;
 }
 
 export interface IBaseDriver<
@@ -59,7 +62,7 @@ export interface IBaseDriver<
 > {
   title: string;
   tiles: readonly IBaseTile<L>[];
-  unknownTile?: FC;
+  TileRender: FC<TileRenderProps>;
   reader?: IBaseReader<S>;
   writer?: IBaseWriter<S>;
   createLevelset: (levels?: readonly L[] | Iterable<L>) => S;
