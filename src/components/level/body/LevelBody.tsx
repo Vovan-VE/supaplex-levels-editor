@@ -2,7 +2,7 @@ import { FC, memo } from "react";
 import cn from "classnames";
 import { useStore } from "effector-react";
 import { TileRenderProps } from "drivers";
-import { $drvTiles, $levelTiles } from "models/levels";
+import { $bodyScale, $drvTiles, $levelTiles } from "models/levels";
 import { ContainerProps } from "ui/types";
 import cl from "./LevelBody.module.scss";
 
@@ -11,12 +11,19 @@ interface Props extends ContainerProps {}
 export const LevelBody: FC<Props> = ({ className, ...rest }) => {
   const TileRender = useStore($drvTiles)!;
   const { width, height, chunks } = useStore($levelTiles)!;
+  const bodyScale = useStore($bodyScale);
 
   return (
     <div
       {...rest}
       className={cn(cl.root, className)}
-      style={{ "--tiles-x": width, "--tiles-y": height } as any}
+      style={
+        {
+          "--tiles-x": width,
+          "--tiles-y": height,
+          "--tile-size": `${bodyScale}rem`,
+        } as any
+      }
     >
       <div className={cl.canvas}>
         <div className={cl.tiles}>

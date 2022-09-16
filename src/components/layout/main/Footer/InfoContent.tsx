@@ -1,13 +1,14 @@
 import { FC } from "react";
+import { APP_NAME } from "configs";
 import cl from "./InfoContent.module.scss";
 
 export const InfoContent: FC = () => (
   <div className={cl.root}>
     <h1>
-      <code>sp-ed</code>
+      <code>{APP_NAME}</code>
     </h1>
     <p>
-      <code>sp-ed</code> is Supaplex levels editor in browser.
+      <code>{APP_NAME}</code> is Supaplex levels editor in browser.
     </p>
 
     <h2>How it works</h2>
@@ -41,6 +42,10 @@ export const InfoContent: FC = () => (
       <li>
         You can drop unneeded files from memory with appropriate button on the
         page.
+      </li>
+      <li>
+        <b>DO NOT</b> rely to the fact, that files are remembering in browser's
+        memory. <b>DO</b> save <b>BACKUPS</b>. Browser can clean storage.
       </li>
       <li>
         This page uses <code>indexedDB</code> and <code>localStorage</code>{" "}

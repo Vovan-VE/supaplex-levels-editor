@@ -3,12 +3,13 @@
 .root {
   @extend %panel-colors;
   display: grid;
-  grid-gap: 0.5rem;
+  //grid-gap: 0.5rem;
 
-  grid-template-columns: auto minmax(10rem, 1fr);
+  //grid-template-columns: auto minmax(10rem, 1fr);
+  grid-template-columns: auto auto;
   grid-template-areas:
-    "config tiles"
-    "tools  tiles";
+    "config tools"
+    "tiles  tiles";
   align-items: center;
 }
 

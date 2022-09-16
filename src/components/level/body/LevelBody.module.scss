@@ -6,7 +6,7 @@
   @include mixins.default-scrollbar;
   padding: 0.5rem;
 
-  --tile-size: 1.5rem;
+  --tile-size: 1.35rem;
   --tiles-x: 1;
   --tiles-y: 1;
 
@@ -19,7 +19,7 @@
   margin: 0 auto;
   width: calc(var(--tiles-x) * var(--tile-size));
   height: calc(var(--tiles-y) * var(--tile-size));
-  box-shadow: 0 0 0.5rem 0.2rem #{sp.$color-orange};
+  box-shadow: 0 0 0.5rem 0.3rem #{sp.$color-orange};
 }
 
 .tiles,

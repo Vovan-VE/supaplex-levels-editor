@@ -1,6 +1,8 @@
 import { combine, createEvent, createStore, sample } from "effector";
+import { withPersistent } from "@cubux/effector-persistent";
 import { getDriver } from "drivers";
 import { $currentLevel, $currentLevelsetFile } from "../levelsets";
+import { localStorageDriver } from "../_utils/persistent";
 
 const _$driver = $currentLevelsetFile.map(
   (f) => (f && getDriver(f.driverName)) || null,
@@ -31,6 +33,19 @@ export const $tile = combine(
 // current tool
 
 // body
+const SCALE_STEP = 0.05;
+const correctScale = (n: number) => (n < SCALE_STEP ? SCALE_STEP : n);
+export const setBodyScale = createEvent<number>();
+export const incBodyScale = createEvent<any>();
+export const decBodyScale = createEvent<any>();
+export const $bodyScale = withPersistent(
+  createStore(1.35),
+  localStorageDriver,
+  "bodyScale",
+)
+  .on(setBodyScale, (_, n) => correctScale(n))
+  .on(incBodyScale, (s) => s + SCALE_STEP)
+  .on(decBodyScale, (s) => correctScale(s - SCALE_STEP));
 
 export const $drvTiles = $currentLevelsetFile.map((file) => {
   if (file) {

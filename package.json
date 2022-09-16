@@ -14,10 +14,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Vovan-VE/sp-ed-dev.git"
+    "url": "git+https://github.com/Vovan-VE/sp-ed.git"
   },
   "bugs": {
-    "url": "https://github.com/Vovan-VE/sp-ed-dev/issues"
+    "url": "https://github.com/Vovan-VE/sp-ed/issues"
   },
   "scripts": {
     "prepare": "npm ls husky > /dev/null && husky install || exit 0",

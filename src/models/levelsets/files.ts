@@ -8,6 +8,7 @@ import {
 import { withPersistent, withPersistentMap } from "@cubux/effector-persistent";
 import * as RoMap from "@cubux/readonly-map";
 import { createIndexedDBDriver, createNullDriver } from "@cubux/storage-driver";
+import { APP_NAME } from "configs";
 import { getDriver } from "drivers";
 import { generateKey } from "utils/strings";
 import { localStorageDriver } from "../_utils/persistent";
@@ -106,7 +107,7 @@ export const $levelsets = withPersistentMap(
   process.env.NODE_ENV === "test"
     ? createNullDriver<LevelsetFileKey, _DbLevelsetFile>()
     : createIndexedDBDriver<LevelsetFileKey, _DbLevelsetFile>({
-        dbName: "sp-ed",
+        dbName: APP_NAME,
         dbVersion: 1,
         table: "levelset-files",
       }),
