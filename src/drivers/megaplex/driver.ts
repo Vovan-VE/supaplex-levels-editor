@@ -1,4 +1,5 @@
 import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../supaplex/box";
+import { fillLevelBorder } from "../supaplex/fillLevelBorder";
 import { Tile } from "../supaplex/Tile";
 import { tiles } from "../supaplex/tiles";
 import { IMegaplexDriver } from "./types";
@@ -13,5 +14,6 @@ export const MegaplexDriver: IMegaplexDriver = {
   reader,
   writer,
   createLevelset: (levels) => new MegaplexLevelset(levels),
-  createLevel: () => new MegaplexLevel(LEVEL_WIDTH, LEVEL_HEIGHT),
+  createLevel: () =>
+    fillLevelBorder(new MegaplexLevel(LEVEL_WIDTH, LEVEL_HEIGHT)),
 };
