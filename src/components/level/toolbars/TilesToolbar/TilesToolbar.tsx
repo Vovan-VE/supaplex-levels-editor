@@ -3,7 +3,7 @@ import cn from "classnames";
 import { useStore } from "effector-react";
 import { getDriver } from "drivers";
 import { $tileIndex, setTile } from "models/levels";
-import { $currentLevelsetFile } from "models/levelsets";
+import { $currentDriverName } from "models/levelsets";
 import { Button, Toolbar } from "ui/button";
 import { ContainerProps } from "ui/types";
 import cl from "./TilesToolbar.module.scss";
@@ -11,8 +11,8 @@ import cl from "./TilesToolbar.module.scss";
 interface Props extends ContainerProps {}
 
 export const TilesToolbar: FC<Props> = ({ className, ...rest }) => {
-  const levelset = useStore($currentLevelsetFile)!;
-  const { tiles, TileRender } = getDriver(levelset.driverName)!;
+  const driverName = useStore($currentDriverName)!;
+  const { tiles, TileRender } = getDriver(driverName)!;
 
   const tileIndex = useStore($tileIndex);
   const handleTile = useMemo(

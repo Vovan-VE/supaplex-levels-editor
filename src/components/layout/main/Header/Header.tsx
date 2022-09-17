@@ -3,7 +3,7 @@ import cn from "classnames";
 import { useStore } from "effector-react";
 import { detectDriver } from "drivers";
 import {
-  $currentLevelsetFile,
+  $currentFileName,
   addLevelsetFileFx,
   downloadCurrentFile,
   removeCurrentLevelsetFile,
@@ -19,9 +19,8 @@ import cl from "./Header.module.scss";
 interface Props extends ContainerProps {}
 
 export const Header: FC<Props> = ({ className, ...rest }) => {
-  const currentFile = useStore($currentLevelsetFile);
+  const filename = useStore($currentFileName);
 
-  const filename = currentFile?.name;
   const handleFile = useMemo(
     () =>
       filename
@@ -91,20 +90,20 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
         <Button
           uiColor={ColorType.SUCCESS}
           icon={<svgs.Download />}
-          disabled={!currentFile}
+          disabled={!filename}
           title={filename ? `Save file "${filename}" from memory` : undefined}
           onClick={downloadCurrentFile}
         />
         <Button
           icon={<svgs.Rename />}
-          disabled={!currentFile}
+          disabled={!filename}
           title="Rename file"
           onClick={handleFile?.rename}
         />
         <Button
           uiColor={ColorType.DANGER}
           icon={<svgs.Trash />}
-          disabled={!currentFile}
+          disabled={!filename}
           title={
             filename ? `Remove levelset "${filename}" from memory` : undefined
           }

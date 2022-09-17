@@ -1,12 +1,10 @@
 import { combine, createEvent, createStore, sample } from "effector";
 import { withPersistent } from "@cubux/effector-persistent";
 import { getDriver } from "drivers";
-import { $currentLevel, $currentLevelsetFile } from "../levelsets";
+import { $currentDriverName, $currentLevel } from "../levelsets";
 import { localStorageDriver } from "../_utils/persistent";
 
-const _$driver = $currentLevelsetFile.map(
-  (f) => (f && getDriver(f.driverName)) || null,
-);
+const _$driver = $currentDriverName.map((d) => (d && getDriver(d)) || null);
 
 // current tile
 
@@ -47,13 +45,7 @@ export const $bodyScale = withPersistent(
   .on(incBodyScale, (s) => s + SCALE_STEP)
   .on(decBodyScale, (s) => correctScale(s - SCALE_STEP));
 
-export const $drvTiles = $currentLevelsetFile.map((file) => {
-  if (file) {
-    const { TileRender } = getDriver(file.driverName)!;
-    return TileRender;
-  }
-  return null;
-});
+export const $drvTiles = _$driver.map((drv) => (drv && drv.TileRender) || null);
 
 export const $levelTiles = $currentLevel.map((level) => {
   if (level) {

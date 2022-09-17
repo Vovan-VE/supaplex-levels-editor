@@ -8,12 +8,10 @@ import cl from "./LevelToolbars.module.scss";
 
 interface Props extends ContainerProps {}
 
-export const LevelToolbars: FC<Props> = ({ className, ...rest }) => {
-  return (
-    <div {...rest} className={cn(cl.root, className)}>
-      <LevelConfig className={cl.config} />
-      <EditorTools className={cl.tools} />
-      <TilesToolbar className={cl.tiles} />
-    </div>
-  );
-};
+export const LevelToolbars: FC<Props> = ({ className, ...rest }) => (
+  <div {...rest} className={cn(cl.root, className)}>
+    <LevelConfig className={cl.config} />
+    <EditorTools className={cl.tools} />
+    <TilesToolbar className={cl.tiles} />
+  </div>
+);

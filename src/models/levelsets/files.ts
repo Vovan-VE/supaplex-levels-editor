@@ -164,3 +164,13 @@ export const $currentLevelsetFile = combine(
   $currentKey,
   (map, key) => (key && map.get(key)) || null,
 );
+
+export const $currentFileName = $currentLevelsetFile.map((f) =>
+  f ? f.name : null,
+);
+export const $currentDriverName = $currentLevelsetFile.map((f) =>
+  f ? f.driverName : null,
+);
+export const $currentLevelset = $currentLevelsetFile.map((f) =>
+  f ? f.levelset : null,
+);

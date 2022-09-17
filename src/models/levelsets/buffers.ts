@@ -416,6 +416,16 @@ export const $currentLevel = $currentBuffer.map((b) =>
     : null,
 );
 
+export const $currentLevelIndex = $currentLevel.map((c) =>
+  c ? c.index : null,
+);
+export const $currentLevelBuffer = $currentLevel.map(
+  (c) => (c && c.level) || null,
+);
+export const $currentLevelUndoQueue = $currentLevelBuffer.map((level) =>
+  level ? level.undoQueue : null,
+);
+
 /**
  * Shortcut for indices of opened levels in current levelset
  */

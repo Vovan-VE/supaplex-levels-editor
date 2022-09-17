@@ -1,15 +1,15 @@
 import { FC, Fragment } from "react";
 import cn from "classnames";
-import { useStoreMap } from "effector-react";
+import { useStore } from "effector-react";
 import { LevelBody, LevelToolbars } from "components/level";
-import { $currentLevel } from "models/levelsets";
+import { $currentLevelIndex } from "models/levelsets";
 import { ContainerProps } from "ui/types";
 import cl from "./LevelEditor.module.scss";
 
 interface Props extends ContainerProps {}
 
 export const LevelEditor: FC<Props> = ({ className, ...rest }) => {
-  const levelIndex = useStoreMap($currentLevel, (cur) => cur && cur.index);
+  const levelIndex = useStore($currentLevelIndex);
 
   return (
     <div {...rest} className={cn(cl.root, className)}>

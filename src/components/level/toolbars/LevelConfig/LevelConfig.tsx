@@ -2,7 +2,7 @@ import { FC } from "react";
 import cn from "classnames";
 import { useStore } from "effector-react";
 import { getDriver } from "drivers";
-import { $currentLevel, $currentLevelsetFile } from "models/levelsets";
+import { $currentDriverName, $currentLevelUndoQueue } from "models/levelsets";
 import { Button, Toolbar } from "ui/button";
 import { Input } from "ui/input";
 import { ContainerProps } from "ui/types";
@@ -11,10 +11,10 @@ import cl from "./LevelConfig.module.scss";
 interface Props extends ContainerProps {}
 
 export const LevelConfig: FC<Props> = ({ className, ...rest }) => {
-  const levelset = useStore($currentLevelsetFile)!;
-  const driver = getDriver(levelset.driverName)!;
-  const { level } = useStore($currentLevel)!;
-  const rawLevel = level.undoQueue.current;
+  const driverName = useStore($currentDriverName)!;
+  const driver = getDriver(driverName)!;
+  const undoQueue = useStore($currentLevelUndoQueue)!;
+  const rawLevel = undoQueue.current;
 
   return (
     <Toolbar {...rest} className={cn(cl.root, className)}>

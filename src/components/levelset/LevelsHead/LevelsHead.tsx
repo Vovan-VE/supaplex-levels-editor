@@ -4,7 +4,7 @@ import { useStore } from "effector-react";
 import {
   $currentBuffer,
   $currentLevel,
-  $currentLevelsetFile,
+  $currentLevelset,
   $currentOpenedIndices,
   appendLevel,
   closeLevel,
@@ -35,7 +35,7 @@ const fmtLevelFull = (index: number, maxDigits: number, title: string) =>
 interface Props extends ContainerProps {}
 
 export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
-  const file = useStore($currentLevelsetFile)!;
+  const fileLevelset = useStore($currentLevelset)!;
   const levelset = useStore($currentBuffer)!;
   const level = useStore($currentLevel);
   const openedIndices = useStore($currentOpenedIndices);
@@ -115,7 +115,6 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
     throw new Error("Logic error");
   }
 
-  const fileLevelset = file.levelset;
   const cannotAddLevelMessage =
     fileLevelset.maxLevelsCount !== null &&
     levelsCount >= fileLevelset.maxLevelsCount

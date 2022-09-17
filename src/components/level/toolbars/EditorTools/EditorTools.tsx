@@ -1,10 +1,8 @@
 import { FC } from "react";
 import cn from "classnames";
 import { useStore } from "effector-react";
-import { getDriver } from "drivers";
 import {
-  $currentLevel,
-  $currentLevelsetFile,
+  $currentLevelUndoQueue,
   redoCurrentLevel,
   undoCurrentLevel,
 } from "models/levelsets";
@@ -15,10 +13,9 @@ import cl from "./EditorTools.module.scss";
 interface Props extends ContainerProps {}
 
 export const EditorTools: FC<Props> = ({ className, ...rest }) => {
-  const levelset = useStore($currentLevelsetFile)!;
-  const driver = getDriver(levelset.driverName)!;
-  const { index, level } = useStore($currentLevel)!;
-  const { undoQueue } = level;
+  // const driverName = useStore($currentDriverName)!;
+  // const driver = getDriver(driverName)!;
+  const undoQueue = useStore($currentLevelUndoQueue)!;
 
   return (
     <Toolbar {...rest} className={cn(cl.root, className)}>
