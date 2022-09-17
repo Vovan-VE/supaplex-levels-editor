@@ -1,4 +1,9 @@
 .root {
+  h1 span {
+    font-size: 0.9rem;
+    font-weight: normal;
+  }
+
   > :first-child {
     margin-top: 0;
   }

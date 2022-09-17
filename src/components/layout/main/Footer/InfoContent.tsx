@@ -1,11 +1,11 @@
 import { FC } from "react";
-import { APP_NAME } from "configs";
+import { APP_NAME, APP_VERSION } from "configs";
 import cl from "./InfoContent.module.scss";
 
 export const InfoContent: FC = () => (
   <div className={cl.root}>
     <h1>
-      <code>{APP_NAME}</code>
+      <code>{APP_NAME}</code> <span>v{APP_VERSION}</span>
     </h1>
     <p>
       <code>{APP_NAME}</code> is Supaplex levels editor in browser.

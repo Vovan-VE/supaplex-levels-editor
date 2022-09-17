@@ -36,4 +36,12 @@ export const Footer: FC<Props> = ({ className, ...rest }) => (
   </footer>
 );
 
-const handleInfoClick = () => msgBox(<InfoContent />, { size: "full" });
+const handleInfoClick = () =>
+  msgBox(<InfoContent />, {
+    size: "full",
+    closeSetAutoFocus: true,
+    button: {
+      text: "Close",
+      autoFocus: false,
+    },
+  });

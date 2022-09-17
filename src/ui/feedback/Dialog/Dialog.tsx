@@ -29,6 +29,7 @@ export interface DialogProps {
   open?: boolean;
   // modal?: boolean;
   closeButton?: boolean;
+  closeSetAutoFocus?: boolean;
   unmountOnClose?: boolean;
   size?: DialogSize;
   title?: ReactNode;
@@ -41,6 +42,7 @@ export const Dialog: FC<PropsWithChildren<DialogProps>> = ({
   open = false,
   // modal = true,
   closeButton = true,
+  closeSetAutoFocus,
   unmountOnClose = true,
   size,
   title,
@@ -58,6 +60,7 @@ export const Dialog: FC<PropsWithChildren<DialogProps>> = ({
             icon={<svgs.Cross />}
             onClick={onClose}
             className={cl.close}
+            autoFocus={closeSetAutoFocus}
           />
         )}
         {(open || !unmountOnClose) && (
