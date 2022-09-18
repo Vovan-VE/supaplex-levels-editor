@@ -67,4 +67,6 @@ export interface IBaseDriver<
   writer?: IBaseWriter<S>;
   createLevelset: (levels?: readonly L[] | Iterable<L>) => S;
   createLevel: () => L;
+  // TODO: level config component
+  // TODO: create levelset config
 }

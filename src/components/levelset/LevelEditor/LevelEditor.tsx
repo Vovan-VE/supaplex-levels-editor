@@ -1,4 +1,4 @@
-import { FC, Fragment } from "react";
+import { FC } from "react";
 import cn from "classnames";
 import { useStore } from "effector-react";
 import { LevelBody, LevelToolbars } from "components/level";
@@ -14,11 +14,11 @@ export const LevelEditor: FC<Props> = ({ className, ...rest }) => {
   return (
     <div {...rest} className={cn(cl.root, className)}>
       {levelIndex !== null && (
-        <Fragment key={levelIndex}>
+        <>
           <LevelToolbars className={cl.toolbars} />
           <LevelBody className={cl.body} />
           {/*<div className={cl.status}>status</div>*/}
-        </Fragment>
+        </>
       )}
     </div>
   );

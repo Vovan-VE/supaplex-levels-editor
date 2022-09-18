@@ -403,6 +403,7 @@ export const $currentBuffer = combine(
   $currentKey,
   (map, key) => (key && map.get(key)) || null,
 );
+export const $currentBufferSelected = $currentBuffer.map(Boolean);
 
 /**
  * Editing buffer to current level in current levelset

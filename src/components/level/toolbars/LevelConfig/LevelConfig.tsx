@@ -1,12 +1,18 @@
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import cn from "classnames";
 import { useStore } from "effector-react";
 import { getDriver } from "drivers";
-import { $currentDriverName, $currentLevelUndoQueue } from "models/levelsets";
+import {
+  $currentDriverName,
+  $currentLevelUndoQueue,
+  updateCurrentLevel,
+} from "models/levelsets";
 import { Button, Toolbar } from "ui/button";
-import { Input } from "ui/input";
+import { useInputDebounce, ValueInput } from "ui/input";
 import { ContainerProps } from "ui/types";
 import cl from "./LevelConfig.module.scss";
+
+const formatTitle = (value: string) => value.trimEnd();
 
 interface Props extends ContainerProps {}
 
@@ -21,9 +27,28 @@ export const LevelConfig: FC<Props> = ({ className, ...rest }) => {
       <Button disabled={!rawLevel.resizable}>
         {rawLevel.width}x{rawLevel.height}
       </Button>
-      <Input
-        value={rawLevel.title}
-        readOnly
+      <ValueInput
+        // 1. Using `ValueInput` so the title "value" is a raw title with
+        // trailing spaces, but title "input" is trimmed. Otherwise, UX will be
+        // inconvenient either in one thing or another.
+        // 2. Using input debouncing to not explode UndoQueue with every letter
+        // typing.
+        //
+        // Both these two things cause good UX.
+        parseInput={useCallback(
+          (input) => input.padEnd(rawLevel.maxTitleLength, " "),
+          [rawLevel.maxTitleLength],
+        )}
+        formatValue={formatTitle}
+        emptyValue=""
+        {...useInputDebounce({
+          value: rawLevel.title,
+          onChangeEnd: useCallback(
+            (title: string) => updateCurrentLevel(rawLevel.setTitle(title)),
+            [rawLevel],
+          ),
+          debounceTimeout: 60 * 1000,
+        })}
         maxLength={rawLevel.maxTitleLength}
         className={cl.title}
       />

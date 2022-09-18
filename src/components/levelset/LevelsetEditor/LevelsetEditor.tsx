@@ -1,7 +1,12 @@
 import { FC, useEffect } from "react";
 import { useStore } from "effector-react";
 import { Loading } from "components/page";
-import { $currentBuffer, $currentKey, flushBuffers } from "models/levelsets";
+import {
+  $currentBufferSelected,
+  $currentKey,
+  $currentLevelIndex,
+  flushBuffers,
+} from "models/levelsets";
 import { LevelsHead } from "../LevelsHead";
 import { LevelEditor } from "../LevelEditor";
 import cl from "./LevelsetEditor.module.scss";
@@ -33,19 +38,20 @@ export const LevelsetEditor: FC = () => {
   }, []);
 
   const key = useStore($currentKey);
-  const levelset = useStore($currentBuffer);
+  const levelsetReady = useStore($currentBufferSelected);
+  const levelIndex = useStore($currentLevelIndex);
 
   if (!key) {
     return null;
   }
-  if (!levelset) {
+  if (!levelsetReady) {
     return <Loading />;
   }
 
   return (
     <div className={cl.root}>
       <LevelsHead key={key} className={cl.levels} />
-      <LevelEditor className={cl.editor} />
+      <LevelEditor key={`${key}:${levelIndex ?? ""}`} className={cl.editor} />
     </div>
   );
 };

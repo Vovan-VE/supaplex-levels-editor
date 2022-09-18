@@ -7,6 +7,7 @@ import {
   undoCurrentLevel,
 } from "models/levelsets";
 import { Button, Toolbar, ToolbarSeparator } from "ui/button";
+import { svgs } from "ui/icon";
 import { ContainerProps } from "ui/types";
 import cl from "./EditorTools.module.scss";
 
@@ -19,17 +20,21 @@ export const EditorTools: FC<Props> = ({ className, ...rest }) => {
 
   return (
     <Toolbar {...rest} className={cn(cl.root, className)}>
-      <Button disabled={!undoQueue.canUndo} onClick={undoCurrentLevel}>
-        Undo
-      </Button>
-      <Button disabled={!undoQueue.canRedo} onClick={redoCurrentLevel}>
-        Redo
-      </Button>
+      <Button
+        icon={<svgs.Undo />}
+        disabled={!undoQueue.canUndo}
+        onClick={undoCurrentLevel}
+      />
+      <Button
+        icon={<svgs.Redo />}
+        disabled={!undoQueue.canRedo}
+        onClick={redoCurrentLevel}
+      />
       <ToolbarSeparator />
-      <Button disabled>Cut</Button>
-      <Button disabled>Copy</Button>
-      <Button disabled>Paste</Button>
-      <Button disabled>Delete</Button>
+      <Button icon={<svgs.Cut />} disabled />
+      <Button icon={<svgs.Copy />} disabled />
+      <Button icon={<svgs.Paste />} disabled />
+      <Button icon={<svgs.DeleteSelection />} disabled />
       {/*<Button disabled>PNG</Button>*/}
       {/*<ToolbarSeparator />*/}
       {/*<Button disabled>Copy level to clipboard</Button>*/}
