@@ -4,6 +4,7 @@ import { tiles } from "./tiles";
 import { reader, writer } from "./io";
 import { SupaplexLevel } from "./level";
 import { SupaplexLevelset } from "./levelset";
+import { LevelConfigurator } from "./LevelConfigurator";
 import { fillLevelBorder } from "./fillLevelBorder";
 
 export const SupaplexDriver: ISupaplexDriver = {
@@ -14,4 +15,5 @@ export const SupaplexDriver: ISupaplexDriver = {
   writer,
   createLevelset: (levels) => new SupaplexLevelset(levels),
   createLevel: () => fillLevelBorder(new SupaplexLevel()),
+  LevelConfigurator,
 };

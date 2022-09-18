@@ -41,6 +41,10 @@ export class MegaplexLevel extends LevelFooter implements IMegaplexLevel {
     return result;
   }
 
+  get body() {
+    return this.#body;
+  }
+
   get width() {
     return this.#box.width;
   }

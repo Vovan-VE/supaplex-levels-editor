@@ -7,7 +7,7 @@ import {
   $currentLevelUndoQueue,
   updateCurrentLevel,
 } from "models/levelsets";
-import { Button, Toolbar } from "ui/button";
+import { Button, Toolbar, ToolbarSeparator } from "ui/button";
 import { useInputDebounce, ValueInput } from "ui/input";
 import { ContainerProps } from "ui/types";
 import cl from "./LevelConfig.module.scss";
@@ -18,7 +18,7 @@ interface Props extends ContainerProps {}
 
 export const LevelConfig: FC<Props> = ({ className, ...rest }) => {
   const driverName = useStore($currentDriverName)!;
-  const driver = getDriver(driverName)!;
+  const { LevelConfigurator } = getDriver(driverName)!;
   const undoQueue = useStore($currentLevelUndoQueue)!;
   const rawLevel = undoQueue.current;
 
@@ -52,7 +52,13 @@ export const LevelConfig: FC<Props> = ({ className, ...rest }) => {
         maxLength={rawLevel.maxTitleLength}
         className={cl.title}
       />
-      {/* TODO: configurator from driver */}
+
+      {LevelConfigurator && (
+        <>
+          <ToolbarSeparator />
+          <LevelConfigurator level={rawLevel} onChange={updateCurrentLevel} />
+        </>
+      )}
     </Toolbar>
   );
 };

@@ -50,6 +50,10 @@ export class SupaplexLevel extends LevelFooter implements ISupaplexLevel {
     return result;
   }
 
+  get body() {
+    return this.#body;
+  }
+
   get width() {
     return LEVEL_WIDTH;
   }

@@ -56,6 +56,11 @@ export interface TileRenderProps {
   tile?: number;
 }
 
+export interface LevelConfiguratorProps<L extends IBaseLevel> {
+  level: L;
+  onChange: (level: L) => void;
+}
+
 export interface IBaseDriver<
   L extends IBaseLevel = IBaseLevel,
   S extends IBaseLevelset<L> = IBaseLevelset<L>,
@@ -67,6 +72,6 @@ export interface IBaseDriver<
   writer?: IBaseWriter<S>;
   createLevelset: (levels?: readonly L[] | Iterable<L>) => S;
   createLevel: () => L;
-  // TODO: level config component
+  LevelConfigurator?: FC<LevelConfiguratorProps<L>>;
   // TODO: create levelset config
 }

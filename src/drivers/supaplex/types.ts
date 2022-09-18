@@ -6,6 +6,7 @@ import {
   IBaseTile,
   IBaseWriter,
 } from "../types";
+import { ILevelBody } from "./internal";
 
 export interface ISupaplexSpecPortProps {
   setsGravity: boolean;
@@ -20,6 +21,7 @@ export interface ISupaplexSpecPort extends ISupaplexSpecPortProps {
 
 export interface ISupaplexLevel extends IBaseLevel {
   readonly raw: Uint8Array;
+  readonly body: ILevelBody;
   readonly initialGravity: boolean;
   setInitialGravity(on: boolean): this;
   readonly initialFreezeZonks: boolean;
