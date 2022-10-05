@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { CSSProperties, FC } from "react";
 
 interface ISizeLimit {
   readonly minWidth?: number;
@@ -54,6 +54,7 @@ export interface IBaseTile<L extends IBaseLevel> {
 
 export interface TileRenderProps {
   tile?: number;
+  style?: CSSProperties;
 }
 
 export interface LevelConfiguratorProps<L extends IBaseLevel> {
