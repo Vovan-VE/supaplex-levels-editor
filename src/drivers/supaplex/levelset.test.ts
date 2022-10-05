@@ -1,6 +1,7 @@
 import { SupaplexLevelset } from "./levelset";
 import { dumpLevel } from "./helpers.dev";
 import { SupaplexLevel } from "./level";
+import { fillLevelBorder } from "./fillLevelBorder";
 
 describe("levelset", () => {
   describe("constructor", () => {
@@ -15,7 +16,7 @@ describe("levelset", () => {
 
       expect(levelset.levelsCount).toBe(3);
 
-      const empty = dumpLevel(new SupaplexLevel());
+      const empty = dumpLevel(fillLevelBorder(new SupaplexLevel()));
       for (const level of levelset.getLevels()) {
         expect(dumpLevel(level)).toEqual(empty);
       }

@@ -1,5 +1,6 @@
 import { ISupaplexLevel, ISupaplexLevelset } from "./types";
 import { SupaplexLevel } from "./level";
+import { fillLevelBorder } from "./fillLevelBorder";
 import { IBaseLevelset } from "../types";
 
 const validateLevelsCount =
@@ -87,8 +88,9 @@ export class Levelset<L extends ISupaplexLevel> implements IBaseLevelset<L> {
 const newLevels = (count: number) => {
   validateLevelsCount?.(count);
   const result: ISupaplexLevel[] = [];
+  const level = fillLevelBorder(new SupaplexLevel());
   for (let i = count; i-- > 0; ) {
-    result.push(new SupaplexLevel());
+    result.push(level);
   }
   return result;
 };

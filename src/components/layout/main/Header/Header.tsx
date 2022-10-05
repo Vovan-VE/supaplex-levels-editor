@@ -4,6 +4,7 @@ import { useStore } from "effector-react";
 import { detectDriver } from "drivers";
 import {
   $currentFileName,
+  addEmptyLevelsetFileFx,
   addLevelsetFileFx,
   downloadCurrentFile,
   removeCurrentLevelsetFile,
@@ -76,7 +77,11 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
   return (
     <header {...rest} className={cn(cl.root, className)}>
       <Toolbar className={cl.start}>
-        <Button icon={<svgs.FileBlank />} title="Create new levelset..." />
+        <Button
+          icon={<svgs.FileBlank />}
+          title="Create new levelset..."
+          onClick={handleNewClick}
+        />
         <Button
           icon={<svgs.DirOpen />}
           onClick={handleOpenClick}
@@ -113,6 +118,14 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
     </header>
   );
 };
+
+function handleNewClick() {
+  // TODO: prompt dialog: driver & its options
+  addEmptyLevelsetFileFx({
+    driverName: "supaplex",
+    name: "new.dat",
+  });
+}
 
 function handleOpenClick() {
   const d = window.document;
