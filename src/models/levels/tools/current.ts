@@ -1,9 +1,10 @@
 import { combine, createEvent, createStore, sample } from "effector";
+import { $currentKey, $currentLevelIndex } from "../../levelsets";
 import { Tool } from "./interface";
 import { PEN } from "./_pen";
-import { $currentKey, $currentLevelIndex } from "../../levelsets";
 
 export const setTool = createEvent<number>();
+export const setToolVariant = createEvent<number>();
 export const rollbackWork = createEvent<any>();
 
 const TOOLS: readonly Tool[] = [PEN];
@@ -33,7 +34,7 @@ const $toolsUIs = combine(TOOLS.map(({ $ui }) => $ui));
 export const $toolUI = combine(
   $toolsUIs,
   $toolIndex,
-  (uis, index) => uis[index],
+  (UIs, index) => UIs[index],
 );
 
 // current file or level probably can be changed on touch screen with secondary
@@ -45,4 +46,13 @@ sample({
   const { $ui } = TOOLS[index];
   const { rollback } = $ui.getState();
   rollback();
+});
+
+sample({
+  clock: setToolVariant,
+  source: $toolIndex,
+  fn: (index, variant) => ({ index, variant }),
+}).watch(({ index, variant }) => {
+  const { setVariant } = TOOLS[index];
+  setVariant(variant);
 });

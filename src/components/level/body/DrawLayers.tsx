@@ -1,7 +1,7 @@
 import { useStore } from "effector-react";
 import { FC, memo } from "react";
 import { $drvTiles } from "models/levels";
-import { DrawLayer } from "models/levels/tools";
+import { DrawLayer, DrawLayerType } from "models/levels/tools";
 import { ContainerProps } from "ui/types";
 import cn from "classnames";
 
@@ -31,7 +31,7 @@ const DrawLayerItem = memo<LayerProps>(({ layer }) => {
   const { x: LX, y: LY } = layer;
 
   switch (layer.type) {
-    case "tiles": {
+    case DrawLayerType.TILES: {
       const { tiles } = layer;
       return (
         <>
@@ -51,7 +51,7 @@ const DrawLayerItem = memo<LayerProps>(({ layer }) => {
       );
     }
 
-    case "custom": {
+    case DrawLayerType.CUSTOM: {
       const { Component } = layer;
       return <Component x={LX} y={LX} />;
     }

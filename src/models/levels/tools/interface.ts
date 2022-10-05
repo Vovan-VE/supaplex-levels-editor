@@ -37,8 +37,12 @@ export interface GridEventsProps {
 export type CellKey = `${number}:${number}`;
 export const cellKey = ({ x, y }: CellCoords): CellKey => `${x}:${y}`;
 
+export const enum DrawLayerType {
+  TILES = "t",
+  CUSTOM = "c",
+}
 interface BaseDrawLayer extends CellCoords {
-  type: string;
+  type: DrawLayerType;
 }
 
 export interface TileCell extends CellCoords {
@@ -46,12 +50,12 @@ export interface TileCell extends CellCoords {
 }
 export type TilesPath = ReadonlyMap<CellKey, TileCell>;
 interface DrawLayerTiles extends BaseDrawLayer {
-  type: "tiles";
+  type: DrawLayerType.TILES;
   tiles: TilesPath;
 }
 
 interface DrawLayerCustom extends BaseDrawLayer {
-  type: "custom";
+  type: DrawLayerType.CUSTOM;
   Component: FC<CellCoords>;
 }
 
@@ -68,8 +72,16 @@ export interface ToolUI {
   Dialogs?: FC;
 }
 
+export interface ToolVariantUI {
+  title: string;
+  Icon: FC;
+}
+
 export interface Tool {
   init: Event<any>;
   free: Event<any>;
+  variants: readonly ToolVariantUI[];
+  setVariant: Event<number>;
+  $variant: Store<number>;
   $ui: Store<ToolUI>;
 }

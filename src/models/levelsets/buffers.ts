@@ -416,7 +416,9 @@ export const $currentLevel = $currentBuffer.map((b) =>
       }
     : null,
 );
-
+export const $currentLevelIsSelected = $currentBuffer.map(
+  (b) => b !== null && b.currentIndex !== undefined,
+);
 export const $currentLevelIndex = $currentLevel.map((c) =>
   c ? c.index : null,
 );
@@ -425,6 +427,13 @@ export const $currentLevelBuffer = $currentLevel.map(
 );
 export const $currentLevelUndoQueue = $currentLevelBuffer.map((level) =>
   level ? level.undoQueue : null,
+);
+export interface IBounds {
+  width: number;
+  height: number;
+}
+export const $currentLevelSize = $currentLevelUndoQueue.map<IBounds | null>(
+  (q) => (q ? { width: q.current.width, height: q.current.height } : null),
 );
 
 /**
