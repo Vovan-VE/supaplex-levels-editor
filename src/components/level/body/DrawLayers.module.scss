@@ -1,0 +1,9 @@
+.root {
+}
+
+.typeTiles {
+  > * {
+    grid-column: calc(1 + var(--x));
+    grid-row: calc(1 + var(--y));
+  }
+}

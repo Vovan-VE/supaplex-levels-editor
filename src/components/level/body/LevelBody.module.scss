@@ -35,12 +35,3 @@
   grid-template-columns: repeat(var(--tiles-x), var(--tile-size));
   grid-template-rows: repeat(var(--tiles-y), var(--tile-size));
 }
-
-.drawLayer {
-  &:global(.layer-tiles) {
-    > * {
-      grid-column: calc(1 + var(--x));
-      grid-row: calc(1 + var(--y));
-    }
-  }
-}
