@@ -5,31 +5,48 @@ export interface CellCoords {
   x: number;
   y: number;
 }
-
-type CopyEventProps = Pick<
-  PointerEvent<any>,
-  "type" | "button" | "buttons" | "altKey" | "ctrlKey" | "metaKey" | "shiftKey"
->;
-
-export interface CellEventSnapshot extends CellCoords, CopyEventProps {
+export interface CellEventProps {
   width: number;
   height: number;
   inBounds: boolean;
 }
+
+type ModifiersEventProps = Pick<
+  PointerEvent<any>,
+  "altKey" | "ctrlKey" | "metaKey" | "shiftKey"
+>;
+type ButtonsEventProps = Pick<PointerEvent<any>, "type" | "button" | "buttons">;
+
+interface CellBaseEventProps
+  extends CellCoords,
+    CellEventProps,
+    ModifiersEventProps {}
+
+export interface CellEventSnapshot
+  extends CellBaseEventProps,
+    ButtonsEventProps {}
 
 export type GridPointerEvent = PointerEvent<HTMLDivElement>;
 export type GridPointerEventHandler = (
   event: GridPointerEvent,
   cell: CellEventSnapshot,
 ) => void;
+export type GridPointerCancelEventHandler = (
+  event?: GridPointerEvent,
+  cell?: CellEventSnapshot,
+) => void;
+
+export interface CellContextEventSnapshot extends CellBaseEventProps {}
+export type GridContextEventHandler = (cell: CellContextEventSnapshot) => void;
 
 export interface GridEventsProps {
   onPointerDown?: GridPointerEventHandler | undefined;
   onPointerMove?: GridPointerEventHandler | undefined;
   onPointerUp?: GridPointerEventHandler | undefined;
-  onPointerCancel?: GridPointerEventHandler | undefined;
+  onPointerCancel?: GridPointerCancelEventHandler | undefined;
   onPointerEnter?: GridPointerEventHandler | undefined;
   onPointerLeave?: GridPointerEventHandler | undefined;
+  onContextMenu?: GridContextEventHandler | undefined;
 }
 
 //-------------------------------

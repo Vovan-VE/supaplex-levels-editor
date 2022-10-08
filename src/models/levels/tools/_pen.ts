@@ -13,8 +13,8 @@ import {
   CellEventSnapshot,
   cellKey,
   DrawLayerType,
+  GridContextEventHandler,
   GridEventsProps,
-  GridPointerEventHandler,
   TilesPath,
   Tool,
   ToolUI,
@@ -172,6 +172,9 @@ sample({
   target: updateCurrentLevel,
 });
 
+const onContextMenu: GridContextEventHandler = () => {
+  // TODO: driver context actions
+};
 const eventsIdle: GridEventsProps = {
   onPointerDown: (e, cell) => {
     if (e.button === 0 && e.buttons === 1 && cell.inBounds) {
@@ -182,23 +185,24 @@ const eventsIdle: GridEventsProps = {
       }
     }
   },
+  onContextMenu: onContextMenu,
 };
 
-const onPointerEnd: GridPointerEventHandler = (e, cell) => {
-  tryDrawEnd(cell);
-};
 const eventsWork: GridEventsProps = {
   onPointerMove: (e, cell) => {
     if (e.buttons === 1 && cell.inBounds) {
       tryDrawMove(cell);
     }
   },
-  onPointerDown: onPointerEnd,
+  onPointerDown: (e, cell) => {
+    tryDrawEnd(cell);
+  },
   onPointerUp: (e, cell) => {
     tryDrawMove(cell);
     tryDrawEnd(cell);
   },
-  onPointerCancel: onPointerEnd,
+  onPointerCancel: rollback,
+  onContextMenu: onContextMenu,
 };
 
 export const PEN: Tool = {

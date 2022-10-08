@@ -1,3 +1,5 @@
+import cn from "classnames";
+import equal from "fast-deep-equal";
 import {
   FC,
   MutableRefObject,
@@ -8,7 +10,6 @@ import {
   useRef,
   useState,
 } from "react";
-import equal from "fast-deep-equal";
 import {
   CellEventSnapshot,
   GridEventsProps,
@@ -17,7 +18,6 @@ import {
 } from "models/levels/tools";
 import { ContainerProps } from "ui/types";
 import cl from "./CoverGrid.module.scss";
-import cn from "classnames";
 
 const snapshotEvent = (
   {
@@ -102,6 +102,7 @@ export const CoverGrid: FC<Props> = ({
   onPointerCancel,
   onPointerEnter,
   onPointerLeave,
+  onContextMenu,
   className,
   ...rest
 }) => {
@@ -125,15 +126,23 @@ export const CoverGrid: FC<Props> = ({
   const handleEnter = useGridPointerEventHandler(onPointerEnter, calc, prev);
   const handleLeave = useGridPointerEventHandler(onPointerLeave, calc, prev);
 
+  const handleContextMenu = useCallback(
+    (e: GridPointerEvent) => {
+      e.preventDefault();
+      const cell = calc(e);
+      onContextMenu?.(cell);
+      onPointerCancel?.(e, cell);
+    },
+    [onPointerCancel, onContextMenu, calc],
+  );
+
   const handleTouchStart = useCallback<TouchEventHandler>((e) => {
     if (e.changedTouches.length === 1 && e.targetTouches.length === 1) {
-      // e.preventDefault();
       setTouchPhase((prev) => (prev === TouchPhase.NO ? TouchPhase.ONE : prev));
       return;
     }
 
     if (e.targetTouches.length >= 2) {
-      // e.preventDefault();
       setTouchPhase((prev) =>
         [TouchPhase.NO, TouchPhase.ONE].includes(prev)
           ? TouchPhase.SCROLL
@@ -154,7 +163,6 @@ export const CoverGrid: FC<Props> = ({
 
   const handleTouchMove = useCallback<TouchEventHandler>((e) => {
     if (e.changedTouches.length === 1 && e.targetTouches.length === 1) {
-      // e.preventDefault();
       setTouchPhase((prev) =>
         prev === TouchPhase.ONE ? TouchPhase.DRAW : prev,
       );
@@ -175,6 +183,7 @@ export const CoverGrid: FC<Props> = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchCancel}
+      onContextMenu={handleContextMenu}
     />
   );
 };
