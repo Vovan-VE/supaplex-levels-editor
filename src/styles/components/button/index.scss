@@ -57,6 +57,7 @@
   border: var(--btn-border-width) solid var(--btn-border-color);
   background: var(--btn-bg);
   transition: config.$btn-transition;
+  touch-action: manipulation;
 
   &:hover {
     color: var(--btn-hover-color);

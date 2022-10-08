@@ -27,7 +27,7 @@ export const LevelBody: FC<Props> = ({ className, ...rest }) => {
           {
             "--tiles-x": width,
             "--tiles-y": height,
-            "--tile-size": `${bodyScale}rem`,
+            "--tile-size": `${bodyScale.toFixed(0)}px`,
           } as any
         }
       >
