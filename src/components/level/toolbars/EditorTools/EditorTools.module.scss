@@ -1,2 +1,11 @@
 .root {
 }
+
+.popupToolbar {
+  padding: 0;
+
+  > button,
+  > a {
+    margin: 0;
+  }
+}

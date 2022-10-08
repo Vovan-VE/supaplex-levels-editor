@@ -1,45 +1,89 @@
 import { FC } from "react";
 import cn from "classnames";
 import { useStore } from "effector-react";
+import { Rect } from "@popperjs/core";
 import {
-  $currentLevelUndoQueue,
-  redoCurrentLevel,
-  undoCurrentLevel,
-} from "models/levelsets";
-import { Button, Toolbar, ToolbarSeparator } from "ui/button";
-import { svgs } from "ui/icon";
-import { ContainerProps } from "ui/types";
+  $toolIndex,
+  $toolsVariants,
+  setTool,
+  setToolVariant,
+  TOOLS,
+} from "models/levels/tools";
+import { Button, ButtonDropdown, TextButton, Toolbar } from "ui/button";
+import { ColorType, ContainerProps } from "ui/types";
 import cl from "./EditorTools.module.scss";
 
 interface Props extends ContainerProps {}
 
+const mod = [
+  {
+    name: "offset",
+    options: {
+      offset: ({ reference }: { reference: Rect }) => [0, -reference.width],
+    },
+  },
+];
+
+const selectedColor = ColorType.WARN;
+
+const handleClicks = TOOLS.map(({ variants }, ti) => ({
+  onTool: () => setTool(ti),
+  onVariants: variants.map((_, vi) => () => {
+    setTool(ti);
+    setToolVariant(vi);
+  }),
+}));
+
 export const EditorTools: FC<Props> = ({ className, ...rest }) => {
-  // const driverName = useStore($currentDriverName)!;
-  // const driver = getDriver(driverName)!;
-  const undoQueue = useStore($currentLevelUndoQueue)!;
+  const toolIndex = useStore($toolIndex);
+  const toolsVariants = useStore($toolsVariants);
 
   return (
     <Toolbar {...rest} className={cn(cl.root, className)}>
-      <Button
-        icon={<svgs.Undo />}
-        disabled={!undoQueue.canUndo}
-        onClick={undoCurrentLevel}
-      />
-      <Button
-        icon={<svgs.Redo />}
-        disabled={!undoQueue.canRedo}
-        onClick={redoCurrentLevel}
-      />
-      <ToolbarSeparator />
-      <Button icon={<svgs.Cut />} disabled />
-      <Button icon={<svgs.Copy />} disabled />
-      <Button icon={<svgs.Paste />} disabled />
-      <Button icon={<svgs.DeleteSelection />} disabled />
-      {/*<Button disabled>PNG</Button>*/}
-      {/*<ToolbarSeparator />*/}
-      {/*<Button disabled>Copy level to clipboard</Button>*/}
-      {/*<Button disabled>Paste level from clipboard</Button>*/}
-      {/*<Button disabled>Internal/System clipboard? (via textarea?)</Button>*/}
+      {TOOLS.map(({ variants }, ti) => {
+        const curVariantIndex = toolsVariants[ti];
+        const v = variants[curVariantIndex];
+        const { onTool, onVariants } = handleClicks[ti];
+
+        const toolColor = ti === toolIndex ? selectedColor : undefined;
+        const curVariantButton = (
+          <Button
+            key={ti}
+            icon={<v.Icon />}
+            title={v.title}
+            uiColor={toolColor}
+            onClick={onTool}
+          />
+        );
+
+        if (variants.length === 1) {
+          return curVariantButton;
+        }
+
+        return (
+          <ButtonDropdown
+            key={ti}
+            standalone={curVariantButton}
+            buttonProps={{ uiColor: toolColor }}
+            placement="right"
+            modifiers={mod}
+          >
+            <Toolbar className={cl.popupToolbar}>
+              {variants.map((v, vi) => (
+                <TextButton
+                  key={vi}
+                  icon={<v.Icon />}
+                  title={v.title}
+                  uiColor={
+                    vi === curVariantIndex ? selectedColor : ColorType.MUTE
+                  }
+                  onClick={onVariants[vi]}
+                />
+              ))}
+            </Toolbar>
+          </ButtonDropdown>
+        );
+      })}
     </Toolbar>
   );
 };

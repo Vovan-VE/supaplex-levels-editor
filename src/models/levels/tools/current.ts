@@ -7,10 +7,10 @@ export const setTool = createEvent<number>();
 export const setToolVariant = createEvent<number>();
 export const rollbackWork = createEvent<any>();
 
-const TOOLS: readonly Tool[] = [PEN];
+export const TOOLS: readonly Tool[] = [PEN];
 
 const setToolInternal = createEvent<number>();
-const $toolIndex = createStore(0).on(setToolInternal, (_, n) => n);
+export const $toolIndex = createStore(0).on(setToolInternal, (_, n) => n);
 const willSetTool = sample({
   clock: setTool,
   source: $toolIndex,
@@ -30,9 +30,14 @@ willSetTool.watch((index) => {
   setToolInternal(index);
 });
 
-const $toolsUIs = combine(TOOLS.map(({ $ui }) => $ui));
+export const $toolsVariants = combine(TOOLS.map(({ $variant }) => $variant));
+// export const $toolVariant = combine(
+//   $toolsVariants,
+//   $toolIndex,
+//   (variants, index) => variants[index],
+// );
 export const $toolUI = combine(
-  $toolsUIs,
+  combine(TOOLS.map(({ $ui }) => $ui)),
   $toolIndex,
   (UIs, index) => UIs[index],
 );

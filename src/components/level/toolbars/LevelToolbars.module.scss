@@ -6,10 +6,10 @@
   //grid-gap: 0.5rem;
 
   //grid-template-columns: auto minmax(10rem, 1fr);
-  grid-template-columns: auto auto;
+  grid-template-columns: auto auto auto;
   grid-template-areas:
-    "config tools"
-    "tiles  tiles";
+    "tools edit  config"
+    "tiles tiles tiles";
   align-items: center;
 }
 
@@ -19,6 +19,10 @@
 
 .tools {
   grid-area: tools;
+}
+
+.edit {
+  grid-area: edit;
 }
 
 .tiles {

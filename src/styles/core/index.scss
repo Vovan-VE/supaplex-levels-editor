@@ -1,1 +1,13 @@
 @use "./reset";
+
+body {
+  --scrollbar-thin: 6px;
+  --scrollbar-norm: 12px;
+
+  @media (hover: none) {
+    --scrollbar-thin: 2px;
+    --scrollbar-norm: 4px;
+  }
+
+  --z-index-popup: 2;
+}

@@ -2,9 +2,9 @@
 
 @function _w($thin: null) {
   @if $thin {
-    @return 6px;
+    @return var(--scrollbar-thin);
   }
-  @return 12px;
+  @return var(--scrollbar-norm);
 }
 
 @mixin scrollbar-custom(

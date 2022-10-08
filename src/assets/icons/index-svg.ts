@@ -1,4 +1,5 @@
 export { ReactComponent as AppendRow } from "./AppendRow.svg";
+export { ReactComponent as ArrowTriangleUp } from "./ArrowTriangleUp.svg";
 export { ReactComponent as CheckboxChecked } from "./CheckboxChecked.svg";
 export { ReactComponent as CheckboxUnchecked } from "./CheckboxUnchecked.svg";
 export { ReactComponent as Copy } from "./Copy.svg";
