@@ -15,6 +15,8 @@ import {
   GridEventsProps,
   GridPointerEvent,
   GridPointerEventHandler,
+  removeFeedbackCell,
+  setFeedbackCell,
 } from "models/levels/tools";
 import { ContainerProps } from "ui/types";
 import cl from "./CoverGrid.module.scss";
@@ -116,15 +118,42 @@ export const CoverGrid: FC<Props> = ({
   const [touchPhase, setTouchPhase] = useState(TouchPhase.NO);
 
   const handleDown = useGridPointerEventHandler(onPointerDown, calc, prev);
+  const _onMove = touchPhase === TouchPhase.SCROLL ? undefined : onPointerMove;
   const handleMove = useGridPointerEventHandler(
-    touchPhase === TouchPhase.SCROLL ? undefined : onPointerMove,
+    useCallback<GridPointerEventHandler>(
+      (e, cell) => {
+        setFeedbackCell(cell);
+        _onMove?.(e, cell);
+      },
+      [_onMove],
+    ),
     calc,
     prev,
   );
   const handleUp = useGridPointerEventHandler(onPointerUp, calc, prev);
   const handleCancel = useGridPointerEventHandler(onPointerCancel, calc, prev);
-  const handleEnter = useGridPointerEventHandler(onPointerEnter, calc, prev);
-  const handleLeave = useGridPointerEventHandler(onPointerLeave, calc, prev);
+  const handleEnter = useGridPointerEventHandler(
+    useCallback<GridPointerEventHandler>(
+      (e, cell) => {
+        setFeedbackCell(cell);
+        onPointerEnter?.(e, cell);
+      },
+      [onPointerEnter],
+    ),
+    calc,
+    prev,
+  );
+  const handleLeave = useGridPointerEventHandler(
+    useCallback<GridPointerEventHandler>(
+      (e, cell) => {
+        removeFeedbackCell();
+        onPointerLeave?.(e, cell);
+      },
+      [onPointerLeave],
+    ),
+    calc,
+    prev,
+  );
 
   const handleContextMenu = useCallback(
     (e: GridPointerEvent) => {

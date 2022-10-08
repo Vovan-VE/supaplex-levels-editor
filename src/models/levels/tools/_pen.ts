@@ -24,13 +24,24 @@ import {
 const enum PenShape {
   DOT,
   _3x3,
+  // TODO: 2x1 & 1x2 with driver specific hacks (sp double chips)
 }
 interface Variant extends ToolVariantUI {
   shape: PenShape;
 }
 const VARIANTS: readonly Variant[] = [
-  { shape: PenShape.DOT, title: "Pencil", Icon: svgs.Pencil },
-  { shape: PenShape._3x3, title: "Pencil 3x3", Icon: svgs.Grid3x3 },
+  {
+    shape: PenShape.DOT,
+    internalName: "x1",
+    title: "Pencil",
+    Icon: svgs.Pencil,
+  },
+  {
+    shape: PenShape._3x3,
+    internalName: "x3",
+    title: "Pencil 3x3",
+    Icon: svgs.Grid3x3,
+  },
 ];
 const SHAPES: Record<PenShape, readonly [x: number, y: number][]> = {
   [PenShape.DOT]: [[0, 0]],
@@ -206,6 +217,7 @@ const eventsWork: GridEventsProps = {
 };
 
 export const PEN: Tool = {
+  internalName: "pen",
   init,
   free,
   variants: VARIANTS,

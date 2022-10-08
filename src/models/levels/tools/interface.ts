@@ -91,10 +91,12 @@ export interface ToolUI {
 
 export interface ToolVariantUI {
   title: string;
+  internalName: string;
   Icon: FC;
 }
 
 export interface Tool {
+  internalName: string;
   init: Event<any>;
   free: Event<any>;
   variants: readonly ToolVariantUI[];

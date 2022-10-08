@@ -31,11 +31,11 @@ willSetTool.watch((index) => {
 });
 
 export const $toolsVariants = combine(TOOLS.map(({ $variant }) => $variant));
-// export const $toolVariant = combine(
-//   $toolsVariants,
-//   $toolIndex,
-//   (variants, index) => variants[index],
-// );
+export const $toolVariant = combine(
+  $toolsVariants,
+  $toolIndex,
+  (variants, index) => variants[index],
+);
 export const $toolUI = combine(
   combine(TOOLS.map(({ $ui }) => $ui)),
   $toolIndex,

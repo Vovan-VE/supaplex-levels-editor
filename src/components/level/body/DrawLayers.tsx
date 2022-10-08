@@ -2,7 +2,14 @@ import cn from "classnames";
 import { useStore } from "effector-react";
 import { FC, memo } from "react";
 import { $drvTiles } from "models/levels";
-import { DrawLayer, DrawLayerType } from "models/levels/tools";
+import {
+  $feedbackCell,
+  $toolIndex,
+  $toolVariant,
+  DrawLayer,
+  DrawLayerType,
+  TOOLS,
+} from "models/levels/tools";
 import { ContainerProps } from "ui/types";
 import cl from "./DrawLayers.module.scss";
 
@@ -29,6 +36,7 @@ export const DrawLayers: FC<ListProps> = ({
         <DrawLayerItem layer={layer} />
       </div>
     ))}
+    <FeedbackLayer {...rest} className={className} />
   </>
 );
 
@@ -69,3 +77,35 @@ const DrawLayerItem = memo<LayerProps>(({ layer }) => {
       return null;
   }
 });
+
+const FeedbackLayer: FC<ContainerProps> = ({ className, ...rest }) => {
+  const feedback = useStore($feedbackCell);
+  const tool = useStore($toolIndex);
+  const toolVariant = useStore($toolVariant);
+  const { internalName, variants } = TOOLS[tool];
+  const variantName = variants[toolVariant].internalName;
+  const clTool = `tool-${internalName}`;
+  return (
+    <div
+      {...rest}
+      className={cn(
+        className,
+        cl.typeFeedback,
+        clTool,
+        `${clTool}-${variantName}`,
+      )}
+    >
+      {feedback && (
+        <div
+          className={cl.cell}
+          style={
+            {
+              "--x": feedback.x,
+              "--y": feedback.y,
+            } as {}
+          }
+        />
+      )}
+    </div>
+  );
+};
