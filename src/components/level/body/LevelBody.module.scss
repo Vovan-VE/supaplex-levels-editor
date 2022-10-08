@@ -16,8 +16,11 @@
 .canvas {
   position: relative;
   margin: 0 auto;
-  width: calc(var(--tiles-x) * var(--tile-size));
-  height: calc(var(--tiles-y) * var(--tile-size));
+  // https://github.com/postcss/postcss-calc/issues/77
+  //width: calc(var(--tile-size) * var(--tiles-x));
+  //height: calc(var(--tile-size) * var(--tiles-y));
+  width: calc(var(--tile-size) / (1 / var(--tiles-x)));
+  height: calc(var(--tile-size) / (1 / var(--tiles-y)));
   box-shadow: 0 0 0.5rem 0.3rem #{sp.$color-orange};
 }
 
