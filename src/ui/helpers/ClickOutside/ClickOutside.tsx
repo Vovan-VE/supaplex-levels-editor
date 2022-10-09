@@ -67,12 +67,14 @@ interface Props {
    * ```
    */
   watch?: boolean;
+  triggerOnDown?: boolean;
   onClickOutside?: () => void;
 }
 
 export const ClickOutside: FC<Props> = ({
   children,
   watch = true,
+  triggerOnDown = false,
   onClickOutside,
 }) => {
   const nodeRef = useRef<HTMLElement | null>(null);
@@ -124,9 +126,15 @@ export const ClickOutside: FC<Props> = ({
       if (target) {
         const node = nodeRef.current;
         if (node && !node.contains(target as any)) {
-          document.addEventListener("pointerup", _onPointerUpOnce, true);
-          document.addEventListener("click", _onClickOnce, true);
-          document.addEventListener("pointercancel", _onPointerCancel, true);
+          event.preventDefault();
+          event.stopPropagation();
+          if (triggerOnDown) {
+            onClickOutside();
+          } else {
+            document.addEventListener("pointerup", _onPointerUpOnce, true);
+            document.addEventListener("click", _onClickOnce, true);
+            document.addEventListener("pointercancel", _onPointerCancel, true);
+          }
         }
       }
     };
@@ -136,14 +144,16 @@ export const ClickOutside: FC<Props> = ({
     return () => {
       document.removeEventListener("pointerdown", _onPointerDown, true);
 
-      // At this version `onClickOutside` callback is triggered only after
-      // `pointerup` & `click` handlers, so it should be safe to remove that
-      // handlers here.
-      document.removeEventListener("pointerup", _onPointerUpOnce, true);
-      document.removeEventListener("click", _onClickOnce, true);
-      document.removeEventListener("pointercancel", _onPointerCancel, true);
+      if (!triggerOnDown) {
+        // At this version `onClickOutside` callback is triggered only after
+        // `pointerup` & `click` handlers, so it should be safe to remove that
+        // handlers here.
+        document.removeEventListener("pointerup", _onPointerUpOnce, true);
+        document.removeEventListener("click", _onClickOnce, true);
+        document.removeEventListener("pointercancel", _onPointerCancel, true);
+      }
     };
-  }, [onClickOutside, watch, hasChildrenCallback]);
+  }, [onClickOutside, watch, triggerOnDown, hasChildrenCallback]);
 
   if (!children) {
     return null;
