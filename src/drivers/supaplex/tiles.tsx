@@ -1,4 +1,7 @@
-import { ISupaplexTile } from "./types";
+import { CellContextEventSnapshot } from "models/levels/tools";
+import { ISupaplexLevel, ISupaplexTile } from "./types";
+import { IBaseTileInteraction, InteractionType } from "../types";
+import { SpecPortDialog } from "./SpecPortDialog";
 
 /**
  * Chars map
@@ -119,6 +122,17 @@ export const isSpecPort = (tile: number) =>
   tile === TILE_SP_PORT_L ||
   tile === TILE_SP_PORT_U;
 
+const specPInt: IBaseTileInteraction<ISupaplexLevel> = {
+  onContextMenu: <T extends ISupaplexLevel>(
+    cell: CellContextEventSnapshot,
+    _: T,
+  ) => ({
+    type: InteractionType.DIALOG,
+    cell,
+    Component: SpecPortDialog,
+  }),
+};
+
 export const tiles: readonly ISupaplexTile[] = [
   { value: TILE_SPACE, title: "Space" },
   { value: TILE_ZONK, title: "Zonk" },
@@ -133,10 +147,10 @@ export const tiles: readonly ISupaplexTile[] = [
   { value: TILE_PORT_D, title: "Port Down" },
   { value: TILE_PORT_L, title: "Port Left" },
   { value: TILE_PORT_U, title: "Port Up" },
-  { value: TILE_SP_PORT_R, title: "Special Port Right" },
-  { value: TILE_SP_PORT_D, title: "Special Port Down" },
-  { value: TILE_SP_PORT_L, title: "Special Port Left" },
-  { value: TILE_SP_PORT_U, title: "Special Port Up" },
+  { value: TILE_SP_PORT_R, title: "Special Port Right", interaction: specPInt },
+  { value: TILE_SP_PORT_D, title: "Special Port Down", interaction: specPInt },
+  { value: TILE_SP_PORT_L, title: "Special Port Left", interaction: specPInt },
+  { value: TILE_SP_PORT_U, title: "Special Port Up", interaction: specPInt },
   { value: TILE_SNIK_SNAK, title: "Snik-Snak" },
   { value: TILE_DISK_Y, title: "Yellow Disk" },
   { value: TILE_TERMINAL, title: "Terminal" },

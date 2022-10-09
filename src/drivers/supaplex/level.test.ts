@@ -179,4 +179,23 @@ describe("level", () => {
       setsFreezeEnemies: true,
     });
   });
+
+  it("setSpecPort", () => {
+    const level = new SupaplexLevel(testLevelData);
+    expect(level.setSpecPort(12, 12)).toBe(level);
+    expect(
+      level.setSpecPort(12, 12, {
+        setsGravity: true,
+        setsFreezeZonks: true,
+        setsFreezeEnemies: true,
+      }),
+    ).toBe(level);
+    expect(
+      level.setSpecPort(12, 12, {
+        setsGravity: false,
+        setsFreezeZonks: true,
+        setsFreezeEnemies: true,
+      }),
+    ).not.toBe(level);
+  });
 });

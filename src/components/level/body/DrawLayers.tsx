@@ -1,7 +1,7 @@
 import cn from "classnames";
 import { useStore } from "effector-react";
 import { FC, memo } from "react";
-import { $drvTiles } from "models/levels";
+import { $drvTileRender } from "models/levels";
 import {
   $feedbackCell,
   $toolIndex,
@@ -44,7 +44,7 @@ interface LayerProps {
   layer: DrawLayer;
 }
 const DrawLayerItem = memo<LayerProps>(({ layer }) => {
-  const TileRender = useStore($drvTiles)!;
+  const TileRender = useStore($drvTileRender)!;
   const { x: LX, y: LY } = layer;
 
   switch (layer.type) {

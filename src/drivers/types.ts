@@ -1,4 +1,5 @@
 import { CSSProperties, FC } from "react";
+import { CellContextEventSnapshot } from "models/levels/tools";
 
 interface ISizeLimit {
   readonly minWidth?: number;
@@ -39,9 +40,32 @@ export interface IBaseWriter<S extends IBaseLevelset<any>> {
   writeLevelset(levelset: S): ArrayBuffer;
 }
 
+export const enum InteractionType {
+  DIALOG,
+}
+export interface InteractionDialogProps<L extends IBaseLevel> {
+  cell: CellContextEventSnapshot;
+  level: L;
+  submit: (next: L) => void;
+  cancel: () => void;
+}
+interface InteractionBase {
+  type: InteractionType;
+  cell?: CellContextEventSnapshot;
+}
+export interface InteractionDialog<L extends IBaseLevel>
+  extends InteractionBase {
+  type: InteractionType.DIALOG;
+  cell: CellContextEventSnapshot;
+  Component: FC<InteractionDialogProps<L>>;
+}
+export type Interaction<L extends IBaseLevel> = InteractionDialog<L>;
+
 export interface IBaseTileInteraction<L extends IBaseLevel> {
-  // TODO: return actions[]?
-  onContextMenu?: (x: number, y: number, level: L) => void;
+  onContextMenu?: <T extends L>(
+    cell: CellContextEventSnapshot,
+    level: T,
+  ) => Interaction<T> | undefined;
 }
 
 export interface IBaseTile<L extends IBaseLevel> {

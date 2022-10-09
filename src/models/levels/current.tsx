@@ -1,4 +1,5 @@
 import { combine, createEvent, createStore, sample } from "effector";
+import equal from "fast-deep-equal";
 import { withPersistent } from "@cubux/effector-persistent";
 import { getDriver } from "drivers";
 import { $currentDriverName, $currentLevel } from "../levelsets";
@@ -98,32 +99,46 @@ export const $bodyScale = $bodyScaleN.map(
 export const $bodyScaleCanInc = $bodyScaleN.map((n) => n < SCALE_STEPS_TOTAL);
 export const $bodyScaleCanDec = $bodyScaleN.map((n) => n > 0);
 
-export const $drvTiles = _$driver.map((drv) => (drv && drv.TileRender) || null);
+export const $drvTileRender = _$driver.map(
+  (drv) => (drv && drv.TileRender) || null,
+);
+export const $drvTiles = _$driver.map((drv) => (drv && drv.tiles) || null);
 
-export const $levelTiles = $currentLevel.map((level) => {
-  if (level) {
-    const rawLevel = level.level.undoQueue.current;
-    const { width, height } = rawLevel;
-    let chunk: number[] = [];
-    const chunks = [chunk];
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        const v = rawLevel.getTile(x, y);
-        chunk.push(v);
-        if (chunk.length === 64) {
-          chunk = [];
-          chunks.push(chunk);
+interface IChunks {
+  width: number;
+  height: number;
+  chunks: number[][];
+}
+export const $levelTiles = $currentLevel.map<IChunks | null>(
+  (level, prev = null) => {
+    if (level) {
+      const rawLevel = level.level.undoQueue.current;
+      const { width, height } = rawLevel;
+      let chunk: number[] = [];
+      const chunks = [chunk];
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const v = rawLevel.getTile(x, y);
+          chunk.push(v);
+          if (chunk.length === 64) {
+            chunk = [];
+            chunks.push(chunk);
+          }
         }
       }
+      if (chunk.length === 0) {
+        chunks.pop();
+      }
+      const next = {
+        width,
+        height,
+        chunks,
+      };
+      if (equal(prev, next)) {
+        return prev;
+      }
+      return next;
     }
-    if (chunk.length === 0) {
-      chunks.pop();
-    }
-    return {
-      width,
-      height,
-      chunks,
-    };
-  }
-  return null;
-});
+    return null;
+  },
+);

@@ -13,7 +13,6 @@ import {
   CellEventSnapshot,
   cellKey,
   DrawLayerType,
-  GridContextEventHandler,
   GridEventsProps,
   TilesPath,
   Tool,
@@ -183,9 +182,6 @@ sample({
   target: updateCurrentLevel,
 });
 
-const onContextMenu: GridContextEventHandler = () => {
-  // TODO: driver context actions
-};
 const eventsIdle: GridEventsProps = {
   onPointerDown: (e, cell) => {
     if (e.button === 0 && e.buttons === 1 && cell.inBounds) {
@@ -196,7 +192,6 @@ const eventsIdle: GridEventsProps = {
       }
     }
   },
-  onContextMenu: onContextMenu,
 };
 
 const eventsWork: GridEventsProps = {
@@ -213,7 +208,6 @@ const eventsWork: GridEventsProps = {
     tryDrawEnd(cell);
   },
   onPointerCancel: rollback,
-  onContextMenu: onContextMenu,
 };
 
 export const PEN: Tool = {
