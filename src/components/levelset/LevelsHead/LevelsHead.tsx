@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 import cn from "classnames";
 import { useStore } from "effector-react";
 import {
@@ -14,6 +14,7 @@ import {
 } from "models/levelsets";
 import { Button, TabItem, TabsButtons, Toolbar } from "ui/button";
 import { svgs } from "ui/icon";
+import { Select, SelectOption } from "ui/input";
 import { ask } from "ui/feedback";
 import { ColorType, ContainerProps } from "ui/types";
 import cl from "./LevelsHead.module.scss";
@@ -66,12 +67,6 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
     [openedIndices, levelsCountDigits, levelset],
   );
 
-  const handleSelChange = useCallback(
-    ({ target }: ChangeEvent<HTMLSelectElement>) =>
-      setCurrentLevel(Number(target.value)),
-    [],
-  );
-
   const handleDeleteClick = useMemo(
     () =>
       levelFullReference
@@ -111,6 +106,24 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
     [levelFullReference],
   );
 
+  const selectOptions = useMemo<SelectOption<number>[]>(
+    () =>
+      levelset.levels.map(({ undoQueue }, i) => ({
+        value: i,
+        label: fmtLevelFull(i, levelsCountDigits, undoQueue.current.title),
+        labelSelected: `${fmtLevelNumber(
+          i,
+          levelsCountDigits,
+        )} / ${levelsCount}`,
+      })),
+    [levelset.levels, levelsCount, levelsCountDigits],
+  );
+  const handleSelect = useCallback((o: SelectOption<number> | null) => {
+    if (o) {
+      setCurrentLevel(o.value);
+    }
+  }, []);
+
   if (!levelset) {
     throw new Error("Logic error");
   }
@@ -128,14 +141,17 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
   return (
     <div {...rest} className={cn(cl.root, className)}>
       <Toolbar className={cl.start}>
-        <select value="" onChange={handleSelChange} className={cl.selSelect}>
-          <option value="" disabled>{`x ${levelsCount}`}</option>
-          {levelset.levels.map(({ undoQueue }, i) => (
-            <option key={i} value={i}>
-              {fmtLevelFull(i, levelsCountDigits, undoQueue.current.title)}
-            </option>
-          ))}
-        </select>
+        <Select
+          options={selectOptions}
+          value={
+            levelset.currentIndex !== undefined
+              ? selectOptions[levelset.currentIndex]
+              : null
+          }
+          onChange={handleSelect}
+          placeholder={`x ${levelsCount}`}
+          className={cl.select2}
+        />
       </Toolbar>
 
       <TabsButtons

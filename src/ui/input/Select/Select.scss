@@ -1,0 +1,73 @@
+@use "styles/components";
+@use "styles/mixins";
+
+:root {
+  .app-react-select {
+    &__control {
+      @extend %button, %button-primary;
+      display: inline-flex;
+      border-radius: 0;
+      min-height: 0;
+    }
+
+    &__value-container {
+      padding-left: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      box-sizing: content-box;
+      width: var(--react-select-value-width, auto);
+    }
+
+    &__placeholder,
+    &__single-value {
+      color: inherit;
+      margin-left: 0;
+      text-align: left;
+    }
+
+    &__input-container {
+      margin-left: 0;
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      color: inherit;
+    }
+
+    &__indicator-separator {
+      margin-bottom: 0;
+      margin-top: 0;
+      background-color: currentColor;
+    }
+
+    &__indicator {
+      color: inherit;
+      padding-top: 0;
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+
+    &__menu {
+      @extend %button-primary;
+      margin: 0;
+      border-radius: 0;
+      background: var(--btn-bg);
+      color: var(--btn-color);
+      @include mixins.popup-shadow;
+    }
+
+    &__option {
+      padding: 0.1rem 0.2rem;
+
+      &:hover,
+      &--is-focused {
+        background: var(--btn-hover-bg);
+        color: var(--btn-hover-color);
+      }
+      &--is-selected {
+        background: var(--btn-active-bg);
+        color: var(--btn-active-color);
+      }
+    }
+  }
+}
