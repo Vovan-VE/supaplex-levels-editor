@@ -4,11 +4,20 @@ import cl from "./InfoContent.module.scss";
 
 export const InfoContent: FC = () => (
   <div className={cl.root}>
+    <img
+      src="/favicon.svg"
+      alt="sp-ed"
+      width={96}
+      height={96}
+      className={cl.logo}
+    />
     <h1>
       <code>{APP_NAME}</code> <span>v{APP_VERSION}</span>
     </h1>
     <p>
-      <code>{APP_NAME}</code> is Supaplex levels editor in browser.
+      <code>{APP_NAME}</code> is Supaplex levels editor in browser. Inspired by{" "}
+      <a href="https://www.supaplex.online/">Supaplex.Online</a> and its
+      community.
     </p>
 
     <h2>How it works</h2>
@@ -53,52 +62,5 @@ export const InfoContent: FC = () => (
         experience.
       </li>
     </ul>
-
-    <h3>UI</h3>
-    <p>User Interface, I hope, should be intuitive enough.</p>
-    <ol>
-      <li>
-        Top row is to manipulate with Files:
-        <ol>
-          <li>"Create new file..." button;</li>
-          <li>"Open files..." button;</li>
-          <li>Scrollable list of opened files;</li>
-          <li>"Save file from memory" button;</li>
-          <li>"Rename file" button;</li>
-          <li>
-            "Remove file from memory" button will cause the browser to forget
-            everything about the file and remove all its data from memory.
-          </li>
-        </ol>
-      </li>
-      <li>
-        When a File is Active, the second row is to manipulate with Levels in
-        the File:
-        <ol>
-          <li>Levels select;</li>
-          <li>Scrollable list of opened levels;</li>
-          <li>
-            "Insert new level" button will insert new empty level in current
-            level offset, so all the levels starting from current will be
-            shifted forward;
-          </li>
-          <li>
-            "Append new level" button will add new empty level in the end after
-            the last level in file;
-          </li>
-          <li>
-            "Delete level" button will delete the level from file without "undo"
-            possibility, so be careful;
-          </li>
-          <li>
-            "Close level" button just cause the level to gone from opened levels
-            list without any data loss.
-          </li>
-        </ol>
-      </li>
-      <li>
-        All the rest area but page footer is related to current level only.
-      </li>
-    </ol>
   </div>
 );
