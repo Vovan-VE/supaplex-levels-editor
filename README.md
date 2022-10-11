@@ -47,6 +47,7 @@ Also:
 - More editing tools at least those from Winplex Collection Editor.
 - Better adaptive UI for mobile device and/or small screen.
 - End User Manual.
+- Visualized level resizing with crop.
 - Draggable files buttons to reorder many opened files.
 - Electron based desktop application.
 

@@ -1,11 +1,12 @@
 import { Levelset } from "../supaplex/levelset";
+import { fillLevelBorder } from "../supaplex/fillLevelBorder";
 import { IMegaplexLevel, IMegaplexLevelset } from "./types";
 import { MegaplexLevel } from "./level";
 
 const newLevels = (count: number) => {
   const result: IMegaplexLevel[] = [];
   for (let i = count; i-- > 0; ) {
-    result.push(new MegaplexLevel(60, 24));
+    result.push(fillLevelBorder(new MegaplexLevel(60, 24)));
   }
   return result;
 };

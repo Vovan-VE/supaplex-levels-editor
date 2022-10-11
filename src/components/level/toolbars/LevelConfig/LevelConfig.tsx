@@ -10,6 +10,7 @@ import {
 import { Button, Toolbar, ToolbarSeparator } from "ui/button";
 import { useInputDebounce, ValueInput } from "ui/input";
 import { ContainerProps } from "ui/types";
+import { promptResizeLevel } from "./promptResizeLevel";
 import cl from "./LevelConfig.module.scss";
 
 const formatTitle = (value: string) => value.trimEnd();
@@ -24,7 +25,7 @@ export const LevelConfig: FC<Props> = ({ className, ...rest }) => {
 
   return (
     <Toolbar {...rest} className={cn(cl.root, className)}>
-      <Button disabled={!rawLevel.resizable}>
+      <Button disabled={!rawLevel.resizable} onClick={promptResizeLevel}>
         {rawLevel.width}x{rawLevel.height}
       </Button>
       <ValueInput
