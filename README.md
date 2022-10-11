@@ -1,40 +1,41 @@
-# sp-ed
+# SpLE
 
 <img src="public/favicon.svg" alt="sd-ed" align="right" width="96" height="96">
 
-Supaplex levels editor in browser. Inspired by [Supaplex.Online][spo] and its
+**Supaplex Levels Editor** in browser. Inspired by [Supaplex.Online][spo] and its
 community.
 
 My previous editor (Winplex Collection Editor) is stuck in far 2010 on Windows.
-Its source code was lost somewhere in 2016 or about with HDD failure. And so,
-here it is: yet another Supaplex levels editor!
+Its source code was lost somewhere in 2016 or about that with HDD failure. And
+so, here it is: yet another Supaplex levels editor!
 
-> **sp-ed** is under development still. Feel free to report bugs, suggest
+> **SpLE** is under development still. Feel free to report bugs, suggest
 > enhancements and correct grammar mistakes.
 
 ## Important to know
 
-**sp-ed** is completely frontend (client side) application (web page). It works
+**SpLE** is completely frontend (client side) application (web page). It works
 only with pseudo-files in browser memory.
 
-- After you opened existing file (technically you are uploading your local file
-  to a web page), it becomes in-memory copy or the original file.
+- After you opened existing file, it becomes in-memory copy or the original
+  file. Technically you are uploading your local file to a web page.
 - In-memory files you opened or created from scratch are NOT related to regular
   files out of browser.
-- To get your modified file back in form of regular file technically you need to
-  download file from web page (with appropriate UI button in **sp-ed**).
+- To get your modified file back as regular file technically you need to
+  download file from web page (with appropriate UI button in **SpLE**).
 
 Also:
 
-- This application uses `indexedDB` and `localStorage` (which both are similar
-  to well known _Cookies_ in terms of privacy) for better user experience.
+- This application uses `indexedDB` and `localStorage` for better user
+  experience. These things are similar to well known _Cookies_ in terms of
+  privacy.
 
-  **sp-ed** will try to remember your modified in-memory files and some
+  **SpLE** will try to remember your modified in-memory files and some
   preferences in browser storage for better user experience.
 
 - There are no intention to send any kind of your data to somewhere.
 
-  **sp-ed** when completely loaded is operating locally in your browser. Neither
+  **SpLE** when completely loaded is operating locally in your browser. Neither
   external storages, nor cross-device sync are implied, nor planned.
 
 - DON'T rely much on browser storage to remember your modified in-memory files
@@ -59,8 +60,8 @@ Also:
 
 This project was bootstrapped with [Create React App][cra].
 
-Ensure to install `husky` git hooks after cloning repository with (should be
-done by default on `npm ci`).
+Ensure to install `husky` git hooks after cloning repository (should be done by
+default on `npm ci`).
 
 ```sh
 git clone ...

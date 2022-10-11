@@ -1,6 +1,6 @@
 {
-  "short_name": "sp-ed",
-  "name": "sp-ed Supaplex levels editor",
+  "short_name": "SpLE",
+  "name": "SpLE - Supaplex Levels Editor",
   "icons": [
     {
       "src": "favicon.ico",

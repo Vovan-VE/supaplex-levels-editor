@@ -1,8 +1,8 @@
 {
-  "name": "sp-ed",
+  "name": "supaplex-levels-editor",
   "version": "0.1.0",
   "private": true,
-  "description": "Supaplex levels editor in browser.",
+  "description": "Supaplex Levels Editor in browser",
   "keywords": [
     "supaplex",
     "megaplex"
@@ -14,10 +14,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Vovan-VE/sp-ed.git"
+    "url": "git+https://github.com/Vovan-VE/supaplex-levels-editor.git"
   },
   "bugs": {
-    "url": "https://github.com/Vovan-VE/sp-ed/issues"
+    "url": "https://github.com/Vovan-VE/supaplex-levels-editor/issues"
   },
   "scripts": {
     "prepare": "npm ls husky > /dev/null && husky install || exit 0",

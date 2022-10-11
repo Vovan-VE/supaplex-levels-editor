@@ -11,7 +11,7 @@ import { saveAs } from "file-saver";
 import { flushDelayed, withPersistent } from "@cubux/effector-persistent";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
-import { APP_NAME } from "configs";
+import { APP_TITLE } from "configs";
 import { getDriver, IBaseLevel } from "drivers";
 import { localStorageDriver } from "../_utils/persistent";
 import { $currentKey, $currentLevelsetFile, $levelsets } from "./files";
@@ -460,7 +460,7 @@ combine(
             ? `${String(index + 1).padStart(String(f[1]).length, "0")}: `
             : ""
         }${f[0]} - `
-      : "") + APP_NAME,
+      : "") + APP_TITLE,
 ).watch((title) => {
   try {
     window.document.title = title;

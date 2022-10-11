@@ -1,21 +1,22 @@
 import { FC } from "react";
-import { APP_NAME, APP_VERSION } from "configs";
+import { APP_TITLE, APP_VERSION } from "configs";
 import cl from "./InfoContent.module.scss";
 
 export const InfoContent: FC = () => (
   <div className={cl.root}>
     <img
       src="/favicon.svg"
-      alt="sp-ed"
+      alt={APP_TITLE}
       width={96}
       height={96}
       className={cl.logo}
     />
     <h1>
-      <code>{APP_NAME}</code> <span>v{APP_VERSION}</span>
+      {APP_TITLE} <span>v{APP_VERSION}</span>
     </h1>
     <p>
-      <code>{APP_NAME}</code> is Supaplex levels editor in browser. Inspired by{" "}
+      <strong>{APP_TITLE}</strong> is <strong>Supaplex Levels Editor</strong> in
+      browser. Inspired by{" "}
       <a href="https://www.supaplex.online/">Supaplex.Online</a> and its
       community.
     </p>
@@ -29,17 +30,17 @@ export const InfoContent: FC = () => (
     <p>Files in browser memory:</p>
     <ul>
       <li>
-        are <b>not</b> related and are <b>not</b> linked to source file you
-        loaded into browser, because browsers work so;
+        are <strong>not</strong> related and are <strong>not</strong> linked to
+        source file you loaded into browser, because browsers work so;
       </li>
       <li>
-        will <b>not</b> be sent to anywhere since everything is operating
-        locally right in your browser;
+        will <strong>not</strong> be sent to anywhere since everything is
+        operating locally right in your browser;
       </li>
       <li>
-        <b>could</b> be remembered in browser when you close, suspense or leave
-        this web page (this should work fine in most of modern browsers unless
-        private mode).
+        <strong>could</strong> be remembered in browser when you close, suspense
+        or leave this web page (this should work fine in most of modern browsers
+        unless private mode).
       </li>
     </ul>
     <p>So:</p>
@@ -53,8 +54,9 @@ export const InfoContent: FC = () => (
         page.
       </li>
       <li>
-        <b>DO NOT</b> rely to the fact, that files are remembering in browser's
-        memory. <b>DO</b> save <b>BACKUPS</b>. Browser can clean storage.
+        <strong>DO NOT</strong> rely to the fact, that files are remembering in
+        browser's memory. <strong>DO</strong> save <strong>BACKUPS</strong>.
+        Browser can clean storage.
       </li>
       <li>
         This page uses <code>indexedDB</code> and <code>localStorage</code>{" "}
