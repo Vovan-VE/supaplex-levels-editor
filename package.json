@@ -20,6 +20,7 @@
     "url": "https://github.com/Vovan-VE/supaplex-levels-editor/issues"
   },
   "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "prepare": "npm ls husky > /dev/null && husky install || exit 0",
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -59,7 +60,8 @@
     "cross-env": "^7.0.3",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
-    "prettier": "2.7.1"
+    "prettier": "2.7.1",
+    "source-map-explorer": "^2.5.3"
   },
   "engines": {
     "node": ">=16"
