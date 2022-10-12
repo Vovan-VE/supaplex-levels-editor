@@ -2,4 +2,4 @@
 
 ## 0.1.0 (DEV)
 
-- First public release.
+- MVP is reached. First public release.

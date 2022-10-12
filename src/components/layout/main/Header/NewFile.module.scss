@@ -1,0 +1,8 @@
+@use "styles/mixins";
+
+.root {
+}
+
+.title {
+  @extend %font-family-mono;
+}

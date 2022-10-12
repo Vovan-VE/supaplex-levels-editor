@@ -61,30 +61,6 @@ addLevelsetFileFx.fail.watch(({ params, error }) => {
   console.log("Could not load file", params, error);
 });
 
-export const addEmptyLevelsetFileFx = createEffect(
-  async (input: Omit<LevelsetFileSource, "file">): Promise<LevelsetFile> => {
-    const driver = getDriver(input.driverName);
-    if (!driver) {
-      throw new Error("Invalid driver name: " + input.driverName);
-    }
-    const { writer } = driver;
-    if (!writer) {
-      throw new Error("No writer in driver: " + input.driverName);
-    }
-    const levelset = driver.createLevelset();
-    return {
-      ...input,
-      key: generateKey() as LevelsetFileKey,
-      file: new Blob([writer.writeLevelset(levelset)]),
-      levelset,
-    };
-  },
-);
-addEmptyLevelsetFileFx.fail.watch(({ params, error }) => {
-  // TODO: UI toast
-  console.log("Could not load file", params, error);
-});
-
 /**
  * Close file and forget everything about it
  */
@@ -112,10 +88,7 @@ export const $currentKey = withPersistent(
   "currentFile",
 )
   .on(setCurrentLevelset, (_, c) => c)
-  .on(
-    [addLevelsetFileFx.doneData, addEmptyLevelsetFileFx.doneData],
-    (_, { key }) => key,
-  );
+  .on(addLevelsetFileFx.doneData, (_, { key }) => key);
 
 const _removeLevelsetFile = sample({
   clock: removeCurrentLevelsetFile,
@@ -160,13 +133,8 @@ export const $levelsets = withPersistentMap(
       }),
   },
 )
-  .on(
-    [
-      updateLevelsetFile,
-      addLevelsetFileFx.doneData,
-      addEmptyLevelsetFileFx.doneData,
-    ],
-    (map, file) => RoMap.set(map, file.key, file),
+  .on([updateLevelsetFile, addLevelsetFileFx.doneData], (map, file) =>
+    RoMap.set(map, file.key, file),
   )
   .on(
     sample({

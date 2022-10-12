@@ -14,10 +14,12 @@ export interface IBaseLevel {
   getTile(x: number, y: number): number;
   setTile(x: number, y: number, value: number): this;
   readonly resizable?: ISizeLimit;
+  // TODO: probably add optional argument to set border with the given tile
   resize?(width: number, height: number): this;
   readonly title: string;
   setTitle(title: string): this;
   readonly maxTitleLength: number;
+  // REFACT: add api for batch changes without intermediate `copy()` calls
 }
 
 export interface IBaseLevelset<L extends IBaseLevel> {
@@ -95,6 +97,8 @@ export interface IBaseDriver<
   TileRender: FC<TileRenderProps>;
   reader?: IBaseReader<S>;
   writer?: IBaseWriter<S>;
+  fileExtensions?: RegExp;
+  fileExtensionDefault: string;
   createLevelset: (levels?: readonly L[] | Iterable<L>) => S;
   createLevel: () => L;
   LevelConfigurator?: FC<LevelConfiguratorProps<L>>;

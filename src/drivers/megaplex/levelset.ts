@@ -5,8 +5,9 @@ import { MegaplexLevel } from "./level";
 
 const newLevels = (count: number) => {
   const result: IMegaplexLevel[] = [];
+  const level = fillLevelBorder(new MegaplexLevel(60, 24));
   for (let i = count; i-- > 0; ) {
-    result.push(fillLevelBorder(new MegaplexLevel(60, 24)));
+    result.push(level);
   }
   return result;
 };

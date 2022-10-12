@@ -4,7 +4,6 @@ import { useStore } from "effector-react";
 import { detectDriver } from "drivers";
 import {
   $currentFileName,
-  addEmptyLevelsetFileFx,
   addLevelsetFileFx,
   downloadCurrentFile,
   removeCurrentLevelsetFile,
@@ -15,6 +14,7 @@ import { ask, msgBox, promptString } from "ui/feedback";
 import { svgs } from "ui/icon";
 import { ColorType, ContainerProps } from "ui/types";
 import { EditorTabs } from "./EditorTabs";
+import { promptNewFile } from "./promptNewFile";
 import cl from "./Header.module.scss";
 
 interface Props extends ContainerProps {}
@@ -80,7 +80,7 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
         <Button
           icon={<svgs.FileBlank />}
           title="Create new levelset..."
-          onClick={handleNewClick}
+          onClick={promptNewFile}
         />
         <Button
           icon={<svgs.DirOpen />}
@@ -118,14 +118,6 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
     </header>
   );
 };
-
-function handleNewClick() {
-  // TODO: prompt dialog: driver & its options
-  addEmptyLevelsetFileFx({
-    driverName: "supaplex",
-    name: "new.dat",
-  });
-}
 
 function handleOpenClick() {
   const d = window.document;

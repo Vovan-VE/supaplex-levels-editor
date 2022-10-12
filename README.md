@@ -2,8 +2,8 @@
 
 <img src="public/favicon.svg" alt="sd-ed" align="right" width="96" height="96">
 
-**Supaplex Levels Editor** in browser. Inspired by [Supaplex.Online][spo] and its
-community.
+**Supaplex Levels Editor** in browser. Inspired by [Supaplex.Online][spo] and
+its community.
 
 My previous editor (Winplex Collection Editor) is stuck in far 2010 on Windows.
 Its source code was lost somewhere in 2016 or about that with HDD failure. And
@@ -43,9 +43,11 @@ Also:
 
 ## Planned features (unsorted)
 
-- Configuration dialog before creating new file.
 - More editing tools at least those from Winplex Collection Editor.
 - Better adaptive UI for mobile device and/or small screen.
+- More file formats to support.
+- Conversion between formats.
+- Compare levels.
 - End User Manual.
 - Visualized level resizing with crop.
 - Draggable files buttons to reorder many opened files.
@@ -55,6 +57,7 @@ Also:
 
 - Mobile device can't fit all UI.
 - Large MPX levels are laggy.
+- Level border in newly create MPX with custom size.
 - Some preferences may be lost in development environment.
 
 ## Contribution, Development

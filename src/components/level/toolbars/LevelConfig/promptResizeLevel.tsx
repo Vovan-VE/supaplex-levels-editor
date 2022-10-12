@@ -9,7 +9,12 @@ import {
 } from "react";
 import { $currentLevelUndoQueue, updateCurrentLevel } from "models/levelsets";
 import { Button } from "ui/button";
-import { Dialog, renderPrompt, RenderPromptProps } from "ui/feedback";
+import {
+  Dialog,
+  intRangeError,
+  renderPrompt,
+  RenderPromptProps,
+} from "ui/feedback";
 import { Field, IntegerInput } from "ui/input";
 import { ColorType } from "ui/types";
 import cl from "./ResizeLevel.module.scss";
@@ -86,9 +91,9 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
             </p>
             <Field
               label="New Width"
-              error={renderRangeError(
+              error={intRangeError(
                 width,
-                resizeable.minWidth,
+                resizeable.minWidth ?? 1,
                 resizeable.maxWidth,
               )}
             >
@@ -96,14 +101,16 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
             </Field>
             <Field
               label="New Height"
-              error={renderRangeError(
+              error={intRangeError(
                 height,
-                resizeable.minHeight,
+                resizeable.minHeight ?? 1,
                 resizeable.maxHeight,
               )}
             >
               <IntegerInput value={height} onChange={setHeight} required />
             </Field>
+
+            {/* TODO: notice about possible lags */}
           </>
         ) : (
           <p>Cannot change size for this level.</p>
@@ -111,26 +118,6 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
       </div>
     </Dialog>
   );
-};
-
-const renderRangeError = (value: number | null, min = 1, max?: number) => {
-  if (value === null) {
-    return "Required";
-  }
-  if (value < min) {
-    return (
-      <>
-        Must be at least <code>{min}</code>.
-      </>
-    );
-  }
-  if (max !== undefined && value > max) {
-    return (
-      <>
-        Must be up to <code>{max}</code>.
-      </>
-    );
-  }
 };
 
 export const promptResizeLevel = () =>

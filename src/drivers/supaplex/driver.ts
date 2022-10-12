@@ -13,6 +13,8 @@ export const SupaplexDriver: ISupaplexDriver = {
   TileRender: Tile,
   reader,
   writer,
+  fileExtensions: /(dat|d\d{2})/i,
+  fileExtensionDefault: "dat",
   createLevelset: (levels) => new SupaplexLevelset(levels),
   createLevel: () => fillLevelBorder(new SupaplexLevel()),
   LevelConfigurator,

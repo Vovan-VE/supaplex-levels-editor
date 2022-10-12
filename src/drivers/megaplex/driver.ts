@@ -9,11 +9,12 @@ import { MegaplexLevel } from "./level";
 import { MegaplexLevelset } from "./levelset";
 
 export const MegaplexDriver: IMegaplexDriver = {
-  title: "Supaplex",
+  title: "Megaplex",
   tiles,
   TileRender: Tile,
   reader,
   writer,
+  fileExtensionDefault: "mpx",
   createLevelset: (levels) => new MegaplexLevelset(levels),
   createLevel: () =>
     fillLevelBorder(new MegaplexLevel(LEVEL_WIDTH, LEVEL_HEIGHT)),

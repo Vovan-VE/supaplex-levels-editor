@@ -8,9 +8,14 @@ const Drivers = {
   supaplex: SupaplexDriver,
   mpx: MegaplexDriver,
 } as const;
+
 const DriversHash: Partial<Record<string, IBaseDriver>> = Drivers as any;
 
-const DETECT_ORDER: readonly (keyof typeof Drivers)[] = ["mpx", "supaplex"];
+type TDrivers = typeof Drivers;
+export type DriverName = keyof TDrivers;
+
+export const DISPLAY_ORDER: readonly DriverName[] = ["supaplex", "mpx"];
+const DETECT_ORDER: readonly DriverName[] = ["mpx", "supaplex"];
 
 export const detectDriver = (file: ArrayBuffer) => {
   for (const name of DETECT_ORDER) {
@@ -22,4 +27,8 @@ export const detectDriver = (file: ArrayBuffer) => {
   }
 };
 
-export const getDriver = (name: string) => DriversHash[name];
+interface GetDriverFn {
+  <T extends DriverName>(name: T): TDrivers[T];
+  (name: string): typeof DriversHash[string];
+}
+export const getDriver: GetDriverFn = (name: string) => DriversHash[name];
