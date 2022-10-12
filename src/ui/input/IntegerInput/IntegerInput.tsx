@@ -22,4 +22,12 @@ export const useIntegerInput = createValueInputHook<number | null>({
 export const IntegerInput = forwardRef<
   HTMLInputElement,
   ValueInputProps<number | null>
->((props, ref) => <Input {...useIntegerInput(props, ref)} />);
+>((props, ref) => (
+  <Input
+    type="text"
+    inputMode="numeric"
+    pattern="\d*"
+    autoComplete="off"
+    {...useIntegerInput(props, ref)}
+  />
+));
