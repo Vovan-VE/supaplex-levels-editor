@@ -45,12 +45,13 @@ export const Header: FC<Props> = ({ className, ...rest }) => {
               if (
                 await ask(
                   <>
-                    Are you sure to remove file "<b>{filename}</b>" from memory?
+                    Are you sure you want to remove file "<b>{filename}</b>"
+                    from memory?
                     <br />
                     You will loss all changes in the file. Consider download it
                     first to backup.
                     <br />
-                    <b>This action would not be undone.</b>
+                    <b>This action can not be undone.</b>
                   </>,
                   {
                     buttons: {

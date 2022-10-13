@@ -14,7 +14,12 @@ import * as RoMap from "@cubux/readonly-map";
 import { APP_TITLE } from "configs";
 import { getDriver, IBaseLevel } from "drivers";
 import { localStorageDriver } from "../_utils/persistent";
-import { $currentKey, $currentLevelsetFile, $levelsets } from "./files";
+import {
+  $currentKey,
+  $currentLevelsetFile,
+  $levelsets,
+  fileDidOpen,
+} from "./files";
 import {
   IBaseLevelsList,
   isEqualLevels,
@@ -46,6 +51,8 @@ export const closeLevel = createEvent<number | undefined>();
  */
 export const setCurrentLevel = createEvent<number>();
 forward({ from: setCurrentLevel, to: openLevel });
+// open first level after file created/opened
+fileDidOpen.watch(() => setCurrentLevel(0));
 /**
  * Insert new level in current level index in current levelset
  */

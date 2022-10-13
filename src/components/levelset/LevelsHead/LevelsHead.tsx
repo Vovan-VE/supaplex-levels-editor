@@ -74,12 +74,12 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
             if (
               await ask(
                 <>
-                  Are you sure to delete level "
-                  <code>{levelFullReference}</code>" from the levelset?
+                  Are you sure you want to delete the level "
+                  <code>{levelFullReference}</code>" from this level set?
                   <br />
                   This will cause all the levels following to shift backward.
                   <br />
-                  <b>This action would not be undone.</b>
+                  <b>This action can not be undone.</b>
                 </>,
                 {
                   buttons: {
@@ -168,10 +168,10 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
           title={
             level
               ? cannotAddLevelMessage ||
-                `Insert new level at ${fmtLevelNumber(
+                `Insert a new level at ${fmtLevelNumber(
                   level.index,
                   levelsCountDigits,
-                )} and shift existing forward`
+                )} and move the current forward`
               : ""
           }
           onClick={insertAtCurrentLevel}

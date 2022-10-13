@@ -79,6 +79,8 @@ export const renameCurrentLevelset = createEvent<string>();
  */
 export const setCurrentLevelset = createEvent<LevelsetFileKey>();
 
+export const fileDidOpen = addLevelsetFileFx.doneData.map(({ key }) => key);
+
 /**
  * Key of current selected file within `$levelsets`
  */
@@ -88,7 +90,7 @@ export const $currentKey = withPersistent(
   "currentFile",
 )
   .on(setCurrentLevelset, (_, c) => c)
-  .on(addLevelsetFileFx.doneData, (_, { key }) => key);
+  .on(fileDidOpen, (_, key) => key);
 
 const _removeLevelsetFile = sample({
   clock: removeCurrentLevelsetFile,

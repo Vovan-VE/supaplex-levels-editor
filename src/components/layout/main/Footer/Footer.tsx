@@ -1,5 +1,6 @@
 import { FC } from "react";
 import cn from "classnames";
+import { useStore } from "effector-react";
 import { ReactComponent as GitHubLogo } from "assets/img/github.svg";
 import { APP_VERSION, REPO_URL } from "configs";
 import {
@@ -8,13 +9,13 @@ import {
   decBodyScale,
   incBodyScale,
 } from "models/levels";
+import { $feedbackCell } from "models/levels/tools";
 import { TextButton } from "ui/button";
 import { msgBox } from "ui/feedback";
 import { svgs } from "ui/icon";
 import { ContainerProps } from "ui/types";
 import { InfoContent } from "./InfoContent";
 import cl from "./Footer.module.scss";
-import { useStore } from "effector-react";
 
 interface Props extends ContainerProps {}
 
@@ -22,6 +23,8 @@ export const Footer: FC<Props> = ({ className, ...rest }) => (
   <footer {...rest} className={cn(cl.root, className)}>
     <TextButton href={REPO_URL} icon={<GitHubLogo />} className={cl.icon} />{" "}
     <span className={cl.text}>v{APP_VERSION}</span>{" "}
+    <span className={cl.space} />
+    <HoveredCell />
     <span className={cl.space} />
     <TextButton
       icon={<svgs.PlusSquare />}
@@ -42,7 +45,7 @@ export const Footer: FC<Props> = ({ className, ...rest }) => (
       className={cl.icon}
       onClick={handleInfoClick}
       title="Info"
-    />{" "}
+    />
   </footer>
 );
 
@@ -55,3 +58,15 @@ const handleInfoClick = () =>
       autoFocus: false,
     },
   });
+
+const HoveredCell: FC = () => {
+  const feedback = useStore($feedbackCell);
+  if (!feedback) {
+    return null;
+  }
+  return (
+    <span className={cl.text}>
+      x={feedback.x}; y={feedback.y}
+    </span>
+  );
+};
