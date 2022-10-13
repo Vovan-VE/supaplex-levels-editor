@@ -34,7 +34,7 @@ jobs:
           cache: npm
       - name: Run npm
         run: |
-          npm ci --production
+          npm ci --omit=dev
           npm run build
         env:
           CI: true
