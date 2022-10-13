@@ -2,19 +2,21 @@ import { combine, createEvent, createStore, sample } from "effector";
 import { $currentKey, $currentLevelIndex } from "../../levelsets";
 import { Tool } from "./interface";
 import { PEN } from "./_pen";
+import { FLOOD } from "./_flood";
 
 export const setTool = createEvent<number>();
 export const setToolVariant = createEvent<number>();
 export const rollbackWork = createEvent<any>();
 
-export const TOOLS: readonly Tool[] = [PEN];
+export const TOOLS: readonly Tool[] = [PEN, FLOOD];
 
 const setToolInternal = createEvent<number>();
 export const $toolIndex = createStore(0).on(setToolInternal, (_, n) => n);
 const willSetTool = sample({
   clock: setTool,
   source: $toolIndex,
-  filter: (next, prev) => next >= 0 && next < TOOLS.length && next !== prev,
+  filter: (prev, next) => next >= 0 && next < TOOLS.length && next !== prev,
+  fn: (_, next) => next,
 });
 const toolWillUnset = sample({
   clock: willSetTool,
@@ -22,15 +24,18 @@ const toolWillUnset = sample({
 });
 toolWillUnset.watch((index) => {
   const { free } = TOOLS[index];
-  free();
+  free?.();
 });
 willSetTool.watch((index) => {
   const { init } = TOOLS[index];
-  init();
+  init?.();
   setToolInternal(index);
 });
 
-export const $toolsVariants = combine(TOOLS.map(({ $variant }) => $variant));
+const _$singleVariant = createStore(0);
+export const $toolsVariants = combine(
+  TOOLS.map(({ $variant = _$singleVariant }) => $variant),
+);
 export const $toolVariant = combine(
   $toolsVariants,
   $toolIndex,
@@ -50,7 +55,7 @@ sample({
 }).watch((index) => {
   const { $ui } = TOOLS[index];
   const { rollback } = $ui.getState();
-  rollback();
+  rollback?.();
 });
 
 sample({
@@ -59,5 +64,5 @@ sample({
   fn: (index, variant) => ({ index, variant }),
 }).watch(({ index, variant }) => {
   const { setVariant } = TOOLS[index];
-  setVariant(variant);
+  setVariant?.(variant);
 });

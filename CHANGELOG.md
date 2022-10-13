@@ -3,6 +3,7 @@
 ## 0.2.0 (DEV)
 
 - Fix: Some text grammar.
+- Add: Flood fill drawing tool.
 - Add: Display hovered cell coordinates in footer.
 - Add: Open first level when a file opened or created.
 

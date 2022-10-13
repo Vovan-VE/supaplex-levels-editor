@@ -46,6 +46,7 @@ export interface GridEventsProps {
   onPointerCancel?: GridPointerCancelEventHandler | undefined;
   onPointerEnter?: GridPointerEventHandler | undefined;
   onPointerLeave?: GridPointerEventHandler | undefined;
+  onClick?: GridPointerEventHandler | undefined;
   onContextMenu?: GridContextEventHandler | undefined;
 }
 
@@ -81,8 +82,10 @@ export type DrawLayer = DrawLayerTiles | DrawLayerCustom;
 //-------------------------------
 
 export interface ToolUI {
-  rollback: Event<any>;
-  commit: Event<any>;
+  rollback?: Event<any>;
+  // REFACT: useless?
+  commit?: Event<any>;
+  // REFACT: useless?
   inWork: boolean;
   drawLayers: readonly DrawLayer[];
   events?: GridEventsProps;
@@ -97,10 +100,10 @@ export interface ToolVariantUI {
 
 export interface Tool {
   internalName: string;
-  init: Event<any>;
-  free: Event<any>;
+  init?: Event<any>;
+  free?: Event<any>;
   variants: readonly ToolVariantUI[];
-  setVariant: Event<number>;
-  $variant: Store<number>;
+  setVariant?: Event<number>;
+  $variant?: Store<number>;
   $ui: Store<ToolUI>;
 }

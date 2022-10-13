@@ -104,6 +104,7 @@ export const CoverGrid: FC<Props> = ({
   onPointerCancel,
   onPointerEnter,
   onPointerLeave,
+  onClick,
   onContextMenu,
   className,
   ...rest
@@ -153,6 +154,10 @@ export const CoverGrid: FC<Props> = ({
     ),
     calc,
     prev,
+  );
+  const handleClick = useMemo(
+    () => onClick && ((e: GridPointerEvent) => onClick(e, calc(e))),
+    [onClick, calc],
   );
 
   const handleContextMenu = useCallback(
@@ -212,6 +217,7 @@ export const CoverGrid: FC<Props> = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchCancel}
+      onClick={handleClick}
       onContextMenu={handleContextMenu}
     />
   );

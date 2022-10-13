@@ -10,6 +10,7 @@ export { ReactComponent as DeleteSelection } from "./DeleteSelection.svg";
 export { ReactComponent as DirOpen } from "./DirOpen.svg";
 export { ReactComponent as Download } from "./Download.svg";
 export { ReactComponent as FileBlank } from "./FileBlank.svg";
+export { ReactComponent as FloodFill } from "./FloodFill.svg";
 export { ReactComponent as Grid3x3 } from "./Grid3x3.svg";
 export { ReactComponent as Info } from "./Info.svg";
 export { ReactComponent as InsertRow } from "./InsertRow.svg";
