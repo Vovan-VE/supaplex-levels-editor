@@ -58,7 +58,7 @@ Also:
 - Mobile device can't fit all UI.
 - Large MPX levels are laggy.
 - Level border in newly create MPX with custom size.
-- Some preferences may be lost in development environment.
+- Some preferences may be lost on page load due to a race condition.
 
 ## Contribution, Development
 
