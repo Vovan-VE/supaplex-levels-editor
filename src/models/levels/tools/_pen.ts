@@ -57,7 +57,6 @@ const SHAPES: Record<PenShape, readonly [x: number, y: number][]> = {
   ],
 };
 
-const init = createEvent<any>();
 const free = createEvent<any>();
 const rollback = createEvent<any>();
 forward({ from: free, to: rollback });
@@ -212,7 +211,6 @@ const eventsWork: GridEventsProps = {
 
 export const PEN: Tool = {
   internalName: "pen",
-  init,
   free,
   variants: VARIANTS,
   setVariant,
