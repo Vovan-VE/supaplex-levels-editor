@@ -107,9 +107,13 @@ export class MegaplexLevel extends LevelFooter implements IMegaplexLevel {
   }
 
   setTile(x: number, y: number, value: number) {
+    const nextBody = this.#body.setTile(x, y, value);
+    if (nextBody === this.#body) {
+      return this;
+    }
     const prev = this.#body.getTile(x, y);
     let next = this.copy();
-    next.#body = next.#body.setTile(x, y, value);
+    next.#body = nextBody;
     if (isSpecPort(prev)) {
       if (!isSpecPort(value)) {
         next = next.deleteSpecPort(x, y);

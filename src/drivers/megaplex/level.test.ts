@@ -145,6 +145,11 @@ describe("level", () => {
       expect(copy.specPortsCount).toBe(1);
     });
 
+    it("noop", () => {
+      const level = new MegaplexLevel(3, 2, testLevelData);
+      expect(level.setTile(2, 0, level.getTile(2, 0))).toBe(level);
+    });
+
     it("add spec port", () => {
       const level = new MegaplexLevel(3, 2, testLevelData);
       const copy = level.setTile(2, 0, TILE_SP_PORT_U);
