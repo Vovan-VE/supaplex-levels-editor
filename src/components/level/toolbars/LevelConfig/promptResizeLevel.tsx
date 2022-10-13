@@ -46,7 +46,7 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
     if (maxHeight !== undefined && height > maxHeight) {
       return;
     }
-    //
+    // TODO: option: set border after resize
     let newLevel = rawLevel.resize(width, height);
     updateCurrentLevel(newLevel);
     onSubmit(true);

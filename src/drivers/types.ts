@@ -1,7 +1,7 @@
 import { CSSProperties, FC } from "react";
 import { CellContextEventSnapshot } from "models/levels/tools";
 
-interface ISizeLimit {
+export interface ISizeLimit {
   readonly minWidth?: number;
   readonly minHeight?: number;
   readonly maxWidth?: number;
@@ -78,6 +78,12 @@ export interface IBaseTile<L extends IBaseLevel> {
   //   and like notices for infotrons % 256 in case of 'all'
 }
 
+export interface INewLevelOptions {
+  width?: number;
+  height?: number;
+  borderTile?: number;
+}
+
 export interface TileRenderProps {
   tile?: number;
   style?: CSSProperties;
@@ -100,7 +106,8 @@ export interface IBaseDriver<
   fileExtensions?: RegExp;
   fileExtensionDefault: string;
   createLevelset: (levels?: readonly L[] | Iterable<L>) => S;
-  createLevel: () => L;
+  createLevel: (options?: INewLevelOptions) => L;
+  newLevelResizable?: ISizeLimit;
   LevelConfigurator?: FC<LevelConfiguratorProps<L>>;
   // TODO: create levelset config
 }

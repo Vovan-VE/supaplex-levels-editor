@@ -5,6 +5,7 @@ import { isSpecPort, TILE_SPACE } from "../supaplex/tiles";
 import { ISupaplexSpecPortProps } from "../supaplex/types";
 import { AnyBox } from "./box";
 import { LevelFooter } from "./footer";
+import { resizable } from "./resizable";
 import { IMegaplexLevel } from "./types";
 
 const sliceFooter = (width: number, height: number, data?: Uint8Array) => {
@@ -54,10 +55,7 @@ export class MegaplexLevel extends LevelFooter implements IMegaplexLevel {
   }
 
   get resizable() {
-    return {
-      maxWidth: 0x7fff,
-      maxHeight: 0x7fff,
-    };
+    return resizable;
   }
 
   copy(): this {
