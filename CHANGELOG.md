@@ -5,6 +5,8 @@
 - Add: Flood fill drawing tool.
 - Add: Display hovered cell coordinates in footer.
 - Add: Open first level when a file opened or created.
+- Fix: Flushing changes to internal file store sometimes may miss the latest
+  changes in levels.
 - Fix: Incorrect border in new MPX file with custom size.
 - Fix: Lost which levels was previously opened on page load.
 - Fix: Some text grammar.

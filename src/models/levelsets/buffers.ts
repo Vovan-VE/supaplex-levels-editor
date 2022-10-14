@@ -12,7 +12,7 @@ import { flushDelayed, withPersistent } from "@cubux/effector-persistent";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
 import { APP_TITLE } from "configs";
-import { getDriver, IBaseLevel } from "drivers";
+import { getDriver, IBaseLevel, IBaseLevelset } from "drivers";
 import { localStorageDriver } from "../_utils/persistent";
 import {
   $currentKey,
@@ -385,7 +385,11 @@ sample({
       source: $levelsets,
       fn: (files, levelsels) =>
         [...levelsels].reduce<
-          { key: LevelsetFileKey; ab: ArrayBuffer; levels: IBaseLevelsList }[]
+          {
+            key: LevelsetFileKey;
+            ab: ArrayBuffer;
+            levelset: IBaseLevelset<IBaseLevel>;
+          }[]
         >((list, [key, levels]) => {
           const file = files.get(key);
           if (file) {
@@ -395,7 +399,11 @@ sample({
               levels,
             });
             if (ab) {
-              list.push({ key, ab, levels });
+              list.push({
+                key,
+                ab,
+                levelset: getDriver(file.driverName)!.createLevelset(levels),
+              });
             }
           }
           return list;
@@ -403,11 +411,11 @@ sample({
     }),
     (files, result) =>
       result.reduce(
-        (files, { key, ab, levels }) =>
+        (files, { key, ab, levelset }) =>
           RoMap.update(files, key, (f) => ({
             ...f,
             file: new Blob([ab]),
-            levels,
+            levelset,
           })),
         files,
       ),
