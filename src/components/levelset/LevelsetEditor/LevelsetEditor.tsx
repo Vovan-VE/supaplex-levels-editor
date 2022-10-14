@@ -13,26 +13,22 @@ import cl from "./LevelsetEditor.module.scss";
 
 export const LevelsetEditor: FC = () => {
   useEffect(() => {
-    let fired = false;
-    function flushOnce() {
-      if (!fired) {
-        fired = true;
-        flushBuffers();
-      }
+    function onSuspend() {
+      flushBuffers();
     }
     function onVisChange() {
       if (window.document.visibilityState === "hidden") {
-        flushOnce();
+        flushBuffers();
       }
     }
 
     window.document.addEventListener("visibilitychange", onVisChange);
-    window.addEventListener("pagehide", flushOnce);
-    window.addEventListener("beforeunload", flushOnce);
+    window.addEventListener("pagehide", onSuspend);
+    window.addEventListener("beforeunload", onSuspend);
 
     return () => {
-      window.removeEventListener("beforeunload", flushOnce);
-      window.removeEventListener("pagehide", flushOnce);
+      window.removeEventListener("beforeunload", onSuspend);
+      window.removeEventListener("pagehide", onSuspend);
       window.document.removeEventListener("visibilitychange", onVisChange);
     };
   }, []);
