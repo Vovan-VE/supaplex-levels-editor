@@ -61,7 +61,6 @@ Also:
 
 - Mobile device can't fit all UI.
 - Large MPX levels are laggy.
-- Some preferences may be lost on page load due to a race condition.
 
 ## Contribution, Development
 

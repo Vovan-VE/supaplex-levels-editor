@@ -120,7 +120,11 @@ type _OpenedIndicesWakeUpMap = ReadonlyMap<
   _OpenedIndicesWakeUp
 >;
 // temporary storage since page load until underlying file activated
-const _$wakeUpOpenedIndices = createStore<_OpenedIndicesWakeUpMap>(new Map());
+const _$wakeUpOpenedIndices = createStore<_OpenedIndicesWakeUpMap>(new Map())
+  // remove unneeded reference when a file closed
+  .on($levelsets, (map, existing) =>
+    RoMap.filter(map, (_, key) => existing.has(key)),
+  );
 
 const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
   // remove buffers when a file closed
@@ -241,6 +245,7 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     ),
   );
 
+// opened indices in loaded buffers
 const _$openedIndices = _$buffersMap.map((map) =>
   RoMap.map(
     map,
@@ -254,6 +259,13 @@ const _$openedIndices = _$buffersMap.map((map) =>
   ),
 );
 
+// all opened indices to keep regardless of whether loaded or not yet
+const _$keepOpenedIndices = combine(
+  _$openedIndices,
+  _$wakeUpOpenedIndices,
+  RoMap.merge,
+);
+
 // persistent store indices for opened levels
 type _OpenedIndicesSerialized = readonly [
   key: LevelsetFileKey,
@@ -262,7 +274,7 @@ type _OpenedIndicesSerialized = readonly [
 ];
 type _OpenedIndicesSerializedList = readonly _OpenedIndicesSerialized[];
 withPersistent<string, _OpenedIndicesWakeUpMap, _OpenedIndicesSerializedList>(
-  _$openedIndices,
+  _$keepOpenedIndices,
   localStorageDriver,
   "openedLevels",
   {
