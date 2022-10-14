@@ -36,7 +36,7 @@ import {
  * Delay to flush changes to in-memory files after a changes was made. More
  * changes in sequence within this delay cause flush to delay more.
  */
-const AUTO_FLUSH_DELAY = 3 * 1000;
+const AUTO_FLUSH_DELAY = 300;
 
 /**
  * Switch level with the given index in current levelset to opened state
@@ -378,47 +378,58 @@ sample({
     source: _$changedLevelsets,
     target: _flushBuffers,
   });
-  // update blob files on flush
-  $levelsets.on(
-    sample({
-      clock: _flushBuffers,
-      source: $levelsets,
-      fn: (files, levelsels) =>
-        [...levelsels].reduce<
-          {
-            key: LevelsetFileKey;
-            ab: ArrayBuffer;
-            levelset: IBaseLevelset<IBaseLevel>;
-          }[]
-        >((list, [key, levels]) => {
-          const file = files.get(key);
-          if (file) {
-            const ab = _writeBuffersToFile({
+  const _flushActually = sample({
+    clock: _flushBuffers,
+    source: $levelsets,
+    fn: (files, levelsels) =>
+      [...levelsels].reduce<
+        {
+          key: LevelsetFileKey;
+          ab: ArrayBuffer;
+          levelset: IBaseLevelset<IBaseLevel>;
+        }[]
+      >((list, [key, levels]) => {
+        const file = files.get(key);
+        if (file) {
+          const ab = _writeBuffersToFile({
+            key,
+            driverName: file.driverName,
+            levels,
+          });
+          if (ab) {
+            list.push({
               key,
-              driverName: file.driverName,
-              levels,
+              ab,
+              levelset: getDriver(file.driverName)!.createLevelset(levels),
             });
-            if (ab) {
-              list.push({
-                key,
-                ab,
-                levelset: getDriver(file.driverName)!.createLevelset(levels),
-              });
-            }
           }
-          return list;
-        }, []),
-    }),
-    (files, result) =>
-      result.reduce(
-        (files, { key, ab, levelset }) =>
-          RoMap.update(files, key, (f) => ({
-            ...f,
-            file: new Blob([ab]),
-            levelset,
-          })),
-        files,
-      ),
+        }
+        return list;
+      }, []),
+  });
+  if (process.env.NODE_ENV === "development") {
+    _flushActually.watch((list) => {
+      if (list.length) {
+        console.info(
+          "Internal flush for",
+          list.length,
+          "file(s)",
+          new Date().toLocaleTimeString(),
+        );
+      }
+    });
+  }
+  // update blob files on flush
+  $levelsets.on(_flushActually, (files, result) =>
+    result.reduce(
+      (files, { key, ab, levelset }) =>
+        RoMap.update(files, key, (f) => ({
+          ...f,
+          file: new Blob([ab]),
+          levelset,
+        })),
+      files,
+    ),
   );
 }
 
