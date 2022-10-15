@@ -21,15 +21,13 @@ interface DrawState extends DrawProps {
 }
 
 type DrawRectFn = (
-  x: number,
-  y: number,
-  w: number,
-  h: number,
+  rect: readonly [x: number, y: number, w: number, h: number],
+  limit: readonly [w: number, h: number],
   draw: (x: number, y: number) => void,
 ) => void;
 
 const drawers: Record<RectType, DrawRectFn> = {
-  [RectType.FRAME]: (x, y, w, h, draw) => {
+  [RectType.FRAME]: ([x, y, w, h], [maxW, maxH], draw) => {
     const preH = h - 1;
     const endX = x + w - 1;
     const endY = y + preH;
@@ -37,39 +35,54 @@ const drawers: Record<RectType, DrawRectFn> = {
     for (let i = 0; i < L; i++) {
       if (i < w) {
         const cx = x + i;
-        draw(cx, y);
-        draw(cx, endY);
+        if (cx >= 0 && cx < maxW) {
+          if (y >= 0 && y < maxH) {
+            draw(cx, y);
+          }
+          if (endY >= 0 && endY < maxH) {
+            draw(cx, endY);
+          }
+        }
       }
       if (i > 0 && i < preH) {
         const cy = y + i;
-        draw(x, cy);
-        draw(endX, cy);
+        if (cy >= 0 && cy < maxH) {
+          if (x >= 0 && x < maxW) {
+            draw(x, cy);
+          }
+          if (endX >= 0 && endX < maxW) {
+            draw(endX, cy);
+          }
+        }
       }
     }
   },
-  [RectType.FILL]: (x, y, w, h, draw) => {
-    for (let j = 0; j < h; j++) {
-      for (let i = 0; i < w; i++) {
-        draw(x + i, y + j);
+  [RectType.FILL]: ([x, y, w, h], [maxW, maxH], draw) => {
+    let endX = x + w;
+    let endY = y + h;
+    if (x < 0) {
+      x = 0;
+    } else if (endX > maxW) {
+      endX = maxW;
+    }
+    if (y < 0) {
+      y = 0;
+    } else if (endY > maxH) {
+      endY = maxH;
+    }
+    for (let j = y; j < endY; j++) {
+      for (let i = x; i < endX; i++) {
+        draw(i, j);
       }
     }
   },
 };
 
-const getRange = (
-  a: number,
-  b: number,
-  max: number,
-): [start: number, length: number] => {
+const getRange = (a: number, b: number): [start: number, length: number] => {
   if (a > b) {
     [a, b] = [b, a];
   }
-  if (a < 0) {
-    a = 0;
-  }
-  if (b >= max) {
-    b = max - 1;
-  }
+  // `a` can be <0 and/or `b` can be >=max
   return [a, b - a + 1];
 };
 
@@ -80,9 +93,9 @@ const drawRect = <T>(
   { rectType, tile, startX, startY, endX, endY }: DrawState,
   draw: (v: T, x: number, y: number, tile: number) => T,
 ): T => {
-  const [x, w] = getRange(startX, endX, width);
-  const [y, h] = getRange(startY, endY, height);
-  drawers[rectType](x, y, w, h, (x, y) => {
+  const [x, w] = getRange(startX, endX);
+  const [y, h] = getRange(startY, endY);
+  drawers[rectType]([x, y, w, h], [width, height], (x, y) => {
     v = draw(v, x, y, tile);
   });
   return v;

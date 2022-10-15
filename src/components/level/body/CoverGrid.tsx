@@ -118,7 +118,21 @@ export const CoverGrid: FC<Props> = ({
 
   const [touchPhase, setTouchPhase] = useState(TouchPhase.NO);
 
-  const handleDown = useGridPointerEventHandler(onPointerDown, calc, prev);
+  const handleDown = useGridPointerEventHandler(
+    useCallback<GridPointerEventHandler>(
+      (e, cell) => {
+        if (e.isPrimary) {
+          try {
+            (e.target as HTMLElement).setPointerCapture(e.pointerId);
+          } catch {}
+        }
+        onPointerDown?.(e, cell);
+      },
+      [onPointerDown],
+    ),
+    calc,
+    prev,
+  );
   const _onMove = touchPhase === TouchPhase.SCROLL ? undefined : onPointerMove;
   const handleMove = useGridPointerEventHandler(
     useCallback<GridPointerEventHandler>(
@@ -131,8 +145,34 @@ export const CoverGrid: FC<Props> = ({
     calc,
     prev,
   );
-  const handleUp = useGridPointerEventHandler(onPointerUp, calc, prev);
-  const handleCancel = useGridPointerEventHandler(onPointerCancel, calc, prev);
+  const handleUp = useGridPointerEventHandler(
+    useCallback<GridPointerEventHandler>(
+      (e, cell) => {
+        if (e.isPrimary) {
+          try {
+            (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+          } catch {}
+        }
+        onPointerUp?.(e, cell);
+      },
+      [onPointerUp],
+    ),
+    calc,
+    prev,
+  );
+  const handleCancel = useGridPointerEventHandler(
+    useCallback<GridPointerEventHandler>(
+      (e, cell) => {
+        try {
+          (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+        } catch {}
+        onPointerCancel?.(e, cell);
+      },
+      [onPointerCancel],
+    ),
+    calc,
+    prev,
+  );
   const handleEnter = useGridPointerEventHandler(
     useCallback<GridPointerEventHandler>(
       (e, cell) => {

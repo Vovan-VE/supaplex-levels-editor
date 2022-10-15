@@ -126,7 +126,7 @@ export const createDragTool = <DrawProps, DrawState>({
 
   const eventsWork: GridEventsProps = {
     onPointerMove: (e, cell) => {
-      if (e.buttons === 1 && cell.inBounds) {
+      if (e.buttons === 1) {
         tryDrawMove(cell);
       }
     },
