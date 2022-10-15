@@ -3,12 +3,13 @@ import { $currentKey, $currentLevelIndex } from "../../levelsets";
 import { Tool } from "./interface";
 import { PEN } from "./_pen";
 import { FLOOD } from "./_flood";
+import { RECT } from "./_rect";
 
 export const setTool = createEvent<number>();
 export const setToolVariant = createEvent<number>();
 export const rollbackWork = createEvent<any>();
 
-export const TOOLS: readonly Tool[] = [PEN, FLOOD];
+export const TOOLS: readonly Tool[] = [PEN, FLOOD, RECT];
 
 const setToolInternal = createEvent<number>();
 export const $toolIndex = createStore(0).on(setToolInternal, (_, n) => n);

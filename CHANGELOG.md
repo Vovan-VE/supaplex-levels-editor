@@ -3,6 +3,7 @@
 ## 0.2.0 (DEV)
 
 - Add: Flood fill drawing tool.
+- Add: Rectangle drawing tools.
 - Add: Display hovered cell coordinates in footer.
 - Add: Open first level when a file opened or created.
 - Fix: Improved stability for flushing changes back to in-memory file.
