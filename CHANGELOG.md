@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 (DEV)
+## 0.2.0 (2022-10-15)
 
 - Add: Flood fill drawing tool.
 - Add: Rectangle drawing tools.
