@@ -7,6 +7,7 @@ import { IMegaplexDriver } from "./types";
 import { reader, writer } from "./io";
 import { MegaplexLevel } from "./level";
 import { MegaplexLevelset } from "./levelset";
+import { resizable } from "./resizable";
 
 export const MegaplexDriver: IMegaplexDriver = {
   title: "Megaplex",
@@ -16,7 +17,11 @@ export const MegaplexDriver: IMegaplexDriver = {
   writer,
   fileExtensionDefault: "mpx",
   createLevelset: (levels) => new MegaplexLevelset(levels),
-  createLevel: () =>
-    fillLevelBorder(new MegaplexLevel(LEVEL_WIDTH, LEVEL_HEIGHT)),
+  createLevel: ({
+    width = LEVEL_WIDTH,
+    height = LEVEL_HEIGHT,
+    borderTile,
+  } = {}) => fillLevelBorder(new MegaplexLevel(width, height), borderTile),
+  newLevelResizable: resizable,
   LevelConfigurator,
 };

@@ -10,6 +10,7 @@ import {
   DrawLayerType,
   TOOLS,
 } from "models/levels/tools";
+import { $currentLevelSize } from "models/levelsets";
 import { ContainerProps } from "ui/types";
 import cl from "./DrawLayers.module.scss";
 
@@ -80,6 +81,7 @@ const DrawLayerItem = memo<LayerProps>(({ layer }) => {
 
 const FeedbackLayer: FC<ContainerProps> = ({ className, ...rest }) => {
   const feedback = useStore($feedbackCell);
+  const { width, height } = useStore($currentLevelSize)!;
   const tool = useStore($toolIndex);
   const toolVariant = useStore($toolVariant);
   const { internalName, variants } = TOOLS[tool];
@@ -95,17 +97,21 @@ const FeedbackLayer: FC<ContainerProps> = ({ className, ...rest }) => {
         `${clTool}-${variantName}`,
       )}
     >
-      {feedback && (
-        <div
-          className={cl.cell}
-          style={
-            {
-              "--x": feedback.x,
-              "--y": feedback.y,
-            } as {}
-          }
-        />
-      )}
+      {feedback &&
+        feedback.x >= 0 &&
+        feedback.y >= 0 &&
+        feedback.x < width &&
+        feedback.y < height && (
+          <div
+            className={cl.cell}
+            style={
+              {
+                "--x": feedback.x,
+                "--y": feedback.y,
+              } as {}
+            }
+          />
+        )}
     </div>
   );
 };

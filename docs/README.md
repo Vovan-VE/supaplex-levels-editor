@@ -1,3 +1,3 @@
-# SpLE User Manual
+# SpLE End User Manual
 
 TBW.

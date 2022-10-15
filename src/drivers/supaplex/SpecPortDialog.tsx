@@ -76,12 +76,13 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
           <Tile tile={level.getTile(x, y)} />
         </IconContainer>
       </p>
+      {/* TODO: replace checkboxes with labeled switches: `(* off)` <=> `(on *)` */}
       <div>
         <Checkbox checked={setsGravity} onChange={handleGravity}>
           <IconContainer className={cl.tile}>
             <Tile tile={TILE_MURPHY} />
           </IconContainer>{" "}
-          Gravity turns <b>{setsGravity ? "ON" : "OFF"}</b>
+          Gravity: <b>{setsGravity ? "ON" : "OFF"}</b>
         </Checkbox>
       </div>
       <div>
@@ -89,7 +90,7 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
           <IconContainer className={cl.tile}>
             <Tile tile={TILE_ZONK} />
           </IconContainer>{" "}
-          Zonks freeze turns <b>{setsFreezeZonks ? "ON" : "OFF"}</b>
+          Zonks freeze: <b>{setsFreezeZonks ? "ON" : "OFF"}</b>
         </Checkbox>
       </div>
       <div>
@@ -98,7 +99,7 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
             <Tile tile={TILE_SNIK_SNAK} />
             <Tile tile={TILE_ELECTRON} />
           </IconContainer>{" "}
-          Enemies freeze turns <b>{setsFreezeEnemies ? "ON" : "OFF"}</b>
+          Enemies freeze: <b>{setsFreezeEnemies ? "ON" : "OFF"}</b>
         </Checkbox>
       </div>
     </Dialog>

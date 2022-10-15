@@ -1,47 +1,15 @@
-import { combine, createEvent, createStore, forward, sample } from "effector";
+import { combine, sample } from "effector";
 import * as RoMap from "@cubux/readonly-map";
 import { svgs } from "ui/icon";
-import {
-  $currentLevel,
-  $currentLevelIsSelected,
-  $currentLevelSize,
-  IBounds,
-  updateCurrentLevel,
-} from "../../levelsets";
-import { $tileIndex } from "../current";
-import {
-  CellEventSnapshot,
-  cellKey,
-  DrawLayerType,
-  GridEventsProps,
-  TilesPath,
-  Tool,
-  ToolUI,
-  ToolVariantUI,
-} from "./interface";
+import { updateCurrentLevel } from "../../levelsets";
+import { cellKey, DrawLayerType, TilesPath, Tool, ToolUI } from "./interface";
+import { createDragTool } from "./_drag-tool";
 
 const enum PenShape {
   DOT,
   _3x3,
   // TODO: 2x1 & 1x2 with driver specific hacks (sp double chips)
 }
-interface Variant extends ToolVariantUI {
-  shape: PenShape;
-}
-const VARIANTS: readonly Variant[] = [
-  {
-    shape: PenShape.DOT,
-    internalName: "x1",
-    title: "Pencil",
-    Icon: svgs.Pencil,
-  },
-  {
-    shape: PenShape._3x3,
-    internalName: "x3",
-    title: "Pencil 3x3",
-    Icon: svgs.Grid3x3,
-  },
-];
 const SHAPES: Record<PenShape, readonly [x: number, y: number][]> = {
   [PenShape.DOT]: [[0, 0]],
   [PenShape._3x3]: [
@@ -57,169 +25,80 @@ const SHAPES: Record<PenShape, readonly [x: number, y: number][]> = {
   ],
 };
 
-const init = createEvent<any>();
-const free = createEvent<any>();
-const rollback = createEvent<any>();
-forward({ from: free, to: rollback });
-const commit = createEvent<any>();
-const didCommit = createEvent<any>();
-
-const setVariant = createEvent<number>();
-const $variant = createStore<number>(0).on(setVariant, (_, n) => {
-  if (n >= 0 && n < VARIANTS.length) {
-    return n;
-  }
-});
-
-interface IStart {
-  event: CellEventSnapshot;
-  tile: number;
+interface DrawProps {
   shape: PenShape;
 }
-interface IDrawInBounds extends IStart {
-  bounds: IBounds;
-}
-const doStart = createEvent<IStart>();
-const doDraw = createEvent<IStart>();
-const doDrawInBounds = sample({
-  clock: doDraw,
-  source: $currentLevelSize,
-  filter: Boolean,
-  fn: (bounds, draw): IDrawInBounds => ({ ...draw, bounds }),
-});
 
-const $isDrawing = createStore(false)
-  .reset(rollback, didCommit)
-  .on(doStart, () => true);
-const $path = createStore<TilesPath>(new Map())
-  .reset(rollback, didCommit)
-  .on(
-    doDrawInBounds,
-    (path, { event, tile, shape, bounds: { width, height } }) =>
-      SHAPES[shape].reduce((path, [dx, dy]) => {
-        const x = event.x + dx;
-        const y = event.y + dy;
-        if (x >= 0 && x < width && y >= 0 && y < height) {
-          const key = cellKey({ x, y });
-          if (path.get(key)?.tile !== tile) {
-            return RoMap.set(path, key, { x, y, tile });
-          }
+const {
+  free,
+  variants,
+  setVariant,
+  $variant,
+
+  $isDrawing,
+  $drawState,
+  rollback,
+  commit,
+  doCommit,
+  eventsIdle,
+  eventsWork,
+} = createDragTool<DrawProps, TilesPath>({
+  VARIANTS: [
+    {
+      internalName: "x1",
+      title: "Pencil",
+      Icon: svgs.Pencil,
+      drawProps: {
+        shape: PenShape.DOT,
+      },
+    },
+    {
+      internalName: "x3",
+      title: "Pencil 3x3",
+      Icon: svgs.Grid3x3,
+      drawProps: {
+        shape: PenShape._3x3,
+      },
+    },
+  ],
+  idleState: new Map(),
+  drawReducer: (
+    path,
+    { event: { x: ex, y: ey, width, height }, tile, drawProps: { shape } },
+  ) =>
+    SHAPES[shape].reduce((path, [dx, dy]) => {
+      const x = ex + dx;
+      const y = ey + dy;
+      if (x >= 0 && x < width && y >= 0 && y < height) {
+        const key = cellKey({ x, y });
+        if (path.get(key)?.tile !== tile) {
+          return RoMap.set(path, key, { x, y, tile });
         }
-        return path;
-      }, path),
-  );
-
-const tryDrawStart = createEvent<CellEventSnapshot>();
-const tryDrawMove = createEvent<CellEventSnapshot>();
-const tryDrawEnd = createEvent<CellEventSnapshot>();
-
-// -----
-// start
-// -----
-
-sample({
-  clock: tryDrawStart,
-  source: {
-    inWork: $isDrawing,
-    isLevelSelected: $currentLevelIsSelected,
-    tile: $tileIndex,
-    variant: $variant,
-  },
-  filter: ({ inWork, isLevelSelected }) => !inWork && isLevelSelected,
-  fn: ({ tile, variant }, event): IStart => ({
-    event,
-    tile,
-    shape: VARIANTS[variant].shape,
-  }),
-  target: doStart,
+      }
+      return path;
+    }, path),
 });
 
-// ---------
-// draw move
-// ---------
-
-sample({
-  clock: tryDrawMove,
-  source: {
-    inWork: $isDrawing,
-    isLevelSelected: $currentLevelIsSelected,
-    tile: $tileIndex,
-    variant: $variant,
-  },
-  filter: ({ inWork, isLevelSelected }) => inWork && isLevelSelected,
-  fn: ({ tile, variant }, event): IStart => ({
-    event,
-    tile,
-    shape: VARIANTS[variant].shape,
-  }),
-  target: doDraw,
-});
-
-// -----------
-// end, commit
-// -----------
-
-forward({ from: tryDrawEnd, to: commit });
-const doCommit = sample({
-  clock: commit,
-  source: {
-    inWork: $isDrawing,
-    level: $currentLevel,
-    path: $path,
-  },
-  filter: ({ inWork, level }) => inWork && level !== null,
-  fn: ({ level, path }) => ({ path, level: level!.level.undoQueue.current }),
-});
-forward({ from: doCommit, to: didCommit });
 sample({
   source: doCommit,
-  fn: ({ level, path }) =>
+  fn: ({ level, drawState }) =>
     RoMap.reduce(
-      path,
+      drawState,
       (level, { x, y, tile }) => level.setTile(x, y, tile),
       level,
     ),
   target: updateCurrentLevel,
 });
 
-const eventsIdle: GridEventsProps = {
-  onPointerDown: (e, cell) => {
-    if (e.button === 0 && e.buttons === 1 && cell.inBounds) {
-      tryDrawStart(cell);
-      // not sure if it can be covered in `CoverGrid` touch hacks
-      if (e.pointerType === "mouse") {
-        tryDrawMove(cell);
-      }
-    }
-  },
-};
-
-const eventsWork: GridEventsProps = {
-  onPointerMove: (e, cell) => {
-    if (e.buttons === 1 && cell.inBounds) {
-      tryDrawMove(cell);
-    }
-  },
-  onPointerDown: (e, cell) => {
-    tryDrawEnd(cell);
-  },
-  onPointerUp: (e, cell) => {
-    tryDrawMove(cell);
-    tryDrawEnd(cell);
-  },
-  onPointerCancel: rollback,
-};
-
 export const PEN: Tool = {
   internalName: "pen",
-  init,
   free,
-  variants: VARIANTS,
+  variants,
   setVariant,
   $variant,
   $ui: combine(
     $isDrawing,
-    $path,
+    $drawState,
     (inWork, tiles): ToolUI => ({
       rollback,
       commit,

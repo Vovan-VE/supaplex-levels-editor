@@ -16,6 +16,7 @@ export const SupaplexDriver: ISupaplexDriver = {
   fileExtensions: /(dat|d\d{2})/i,
   fileExtensionDefault: "dat",
   createLevelset: (levels) => new SupaplexLevelset(levels),
-  createLevel: () => fillLevelBorder(new SupaplexLevel()),
+  createLevel: ({ borderTile } = {}) =>
+    fillLevelBorder(new SupaplexLevel(), borderTile),
   LevelConfigurator,
 };

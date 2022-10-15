@@ -40,22 +40,19 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
 
   const {
     level,
-    level: {
-      resizable,
-      maxTitleLength,
-      width: defaultWidth,
-      height: defaultHeight,
-    },
+    level: { maxTitleLength, width: defaultWidth, height: defaultHeight },
+    resizable,
     fileExtensionDefault,
     minLevelsCount,
     maxLevelsCount,
   } = useMemo(() => {
     const drv = getDriver(driverName as string)!;
-    const { fileExtensionDefault } = drv;
+    const { fileExtensionDefault, newLevelResizable } = drv;
     const level = drv.createLevel();
     const { minLevelsCount, maxLevelsCount } = drv.createLevelset([level]);
     return {
       level,
+      resizable: newLevelResizable,
       fileExtensionDefault,
       minLevelsCount,
       maxLevelsCount,
@@ -93,22 +90,12 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
       return;
     }
     const drv = getDriver(driverName as string)!;
-    const { fileExtensionDefault, writer } = drv;
+    const { fileExtensionDefault, writer, newLevelResizable: resizable } = drv;
     if (!writer) {
       return;
     }
 
-    let level = drv.createLevel();
-    if (title.length > level.maxTitleLength) {
-      return;
-    }
-    try {
-      level = level.setTitle(title);
-    } catch {
-      return;
-    }
-    const { resizable } = level;
-    if (resizable && level.resize && (width !== null || height !== null)) {
+    if (resizable && (width !== null || height !== null)) {
       if (
         width !== null &&
         ((resizable.minWidth !== undefined && width < resizable.minWidth) ||
@@ -123,8 +110,17 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
       ) {
         return;
       }
-      // FIXME: level border
-      level = level.resize(width ?? level.width, height ?? level.height);
+    }
+
+    let level = drv.createLevel({
+      width: width ?? undefined,
+      height: height ?? undefined,
+      // TODO: `borderTile` can be configured too
+    });
+    try {
+      level = level.setTitle(title);
+    } catch {
+      return;
     }
 
     const levelset = drv.createLevelset([level]);

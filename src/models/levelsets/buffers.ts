@@ -12,9 +12,14 @@ import { flushDelayed, withPersistent } from "@cubux/effector-persistent";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
 import { APP_TITLE } from "configs";
-import { getDriver, IBaseLevel } from "drivers";
+import { getDriver, IBaseLevel, IBaseLevelset } from "drivers";
 import { localStorageDriver } from "../_utils/persistent";
-import { $currentKey, $currentLevelsetFile, $levelsets } from "./files";
+import {
+  $currentKey,
+  $currentLevelsetFile,
+  $levelsets,
+  fileDidOpen,
+} from "./files";
 import {
   IBaseLevelsList,
   isEqualLevels,
@@ -31,7 +36,7 @@ import {
  * Delay to flush changes to in-memory files after a changes was made. More
  * changes in sequence within this delay cause flush to delay more.
  */
-const AUTO_FLUSH_DELAY = 3 * 1000;
+const AUTO_FLUSH_DELAY = 300;
 
 /**
  * Switch level with the given index in current levelset to opened state
@@ -46,6 +51,8 @@ export const closeLevel = createEvent<number | undefined>();
  */
 export const setCurrentLevel = createEvent<number>();
 forward({ from: setCurrentLevel, to: openLevel });
+// open first level after file created/opened
+fileDidOpen.watch(() => setCurrentLevel(0));
 /**
  * Insert new level in current level index in current levelset
  */
@@ -113,7 +120,11 @@ type _OpenedIndicesWakeUpMap = ReadonlyMap<
   _OpenedIndicesWakeUp
 >;
 // temporary storage since page load until underlying file activated
-const _$wakeUpOpenedIndices = createStore<_OpenedIndicesWakeUpMap>(new Map());
+const _$wakeUpOpenedIndices = createStore<_OpenedIndicesWakeUpMap>(new Map())
+  // remove unneeded reference when a file closed
+  .on($levelsets, (map, existing) =>
+    RoMap.filter(map, (_, key) => existing.has(key)),
+  );
 
 const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
   // remove buffers when a file closed
@@ -234,6 +245,7 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     ),
   );
 
+// opened indices in loaded buffers
 const _$openedIndices = _$buffersMap.map((map) =>
   RoMap.map(
     map,
@@ -247,6 +259,13 @@ const _$openedIndices = _$buffersMap.map((map) =>
   ),
 );
 
+// all opened indices to keep regardless of whether loaded or not yet
+const _$keepOpenedIndices = combine(
+  _$openedIndices,
+  _$wakeUpOpenedIndices,
+  RoMap.merge,
+);
+
 // persistent store indices for opened levels
 type _OpenedIndicesSerialized = readonly [
   key: LevelsetFileKey,
@@ -255,7 +274,7 @@ type _OpenedIndicesSerialized = readonly [
 ];
 type _OpenedIndicesSerializedList = readonly _OpenedIndicesSerialized[];
 withPersistent<string, _OpenedIndicesWakeUpMap, _OpenedIndicesSerializedList>(
-  _$openedIndices,
+  _$keepOpenedIndices,
   localStorageDriver,
   "openedLevels",
   {
@@ -359,39 +378,58 @@ sample({
     source: _$changedLevelsets,
     target: _flushBuffers,
   });
-  // update blob files on flush
-  $levelsets.on(
-    sample({
-      clock: _flushBuffers,
-      source: $levelsets,
-      fn: (files, levelsels) =>
-        [...levelsels].reduce<
-          { key: LevelsetFileKey; ab: ArrayBuffer; levels: IBaseLevelsList }[]
-        >((list, [key, levels]) => {
-          const file = files.get(key);
-          if (file) {
-            const ab = _writeBuffersToFile({
-              key,
-              driverName: file.driverName,
-              levels,
-            });
-            if (ab) {
-              list.push({ key, ab, levels });
-            }
-          }
-          return list;
-        }, []),
-    }),
-    (files, result) =>
-      result.reduce(
-        (files, { key, ab, levels }) =>
-          RoMap.update(files, key, (f) => ({
-            ...f,
-            file: new Blob([ab]),
+  const _flushActually = sample({
+    clock: _flushBuffers,
+    source: $levelsets,
+    fn: (files, levelsels) =>
+      [...levelsels].reduce<
+        {
+          key: LevelsetFileKey;
+          ab: ArrayBuffer;
+          levelset: IBaseLevelset<IBaseLevel>;
+        }[]
+      >((list, [key, levels]) => {
+        const file = files.get(key);
+        if (file) {
+          const ab = _writeBuffersToFile({
+            key,
+            driverName: file.driverName,
             levels,
-          })),
-        files,
-      ),
+          });
+          if (ab) {
+            list.push({
+              key,
+              ab,
+              levelset: getDriver(file.driverName)!.createLevelset(levels),
+            });
+          }
+        }
+        return list;
+      }, []),
+  });
+  if (process.env.NODE_ENV === "development") {
+    _flushActually.watch((list) => {
+      if (list.length) {
+        console.info(
+          "Internal flush for",
+          list.length,
+          "file(s)",
+          new Date().toLocaleTimeString(),
+        );
+      }
+    });
+  }
+  // update blob files on flush
+  $levelsets.on(_flushActually, (files, result) =>
+    result.reduce(
+      (files, { key, ab, levelset }) =>
+        RoMap.update(files, key, (f) => ({
+          ...f,
+          file: new Blob([ab]),
+          levelset,
+        })),
+      files,
+    ),
   );
 }
 

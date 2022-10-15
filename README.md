@@ -1,12 +1,13 @@
 # SpLE
 
-![Version](https://img.shields.io/github/package-json/v/vovan-ve/supaplex-levels-editor)
-[![sple.me](https://img.shields.io/badge/https-sple.me-blue)](https://sple.me)
-
 <img src="public/favicon.svg" alt="sd-ed" align="right" width="96" height="96">
 
-[sple.me](https://sple.me) is **Supaplex Levels Editor** in browser. Inspired by [Supaplex.Online][spo] and
-its community.
+![Version](https://img.shields.io/github/package-json/v/vovan-ve/supaplex-levels-editor)
+[![sple.me](https://img.shields.io/badge/https-sple.me-blue)](https://sple.me)
+![License](https://img.shields.io/github/license/vovan-ve/supaplex-levels-editor)
+
+[sple.me](https://sple.me) is **Supaplex Levels Editor** in browser. Inspired by
+[Supaplex.Online][spo] and its community.
 
 My previous editor (Winplex Collection Editor) is stuck in far 2010 on Windows.
 Its source code was lost somewhere in 2016 or about that with HDD failure. And
@@ -60,8 +61,6 @@ Also:
 
 - Mobile device can't fit all UI.
 - Large MPX levels are laggy.
-- Level border in newly create MPX with custom size.
-- Some preferences may be lost on page load due to a race condition.
 
 ## Contribution, Development
 

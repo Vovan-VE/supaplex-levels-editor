@@ -17,10 +17,10 @@
   position: relative;
   margin: 0 auto;
   // https://github.com/postcss/postcss-calc/issues/77
-  //width: calc(var(--tile-size) * var(--tiles-x));
-  //height: calc(var(--tile-size) * var(--tiles-y));
-  width: calc(var(--tile-size) / (1 / var(--tiles-x)));
-  height: calc(var(--tile-size) / (1 / var(--tiles-y)));
+  width: calc(var(--tile-size) * var(--tiles-x));
+  height: calc(var(--tile-size) * var(--tiles-y));
+  //width: calc(var(--tile-size) / (1 / var(--tiles-x)));
+  //height: calc(var(--tile-size) / (1 / var(--tiles-y)));
   box-shadow: 0 0 0.5rem 0.3rem #{sp.$color-orange};
 }
 
