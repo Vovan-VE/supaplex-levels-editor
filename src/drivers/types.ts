@@ -1,4 +1,4 @@
-import { CSSProperties, FC } from "react";
+import { CSSProperties, FC, ReactNode } from "react";
 import { CellContextEventSnapshot } from "models/levels/tools";
 
 export interface ISizeLimit {
@@ -8,7 +8,12 @@ export interface ISizeLimit {
   readonly maxHeight?: number;
 }
 
+export type IsPlayableResult =
+  | readonly [valid: true, nothing?: undefined]
+  | readonly [valid: false, errors: readonly ReactNode[]];
+
 export interface IBaseLevel {
+  readonly raw: Uint8Array;
   readonly width: number;
   readonly height: number;
   getTile(x: number, y: number): number;
@@ -20,6 +25,8 @@ export interface IBaseLevel {
   setTitle(title: string): this;
   readonly maxTitleLength: number;
   // REFACT: add api for batch changes without intermediate `copy()` calls
+
+  isPlayable(): IsPlayableResult;
 }
 
 export interface IBaseLevelset<L extends IBaseLevel> {

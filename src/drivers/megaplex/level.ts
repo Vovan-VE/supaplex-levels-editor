@@ -1,4 +1,3 @@
-import { ILevelBody } from "../supaplex/internal";
 import { LevelBody } from "../supaplex/body";
 import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "../supaplex/footer";
 import { isSpecPort, TILE_SPACE } from "../supaplex/tiles";
@@ -23,7 +22,7 @@ const sliceFooter = (width: number, height: number, data?: Uint8Array) => {
 
 export class MegaplexLevel extends LevelFooter implements IMegaplexLevel {
   readonly #box: AnyBox;
-  #body: ILevelBody;
+  #body: LevelBody;
 
   constructor(width: number, height: number, data?: Uint8Array) {
     super(width, sliceFooter(width, height, data));
@@ -122,6 +121,10 @@ export class MegaplexLevel extends LevelFooter implements IMegaplexLevel {
       }
     }
     return next;
+  }
+
+  isPlayable() {
+    return this.#body.isPlayable();
   }
 
   get maxTitleLength() {

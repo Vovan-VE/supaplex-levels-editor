@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 (2022-10-16)
+
+- Add: Experimental "test level" with Supaplex.Online test page.
+
 ## 0.2.0 (2022-10-15)
 
 - Add: Flood fill drawing tool.
