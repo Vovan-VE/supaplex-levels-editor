@@ -85,6 +85,10 @@ export class SupaplexLevel extends LevelFooter implements ISupaplexLevel {
     return next;
   }
 
+  isPlayable() {
+    return this.#body.isPlayable();
+  }
+
   get maxTitleLength() {
     return TITLE_LENGTH;
   }

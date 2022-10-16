@@ -1,4 +1,6 @@
+import { IsPlayableResult } from "../types";
 import { IBox, ILevelBody } from "./internal";
+import { TILE_EXIT, TILE_MURPHY } from "./tiles";
 
 const validateByte =
   process.env.NODE_ENV === "production"
@@ -54,5 +56,23 @@ export class LevelBody implements ILevelBody {
     const copy = this.copy();
     copy.#raw[offset] = value;
     return copy;
+  }
+
+  isPlayable(): IsPlayableResult {
+    const leftToRequire = new Set([TILE_MURPHY, TILE_EXIT]);
+    for (const tile of this.#raw) {
+      if (!leftToRequire.size) {
+        break;
+      }
+      if (leftToRequire.has(tile)) {
+        leftToRequire.delete(tile);
+      }
+    }
+    const errors = [
+      // TODO: show SVG tiles
+      leftToRequire.has(TILE_MURPHY) && "There is no Murphy in the level.",
+      leftToRequire.has(TILE_EXIT) && "There is no Exit in the level.",
+    ].filter(Boolean);
+    return errors.length ? [false, errors] : [true];
   }
 }

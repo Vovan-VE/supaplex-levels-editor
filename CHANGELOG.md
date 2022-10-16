@@ -2,7 +2,7 @@
 
 ## 0.3.0 (DEV)
 
-- ...
+- Add: Experimental "test level" with Supaplex.Online test page.
 
 ## 0.2.0 (2022-10-15)
 
