@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.0 (DEV)
+## 0.3.0 (2022-10-16)
 
 - Add: Experimental "test level" with Supaplex.Online test page.
 
