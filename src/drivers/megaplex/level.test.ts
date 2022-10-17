@@ -7,8 +7,11 @@ import {
   TILE_SP_PORT_R,
   TILE_SP_PORT_U,
   TILE_ZONK,
-} from "../supaplex/tiles";
-import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "../supaplex/types";
+} from "../supaplex/tiles-id";
+import {
+  ISupaplexSpecPort,
+  ISupaplexSpecPortProps,
+} from "../supaplex/internal";
 
 describe("level", () => {
   const testFooter = Uint8Array.of(

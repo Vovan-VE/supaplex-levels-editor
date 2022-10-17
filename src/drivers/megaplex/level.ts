@@ -1,7 +1,7 @@
 import { LevelBody } from "../supaplex/body";
 import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "../supaplex/footer";
-import { isSpecPort, TILE_SPACE } from "../supaplex/tiles";
-import { ISupaplexSpecPortProps } from "../supaplex/types";
+import { isSpecPort, TILE_SPACE } from "../supaplex/tiles-id";
+import { ISupaplexSpecPortProps } from "../supaplex/internal";
 import { AnyBox } from "./box";
 import { LevelFooter } from "./footer";
 import { resizable } from "./resizable";

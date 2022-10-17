@@ -6,7 +6,7 @@ import {
   TITLE_LENGTH,
 } from "./footer";
 import { LEVEL_WIDTH } from "./box";
-import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./types";
+import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./internal";
 
 it("spec port coords", () => {
   expect(specPortCoordsToOffset(0, 0, 60)).toEqual([0, 0]);

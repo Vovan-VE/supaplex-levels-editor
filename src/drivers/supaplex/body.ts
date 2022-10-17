@@ -1,6 +1,6 @@
 import { IsPlayableResult } from "../types";
 import { IBox, ILevelBody } from "./internal";
-import { TILE_EXIT, TILE_MURPHY } from "./tiles";
+import { TILE_EXIT, TILE_MURPHY } from "./tiles-id";
 
 const validateByte =
   process.env.NODE_ENV === "production"

@@ -1,8 +1,9 @@
-import { ISupaplexLevel, ISupaplexSpecPortProps } from "./types";
+import { ISupaplexLevel } from "./types";
 import { LevelBody } from "./body";
 import { BODY_LENGTH, LEVEL_HEIGHT, LEVEL_WIDTH, supaplexBox } from "./box";
 import { FOOTER_BYTE_LENGTH, LevelFooter, TITLE_LENGTH } from "./footer";
-import { isSpecPort } from "./tiles";
+import { isSpecPort } from "./tiles-id";
+import { ISupaplexSpecPortProps } from "./internal";
 
 export const LEVEL_BYTES_LENGTH = BODY_LENGTH + FOOTER_BYTE_LENGTH;
 

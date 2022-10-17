@@ -1,5 +1,3 @@
-import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./types";
-
 export interface IBox {
   // readonly width: number;
   // readonly height: number;
@@ -13,6 +11,17 @@ export interface ILevelBody {
   readonly raw: Uint8Array;
   getTile(x: number, y: number): number;
   setTile(x: number, y: number, value: number): this;
+}
+
+export interface ISupaplexSpecPortProps {
+  setsGravity: boolean;
+  setsFreezeZonks: boolean;
+  setsFreezeEnemies: boolean;
+}
+
+export interface ISupaplexSpecPort extends ISupaplexSpecPortProps {
+  x: number;
+  y: number;
 }
 
 export interface ILevelFooter {

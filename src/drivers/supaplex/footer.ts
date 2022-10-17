@@ -1,5 +1,8 @@
-import { ILevelFooter } from "./internal";
-import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./types";
+import {
+  ILevelFooter,
+  ISupaplexSpecPort,
+  ISupaplexSpecPortProps,
+} from "./internal";
 
 export const FOOTER_BYTE_LENGTH = 96;
 

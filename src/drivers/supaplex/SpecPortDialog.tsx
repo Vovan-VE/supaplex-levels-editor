@@ -1,13 +1,19 @@
+import { useCallback, useState } from "react";
 import { Button } from "ui/button";
 import { Dialog } from "ui/feedback";
 import { IconContainer } from "ui/icon";
 import { Checkbox } from "ui/input";
 import { ColorType } from "ui/types";
 import { InteractionDialogProps } from "../types";
-import { ISupaplexLevel, ISupaplexSpecPortProps } from "./types";
-import { useCallback, useState } from "react";
+import { ISupaplexLevel } from "./types";
+import { ISupaplexSpecPortProps } from "./internal";
 import { Tile } from "./Tile";
-import { TILE_ELECTRON, TILE_MURPHY, TILE_SNIK_SNAK, TILE_ZONK } from "./tiles";
+import {
+  TILE_ELECTRON,
+  TILE_MURPHY,
+  TILE_SNIK_SNAK,
+  TILE_ZONK,
+} from "./tiles-id";
 import cl from "./SpecPortDialog.module.scss";
 
 const fallbackProps: ISupaplexSpecPortProps = {

@@ -1,5 +1,5 @@
 import { ISupaplexLevel } from "./types";
-import { TILE_HARDWARE } from "./tiles";
+import { TILE_HARDWARE } from "./tiles-id";
 
 export const fillLevelBorder = <L extends ISupaplexLevel>(
   level: L,

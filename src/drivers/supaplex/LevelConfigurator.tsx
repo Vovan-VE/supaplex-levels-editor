@@ -4,7 +4,7 @@ import { Checkbox, IntegerInput, useInputDebounce } from "ui/input";
 import { LevelConfiguratorProps } from "../types";
 import { ISupaplexLevel } from "./types";
 import { Tile } from "./Tile";
-import { TILE_ELECTRON, TILE_INFOTRON } from "./tiles";
+import { TILE_ELECTRON, TILE_INFOTRON } from "./tiles-id";
 import cl from "./LevelConfigurator.module.scss";
 
 export const LevelConfigurator = <L extends ISupaplexLevel>({

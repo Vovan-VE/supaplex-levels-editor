@@ -1,5 +1,5 @@
 import { ReactElement, ReactNode } from "react";
-import { Spinner } from "../../feedback";
+import { Spinner } from "ui/feedback/Spinner";
 import { IconContainer } from "../../icon";
 import { IconPosition, OwnProps } from "./types";
 
