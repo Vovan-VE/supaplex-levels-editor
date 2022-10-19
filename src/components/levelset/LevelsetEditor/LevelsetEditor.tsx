@@ -1,14 +1,13 @@
 import { FC, useEffect } from "react";
 import { useStore } from "effector-react";
 import { Loading } from "components/page";
+import { LevelBody } from "components/level/body";
 import {
   $currentBufferSelected,
   $currentKey,
   $currentLevelIndex,
   flushBuffers,
 } from "models/levelsets";
-import { LevelsHead } from "../LevelsHead";
-import { LevelEditor } from "../LevelEditor";
 import cl from "./LevelsetEditor.module.scss";
 
 export const LevelsetEditor: FC = () => {
@@ -38,16 +37,14 @@ export const LevelsetEditor: FC = () => {
   const levelIndex = useStore($currentLevelIndex);
 
   if (!key) {
+    // TODO: empty screen content
     return null;
   }
   if (!levelsetReady) {
-    return <Loading />;
+    return <Loading className={cl.root} />;
   }
-
-  return (
-    <div className={cl.root}>
-      <LevelsHead key={key} className={cl.levels} />
-      <LevelEditor key={`${key}:${levelIndex ?? ""}`} className={cl.editor} />
-    </div>
-  );
+  if (levelIndex === null) {
+    return <div className={cl.root} />;
+  }
+  return <LevelBody key={`${key}:${levelIndex}`} className={cl.root} />;
 };

@@ -1,186 +1,38 @@
-import { FC, ReactNode, useMemo } from "react";
-import cn from "classnames";
 import { useStore } from "effector-react";
-import { detectDriver } from "drivers";
+import { FC, Fragment } from "react";
+import { FilesToolbar } from "components/files/FilesToolbar";
+import { FileToolbar } from "components/files/FileToolbar";
+import { LevelsHead } from "components/levelset/LevelsHead";
+import { LevelToolbars } from "components/level/toolbars/LevelToolbars";
 import {
-  $currentFileName,
-  addLevelsetFileFx,
-  downloadCurrentFile,
-  removeCurrentLevelsetFile,
-  renameCurrentLevelset,
+  $currentBufferSelected,
+  $currentKey,
+  $currentLevelIndex,
 } from "models/levelsets";
-import { Button, Toolbar } from "ui/button";
-import { ask, msgBox, promptString } from "ui/feedback";
-import { svgs } from "ui/icon";
-import { ColorType, ContainerProps } from "ui/types";
+import { ContainerProps } from "ui/types";
 import { EditorTabs } from "./EditorTabs";
-import { promptNewFile } from "./promptNewFile";
 import cl from "./Header.module.scss";
 
 interface Props extends ContainerProps {}
 
-export const Header: FC<Props> = ({ className, ...rest }) => {
-  const filename = useStore($currentFileName);
-
-  const handleFile = useMemo(
-    () =>
-      filename
-        ? {
-            rename: async () => {
-              const newName = await promptString({
-                title: (
-                  <>
-                    Rename file "<b>{filename}</b>" in memory
-                  </>
-                ),
-                label: "New filename",
-                defaultValue: filename,
-                required: true,
-              });
-              if (newName !== undefined) {
-                renameCurrentLevelset(newName);
-              }
-            },
-            remove: async () => {
-              if (
-                await ask(
-                  <>
-                    Are you sure you want to remove file "<b>{filename}</b>"
-                    from memory?
-                    <br />
-                    You will loss all changes in the file. Consider download it
-                    first to backup.
-                    <br />
-                    <b>This action can not be undone.</b>
-                  </>,
-                  {
-                    buttons: {
-                      okText: <>Forgot "{filename}"</>,
-                      ok: {
-                        uiColor: ColorType.DANGER,
-                        autoFocus: false,
-                      },
-                      cancel: {
-                        autoFocus: true,
-                      },
-                    },
-                  },
-                )
-              ) {
-                removeCurrentLevelsetFile();
-              }
-            },
-          }
-        : undefined,
-    [filename],
-  );
+export const Header: FC<Props> = (props) => {
+  const key = useStore($currentKey);
+  const levelsetReady = useStore($currentBufferSelected);
+  const levelIndex = useStore($currentLevelIndex);
 
   return (
-    <header {...rest} className={cn(cl.root, className)}>
-      <Toolbar className={cl.start}>
-        <Button
-          icon={<svgs.FileBlank />}
-          title="Create new levelset..."
-          onClick={promptNewFile}
-        />
-        <Button
-          icon={<svgs.DirOpen />}
-          onClick={handleOpenClick}
-          title="Open files..."
-        />
-      </Toolbar>
-
-      <EditorTabs className={cl.tabs} />
-
-      <Toolbar className={cl.end}>
-        <Button
-          uiColor={ColorType.SUCCESS}
-          icon={<svgs.Download />}
-          disabled={!filename}
-          title={filename ? `Save file "${filename}" from memory` : undefined}
-          onClick={downloadCurrentFile}
-        />
-        <Button
-          icon={<svgs.Rename />}
-          disabled={!filename}
-          title="Rename file"
-          onClick={handleFile?.rename}
-        />
-        <Button
-          uiColor={ColorType.DANGER}
-          icon={<svgs.Trash />}
-          disabled={!filename}
-          title={
-            filename ? `Remove levelset "${filename}" from memory` : undefined
-          }
-          onClick={handleFile?.remove}
-        />
-      </Toolbar>
+    <header {...props}>
+      <div className={cl.files}>
+        <FilesToolbar className={cl.start} />
+        <EditorTabs className={cl.tabs} />
+        <FileToolbar className={cl.end} />
+      </div>
+      {levelsetReady && key && (
+        <Fragment key={key}>
+          <LevelsHead />
+          {levelIndex !== null && <LevelToolbars key={levelIndex} />}
+        </Fragment>
+      )}
     </header>
   );
 };
-
-function handleOpenClick() {
-  const d = window.document;
-  const input = d.createElement("input");
-  input.setAttribute("type", "file");
-  input.setAttribute("multiple", "multiple");
-  input.style.visibility = "hidden";
-  input.style.position = "absolute";
-  d.body.appendChild(input);
-  input.addEventListener("change", handler);
-  input.click();
-
-  function handler() {
-    const files = input.files;
-    input.removeEventListener("change", handler);
-    d.body.removeChild(input);
-
-    if (files) {
-      (async () => {
-        const detected = await Promise.allSettled(
-          Array.from(files).map(
-            async (file) =>
-              [file, detectDriver(await file.arrayBuffer())] as const,
-          ),
-        );
-        const errors: ReactNode[] = [];
-        for (const [i, item] of detected.entries()) {
-          if (item.status === "fulfilled") {
-            const [file, driverName] = item.value;
-            if (driverName) {
-              addLevelsetFileFx({
-                file,
-                driverName,
-                name: file.name,
-              });
-            } else {
-              errors.push(<>"{file.name}": Unsupported file format.</>);
-            }
-          } else {
-            errors.push(
-              <>
-                "{files[i].name}": Couldn't read file:{" "}
-                {item.reason instanceof Error
-                  ? item.reason.message
-                  : "unknown reason"}
-                .
-              </>,
-            );
-            console.error("Cannot read file", item.reason);
-          }
-        }
-        if (errors.length) {
-          // TODO: typography component to add intro text with apply uiColor
-          msgBox(
-            <ul>
-              {errors.map((err, i) => (
-                <li key={i}>{err}</li>
-              ))}
-            </ul>,
-          );
-        }
-      })();
-    }
-  }
-}
