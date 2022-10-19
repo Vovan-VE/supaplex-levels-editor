@@ -12,7 +12,7 @@ import { flushDelayed, withPersistent } from "@cubux/effector-persistent";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
 import { APP_TITLE } from "configs";
-import { getDriver, IBaseLevel, IBaseLevelset } from "drivers";
+import { getDriver, IBaseLevel, IBaseLevelset, IWithDemo } from "drivers";
 import { localStorageDriver } from "../_utils/persistent";
 import {
   $currentKey,
@@ -21,6 +21,7 @@ import {
   fileDidOpen,
 } from "./files";
 import {
+  DemoData,
   IBaseLevelsList,
   isEqualLevels,
   LevelsetFile,
@@ -69,6 +70,11 @@ export const deleteCurrentLevel = createEvent<any>();
  * Update current level in current levelset
  */
 export const updateCurrentLevel = createEvent<IBaseLevel>();
+export const internalUpdateLevelDemo = createEvent<{
+  key: LevelsetFileKey;
+  index: number;
+  demoData: DemoData;
+}>();
 /**
  * Undo in current level in current levelset
  */
@@ -110,6 +116,12 @@ const createLevelForFile = (file: LevelsetFile) => {
   }
   return d.createLevel();
 };
+
+const levelSupportsDemo = (level: any): level is IWithDemo =>
+  typeof level === "object" &&
+  level !== null &&
+  typeof level.setDemo === "function" &&
+  typeof level.setDemoSeed === "function";
 
 interface _OpenedIndicesWakeUp {
   opened: ReadonlySet<number>;
@@ -231,6 +243,23 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
         ...b,
         undoQueue: b.undoQueue.done(level),
       })),
+  )
+  .on(
+    internalUpdateLevelDemo,
+    (map, { key, index, demoData: { data, seed_lo, seed_hi } }) =>
+      updateBufferLevel(map, key, index, (b) => {
+        const level = b.undoQueue.current;
+        if (!levelSupportsDemo(level)) {
+          return b;
+        }
+
+        return {
+          ...b,
+          undoQueue: b.undoQueue.done(
+            level.setDemo(data).setDemoSeed({ hi: seed_hi, lo: seed_lo }),
+          ),
+        };
+      }),
   )
   // undo in current level in current levelset
   .on(_withCurrentKey(undoCurrentLevel), (map, { current: key }) =>

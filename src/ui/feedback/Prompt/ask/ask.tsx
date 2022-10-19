@@ -10,7 +10,19 @@ const createDefaultButtonsRenderer =
   ({ ok, okText, cancel, cancelText }: AskButtonsDefaultProps = {}) =>
     (
       <>
-        <Button autoFocus uiColor={ColorType.SUCCESS} {...ok} onClick={onOk}>
+        <Button
+          autoFocus
+          uiColor={ColorType.SUCCESS}
+          {...ok}
+          onClick={
+            ok?.onClick
+              ? (e) => {
+                  ok.onClick!(e);
+                  onOk();
+                }
+              : onOk
+          }
+        >
           {okText ?? "OK"}
         </Button>
         <Button {...cancel} onClick={onCancel}>

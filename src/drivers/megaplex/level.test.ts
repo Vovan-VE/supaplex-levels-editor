@@ -82,6 +82,30 @@ describe("level", () => {
   it("raw", () => {
     const level = new MegaplexLevel(3, 2, testLevelData);
     expect(level.raw).toEqual(testLevelData);
+    expect(level.length).toEqual(testLevelData.length);
+
+    const demo = Uint8Array.of(10, 20, 30, 40, 50, 60, 70);
+    const next = level.setDemoSeed({ lo: 0x12, hi: 0x34 }).setDemo(demo);
+    expect(next.length).toEqual(testLevelData.length + 7 + 2);
+    expect(next.length).toEqual(6 + 96 + 7 + 2);
+
+    const modFooter = new Uint8Array(testFooter);
+    modFooter[94] = 0x12;
+    modFooter[95] = 0x34;
+    expect(next.raw).toEqual(
+      Uint8Array.of(
+        0,
+        TILE_SP_PORT_U,
+        4,
+        1,
+        3,
+        5,
+        ...modFooter,
+        0,
+        ...demo,
+        0xff,
+      ),
+    );
   });
 
   it("copy", () => {

@@ -46,7 +46,7 @@ export class SupaplexLevel extends LevelFooter implements ISupaplexLevel {
 
   get raw() {
     const result = new Uint8Array(this.length);
-    result.set(super.getRaw(LEVEL_WIDTH), BODY_LENGTH);
+    result.set(super.getRaw(), BODY_LENGTH);
     result.set(this.#body.raw, 0);
     return result;
   }

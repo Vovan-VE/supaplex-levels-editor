@@ -51,7 +51,10 @@ describe("footer", () => {
       .padEnd(10 * 6, "\x00")
       .split("")
       .map((c) => c.charCodeAt(0)),
-    ...[0, 0, 0, 0],
+    // demo speed extras
+    ...[0, 0],
+    // demo_seed_lo demo_seed_hi
+    ...[0x34, 0x12],
   );
   expect(testFooterData.length).toBe(96);
 
@@ -79,7 +82,7 @@ describe("footer", () => {
         () => new LevelFooter(LEVEL_WIDTH, Uint8Array.of(0, 1, 6, 5)),
       ).toThrow(
         new Error(
-          `Invalid buffer length 4, expected at least ${FOOTER_BYTE_LENGTH}`,
+          `Invalid buffer length 4, expected exactly ${FOOTER_BYTE_LENGTH}`,
         ),
       );
     });
@@ -296,5 +299,20 @@ describe("footer", () => {
         },
       ]);
     });
+  });
+
+  it("demo seed", () => {
+    const footer = new LevelFooter(LEVEL_WIDTH, testFooterData);
+
+    const seed1 = { lo: 0x34, hi: 0x12 };
+    const seed2 = { lo: 0xdd, hi: 0xcc };
+
+    expect(footer.demoSeed).toEqual(seed1);
+    expect(footer.setDemoSeed(seed1)).toBe(footer);
+
+    const next = footer.setDemoSeed(seed2);
+    expect(next.demoSeed).toEqual(seed2);
+    expect(next).not.toBe(footer);
+    expect(footer.demoSeed).toEqual(seed1);
   });
 });

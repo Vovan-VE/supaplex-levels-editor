@@ -5,6 +5,8 @@ const {
   REACT_APP_BUGS_URL: BUGS_URL,
   REACT_APP_TEST_LEVEL_URL: TEST_LEVEL_URL = "https://supaplex.online/test/",
   REACT_APP_TEST_LEVEL_TITLE: TEST_LEVEL_TITLE = "Supaplex.Online",
+  REACT_APP_TEST_MESSAGE_ORIGIN: TEST_MESSAGE_ORIGIN = new URL(TEST_LEVEL_URL)
+    .origin,
 } = process.env;
 
 export {
@@ -14,6 +16,7 @@ export {
   BUGS_URL,
   TEST_LEVEL_URL,
   TEST_LEVEL_TITLE,
+  TEST_MESSAGE_ORIGIN,
 };
 
 export const APP_TITLE = "SpLE";

@@ -10,6 +10,7 @@ import {
   redoCurrentLevel,
   undoCurrentLevel,
 } from "models/levelsets";
+import { rememberDemoTarget } from "models/levelsets/demo";
 import { $prefConfirmedTestSO, setPrefAskTestSO } from "models/preferences";
 import { Button, TextButton, Toolbar, ToolbarSeparator } from "ui/button";
 import { ask, msgBox } from "ui/feedback";
@@ -89,7 +90,8 @@ const handleTestClick = () => {
         <div>
           <p>Could not open new window. Follow the link:</p>
           <p>
-            <a href={url} target="_blank" rel="noopener noreferrer">
+            {/* eslint-disable-next-line react/jsx-no-target-blank */}
+            <a href={url} target="_blank" rel="opener">
               Test level at {TEST_LEVEL_TITLE}
             </a>
           </p>
@@ -107,7 +109,13 @@ const handleTestClick = () => {
         uiColor: ColorType.SUCCESS,
         href: url,
         target: "_blank",
-        rel: "noopener noreferrer",
+        rel: "opener",
+        onClick: (e) => {
+          rememberDemoTarget();
+          if (window.open(url, "_blank")) {
+            e.preventDefault();
+          }
+        },
       },
     },
   });
@@ -115,6 +123,9 @@ const handleTestClick = () => {
 
 const ConfirmTestSO: FC = () => {
   const confirmed = useStore($prefConfirmedTestSO);
+  const driverName = useStore($currentDriverName);
+  const demoSupport =
+    (driverName && getDriver(driverName)?.demoSupport) || false;
 
   return (
     <div>
@@ -126,6 +137,7 @@ const ConfirmTestSO: FC = () => {
         . It will be opened in new tab/window, so you will not loss undo history
         in current editing session.
       </p>
+      {/*{demoSupport && <p>In order <strong>to save demo</strong>, please keep</p>}*/}
       <div>
         <Checkbox checked={confirmed} onChange={setPrefAskTestSO}>
           Don't show this confirmation again

@@ -23,5 +23,6 @@ export const MegaplexDriver: IMegaplexDriver = {
     borderTile,
   } = {}) => fillLevelBorder(new MegaplexLevel(width, height), borderTile),
   newLevelResizable: resizable,
+  demoSupport: true,
   LevelConfigurator,
 };

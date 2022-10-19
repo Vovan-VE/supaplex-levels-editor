@@ -36,7 +36,8 @@ export class MegaplexLevel extends LevelFooter implements IMegaplexLevel {
 
   get raw() {
     const result = new Uint8Array(this.length);
-    result.set(super.getRaw(this.#box.width), this.#box.length);
+    const footer = super.getRaw();
+    result.set(footer, this.#box.length);
     result.set(this.#body.raw, 0);
     return result;
   }
@@ -86,8 +87,8 @@ export class MegaplexLevel extends LevelFooter implements IMegaplexLevel {
       }
     }
 
-    const temp = new Uint8Array(width * height + src.length - src.#box.length);
-    temp.set(src.getRaw(width), width * height);
+    const temp = new Uint8Array(width * height + super.length);
+    temp.set(src.getRaw(), width * height);
     let result = new MegaplexLevel(width, height, temp) as this;
 
     for (let y = Math.min(height, this.#box.height); y-- > 0; ) {

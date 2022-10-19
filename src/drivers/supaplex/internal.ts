@@ -26,7 +26,7 @@ export interface ISupaplexSpecPort extends ISupaplexSpecPortProps {
 
 export interface ILevelFooter {
   readonly length: number;
-  getRaw(width: number): Uint8Array;
+  getRaw(): Uint8Array;
   readonly title: string;
   setTitle(title: string): this;
   readonly initialGravity: boolean;

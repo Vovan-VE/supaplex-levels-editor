@@ -1,3 +1,4 @@
+import { DemoSeed } from "../types";
 import {
   ILevelFooter,
   ISupaplexSpecPort,
@@ -15,6 +16,10 @@ const SPEC_PORT_COUNT_OFFSET = INFOTRONS_NEED_OFFSET + 1;
 const SPEC_PORT_DB_OFFSET = SPEC_PORT_COUNT_OFFSET + 1;
 const SPEC_PORT_ITEM_LENGTH = 6;
 const SPEC_PORT_MAX_COUNT = 10;
+const DEMO_SPEED_A_OFFSET = 92;
+const DEMO_SPEED_B_OFFSET = 93;
+const DEMO_RNG_SEED_LO_OFFSET = 94;
+const DEMO_RNG_SEED_HI_OFFSET = 95;
 
 const validateByte =
   process.env.NODE_ENV === "production"
@@ -65,10 +70,10 @@ export class LevelFooter implements ILevelFooter {
     if (data) {
       if (
         process.env.NODE_ENV !== "production" &&
-        data.length < FOOTER_BYTE_LENGTH
+        data.length !== FOOTER_BYTE_LENGTH
       ) {
         throw new Error(
-          `Invalid buffer length ${data.length}, expected at least ${FOOTER_BYTE_LENGTH}`,
+          `Invalid buffer length ${data.length}, expected exactly ${FOOTER_BYTE_LENGTH}`,
         );
       }
       data = new Uint8Array(data);
@@ -86,6 +91,10 @@ export class LevelFooter implements ILevelFooter {
     this.#src = data;
   }
 
+  get width() {
+    return this.#width;
+  }
+
   copy(): this {
     return new LevelFooter(this.#width, this.#src) as this;
   }
@@ -94,7 +103,7 @@ export class LevelFooter implements ILevelFooter {
     return this.#src.length;
   }
 
-  getRaw(width: number) {
+  getRaw() {
     return new Uint8Array(this.#src);
   }
 
@@ -262,6 +271,34 @@ export class LevelFooter implements ILevelFooter {
       specPortRawOffset(last),
     );
     copy.#src[SPEC_PORT_COUNT_OFFSET] = this.specPortsCount - 1;
+    return copy;
+  }
+
+  get demoSeed(): DemoSeed {
+    return {
+      lo: this.#src[DEMO_RNG_SEED_LO_OFFSET],
+      hi: this.#src[DEMO_RNG_SEED_HI_OFFSET],
+    };
+  }
+
+  setDemoSeed({ lo, hi }: DemoSeed) {
+    if (validateByte) {
+      validateByte(lo);
+      validateByte(hi);
+    }
+    if (
+      this.#src[DEMO_SPEED_A_OFFSET] === 0 &&
+      this.#src[DEMO_SPEED_B_OFFSET] === 0 &&
+      this.#src[DEMO_RNG_SEED_LO_OFFSET] === lo &&
+      this.#src[DEMO_RNG_SEED_HI_OFFSET] === hi
+    ) {
+      return this;
+    }
+    const copy = this.copy();
+    copy.#src[DEMO_SPEED_A_OFFSET] = 0;
+    copy.#src[DEMO_SPEED_B_OFFSET] = 0;
+    copy.#src[DEMO_RNG_SEED_LO_OFFSET] = lo;
+    copy.#src[DEMO_RNG_SEED_HI_OFFSET] = hi;
     return copy;
   }
 }
