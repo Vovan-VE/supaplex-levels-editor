@@ -1,9 +1,22 @@
 .root {
+  position: relative;
   display: inline-block;
   vertical-align: middle;
   width: auto;
   height: 1em;
+}
 
+.stackIndex {
+  position: absolute;
+  display: inline-block;
+  width: auto;
+  height: 50%;
+  right: -25%;
+  bottom: -25%;
+}
+
+.root,
+.stackIndex {
   > svg {
     display: block;
     width: auto;
