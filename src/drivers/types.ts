@@ -24,6 +24,12 @@ export interface IWithDemo {
   setDemoSeed(seed: DemoSeed): this;
 }
 
+export const levelSupportsDemo = (level: any): level is IWithDemo =>
+  typeof level === "object" &&
+  level !== null &&
+  typeof level.setDemo === "function" &&
+  typeof level.setDemoSeed === "function";
+
 export interface IBaseLevel {
   readonly raw: Uint8Array;
   readonly width: number;

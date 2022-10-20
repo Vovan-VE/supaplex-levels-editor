@@ -1,13 +1,18 @@
 import { createEvent, createStore, Event, sample } from "effector";
+import { getDriver } from "drivers";
 import { ask } from "ui/feedback";
 import { DemoData, LevelsetFileKey } from "./types";
-import { $currentKey, $levelsets } from "./files";
+import { $currentDriverName, $currentKey, $levelsets } from "./files";
 import {
   $currentLevelIndex,
   deleteCurrentLevel,
   insertAtCurrentLevel,
   internalUpdateLevelDemo,
 } from "./buffers";
+
+export const $fileSupportsDemo = $currentDriverName.map(
+  (driverName) => (driverName && getDriver(driverName)?.demoSupport) || false,
+);
 
 const decodeDemoMessage = (data: any): DemoData | null => {
   if (typeof data === "string") {

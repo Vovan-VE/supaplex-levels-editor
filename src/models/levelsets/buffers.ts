@@ -12,7 +12,12 @@ import { flushDelayed, withPersistent } from "@cubux/effector-persistent";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
 import { APP_TITLE } from "configs";
-import { getDriver, IBaseLevel, IBaseLevelset, IWithDemo } from "drivers";
+import {
+  getDriver,
+  IBaseLevel,
+  IBaseLevelset,
+  levelSupportsDemo,
+} from "drivers";
 import { localStorageDriver } from "../_utils/persistent";
 import {
   $currentKey,
@@ -116,12 +121,6 @@ const createLevelForFile = (file: LevelsetFile) => {
   }
   return d.createLevel();
 };
-
-const levelSupportsDemo = (level: any): level is IWithDemo =>
-  typeof level === "object" &&
-  level !== null &&
-  typeof level.setDemo === "function" &&
-  typeof level.setDemoSeed === "function";
 
 interface _OpenedIndicesWakeUp {
   opened: ReadonlySet<number>;
