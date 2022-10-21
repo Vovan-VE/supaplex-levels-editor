@@ -8,6 +8,7 @@ import {
 } from "react";
 import { DISPLAY_ORDER, DriverName, getDriver } from "drivers";
 import { addLevelsetFileFx } from "models/levelsets";
+import { NoticeSizeLags } from "../../level/toolbars/LevelConfig/NoticeSizeLags";
 import { Button } from "ui/button";
 import {
   Dialog,
@@ -279,7 +280,9 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
           )}
         </Field>
 
-        {/* TODO: notice about possible lags due to level size or levels count */}
+        {resizable && width !== null && height !== null && (
+          <NoticeSizeLags totalTiles={width * height} />
+        )}
 
         {/* TODO: prompt dialog: driver & its options */}
       </div>

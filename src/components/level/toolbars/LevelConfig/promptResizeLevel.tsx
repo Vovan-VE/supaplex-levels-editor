@@ -17,6 +17,7 @@ import {
 } from "ui/feedback";
 import { Field, IntegerInput } from "ui/input";
 import { ColorType } from "ui/types";
+import { NoticeSizeLags } from "./NoticeSizeLags";
 import cl from "./ResizeLevel.module.scss";
 
 interface Props extends RenderPromptProps<true> {}
@@ -110,7 +111,9 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
               <IntegerInput value={height} onChange={setHeight} required />
             </Field>
 
-            {/* TODO: notice about possible lags */}
+            {width !== null && height !== null && (
+              <NoticeSizeLags totalTiles={width * height} />
+            )}
           </>
         ) : (
           <p>Cannot change size for this level.</p>
