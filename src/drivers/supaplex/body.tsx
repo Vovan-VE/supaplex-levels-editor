@@ -1,6 +1,7 @@
 import { IsPlayableResult } from "../types";
 import { IBox, ILevelBody } from "./internal";
 import { TILE_EXIT, TILE_MURPHY } from "./tiles-id";
+import { InlineTile } from "./InlineTile";
 
 const validateByte =
   process.env.NODE_ENV === "production"
@@ -69,9 +70,16 @@ export class LevelBody implements ILevelBody {
       }
     }
     const errors = [
-      // TODO: show SVG tiles
-      leftToRequire.has(TILE_MURPHY) && "There is no Murphy in the level.",
-      leftToRequire.has(TILE_EXIT) && "There is no Exit in the level.",
+      leftToRequire.has(TILE_MURPHY) && (
+        <>
+          There is no <InlineTile tile={TILE_MURPHY} /> Murphy in the level.
+        </>
+      ),
+      leftToRequire.has(TILE_EXIT) && (
+        <>
+          There is no <InlineTile tile={TILE_EXIT} /> Exit in the level.
+        </>
+      ),
     ].filter(Boolean);
     return errors.length ? [false, errors] : [true];
   }
