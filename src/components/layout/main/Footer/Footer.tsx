@@ -2,7 +2,7 @@ import { FC } from "react";
 import cn from "classnames";
 import { useStore } from "effector-react";
 import { ReactComponent as GitHubLogo } from "assets/img/github.svg";
-import { APP_VERSION, REPO_URL } from "configs";
+import { APP_VERSION, REPO_URL, VERSION_URL } from "configs";
 import {
   $bodyScaleCanDec,
   $bodyScaleCanInc,
@@ -21,8 +21,21 @@ interface Props extends ContainerProps {}
 
 export const Footer: FC<Props> = ({ className, ...rest }) => (
   <footer {...rest} className={cn(cl.root, className)}>
-    <TextButton href={REPO_URL} icon={<GitHubLogo />} className={cl.icon} />{" "}
-    <span className={cl.text}>v{APP_VERSION}</span>{" "}
+    <TextButton
+      href={REPO_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      icon={<GitHubLogo />}
+      className={cl.icon}
+    />{" "}
+    <TextButton
+      href={VERSION_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cl.text}
+    >
+      v{APP_VERSION}
+    </TextButton>{" "}
     <span className={cl.space} />
     <HoveredCell />
     <span className={cl.space} />
