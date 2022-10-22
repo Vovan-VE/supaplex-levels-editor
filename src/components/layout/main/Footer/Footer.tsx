@@ -3,6 +3,7 @@ import cn from "classnames";
 import { useStore } from "effector-react";
 import { ReactComponent as GitHubLogo } from "assets/img/github.svg";
 import { APP_VERSION, REPO_URL, VERSION_URL } from "configs";
+import { TileCoords } from "components/settings/display";
 import {
   $bodyScaleCanDec,
   $bodyScaleCanInc,
@@ -10,6 +11,7 @@ import {
   incBodyScale,
 } from "models/levels";
 import { $feedbackCell } from "models/levels/tools";
+import { openSettings } from "models/settings";
 import { TextButton } from "ui/button";
 import { msgBox } from "ui/feedback";
 import { svgs } from "ui/icon";
@@ -54,6 +56,12 @@ export const Footer: FC<Props> = ({ className, ...rest }) => (
       title="Zoom Out"
     />{" "}
     <TextButton
+      icon={<svgs.Wrench />}
+      className={cl.icon}
+      onClick={openSettings}
+      title="Settings"
+    />{" "}
+    <TextButton
       icon={<svgs.Info />}
       className={cl.icon}
       onClick={handleInfoClick}
@@ -79,7 +87,7 @@ const HoveredCell: FC = () => {
   }
   return (
     <span className={cl.text}>
-      x={feedback.x}; y={feedback.y}
+      <TileCoords {...feedback} />
     </span>
   );
 };

@@ -2,7 +2,9 @@
 
 ## 0.4.0 (DEV)
 
-- ...
+- Enh: Minor UI enhancements.
+- Add: Settings dialog.
+  - Coordinates display basis: 0 or 1.
 
 ## 0.3.0 (2022-10-16)
 

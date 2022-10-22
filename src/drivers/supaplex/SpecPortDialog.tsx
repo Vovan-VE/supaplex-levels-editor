@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { TileCoords } from "components/settings/display";
 import { Button } from "ui/button";
 import { Dialog } from "ui/feedback";
 import { Checkbox } from "ui/input";
@@ -73,10 +74,11 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
       onClose={cancel}
     >
       <p>
-        <code title="Zero based coordinates">
-          [{x}; {y}]
-        </code>{" "}
-        <InlineTile tile={level.getTile(x, y)} />
+        <TileCoords x={x} y={y} /> <InlineTile tile={level.getTile(x, y)} />
+      </p>
+      <p>
+        When Murphy pass thru this Special Port, the game conditions will change
+        to:
       </p>
       {/* TODO: replace checkboxes with labeled switches: `(* off)` <=> `(on *)` */}
       <div>

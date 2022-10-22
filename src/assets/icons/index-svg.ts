@@ -1,6 +1,7 @@
 export { ReactComponent as AppendRow } from "./AppendRow.svg";
 export { ReactComponent as ArrowTriangleUp } from "./ArrowTriangleUp.svg";
 export { ReactComponent as CheckboxChecked } from "./CheckboxChecked.svg";
+export { ReactComponent as CheckboxDot } from "./CheckboxDot.svg";
 export { ReactComponent as CheckboxUnchecked } from "./CheckboxUnchecked.svg";
 export { ReactComponent as Copy } from "./Copy.svg";
 export { ReactComponent as Cross } from "./Cross.svg";
@@ -25,3 +26,4 @@ export { ReactComponent as Rename } from "./Rename.svg";
 export { ReactComponent as Trash } from "./Trash.svg";
 export { ReactComponent as Undo } from "./Undo.svg";
 export { ReactComponent as Upload } from "./Upload.svg";
+export { ReactComponent as Wrench } from "./Wrench.svg";

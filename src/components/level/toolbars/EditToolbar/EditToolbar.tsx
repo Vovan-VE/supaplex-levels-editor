@@ -14,7 +14,7 @@ import {
   undoCurrentLevel,
 } from "models/levelsets";
 import { $fileSupportsDemo, rememberDemoTarget } from "models/levelsets/demo";
-import { $prefConfirmedTestSO, setPrefAskTestSO } from "models/preferences";
+import { $prefConfirmedTestSO, setPrefAskTestSO } from "models/settings";
 import { Button, TextButton, Toolbar, ToolbarSeparator } from "ui/button";
 import { ask, msgBox } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
