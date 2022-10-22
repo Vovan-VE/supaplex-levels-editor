@@ -129,6 +129,7 @@ const sendLevelTo = ({
   const rel = target ? "opener" : "noopener noreferrer";
 
   if ($confirmed.getState()) {
+    onConfirmed?.();
     if (!window.open(url, targetOrBlank)) {
       msgBox(
         <div>
