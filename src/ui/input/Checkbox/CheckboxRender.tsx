@@ -12,6 +12,7 @@ export const CheckboxRender: FC<Props> = ({
   _radio,
   checked = false,
   onChange,
+  name,
   children,
   className,
   ...rest
@@ -41,6 +42,7 @@ export const CheckboxRender: FC<Props> = ({
           type={_radio ? "radio" : "checkbox"}
           checked={checked}
           onChange={handleChange}
+          name={name}
         />
       </span>
       <span>{children}</span>

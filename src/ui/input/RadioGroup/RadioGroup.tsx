@@ -1,5 +1,6 @@
 import cn from "classnames";
-import { FC, ReactNode, useMemo } from "react";
+import { FC, ReactNode, useMemo, useState } from "react";
+import { generateKey } from "utils/strings";
 import { ContainerProps } from "../../types";
 import { CheckboxRender } from "../Checkbox/CheckboxRender";
 import cl from "./RadioGroup.module.scss";
@@ -15,6 +16,7 @@ interface Props<V> extends ContainerProps {
   value?: V;
   onChange?: (value: V) => void;
   flowInline?: boolean;
+  name?: string;
 }
 
 export const RadioGroup = <V,>({
@@ -22,9 +24,13 @@ export const RadioGroup = <V,>({
   value,
   onChange,
   flowInline = false,
+  name,
   className,
   ...rest
 }: Props<V>): ReturnType<FC> => {
+  const [fallbackName] = useState(generateKey);
+  const _name = name ?? fallbackName;
+
   const handleChange = useMemo(
     () =>
       onChange
@@ -48,6 +54,7 @@ export const RadioGroup = <V,>({
           _radio
           checked={value !== undefined && o.value === value}
           onChange={handleChange?.[i]}
+          name={_name}
         >
           {o.label}
         </CheckboxRender>
