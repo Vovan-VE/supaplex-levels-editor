@@ -150,6 +150,8 @@ export const $levelsets = withPersistentMap(
   )
   .on(_removeLevelsetFile, RoMap.remove);
 
+export const $hasFiles = $levelsets.map((m) => m.size > 0);
+
 // reset current file key when is refers to non-existing file
 $currentKey.reset(
   sample({

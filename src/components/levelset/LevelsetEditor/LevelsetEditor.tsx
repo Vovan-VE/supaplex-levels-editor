@@ -1,7 +1,8 @@
 import { FC, useEffect } from "react";
 import { useStore } from "effector-react";
-import { Loading } from "components/page";
+import { NoFileSelected, NoLevelSelected } from "components/common";
 import { LevelBody } from "components/level/body";
+import { Loading } from "components/page";
 import { TEST_MESSAGE_ORIGIN } from "configs";
 import {
   $currentBufferSelected,
@@ -46,14 +47,13 @@ export const LevelsetEditor: FC = () => {
   const levelIndex = useStore($currentLevelIndex);
 
   if (!key) {
-    // TODO: empty screen content
-    return null;
+    return <NoFileSelected className={cl.root} />;
   }
   if (!levelsetReady) {
     return <Loading className={cl.root} />;
   }
   if (levelIndex === null) {
-    return <div className={cl.root} />;
+    return <NoLevelSelected className={cl.root} />;
   }
   return <LevelBody key={`${key}:${levelIndex}`} className={cl.root} />;
 };
