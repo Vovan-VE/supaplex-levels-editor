@@ -30,13 +30,7 @@ export const useValueInputWrap = <V>(
   const [input, setInput] = useState(formatValue(ownValue));
 
   const updateInput = useCallback(
-    (value: V) => {
-      const string = formatValue(value);
-      // REFACT: useless condition
-      // if (string !== input) {
-      setInput(string);
-      // }
-    },
+    (value: V) => setInput(formatValue(value)),
     [formatValue],
   );
 
@@ -51,7 +45,6 @@ export const useValueInputWrap = <V>(
 
   // update input on format change (by locale or props)
   useEffect(() => {
-    // REFACT: does it work without warning?
     setOwnValue((ownValue) => {
       setInput(formatValue(ownValue));
       return ownValue;

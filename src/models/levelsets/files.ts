@@ -57,7 +57,6 @@ export const addLevelsetFileFx = createEffect(
     }),
 );
 addLevelsetFileFx.fail.watch(({ params, error }) => {
-  // TODO: UI toast
   console.log("Could not load file", params, error);
 });
 
