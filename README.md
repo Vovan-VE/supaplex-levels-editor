@@ -56,7 +56,6 @@ Also:
 ## Planned features (unsorted)
 
 - More editing tools at least those from Winplex Collection Editor.
-- Better adaptive UI for mobile device and/or small screen.
 - More file formats to support.
 - Conversion between formats.
 - Compare levels.
