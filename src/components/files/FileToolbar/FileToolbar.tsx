@@ -12,7 +12,7 @@ export const FileToolbar: FC = () => {
     <>
       <Button
         uiColor={ColorType.SUCCESS}
-        icon={<svgs.Download />}
+        icon={<svgs.Save />}
         disabled={!filename}
         title={filename ? `Save file "${filename}" from memory` : undefined}
         onClick={downloadCurrentFile}
