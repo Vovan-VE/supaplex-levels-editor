@@ -16,7 +16,7 @@ export const showInfoDialog = () =>
 const InfoContent: FC = () => (
   <div className={cl.root}>
     <img
-      src="/public/favicon.svg"
+      src="/favicon.svg"
       alt={APP_TITLE}
       width={96}
       height={96}

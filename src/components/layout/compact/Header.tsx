@@ -2,7 +2,7 @@ import cn from "classnames";
 import { useStore } from "effector-react";
 import { FC, Fragment } from "react";
 import { ReactComponent as GitHubLogo } from "assets/img/github.svg";
-import { ZoomButtons } from "components/common";
+import { showInfoDialog, ZoomButtons } from "components/common";
 import { EditorTabs, FilesToolbar, FileToolbar } from "components/files";
 import { EditToolbar, UndoButton } from "components/level/toolbars/EditToolbar";
 import { promptLevelConfig } from "components/level/toolbars/LevelConfig";
@@ -104,6 +104,13 @@ export const Header: FC<Props> = (props) => {
               icon={<GitHubLogo />}
             >
               GitHub repo <span className={cl.ver}>v{APP_VERSION}</span>
+            </TextButton>
+            <TextButton
+              uiColor={MUTE}
+              icon={<svgs.Info />}
+              onClick={showInfoDialog}
+            >
+              Info
             </TextButton>
           </Toolbar>
         </ButtonDropdown>
