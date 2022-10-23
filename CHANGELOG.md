@@ -5,6 +5,8 @@
 - Enh: Minor UI enhancements.
 - Add: Settings dialog.
   - Coordinates display basis: 0 or 1.
+- Add: Compact UI for mobile devices. UI is adaptive by default, but can be
+  changed from Settings dialog. Any feedback for it will be helpful.
 
 ## 0.3.0 (2022-10-16)
 

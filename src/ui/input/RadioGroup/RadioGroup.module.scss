@@ -1,6 +1,14 @@
 .root {
   display: flex;
+}
+._rows {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
+}
+._inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
 }

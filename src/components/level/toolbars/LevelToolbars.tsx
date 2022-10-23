@@ -1,5 +1,6 @@
 import { FC } from "react";
 import cn from "classnames";
+import { Toolbar } from "ui/button";
 import { ContainerProps } from "ui/types";
 import { EditToolbar } from "./EditToolbar";
 import { EditorTools } from "./EditorTools";
@@ -11,8 +12,12 @@ interface Props extends ContainerProps {}
 
 export const LevelToolbars: FC<Props> = ({ className, ...rest }) => (
   <div {...rest} className={cn(cl.root, className)}>
-    <EditToolbar className={cl.edit} />
-    <LevelConfig className={cl.config} />
+    <Toolbar className={cl.edit}>
+      <EditToolbar />
+    </Toolbar>
+    <Toolbar className={cl.config}>
+      <LevelConfig />
+    </Toolbar>
     <EditorTools className={cl.tools} />
     <TilesToolbar className={cl.tiles} />
   </div>

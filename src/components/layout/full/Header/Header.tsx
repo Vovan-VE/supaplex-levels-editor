@@ -1,16 +1,15 @@
 import { useStore } from "effector-react";
 import { FC, Fragment } from "react";
-import { FilesToolbar } from "components/files/FilesToolbar";
-import { FileToolbar } from "components/files/FileToolbar";
-import { LevelsHead } from "components/levelset/LevelsHead";
+import { EditorTabs, FilesToolbar, FileToolbar } from "components/files";
+import { LevelsHead } from "components/layout/full/Header/LevelsHead";
 import { LevelToolbars } from "components/level/toolbars/LevelToolbars";
 import {
   $currentBufferSelected,
   $currentKey,
   $currentLevelIndex,
 } from "models/levelsets";
+import { Toolbar } from "ui/button";
 import { ContainerProps } from "ui/types";
-import { EditorTabs } from "./EditorTabs";
 import cl from "./Header.module.scss";
 
 interface Props extends ContainerProps {}
@@ -23,9 +22,13 @@ export const Header: FC<Props> = (props) => {
   return (
     <header {...props}>
       <div className={cl.files}>
-        <FilesToolbar className={cl.start} />
+        <Toolbar className={cl.start}>
+          <FilesToolbar />
+        </Toolbar>
         <EditorTabs className={cl.tabs} />
-        <FileToolbar className={cl.end} />
+        <Toolbar className={cl.end}>
+          <FileToolbar />
+        </Toolbar>
       </div>
       {levelsetReady && key && (
         <Fragment key={key}>

@@ -470,6 +470,9 @@ export const $currentBuffer = combine(
   (map, key) => (key && map.get(key)) || null,
 );
 export const $currentBufferSelected = $currentBuffer.map(Boolean);
+export const $currentBufferLevelsCount = $currentBuffer.map(
+  (b) => b && b.levels.length,
+);
 
 /**
  * Editing buffer to current level in current levelset

@@ -1,5 +1,4 @@
 import { FC, useCallback } from "react";
-import cn from "classnames";
 import { useStore } from "effector-react";
 import { getDriver } from "drivers";
 import {
@@ -7,25 +6,32 @@ import {
   $currentLevelUndoQueue,
   updateCurrentLevel,
 } from "models/levelsets";
-import { Button, Toolbar, ToolbarSeparator } from "ui/button";
+import { Button, ToolbarSeparator } from "ui/button";
 import { useInputDebounce, ValueInput } from "ui/input";
-import { ContainerProps } from "ui/types";
 import { promptResizeLevel } from "./promptResizeLevel";
 import cl from "./LevelConfig.module.scss";
 
 const formatTitle = (value: string) => value.trimEnd();
 
-interface Props extends ContainerProps {}
+interface Props {
+  onDidResize?: () => void;
+}
 
-export const LevelConfig: FC<Props> = ({ className, ...rest }) => {
+export const LevelConfig: FC<Props> = ({ onDidResize }) => {
   const driverName = useStore($currentDriverName)!;
   const { LevelConfigurator } = getDriver(driverName)!;
   const undoQueue = useStore($currentLevelUndoQueue)!;
   const rawLevel = undoQueue.current;
 
+  const handleResizeClick = useCallback(async () => {
+    if (await promptResizeLevel()) {
+      onDidResize?.();
+    }
+  }, [onDidResize]);
+
   return (
-    <Toolbar {...rest} className={cn(cl.root, className)}>
-      <Button disabled={!rawLevel.resizable} onClick={promptResizeLevel}>
+    <>
+      <Button disabled={!rawLevel.resizable} onClick={handleResizeClick}>
         {rawLevel.width}x{rawLevel.height}
       </Button>
       <ValueInput
@@ -60,6 +66,6 @@ export const LevelConfig: FC<Props> = ({ className, ...rest }) => {
           <LevelConfigurator level={rawLevel} onChange={updateCurrentLevel} />
         </>
       )}
-    </Toolbar>
+    </>
   );
 };

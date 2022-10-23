@@ -3,11 +3,19 @@
   height: 100%;
   display: grid;
   grid-template-columns: 100%;
+}
+._full {
   grid-template-rows: auto minmax(0, 1fr) auto;
   grid-template-areas:
     "head"
     "main"
     "foot";
+}
+._compact {
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "head"
+    "main";
 }
 
 .header {
@@ -15,8 +23,6 @@
 }
 .main {
   grid-area: main;
-  //padding-top: 0.5rem;
-  //padding-bottom: 0.5rem;
 }
 .footer {
   grid-area: foot;

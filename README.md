@@ -67,7 +67,6 @@ Also:
 
 ## Known Issues
 
-- Mobile device can't fit all UI.
 - Large MPX levels are laggy.
 
 ## Contribution, Development

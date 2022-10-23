@@ -6,6 +6,7 @@ import { Dialog } from "ui/feedback";
 import { ColorType } from "ui/types";
 import { CoordsChoice } from "./CoordsChoice";
 import { Confirmations } from "./ConfirmCheckbox";
+import { LayoutChoice } from "./LayoutChoice";
 
 export const SettingsDialog: FC = () => {
   const opened = useStore($opened);
@@ -22,6 +23,7 @@ export const SettingsDialog: FC = () => {
         </Button>
       }
     >
+      <LayoutChoice />
       <CoordsChoice />
       <Confirmations />
     </Dialog>

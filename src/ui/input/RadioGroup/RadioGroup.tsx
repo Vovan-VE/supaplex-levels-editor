@@ -14,12 +14,14 @@ interface Props<V> extends ContainerProps {
   options: RadioOptions<V>;
   value?: V;
   onChange?: (value: V) => void;
+  flowInline?: boolean;
 }
 
 export const RadioGroup = <V,>({
   options,
   value,
   onChange,
+  flowInline = false,
   className,
   ...rest
 }: Props<V>): ReturnType<FC> => {
@@ -36,7 +38,10 @@ export const RadioGroup = <V,>({
   );
 
   return (
-    <div {...rest} className={cn(cl.root, className)}>
+    <div
+      {...rest}
+      className={cn(cl.root, flowInline ? cl._inline : cl._rows, className)}
+    >
       {options.map((o, i) => (
         <CheckboxRender
           key={i}

@@ -13,6 +13,7 @@ export const $prefConfirmedTestSO = withPersistent(
   createStore(false),
   localStorageDriver,
   "prefConfirmTestSO",
+  { unserialize: Boolean },
 ).on(setPrefAskTestSO, (_, v) => v);
 
 export const setCoordsDisplayBasis = createEvent<0 | 1>();
@@ -22,3 +23,18 @@ export const $coordsDisplayBasis = withPersistent(
   "coordsBasis",
   { unserialize: (v) => (v ? 1 : 0) },
 ).on(setCoordsDisplayBasis, (_, v) => v);
+
+export enum LayoutType {
+  AUTO = "auto",
+  COMPACT = "compact",
+  FULL = "full",
+}
+const isLayoutType = (v: any): v is LayoutType =>
+  typeof v === "string" && LayoutType.hasOwnProperty(v);
+export const setLayoutType = createEvent<LayoutType>();
+export const $layoutType = withPersistent(
+  createStore<LayoutType>(LayoutType.AUTO),
+  localStorageDriver,
+  "layout",
+  { unserialize: (v) => (isLayoutType(v) ? v : LayoutType.AUTO) },
+).on(setLayoutType, (_, v) => v);

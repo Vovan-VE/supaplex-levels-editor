@@ -1,11 +1,22 @@
 import { FC } from "react";
 import { APP_TITLE, APP_VERSION } from "configs";
+import { msgBox } from "ui/feedback";
 import cl from "./InfoContent.module.scss";
 
-export const InfoContent: FC = () => (
+export const showInfoDialog = () =>
+  msgBox(<InfoContent />, {
+    size: "full",
+    closeSetAutoFocus: true,
+    button: {
+      text: "Close",
+      autoFocus: false,
+    },
+  });
+
+const InfoContent: FC = () => (
   <div className={cl.root}>
     <img
-      src="/favicon.svg"
+      src="/public/favicon.svg"
       alt={APP_TITLE}
       width={96}
       height={96}
@@ -17,7 +28,7 @@ export const InfoContent: FC = () => (
     <p>
       <strong>{APP_TITLE}</strong> is <strong>Supaplex Levels Editor</strong> in
       browser. Inspired by{" "}
-      <a href="https://www.supaplex.online/">Supaplex.Online</a> and its
+      <a href="components/common/InfoContent">Supaplex.Online</a> and its
       community.
     </p>
 
