@@ -7,6 +7,17 @@
     grid-row: calc(1 + var(--y));
   }
 }
+.typeTileFill {
+  > * {
+    grid-column-start: calc(1 + var(--x));
+    grid-column-end: span var(--w);
+    grid-row-start: calc(1 + var(--y));
+    grid-row-end: span var(--h);
+    background-size: var(--tile-size);
+    background-repeat: repeat;
+    aspect-ratio: auto;
+  }
+}
 
 .typeFeedback {
   .cell {

@@ -16,6 +16,7 @@ import cl from "./DrawLayers.module.scss";
 
 const TYPE_CLASSES: Partial<Record<DrawLayerType, string>> = {
   [DrawLayerType.TILES]: cl.typeTiles,
+  [DrawLayerType.TILE_FILL]: cl.typeTileFill,
 };
 
 interface ListProps extends ContainerProps {
@@ -66,6 +67,23 @@ const DrawLayerItem = memo<LayerProps>(({ layer }) => {
             />
           ))}
         </>
+      );
+    }
+
+    case DrawLayerType.TILE_FILL: {
+      const { tile, width, height } = layer;
+      return (
+        <TileRender
+          tile={tile}
+          style={
+            {
+              "--x": LX,
+              "--y": LY,
+              "--w": width,
+              "--h": height,
+            } as {}
+          }
+        />
       );
     }
 

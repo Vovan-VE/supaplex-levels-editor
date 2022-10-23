@@ -57,6 +57,7 @@ export const cellKey = ({ x, y }: CellCoords): CellKey => `${x}:${y}`;
 
 export const enum DrawLayerType {
   TILES = "t",
+  TILE_FILL = "tf",
   CUSTOM = "c",
 }
 interface BaseDrawLayer extends CellCoords {
@@ -71,13 +72,18 @@ interface DrawLayerTiles extends BaseDrawLayer {
   type: DrawLayerType.TILES;
   tiles: TilesPath;
 }
-
+interface DrawLayerTileFill extends BaseDrawLayer {
+  type: DrawLayerType.TILE_FILL;
+  tile: number;
+  width: number;
+  height: number;
+}
 interface DrawLayerCustom extends BaseDrawLayer {
   type: DrawLayerType.CUSTOM;
   Component: FC<CellCoords>;
 }
 
-export type DrawLayer = DrawLayerTiles | DrawLayerCustom;
+export type DrawLayer = DrawLayerTiles | DrawLayerTileFill | DrawLayerCustom;
 
 //-------------------------------
 
