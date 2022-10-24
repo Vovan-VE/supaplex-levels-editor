@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0 (DEV)
+## 0.4.0 (2022-10-24)
 
 - Add: Experimental recording and replay embedded demo with Supaplex.Online test
   page (when supported by file format, like MPX).
