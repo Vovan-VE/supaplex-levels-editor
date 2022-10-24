@@ -2,6 +2,8 @@
 
 ## 0.4.0 (DEV)
 
+- Add: Experimental recording and replay embedded demo with Supaplex.Online test
+  page (when supported by file format, like MPX).
 - Add: Compact UI for mobile devices. Any feedback for it will be helpful.
   - UI is adaptive by default, but can be changed in new Settings dialog.
 - Add: Settings dialog.
