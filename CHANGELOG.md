@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1 (2022-10-24)
+
+- Fix: Demo recording don't work due to wrong configuration.
+
 ## 0.4.0 (2022-10-24)
 
 - Add: Experimental recording and replay embedded demo with Supaplex.Online test
