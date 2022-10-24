@@ -51,7 +51,6 @@ const _receivedDemo = sample({
   source: receivedDemoFromTest.map(decodeDemoMessage),
   filter: Boolean,
 });
-_receivedDemo.watch((v) => console.log(">> demo", v));
 
 if (process.env.NODE_ENV === "development") {
   // since we cannot receive `postMessage()` sent to production origin,
@@ -119,8 +118,6 @@ const $demoTarget = createStore<_DemoTarget | null>(null)
       }
     }
   });
-
-$demoTarget.watch((v) => console.log(">> demo target", v));
 
 sample({
   clock: _receivedDemo,
