@@ -1,18 +1,25 @@
 import { FC, useEffect } from "react";
 import { useStore } from "effector-react";
+import { NoFileSelected, NoLevelSelected } from "components/common";
+import { LevelBody } from "components/level/body";
 import { Loading } from "components/page";
+import { TEST_MESSAGE_ORIGIN } from "configs";
 import {
   $currentBufferSelected,
   $currentKey,
   $currentLevelIndex,
   flushBuffers,
 } from "models/levelsets";
-import { LevelsHead } from "../LevelsHead";
-import { LevelEditor } from "../LevelEditor";
+import { receivedDemoFromTest } from "models/levelsets/demo";
 import cl from "./LevelsetEditor.module.scss";
 
 export const LevelsetEditor: FC = () => {
   useEffect(() => {
+    function onMessage(e: MessageEvent) {
+      if (e.origin === TEST_MESSAGE_ORIGIN) {
+        receivedDemoFromTest(e.data);
+      }
+    }
     function onSuspend() {
       flushBuffers();
     }
@@ -25,8 +32,10 @@ export const LevelsetEditor: FC = () => {
     window.document.addEventListener("visibilitychange", onVisChange);
     window.addEventListener("pagehide", onSuspend);
     window.addEventListener("beforeunload", onSuspend);
+    window.addEventListener("message", onMessage);
 
     return () => {
+      window.removeEventListener("message", onMessage);
       window.removeEventListener("beforeunload", onSuspend);
       window.removeEventListener("pagehide", onSuspend);
       window.document.removeEventListener("visibilitychange", onVisChange);
@@ -38,16 +47,13 @@ export const LevelsetEditor: FC = () => {
   const levelIndex = useStore($currentLevelIndex);
 
   if (!key) {
-    return null;
+    return <NoFileSelected className={cl.root} />;
   }
   if (!levelsetReady) {
-    return <Loading />;
+    return <Loading className={cl.root} />;
   }
-
-  return (
-    <div className={cl.root}>
-      <LevelsHead key={key} className={cl.levels} />
-      <LevelEditor key={`${key}:${levelIndex ?? ""}`} className={cl.editor} />
-    </div>
-  );
+  if (levelIndex === null) {
+    return <NoLevelSelected className={cl.root} />;
+  }
+  return <LevelBody key={`${key}:${levelIndex}`} className={cl.root} />;
 };

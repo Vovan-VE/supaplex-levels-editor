@@ -1,7 +1,7 @@
 import { LEVEL_BYTES_LENGTH, SupaplexLevel } from "./level";
 import { dumpLevel } from "./helpers.dev";
-import { TILE_SP_PORT_R, TILE_SP_PORT_U, TILE_ZONK } from "./tiles";
-import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./types";
+import { TILE_SP_PORT_R, TILE_SP_PORT_U, TILE_ZONK } from "./tiles-id";
+import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./internal";
 
 describe("level", () => {
   const testLevelData = Uint8Array.of(

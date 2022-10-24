@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 (2022-10-24)
+
+- Add: Experimental recording and replay embedded demo with Supaplex.Online test
+  page (when supported by file format, like MPX).
+- Add: Compact UI for mobile devices. Any feedback for it will be helpful.
+  - UI is adaptive by default, but can be changed in new Settings dialog.
+- Add: Settings dialog.
+  - Coordinates display basis: 0 or 1.
+- Enh: Minor UI enhancements.
+
 ## 0.3.0 (2022-10-16)
 
 - Add: Experimental "test level" with Supaplex.Online test page.

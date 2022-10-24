@@ -6,18 +6,11 @@ import {
   IBaseTile,
   IBaseWriter,
 } from "../types";
-import { ILevelBody } from "./internal";
-
-export interface ISupaplexSpecPortProps {
-  setsGravity: boolean;
-  setsFreezeZonks: boolean;
-  setsFreezeEnemies: boolean;
-}
-
-export interface ISupaplexSpecPort extends ISupaplexSpecPortProps {
-  x: number;
-  y: number;
-}
+import {
+  ILevelBody,
+  ISupaplexSpecPort,
+  ISupaplexSpecPortProps,
+} from "./internal";
 
 export interface ISupaplexLevel extends IBaseLevel {
   readonly raw: Uint8Array;

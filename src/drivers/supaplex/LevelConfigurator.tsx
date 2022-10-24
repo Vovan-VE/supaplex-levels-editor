@@ -1,10 +1,9 @@
 import { useMemo } from "react";
-import { IconContainer } from "ui/icon";
 import { Checkbox, IntegerInput, useInputDebounce } from "ui/input";
 import { LevelConfiguratorProps } from "../types";
 import { ISupaplexLevel } from "./types";
-import { Tile } from "./Tile";
-import { TILE_ELECTRON, TILE_INFOTRON } from "./tiles";
+import { TILE_ELECTRON, TILE_INFOTRON } from "./tiles-id";
+import { InlineTile } from "./InlineTile";
 import cl from "./LevelConfigurator.module.scss";
 
 export const LevelConfigurator = <L extends ISupaplexLevel>({
@@ -53,9 +52,7 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
       </Checkbox>
 
       <label className={cl.field}>
-        <IconContainer className={cl.icon}>
-          <Tile tile={TILE_INFOTRON} />
-        </IconContainer>
+        <InlineTile tile={TILE_INFOTRON} />
         <IntegerInput
           {...useInputDebounce<number | null>({
             value: level.infotronsNeed,
@@ -67,9 +64,7 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
           {level.infotronsNeed === 0 && countInf > 0 ? "= all" : "of"}{" "}
           {countInf}
           {", "}
-          <IconContainer className={cl.icon}>
-            <Tile tile={TILE_ELECTRON} />
-          </IconContainer>
+          <InlineTile tile={TILE_ELECTRON} />
           {" x "}
           {countElec}
         </span>

@@ -21,7 +21,7 @@ so, here it is: yet another Supaplex levels editor!
 **SpLE** is completely frontend (client side) application (web page). It works
 only with pseudo-files in browser memory.
 
-- After you opened existing file, it becomes in-memory copy or the original
+- After you opened existing file, it becomes in-memory copy of the original
   file. Technically you are uploading your local file to a web page.
 - In-memory files you opened or created from scratch are NOT related to regular
   files out of browser.
@@ -37,18 +37,25 @@ Also:
   **SpLE** will try to remember your modified in-memory files and some
   preferences in browser storage for better user experience.
 
-- There are no intention to send any kind of your data to somewhere.
+- There are no intention to send any kind of your data to somewhere without your
+  confirmation.
 
   **SpLE** when completely loaded is operating locally in your browser. Neither
   external storages, nor cross-device sync are implied, nor planned.
 
+  **SpLE** uses [Supaplex.Online test page][spo.test] to test your level when
+  you request that.
+
 - DON'T rely much on browser storage to remember your modified in-memory files
   forever. DO SAVE BACKUPS. Browser can clean its storage.
+
+  Also, **SpLE**-related storage in browser can be accidentally reset in case of
+  some errors in **SpLE** itself. Because, you know: _Every program has at least
+  one bug_.
 
 ## Planned features (unsorted)
 
 - More editing tools at least those from Winplex Collection Editor.
-- Better adaptive UI for mobile device and/or small screen.
 - More file formats to support.
 - Conversion between formats.
 - Compare levels.
@@ -59,7 +66,6 @@ Also:
 
 ## Known Issues
 
-- Mobile device can't fit all UI.
 - Large MPX levels are laggy.
 
 ## Contribution, Development
@@ -83,3 +89,4 @@ npm run test:watch
 
 [cra]: https://github.com/facebook/create-react-app
 [spo]: https://www.supaplex.online/
+[spo.test]: https://www.supaplex.online/test/

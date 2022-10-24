@@ -1,5 +1,5 @@
 import { ReactElement, ReactNode } from "react";
-import { Spinner } from "../../feedback";
+import { Spinner } from "ui/feedback/Spinner";
 import { IconContainer } from "../../icon";
 import { IconPosition, OwnProps } from "./types";
 
@@ -11,7 +11,7 @@ interface Options {
 }
 
 export const renderContent = (
-  { icon, iconPosition, loading = false, uiColor }: OwnProps,
+  { icon, iconPosition, iconStack, loading = false, uiColor }: OwnProps,
   children: ReactNode,
   {
     wrapClassName,
@@ -26,7 +26,9 @@ export const renderContent = (
         <span className={textClassName}>{children}</span>
       ),
       ic = icon && (
-        <IconContainer className={iconClassName}>{icon}</IconContainer>
+        <IconContainer stack={iconStack} className={iconClassName}>
+          {icon}
+        </IconContainer>
       ),
     ) =>
       ic ? (

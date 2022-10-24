@@ -1,7 +1,4 @@
 import { ILevelFooter as ISpLevelFooter } from "../supaplex/internal";
-
-export interface IWithDemo {
-  demo: Uint8Array | null;
-}
+import { IWithDemo } from "../types";
 
 export interface ILevelFooter extends ISpLevelFooter, IWithDemo {}

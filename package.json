@@ -1,6 +1,6 @@
 {
   "name": "supaplex-levels-editor",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Supaplex Levels Editor in browser",
   "keywords": [
@@ -24,7 +24,9 @@
     "prepare": "npm ls husky > /dev/null && husky install || exit 0",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "tsc && cross-env CI=true react-scripts test --env=./jest-env-jsdom-ext.js",
+    "test": "tsc && npm run test:unit && npm run test:dependencies",
+    "test:dependencies": "npm exec --yes -- madge@^5 -c src/index.tsx --warning --ts-config tsconfig.json",
+    "test:unit": "cross-env CI=true react-scripts test --env=./jest-env-jsdom-ext.js",
     "test:watch": "react-scripts test --env=./jest-env-jsdom-ext.js",
     "typescript": "tsc"
   },

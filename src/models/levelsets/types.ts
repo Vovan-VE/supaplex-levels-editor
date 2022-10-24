@@ -78,3 +78,9 @@ export const updateBufferLevel = (
       levels: RoArray.update(buf.levels, i, updater),
     };
   });
+
+export interface DemoData {
+  data: Uint8Array;
+  seed_hi: number;
+  seed_lo: number;
+}

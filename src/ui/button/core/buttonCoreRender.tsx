@@ -6,11 +6,19 @@ import { ButtonCoreProps } from "./types";
 import cl from "./ButtonCore.module.scss";
 
 export const buttonCoreRender = (
-  { icon, iconPosition, loading, uiColor, children, ...props }: ButtonCoreProps,
+  {
+    icon,
+    iconPosition,
+    iconStack,
+    loading,
+    uiColor,
+    children,
+    ...props
+  }: ButtonCoreProps,
   ref: ForwardedRef<HTMLAnchorElement | HTMLButtonElement>,
 ): ReactElement | null => {
   const content = renderContent(
-    { icon, iconPosition, loading, uiColor },
+    { icon, iconPosition, iconStack, loading, uiColor },
     children,
     {
       wrapClassName: cl.wrap,

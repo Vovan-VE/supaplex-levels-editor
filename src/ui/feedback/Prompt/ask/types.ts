@@ -4,7 +4,7 @@ import { RenderPromptProps } from "../renderPrompt";
 import { BaseOptions } from "./internal";
 
 export interface AskButtonsDefaultProps {
-  ok?: Omit<ButtonProps, "onClick">;
+  ok?: ButtonProps;
   okText?: ReactNode;
   cancel?: Omit<ButtonProps, "onClick">;
   cancelText?: ReactNode;

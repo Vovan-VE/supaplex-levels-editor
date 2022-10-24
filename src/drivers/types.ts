@@ -12,6 +12,24 @@ export type IsPlayableResult =
   | readonly [valid: true, nothing?: undefined]
   | readonly [valid: false, errors: readonly ReactNode[]];
 
+export interface DemoSeed {
+  lo: number;
+  hi: number;
+}
+
+export interface IWithDemo {
+  readonly demo: Uint8Array | null;
+  setDemo(demo: Uint8Array | null): this;
+  readonly demoSeed: DemoSeed;
+  setDemoSeed(seed: DemoSeed): this;
+}
+
+export const levelSupportsDemo = (level: any): level is IWithDemo =>
+  typeof level === "object" &&
+  level !== null &&
+  typeof level.setDemo === "function" &&
+  typeof level.setDemoSeed === "function";
+
 export interface IBaseLevel {
   readonly raw: Uint8Array;
   readonly width: number;
@@ -115,6 +133,7 @@ export interface IBaseDriver<
   createLevelset: (levels?: readonly L[] | Iterable<L>) => S;
   createLevel: (options?: INewLevelOptions) => L;
   newLevelResizable?: ISizeLimit;
+  demoSupport?: boolean;
   LevelConfigurator?: FC<LevelConfiguratorProps<L>>;
   // TODO: create levelset config
 }

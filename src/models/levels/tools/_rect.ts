@@ -101,6 +101,33 @@ const drawRect = <T>(
   return v;
 };
 
+const getFillRect = (
+  { startX, startY, endX, endY }: DrawState,
+  width: number,
+  height: number,
+) => {
+  let [x1, x2] = startX <= endX ? [startX, endX] : [endX, startX];
+  let [y1, y2] = startY <= endY ? [startY, endY] : [endY, startY];
+  if (x1 < 0) {
+    x1 = 0;
+  }
+  if (y1 < 0) {
+    y1 = 0;
+  }
+  if (x2 >= width) {
+    x2 = width - 1;
+  }
+  if (y2 >= height) {
+    y2 = height - 1;
+  }
+  return {
+    x: x1,
+    y: y1,
+    width: x2 - x1 + 1,
+    height: y2 - y1 + 1,
+  };
+};
+
 const {
   free,
   variants,
@@ -182,19 +209,25 @@ export const RECT: Tool = {
       drawLayers:
         drawState && size
           ? [
-              {
-                x: 0,
-                y: 0,
-                type: DrawLayerType.TILES,
-                tiles: drawRect<TilesPath>(
-                  new Map(),
-                  size.width,
-                  size.height,
-                  drawState,
-                  (m, x, y, tile) =>
-                    RoMap.set(m, cellKey({ x, y }), { x, y, tile }),
-                ),
-              },
+              drawState.rectType === RectType.FRAME
+                ? {
+                    x: 0,
+                    y: 0,
+                    type: DrawLayerType.TILES,
+                    tiles: drawRect<TilesPath>(
+                      new Map(),
+                      size.width,
+                      size.height,
+                      drawState,
+                      (m, x, y, tile) =>
+                        RoMap.set(m, cellKey({ x, y }), { x, y, tile }),
+                    ),
+                  }
+                : {
+                    type: DrawLayerType.TILE_FILL,
+                    tile: drawState.tile,
+                    ...getFillRect(drawState, size.width, size.height),
+                  },
             ]
           : [],
       events: inWork ? eventsWork : eventsIdle,

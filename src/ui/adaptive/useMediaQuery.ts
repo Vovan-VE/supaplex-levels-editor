@@ -24,6 +24,8 @@ export interface QueryOptions {
    */
   watch?: boolean;
 }
+const getActualQuery = ({ query, adaptive, watch }: QueryOptions) =>
+  watch ? query ?? adaptiveRangeToString(adaptive ?? []) : null;
 
 interface EventsOptions {
   onChange?: (match: boolean) => void;
@@ -54,7 +56,7 @@ export const useMediaQuery = ({
   fireOnInit = true,
 }: SingleOptions) => {
   const _query = useMemo(
-    () => (watch ? query ?? adaptiveRangeToString(adaptive ?? []) : null),
+    () => getActualQuery({ query, adaptive, watch }),
     [query, adaptive, watch],
   );
 
@@ -88,7 +90,10 @@ export const useMediaQuery = ({
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia
  */
 export const useMediaQueryState = (options: QueryOptions) => {
-  const [match, setMatch] = useState(false);
+  const [match, setMatch] = useState(() => {
+    const _query = getActualQuery(options);
+    return Boolean(_query && window.matchMedia(_query).matches);
+  });
   useMediaQuery({ ...options, onChange: setMatch, fireOnInit: true });
   return match;
 };

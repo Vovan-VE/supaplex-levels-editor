@@ -1,9 +1,6 @@
 @use "styles/components/input/config" as i;
 @use "styles/mixins";
 
-.root {
-}
-
 .title {
   @extend %font-family-mono;
   display: inline-block;

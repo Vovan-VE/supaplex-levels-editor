@@ -1,4 +1,4 @@
-import { toChar } from "../tiles";
+import { toChar } from "../tiles-id";
 import { ISupaplexLevel } from "../types";
 
 export const dumpLevel = (level: ISupaplexLevel) => ({
