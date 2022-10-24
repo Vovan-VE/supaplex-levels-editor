@@ -1,3 +1,4 @@
+import { DemoSeed } from "../types";
 import { ISupaplexLevel } from "./types";
 import { LevelBody } from "./body";
 import { BODY_LENGTH, LEVEL_HEIGHT, LEVEL_WIDTH, supaplexBox } from "./box";
@@ -21,7 +22,7 @@ const sliceFooter = (data?: Uint8Array) => {
   }
 };
 
-export class SupaplexLevel extends LevelFooter implements ISupaplexLevel {
+export class SupaplexLevel implements ISupaplexLevel {
   static fromArrayBuffer(buffer: ArrayBufferLike, byteOffset?: number) {
     return new SupaplexLevel(
       new Uint8Array(buffer, byteOffset, LEVEL_BYTES_LENGTH),
@@ -29,10 +30,10 @@ export class SupaplexLevel extends LevelFooter implements ISupaplexLevel {
   }
 
   #body: LevelBody;
+  #footer: LevelFooter;
 
   constructor(data?: Uint8Array) {
-    super(LEVEL_WIDTH, sliceFooter(data));
-
+    this.#footer = new LevelFooter(sliceFooter(data));
     this.#body = new LevelBody(supaplexBox, data?.slice(0, BODY_LENGTH));
   }
 
@@ -41,12 +42,12 @@ export class SupaplexLevel extends LevelFooter implements ISupaplexLevel {
   }
 
   get length() {
-    return BODY_LENGTH + super.length;
+    return BODY_LENGTH + this.#footer.length;
   }
 
   get raw() {
     const result = new Uint8Array(this.length);
-    result.set(super.getRaw(), BODY_LENGTH);
+    result.set(this.#footer.getRaw(), BODY_LENGTH);
     result.set(this.#body.raw, 0);
     return result;
   }
@@ -90,22 +91,122 @@ export class SupaplexLevel extends LevelFooter implements ISupaplexLevel {
     return this.#body.isPlayable();
   }
 
+  get title() {
+    return this.#footer.title;
+  }
+
+  setTitle(title: string) {
+    const nextFooter = this.#footer.setTitle(title);
+    if (nextFooter === this.#footer) {
+      return this;
+    }
+    const copy = this.copy();
+    copy.#footer = nextFooter;
+    return copy;
+  }
+
   get maxTitleLength() {
     return TITLE_LENGTH;
   }
 
+  get initialGravity() {
+    return this.#footer.initialGravity;
+  }
+
+  setInitialGravity(on: boolean) {
+    const nextFooter = this.#footer.setInitialGravity(on);
+    if (nextFooter === this.#footer) {
+      return this;
+    }
+    const copy = this.copy();
+    copy.#footer = nextFooter;
+    return copy;
+  }
+
+  get initialFreezeZonks() {
+    return this.#footer.initialFreezeZonks;
+  }
+
+  setInitialFreezeZonks(on: boolean) {
+    const nextFooter = this.#footer.setInitialFreezeZonks(on);
+    if (nextFooter === this.#footer) {
+      return this;
+    }
+    const copy = this.copy();
+    copy.#footer = nextFooter;
+    return copy;
+  }
+
+  get infotronsNeed() {
+    return this.#footer.infotronsNeed;
+  }
+
+  setInfotronsNeed(value: number) {
+    const nextFooter = this.#footer.setInfotronsNeed(value);
+    if (nextFooter === this.#footer) {
+      return this;
+    }
+    const copy = this.copy();
+    copy.#footer = nextFooter;
+    return copy;
+  }
+
+  get specPortsCount() {
+    return this.#footer.specPortsCount;
+  }
+
+  getSpecPorts() {
+    return this.#footer.getSpecPorts();
+  }
+
+  clearSpecPorts() {
+    const nextFooter = this.#footer.clearSpecPorts();
+    if (nextFooter !== this.#footer) {
+      return this;
+    }
+    const copy = this.copy();
+    copy.#footer = nextFooter;
+    return copy;
+  }
+
   findSpecPort(x: number, y: number) {
     supaplexBox.validateCoords?.(x, y);
-    return super.findSpecPort(x, y);
+    return this.#footer.findSpecPort(x, y);
   }
 
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps) {
     supaplexBox.validateCoords?.(x, y);
-    return super.setSpecPort(x, y, props);
+    const nextFooter = this.#footer.setSpecPort(x, y, props);
+    if (nextFooter === this.#footer) {
+      return this;
+    }
+    const copy = this.copy();
+    copy.#footer = nextFooter;
+    return copy;
   }
 
   deleteSpecPort(x: number, y: number) {
     supaplexBox.validateCoords?.(x, y);
-    return super.deleteSpecPort(x, y);
+    const nextFooter = this.#footer.deleteSpecPort(x, y);
+    if (nextFooter === this.#footer) {
+      return this;
+    }
+    const copy = this.copy();
+    copy.#footer = nextFooter;
+    return copy;
+  }
+
+  get demoSeed() {
+    return this.#footer.demoSeed;
+  }
+
+  setDemoSeed(seed: DemoSeed) {
+    const nextFooter = this.#footer.setDemoSeed(seed);
+    if (nextFooter === this.#footer) {
+      return this;
+    }
+    const copy = this.copy();
+    copy.#footer = nextFooter;
+    return copy;
   }
 }

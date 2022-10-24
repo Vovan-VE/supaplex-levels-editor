@@ -1,4 +1,5 @@
 import { DemoSeed } from "../types";
+import { LEVEL_WIDTH } from "./box";
 import {
   ILevelFooter,
   ISupaplexSpecPort,
@@ -63,10 +64,9 @@ export const specPortCoordsToOffset = (
 };
 
 export class LevelFooter implements ILevelFooter {
-  #width: number;
   #src: Uint8Array;
 
-  constructor(width: number, data?: Uint8Array) {
+  constructor(data?: Uint8Array) {
     if (data) {
       if (
         process.env.NODE_ENV !== "production" &&
@@ -87,16 +87,15 @@ export class LevelFooter implements ILevelFooter {
         TITLE_OFFSET,
       );
     }
-    this.#width = width;
     this.#src = data;
   }
 
   get width() {
-    return this.#width;
+    return LEVEL_WIDTH;
   }
 
   copy(): this {
-    return new LevelFooter(this.#width, this.#src) as this;
+    return new LevelFooter(this.#src) as this;
   }
 
   get length() {
@@ -179,7 +178,7 @@ export class LevelFooter implements ILevelFooter {
     for (let i = 0, L = this.specPortsCount; i < L; i++) {
       const offset = specPortRawOffset(i);
       const raw = this.#src.slice(offset, offset + SPEC_PORT_ITEM_LENGTH);
-      const [x, y] = specPortOffsetToCoords(raw[0], raw[1], this.#width);
+      const [x, y] = specPortOffsetToCoords(raw[0], raw[1], this.width);
       yield { x, y, ...getSpecPortProps(raw) };
     }
   }
@@ -236,7 +235,7 @@ export class LevelFooter implements ILevelFooter {
     }
 
     const result = this.copy();
-    const [b0, b1] = specPortCoordsToOffset(x, y, this.#width);
+    const [b0, b1] = specPortCoordsToOffset(x, y, this.width);
     result.#src.set(
       Uint8Array.of(
         b0,

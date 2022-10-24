@@ -5,10 +5,12 @@ import {
 import { ILevelFooter } from "./internal";
 
 export class LevelFooter extends SpLevelFooter implements ILevelFooter {
+  #width: number;
   #demo: Uint8Array | null = null;
 
   constructor(width: number, data?: Uint8Array) {
-    super(width, data?.slice(0, FOOTER_BYTE_LENGTH));
+    super(data?.slice(0, FOOTER_BYTE_LENGTH));
+    this.#width = width;
 
     if (
       data &&
@@ -21,6 +23,10 @@ export class LevelFooter extends SpLevelFooter implements ILevelFooter {
 
   copy() {
     return new LevelFooter(this.width, this.getRaw()) as this;
+  }
+
+  get width() {
+    return this.#width;
   }
 
   get length() {
