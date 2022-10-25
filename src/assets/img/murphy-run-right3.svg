@@ -1,0 +1,78 @@
+<svg
+    version="1.2"
+    width="64"
+    height="64"
+    viewBox="0 0 16 16"
+    baseProfile="tiny"
+    image-rendering="optimizeSpeed"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+  <defs>
+    <symbol id="mrr-bg" viewBox="0 0 16 16">
+      <rect width="100%" height="100%" fill="#000" class="sp-color-black" />
+      <path
+          fill="#E31010"
+          class="sp-color-red-light"
+          d="M6,0h4l1,1h1l1,1h1l1,1v1l1,1v4l-3,3l-4,2h-5l-2,-1l-2,-4v-3l1,-2v-1l2,-2h1z"
+      />
+      <path
+          fill="#B20000"
+          class="sp-color-red-dark"
+          d="M5,0h1v1h-1z M10,0h1v1h-1z M12,1h1v1h-1z M0,4h1v2h-1z M0,9h1v2h1v2h2v1h5v-1h2v-1h4v1h-1v1h-1v1h-2v1h-6v-1h-2v-1h-1v-1h-1v-2h-1z"
+      />
+      <path fill="#F39241" class="sp-color-orange" d="M4,2h4v1h1v3h-1v1h-1v1h-4v-1h-1v-3h1v-1h1z" />
+      <path fill="#E3E300" class="sp-color-yellow" d="M5,3h1v1h1v1h-1v1h-2v-2h1z" />
+      <path fill="#824100" class="sp-color-brown" d="M4,0h1v1h-1z M2,1h1v1h-1v1h-1v-1h1z M0,11h1v1h-1z" />
+      <path fill="#828282" class="sp-color-grey" d="M11,4h1v1l-1,1h-1v-1z M14,2h1v1h-1z"/>
+      <path fill="#F3F3F3" class="sp-color-white" d="M10,4h1v1h-1z" />
+      <path fill="#000000" class="sp-color-black" d="M11,5h1v1h-1z" />
+    </symbol>
+
+    <symbol id="mrr-mouth-open" viewBox="0 0 16 16">
+      <path fill="#000" class="sp-color-black" d="M16,7h-1l-1,1h-1v2l1,1h2z" />
+      <path fill="#824100" class="sp-color-brown" d="M15,4h1v1h-1z M12,8h1v1h-1z" />
+      <path fill="#B20000" class="sp-color-red-dark" d="M15,5h1v2h-1v1h-1v-1h1z M11,8h1v1h-1z" />
+      <path fill="#717171" class="sp-color-grey-dark" d="M9,10h5v1h1v2h-3v-1h-2v-1h-1z" />
+      <path fill="#616161" class="sp-color-grey-xdark" d="M8,9h5v2h-3v-1h-2z" />
+    </symbol>
+
+    <symbol id="mrr-mouth-half" viewBox="0 0 16 16">
+      <path fill="#000" class="sp-color-black" d="M16,8h-3v1h1v1h2z" />
+      <path fill="#824100" class="sp-color-brown" d="M15,7h1v1h-1z" />
+      <path fill="#B20000" class="sp-color-red-dark" d="M15,4h1v1h-1z M12,8h1v1h-1z M16,10h-1l-2,1v1h3z" />
+      <path fill="#616161" class="sp-color-grey-xdark" d="M8,9h6v1l-1,1h-3v-1h-2z" />
+      <path fill="#717171" class="sp-color-grey-dark" d="M13,10h2v1h-2z" />
+    </symbol>
+
+    <symbol id="mrr-mouth-close" viewBox="0 0 16 16">
+      <path fill="#B20000" class="sp-color-red-dark" d="M15,4h1v2h-1z M15,9h1v1l-1,2h-2v-1h-3v-1h-2v-1h2v1h5z" />
+      <path fill="#824100" class="sp-color-brown" d="M14,10h2v2h-1v-1h-1z" />
+    </symbol>
+  </defs>
+
+  <g id="mrr">
+    <use xlink:href="#mrr-bg"/>
+    <g id="mrr_static">
+      <use xlink:href="#mrr-mouth-open"/>
+    </g>
+    <g id="mrr_animated">
+      <use xlink:href="#mrr-mouth-open">
+        <animate
+          attributeName="xlink:href"
+          values="#mrr-mouth-open;#mrr-mouth-half;#mrr-mouth-close;#mrr-mouth-half"
+          begin="0s"
+          repeatCount="indefinite"
+          dur="0.4s"
+        />
+      </use>
+    </g>
+  </g>
+
+  <style>
+    #mrr > #mrr_static { visibility: visible }
+    #mrr > #mrr_animated { visibility: hidden }
+    #mrr:hover > #mrr_static { visibility: hidden }
+    #mrr:hover > #mrr_animated { visibility: visible }
+  </style>
+</svg>

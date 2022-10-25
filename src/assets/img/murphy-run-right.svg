@@ -22,7 +22,6 @@
   <path fill="#F3F3F3" class="sp-color-white" d="M10,4h1v1h-1z" />
   <path fill="#000000" class="sp-color-black" d="M11,5h1v1h-1z" />
 
-  <!-- TODO: wished animated mouth on hover -->
   <!-- full open mouth -->
   <g>
     <path fill="#000" class="sp-color-black" d="M16,7h-1l-1,1h-1v2l1,1h2z" />
