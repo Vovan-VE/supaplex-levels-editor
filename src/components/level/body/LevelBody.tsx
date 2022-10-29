@@ -1,12 +1,10 @@
-import { FC, memo, useEffect, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 import cn from "classnames";
 import { useStore, useStoreMap } from "effector-react";
-import { TileRenderProps } from "drivers";
 import {
   $bodyScale,
   $drvTileRender,
   $drvTiles,
-  $levelTiles,
   addInteraction,
 } from "models/levels";
 import {
@@ -14,28 +12,38 @@ import {
   GridContextEventHandler,
   rollbackWork,
 } from "models/levels/tools";
-import { $currentLevelUndoQueue } from "models/levelsets";
+import { $currentLevelSize, $currentLevelUndoQueue } from "models/levelsets";
 import { ContainerProps } from "ui/types";
 import { CoverGrid } from "./CoverGrid";
 import { DrawLayers } from "./DrawLayers";
 import { DriverInteractions } from "./DriverInteractions";
+import { useVisibleBodyRect } from "./useVisibleBodyRect";
+import { useVisibleTiles } from "./useVisibleTiles";
 import cl from "./LevelBody.module.scss";
 
 interface Props extends ContainerProps {}
 
 export const LevelBody: FC<Props> = ({ className, ...rest }) => {
   const TileRender = useStore($drvTileRender)!;
-  const { width, height, chunks } = useStore($levelTiles)!;
+  const { width, height } = useStore($currentLevelSize)!;
   const bodyScale = useStore($bodyScale);
   const { events, drawLayers, Dialogs } = useStore($toolUI);
   useEffect(() => rollbackWork, []);
 
   const handleContextMenu = useContextMenuHandler(events?.onContextMenu);
 
+  const { refRoot, refCanvas, rect } = useVisibleBodyRect(
+    width,
+    height,
+    bodyScale,
+  );
+  const nodes = useVisibleTiles(rect, TileRender);
+
   return (
     <>
       <div
         {...rest}
+        ref={refRoot}
         className={cn(cl.root, className)}
         style={
           {
@@ -45,10 +53,8 @@ export const LevelBody: FC<Props> = ({ className, ...rest }) => {
           } as any
         }
       >
-        <div className={cl.canvas}>
-          <div className={cl.tiles}>
-            <Chunks chunks={chunks} TileRender={TileRender} />
-          </div>
+        <div ref={refCanvas} className={cl.canvas}>
+          <div className={cl.tiles}>{nodes}</div>
           <DrawLayers drawLayers={drawLayers} className={cl.drawLayer} />
           <CoverGrid
             cols={width}
@@ -64,30 +70,6 @@ export const LevelBody: FC<Props> = ({ className, ...rest }) => {
     </>
   );
 };
-
-interface ChunksProps {
-  chunks: number[][];
-  TileRender: FC<TileRenderProps>;
-}
-const Chunks = memo<ChunksProps>(({ chunks, TileRender }) => (
-  <>
-    {chunks.map((chunk, i) => (
-      <Chunk key={i} values={chunk} TileRender={TileRender} />
-    ))}
-  </>
-));
-
-interface ChunkProps {
-  values: number[];
-  TileRender: FC<TileRenderProps>;
-}
-const Chunk = memo<ChunkProps>(({ values, TileRender }) => (
-  <>
-    {values.map((value, i) => (
-      <TileRender key={i} tile={value} />
-    ))}
-  </>
-));
 
 const useContextMenuHandler = (toolContextMenu?: GridContextEventHandler) => {
   const hasToolContextMenu = Boolean(toolContextMenu);

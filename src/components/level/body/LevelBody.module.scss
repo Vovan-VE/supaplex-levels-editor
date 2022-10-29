@@ -6,7 +6,7 @@
   @include mixins.default-scrollbar;
   padding: 0.5rem;
 
-  --tile-size: 1.35rem;
+  --tile-size: 24px;
   --tiles-x: 1;
   --tiles-y: 1;
 
@@ -37,4 +37,11 @@
   grid-gap: 0;
   grid-template-columns: repeat(var(--tiles-x), var(--tile-size));
   grid-template-rows: repeat(var(--tiles-y), var(--tile-size));
+}
+
+.tiles {
+  > i {
+    grid-column: calc(var(--x) + 1);
+    grid-row: calc(var(--y) + 1);
+  }
 }

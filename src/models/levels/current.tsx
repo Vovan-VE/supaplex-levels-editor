@@ -1,8 +1,7 @@
 import { combine, createEvent, createStore, sample } from "effector";
-import equal from "fast-deep-equal";
 import { withPersistent } from "@cubux/effector-persistent";
 import { getDriver } from "drivers";
-import { $currentDriverName, $currentLevel } from "../levelsets";
+import { $currentDriverName } from "../levelsets";
 import { localStorageDriver } from "../_utils/persistent";
 
 const _$driver = $currentDriverName.map((d) => (d && getDriver(d)) || null);
@@ -103,42 +102,3 @@ export const $drvTileRender = _$driver.map(
   (drv) => (drv && drv.TileRender) || null,
 );
 export const $drvTiles = _$driver.map((drv) => (drv && drv.tiles) || null);
-
-interface IChunks {
-  width: number;
-  height: number;
-  chunks: number[][];
-}
-export const $levelTiles = $currentLevel.map<IChunks | null>(
-  (level, prev = null) => {
-    if (level) {
-      const rawLevel = level.level.undoQueue.current;
-      const { width, height } = rawLevel;
-      let chunk: number[] = [];
-      const chunks = [chunk];
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          const v = rawLevel.getTile(x, y);
-          chunk.push(v);
-          if (chunk.length === 64) {
-            chunk = [];
-            chunks.push(chunk);
-          }
-        }
-      }
-      if (chunk.length === 0) {
-        chunks.pop();
-      }
-      const next = {
-        width,
-        height,
-        chunks,
-      };
-      if (equal(prev, next)) {
-        return prev;
-      }
-      return next;
-    }
-    return null;
-  },
-);

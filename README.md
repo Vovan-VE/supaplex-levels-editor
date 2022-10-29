@@ -66,7 +66,7 @@ Also:
 
 ## Known Issues
 
-- Large MPX levels are laggy.
+- Large MPX levels may lag.
 
 ## Contribution, Development
 

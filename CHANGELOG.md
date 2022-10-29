@@ -2,7 +2,8 @@
 
 ## 0.5.0 (DEV)
 
-- ...
+- Enh: Optimized rendering for level tiles. Now only visible range of tiles are
+  rendering. The price is some flickering while scrolling.
 
 ## 0.4.1 (2022-10-24)
 
