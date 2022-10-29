@@ -1,4 +1,4 @@
-import { DemoSeed } from "../types";
+import { DemoSeed, ITilesStreamItem } from "../types";
 import { ISupaplexLevel } from "./types";
 import { LevelBody } from "./body";
 import { BODY_LENGTH, LEVEL_HEIGHT, LEVEL_WIDTH, supaplexBox } from "./box";
@@ -89,6 +89,15 @@ export class SupaplexLevel implements ISupaplexLevel {
 
   isPlayable() {
     return this.#body.isPlayable();
+  }
+
+  tilesRenderStream(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+  ): Iterable<ITilesStreamItem> {
+    return this.#body.tilesRenderStream(x, y, w, h, LEVEL_WIDTH, LEVEL_HEIGHT);
   }
 
   get title() {

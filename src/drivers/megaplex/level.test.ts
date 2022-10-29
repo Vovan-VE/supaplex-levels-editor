@@ -1,7 +1,8 @@
 import { MegaplexLevel } from "./level";
 import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "../supaplex/footer";
-import { dumpLevel } from "./helpers.dev";
+import { dumpLevel, readExampleFile } from "./helpers.dev";
 import {
+  TILE_HARDWARE,
   TILE_INFOTRON,
   TILE_SP_PORT_D,
   TILE_SP_PORT_R,
@@ -12,6 +13,7 @@ import {
   ISupaplexSpecPort,
   ISupaplexSpecPortProps,
 } from "../supaplex/internal";
+import { reader } from "./io";
 
 describe("level", () => {
   const testFooter = Uint8Array.of(
@@ -235,6 +237,20 @@ describe("level", () => {
       setsGravity: true,
       setsFreezeZonks: true,
       setsFreezeEnemies: true,
+    });
+  });
+
+  describe("tilesRenderStream", () => {
+    it("huge maze", async () => {
+      const data = await readExampleFile("HUDEMAZ1.mpx");
+      const level = reader
+        .readLevelset(data.buffer)
+        .getLevel(0) as MegaplexLevel;
+
+      const a = [...level.tilesRenderStream(0, 0, 202, 202)];
+      expect(a.length).toBeLessThan(202 * 202);
+      expect(a[0]).toEqual([0, 0, 202, TILE_HARDWARE]);
+      expect(a[a.length - 1]).toEqual([0, 201, 202, TILE_HARDWARE]);
     });
   });
 });

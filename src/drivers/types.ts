@@ -30,12 +30,25 @@ export const levelSupportsDemo = (level: any): level is IWithDemo =>
   typeof level.setDemo === "function" &&
   typeof level.setDemoSeed === "function";
 
+export type ITilesStreamItem = readonly [
+  x: number,
+  y: number,
+  width: number,
+  tile: number,
+];
+
 export interface IBaseLevel {
   readonly raw: Uint8Array;
   readonly width: number;
   readonly height: number;
   getTile(x: number, y: number): number;
   setTile(x: number, y: number, value: number): this;
+  tilesRenderStream(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+  ): Iterable<ITilesStreamItem>;
   readonly resizable?: ISizeLimit;
   // TODO: probably add optional argument to set border with the given tile
   resize?(width: number, height: number): this;

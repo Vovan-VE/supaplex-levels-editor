@@ -1,4 +1,4 @@
-import { IsPlayableResult } from "../types";
+import { IsPlayableResult, ITilesStreamItem } from "../types";
 import { IBox, ILevelBody } from "./internal";
 import { TILE_EXIT, TILE_MURPHY } from "./tiles-id";
 import { InlineTile } from "./InlineTile";
@@ -82,5 +82,42 @@ export class LevelBody implements ILevelBody {
       ),
     ].filter(Boolean);
     return errors.length ? [false, errors] : [true];
+  }
+
+  *tilesRenderStream(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    width: number,
+    height: number,
+  ): Iterable<ITilesStreamItem> {
+    if (x >= width || y >= height || x + w <= 0 || y + h <= 0) {
+      return;
+    }
+    const xEnd = Math.min(width, x + w);
+    const yEnd = Math.min(height, y + h);
+    if (x < 0) {
+      x = 0;
+    }
+    if (y < 0) {
+      y = 0;
+    }
+    for (let j = y; j < yEnd; j++) {
+      let lastItem: [x: number, y: number, width: number, tile: number] | null =
+        [0, 0, 0, -1];
+      for (let i = x; i < xEnd; i++) {
+        const tile = this.#raw[this.#box.coordsToOffset(i, j)];
+        if (tile === lastItem[3]) {
+          lastItem[2]++;
+        } else {
+          if (lastItem[2]) {
+            yield lastItem;
+          }
+          lastItem = [i, j, 1, tile];
+        }
+      }
+      yield lastItem;
+    }
   }
 }

@@ -1,5 +1,7 @@
 import { BODY_LENGTH, supaplexBox } from "./box";
 import { LevelBody } from "./body";
+import { TILE_EXIT, TILE_HARDWARE, TILE_MURPHY, TILE_SPACE } from "./tiles-id";
+import { AnyBox } from "../megaplex/box";
 
 describe("LevelBody", () => {
   const data = new Uint8Array(BODY_LENGTH);
@@ -82,5 +84,47 @@ describe("LevelBody", () => {
     expect(() => body.setTile(0, 0, -1)).toThrow(e2);
     expect(() => body.setTile(0, 0, 256)).toThrow(e2);
     expect(() => body.setTile(0, 0, 257)).toThrow(e2);
+  });
+
+  describe("tilesRenderStream", () => {
+    it("empty", () => {
+      const data = Uint8Array.of(
+        TILE_HARDWARE,
+        TILE_HARDWARE,
+        TILE_HARDWARE,
+        TILE_HARDWARE,
+        TILE_HARDWARE,
+        TILE_HARDWARE,
+        TILE_MURPHY,
+        TILE_SPACE,
+        TILE_EXIT,
+        TILE_HARDWARE,
+        TILE_HARDWARE,
+        TILE_HARDWARE,
+        TILE_HARDWARE,
+        TILE_HARDWARE,
+        TILE_HARDWARE,
+      );
+      const body = new LevelBody(new AnyBox(5, 3), data);
+      const full = [
+        [0, 0, 5, TILE_HARDWARE],
+        [0, 1, 1, TILE_HARDWARE],
+        [1, 1, 1, TILE_MURPHY],
+        [2, 1, 1, TILE_SPACE],
+        [3, 1, 1, TILE_EXIT],
+        [4, 1, 1, TILE_HARDWARE],
+        [0, 2, 5, TILE_HARDWARE],
+      ];
+      expect([...body.tilesRenderStream(0, 0, 5, 3, 5, 3)]).toEqual(full);
+      expect([...body.tilesRenderStream(-2, -3, 42, 37, 5, 3)]).toEqual(full);
+
+      expect([...body.tilesRenderStream(1, -1, 3, 10, 5, 3)]).toEqual([
+        [1, 0, 3, TILE_HARDWARE],
+        [1, 1, 1, TILE_MURPHY],
+        [2, 1, 1, TILE_SPACE],
+        [3, 1, 1, TILE_EXIT],
+        [1, 2, 3, TILE_HARDWARE],
+      ]);
+    });
   });
 });

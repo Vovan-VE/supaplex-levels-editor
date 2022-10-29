@@ -1,4 +1,4 @@
-import { DemoSeed } from "../types";
+import { DemoSeed, ITilesStreamItem } from "../types";
 import { LevelBody } from "../supaplex/body";
 import { supaplexBox } from "../supaplex/box";
 import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "../supaplex/footer";
@@ -128,6 +128,22 @@ export class MegaplexLevel implements IMegaplexLevel {
 
   isPlayable() {
     return this.#body.isPlayable();
+  }
+
+  tilesRenderStream(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+  ): Iterable<ITilesStreamItem> {
+    return this.#body.tilesRenderStream(
+      x,
+      y,
+      w,
+      h,
+      this.#box.width,
+      this.#box.height,
+    );
   }
 
   get title() {

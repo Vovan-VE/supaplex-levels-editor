@@ -41,7 +41,11 @@
 
 .tiles {
   > i {
-    grid-column: calc(var(--x) + 1);
+    grid-column-start: calc(var(--x) + 1);
+    grid-column-end: span var(--w);
     grid-row: calc(var(--y) + 1);
+    aspect-ratio: auto;
+    background-repeat: repeat;
+    background-size: var(--tile-size);
   }
 }
