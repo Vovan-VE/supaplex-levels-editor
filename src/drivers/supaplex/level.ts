@@ -1,8 +1,8 @@
 import { DemoSeed, ITilesStreamItem } from "../types";
 import { ISupaplexLevel } from "./types";
-import { LevelBody } from "./body";
+import { createLevelBody } from "./body";
 import { BODY_LENGTH, LEVEL_HEIGHT, LEVEL_WIDTH, supaplexBox } from "./box";
-import { FOOTER_BYTE_LENGTH, LevelFooter, TITLE_LENGTH } from "./footer";
+import { createLevelFooter, FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "./footer";
 import { isSpecPort } from "./tiles-id";
 import { ISupaplexSpecPortProps } from "./internal";
 
@@ -22,19 +22,22 @@ const sliceFooter = (data?: Uint8Array) => {
   }
 };
 
-export class SupaplexLevel implements ISupaplexLevel {
-  static fromArrayBuffer(buffer: ArrayBufferLike, byteOffset?: number) {
-    return new SupaplexLevel(
-      new Uint8Array(buffer, byteOffset, LEVEL_BYTES_LENGTH),
-    );
-  }
+export const createLevel = (data?: Uint8Array): ISupaplexLevel =>
+  new SupaplexLevel(data);
 
-  #body: LevelBody;
-  #footer: LevelFooter;
+export const createLevelFromArrayBuffer = (
+  buffer: ArrayBufferLike,
+  byteOffset?: number,
+): ISupaplexLevel =>
+  new SupaplexLevel(new Uint8Array(buffer, byteOffset, LEVEL_BYTES_LENGTH));
+
+class SupaplexLevel implements ISupaplexLevel {
+  #body;
+  #footer;
 
   constructor(data?: Uint8Array) {
-    this.#footer = new LevelFooter(sliceFooter(data));
-    this.#body = new LevelBody(supaplexBox, data?.slice(0, BODY_LENGTH));
+    this.#footer = createLevelFooter(sliceFooter(data));
+    this.#body = createLevelBody(supaplexBox, data?.slice(0, BODY_LENGTH));
   }
 
   copy(): this {
@@ -219,3 +222,5 @@ export class SupaplexLevel implements ISupaplexLevel {
     return copy;
   }
 }
+
+export type { SupaplexLevel };

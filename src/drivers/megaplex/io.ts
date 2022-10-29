@@ -1,7 +1,7 @@
 import { IMegaplexLevel, IMegaplexReader, IMegaplexWriter } from "./types";
 import { FOOTER_BYTE_LENGTH } from "../supaplex/footer";
-import { MegaplexLevel } from "./level";
-import { MegaplexLevelset } from "./levelset";
+import { createLevel } from "./level";
+import { createLevelset } from "./levelset";
 
 // MPX format
 // 04 : "MPX "
@@ -82,7 +82,7 @@ export const reader: IMegaplexReader = {
     const levels: IMegaplexLevel[] = [];
     for (let i = 0; i < levelsCount; i++) {
       levels.push(
-        new MegaplexLevel(
+        createLevel(
           widths[i],
           heights[i],
           new Uint8Array(file, offsets[i], sizes[i]),
@@ -90,7 +90,7 @@ export const reader: IMegaplexReader = {
       );
     }
 
-    return new MegaplexLevelset(levels);
+    return createLevelset(levels);
   },
 };
 

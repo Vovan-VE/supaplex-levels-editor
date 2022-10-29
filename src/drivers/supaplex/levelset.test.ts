@@ -1,36 +1,32 @@
-import { SupaplexLevelset } from "./levelset";
+import { createLevelset } from "./levelset";
 import { dumpLevel } from "./helpers.dev";
-import { SupaplexLevel } from "./level";
+import { createLevel } from "./level";
 import { fillLevelBorder } from "./fillLevelBorder";
 
 describe("levelset", () => {
   describe("constructor", () => {
     it("throw", () => {
-      expect(() => new SupaplexLevelset(-2)).toThrow(
+      expect(() => createLevelset(-2)).toThrow(
         new RangeError("Invalid levels count -2"),
       );
     });
 
     it("number", () => {
-      const levelset = new SupaplexLevelset(3);
+      const levelset = createLevelset(3);
 
       expect(levelset.levelsCount).toBe(3);
 
-      const empty = dumpLevel(fillLevelBorder(new SupaplexLevel()));
+      const empty = dumpLevel(fillLevelBorder(createLevel()));
       for (const level of levelset.getLevels()) {
         expect(dumpLevel(level)).toEqual(empty);
       }
 
-      expect(new SupaplexLevelset().levelsCount).toBe(111);
+      expect(createLevelset().levelsCount).toBe(111);
     });
   });
 
   it("getLevel", () => {
-    const levelset = new SupaplexLevelset(3);
-
-    expect(levelset.getLevel(0)).toBeInstanceOf(SupaplexLevel);
-    expect(levelset.getLevel(1)).toBeInstanceOf(SupaplexLevel);
-    expect(levelset.getLevel(2)).toBeInstanceOf(SupaplexLevel);
+    const levelset = createLevelset(3);
 
     let e = /^Invalid level index -?\d+$/;
     expect(() => levelset.getLevel(-2)).toThrow(e);
@@ -40,7 +36,7 @@ describe("levelset", () => {
   });
 
   it("setLevel", () => {
-    const levelset = new SupaplexLevelset(3);
+    const levelset = createLevelset(3);
 
     const a = levelset.getLevel(0).setTitle("1st");
     const b = levelset.getLevel(1).setTitle("2nd");
@@ -52,12 +48,12 @@ describe("levelset", () => {
   });
 
   it("appendLevel", () => {
-    const levelset = new SupaplexLevelset(2);
+    const levelset = createLevelset(2);
 
     const a = levelset.getLevel(0);
     const b = levelset.getLevel(1);
 
-    const c = new SupaplexLevel().setTitle("3rd");
+    const c = createLevel().setTitle("3rd");
     const copy = levelset.appendLevel(c);
 
     expect(copy.levelsCount).toBe(3);
@@ -65,12 +61,12 @@ describe("levelset", () => {
   });
 
   it("insertLevel", () => {
-    const levelset = new SupaplexLevelset(2);
+    const levelset = createLevelset(2);
 
     const a = levelset.getLevel(0);
     const c = levelset.getLevel(1);
 
-    const b = new SupaplexLevel().setTitle("2nd");
+    const b = createLevel().setTitle("2nd");
 
     expect(() => levelset.insertLevel(-1, b)).toThrow(
       new RangeError(`Invalid level index -1`),
@@ -88,7 +84,7 @@ describe("levelset", () => {
   });
 
   it("removeLevel", () => {
-    const levelset = new SupaplexLevelset(3);
+    const levelset = createLevelset(3);
 
     const a = levelset.getLevel(0);
     const c = levelset.getLevel(2);

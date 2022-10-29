@@ -1,9 +1,9 @@
 import { BODY_LENGTH, supaplexBox } from "./box";
-import { LevelBody } from "./body";
+import { createLevelBody } from "./body";
 import { TILE_EXIT, TILE_HARDWARE, TILE_MURPHY, TILE_SPACE } from "./tiles-id";
 import { AnyBox } from "../megaplex/box";
 
-describe("LevelBody", () => {
+describe("createLevelBody", () => {
   const data = new Uint8Array(BODY_LENGTH);
   for (let i = 65; i-- > 0; ) {
     data[i] = i;
@@ -11,26 +11,26 @@ describe("LevelBody", () => {
 
   describe("constructor", () => {
     it("no data", () => {
-      const body = new LevelBody(supaplexBox);
+      const body = createLevelBody(supaplexBox);
       expect(body.length).toEqual(BODY_LENGTH);
       expect(body.raw).toEqual(new Uint8Array(BODY_LENGTH));
     });
 
     it("data", () => {
-      const body = new LevelBody(supaplexBox, data);
+      const body = createLevelBody(supaplexBox, data);
       expect(body.length).toEqual(BODY_LENGTH);
       expect(body.raw).toEqual(data);
     });
 
     it("throw", () => {
-      expect(() => new LevelBody(supaplexBox, new Uint8Array(100))).toThrow(
+      expect(() => createLevelBody(supaplexBox, new Uint8Array(100))).toThrow(
         new Error(`Invalid buffer length 100, expected ${BODY_LENGTH}`),
       );
     });
   });
 
   it("getTile", () => {
-    const body = new LevelBody(supaplexBox, data);
+    const body = createLevelBody(supaplexBox, data);
 
     expect(body.getTile(0, 0)).toBe(0);
     expect(body.getTile(1, 0)).toBe(1);
@@ -57,7 +57,7 @@ describe("LevelBody", () => {
   });
 
   it("setTile", () => {
-    const body = new LevelBody(supaplexBox, data);
+    const body = createLevelBody(supaplexBox, data);
 
     expect(body.setTile(2, 1, 62)).toBe(body);
 
@@ -105,7 +105,7 @@ describe("LevelBody", () => {
         TILE_HARDWARE,
         TILE_HARDWARE,
       );
-      const body = new LevelBody(new AnyBox(5, 3), data);
+      const body = createLevelBody(new AnyBox(5, 3), data);
       const full = [
         [0, 0, 5, TILE_HARDWARE],
         [0, 1, 1, TILE_HARDWARE],

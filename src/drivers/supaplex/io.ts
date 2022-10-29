@@ -1,6 +1,6 @@
 import { ISupaplexReader, ISupaplexWriter } from "./types";
-import { LEVEL_BYTES_LENGTH, SupaplexLevel } from "./level";
-import { SupaplexLevelset } from "./levelset";
+import { createLevelFromArrayBuffer, LEVEL_BYTES_LENGTH } from "./level";
+import { createLevelset } from "./levelset";
 
 function* levelsFromBuffer(buffer: ArrayBuffer) {
   if (buffer.byteLength % LEVEL_BYTES_LENGTH) {
@@ -9,12 +9,12 @@ function* levelsFromBuffer(buffer: ArrayBuffer) {
 
   const count = Math.floor(buffer.byteLength / LEVEL_BYTES_LENGTH);
   for (let i = 0; i < count; i++) {
-    yield SupaplexLevel.fromArrayBuffer(buffer, i * LEVEL_BYTES_LENGTH);
+    yield createLevelFromArrayBuffer(buffer, i * LEVEL_BYTES_LENGTH);
   }
 }
 
 export const reader: ISupaplexReader = {
-  readLevelset: (file) => new SupaplexLevelset(levelsFromBuffer(file)),
+  readLevelset: (file) => createLevelset(levelsFromBuffer(file)),
 };
 
 export const writer: ISupaplexWriter = {

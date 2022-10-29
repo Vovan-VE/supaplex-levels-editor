@@ -17,11 +17,14 @@ export interface DemoSeed {
   hi: number;
 }
 
-export interface IWithDemo {
-  readonly demo: Uint8Array | null;
-  setDemo(demo: Uint8Array | null): this;
+export interface IWithDemoSeed {
   readonly demoSeed: DemoSeed;
   setDemoSeed(seed: DemoSeed): this;
+}
+
+export interface IWithDemo extends IWithDemoSeed {
+  readonly demo: Uint8Array | null;
+  setDemo(demo: Uint8Array | null): this;
 }
 
 export const levelSupportsDemo = (level: any): level is IWithDemo =>

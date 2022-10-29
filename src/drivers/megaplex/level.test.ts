@@ -1,4 +1,4 @@
-import { MegaplexLevel } from "./level";
+import { createLevel, MegaplexLevel } from "./level";
 import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "../supaplex/footer";
 import { dumpLevel, readExampleFile } from "./helpers.dev";
 import {
@@ -53,7 +53,7 @@ describe("level", () => {
 
   describe("constructor", () => {
     it("no data", () => {
-      const level = new MegaplexLevel(3, 2);
+      const level = createLevel(3, 2);
 
       expect(level.width).toBe(3);
       expect(level.height).toBe(2);
@@ -65,13 +65,13 @@ describe("level", () => {
     });
 
     it("data", () => {
-      const level = new MegaplexLevel(3, 2, testLevelData);
+      const level = createLevel(3, 2, testLevelData);
 
       expect(dumpLevel(level)).toMatchSnapshot();
     });
 
     it("throw", () => {
-      expect(() => new MegaplexLevel(3, 2, new Uint8Array(42))).toThrow(
+      expect(() => createLevel(3, 2, new Uint8Array(42))).toThrow(
         new Error(
           `Invalid buffer length 42, expected at least ${
             6 + FOOTER_BYTE_LENGTH
@@ -82,7 +82,7 @@ describe("level", () => {
   });
 
   it("raw", () => {
-    const level = new MegaplexLevel(3, 2, testLevelData);
+    const level = createLevel(3, 2, testLevelData);
     expect(level.raw).toEqual(testLevelData);
     expect(level.length).toEqual(testLevelData.length);
 
@@ -111,9 +111,9 @@ describe("level", () => {
   });
 
   it("copy", () => {
-    const a = new MegaplexLevel(3, 2)
+    const a = createLevel(3, 2)
       .setTitle("First level title")
-      .setTile(1, 0, 6);
+      .setTile(1, 0, 6) as MegaplexLevel;
 
     let b = a.copy();
     expect(dumpLevel(b)).toEqual(dumpLevel(a));
@@ -126,7 +126,7 @@ describe("level", () => {
 
   describe("resize", () => {
     it("simple", () => {
-      const a = new MegaplexLevel(3, 2, testLevelData);
+      const a = createLevel(3, 2, testLevelData);
 
       let b = a.resize(5, 4);
       expect(dumpLevel(b)).toMatchSnapshot();
@@ -154,7 +154,7 @@ describe("level", () => {
   });
 
   it("getTile", () => {
-    const level = new MegaplexLevel(3, 2, testLevelData);
+    const level = createLevel(3, 2, testLevelData);
 
     expect(level.getTile(0, 0)).toEqual(0);
     expect(level.getTile(1, 0)).toEqual(TILE_SP_PORT_U);
@@ -166,7 +166,7 @@ describe("level", () => {
 
   describe("setTile", () => {
     it("usual", () => {
-      const level = new MegaplexLevel(3, 2, testLevelData);
+      const level = createLevel(3, 2, testLevelData);
       const copy = level.setTile(2, 0, 7);
       expect(level.getTile(2, 0)).toBe(4);
       expect(level.specPortsCount).toBe(1);
@@ -175,12 +175,12 @@ describe("level", () => {
     });
 
     it("noop", () => {
-      const level = new MegaplexLevel(3, 2, testLevelData);
+      const level = createLevel(3, 2, testLevelData);
       expect(level.setTile(2, 0, level.getTile(2, 0))).toBe(level);
     });
 
     it("add spec port", () => {
-      const level = new MegaplexLevel(3, 2, testLevelData);
+      const level = createLevel(3, 2, testLevelData);
       const copy = level.setTile(2, 0, TILE_SP_PORT_U);
       expect(level.getTile(2, 0)).toBe(4);
       expect(level.specPortsCount).toBe(1);
@@ -205,7 +205,7 @@ describe("level", () => {
     });
 
     it("keep spec port", () => {
-      const level = new MegaplexLevel(3, 2, testLevelData);
+      const level = createLevel(3, 2, testLevelData);
       const copy = level.setTile(1, 0, TILE_SP_PORT_R);
       expect(level.getTile(1, 0)).toBe(TILE_SP_PORT_U);
       expect(level.specPortsCount).toBe(1);
@@ -223,7 +223,7 @@ describe("level", () => {
     });
 
     it("remove spec port", () => {
-      const level = new MegaplexLevel(3, 2, testLevelData);
+      const level = createLevel(3, 2, testLevelData);
       const copy = level.setTile(1, 0, TILE_ZONK);
       expect(copy.getTile(1, 0)).toBe(TILE_ZONK);
       expect(copy.specPortsCount).toBe(0);
@@ -232,7 +232,7 @@ describe("level", () => {
   });
 
   it("findSpecPort", () => {
-    const level = new MegaplexLevel(3, 2, testLevelData);
+    const level = createLevel(3, 2, testLevelData);
     expect(level.findSpecPort(1, 0)).toEqual<ISupaplexSpecPortProps>({
       setsGravity: true,
       setsFreezeZonks: true,
@@ -243,9 +243,7 @@ describe("level", () => {
   describe("tilesRenderStream", () => {
     it("huge maze", async () => {
       const data = await readExampleFile("HUDEMAZ1.mpx");
-      const level = reader
-        .readLevelset(data.buffer)
-        .getLevel(0) as MegaplexLevel;
+      const level = reader.readLevelset(data.buffer).getLevel(0);
 
       const a = [...level.tilesRenderStream(0, 0, 202, 202)];
       expect(a.length).toBeLessThan(202 * 202);

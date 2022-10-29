@@ -1,3 +1,5 @@
+import { IsPlayableResult, ITilesStreamItem } from "../types";
+
 export interface IBox {
   // readonly width: number;
   // readonly height: number;
@@ -11,6 +13,15 @@ export interface ILevelBody {
   readonly raw: Uint8Array;
   getTile(x: number, y: number): number;
   setTile(x: number, y: number, value: number): this;
+  isPlayable(): IsPlayableResult;
+  tilesRenderStream(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    width: number,
+    height: number,
+  ): Iterable<ITilesStreamItem>;
 }
 
 export interface ISupaplexSpecPortProps {

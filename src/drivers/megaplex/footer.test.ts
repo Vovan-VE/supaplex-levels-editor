@@ -1,5 +1,5 @@
 import { FOOTER_BYTE_LENGTH } from "../supaplex/footer";
-import { LevelFooter } from "./footer";
+import { createLevelFooter } from "./footer";
 
 const srcMain = new Uint8Array(FOOTER_BYTE_LENGTH);
 srcMain.set(
@@ -26,7 +26,7 @@ it("demo", () => {
     0xff,
   );
 
-  let footer = new LevelFooter(1, src);
+  let footer = createLevelFooter(1, src);
   expect(footer.demo).toEqual(Uint8Array.of(10, 20, 30, 40, 50, 60, 42, 0, 23));
   expect(footer.length).toEqual(FOOTER_BYTE_LENGTH + 9 + 2);
 
@@ -47,12 +47,12 @@ it("demo", () => {
   expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
   expect(footer.getRaw()).toEqual(srcMain);
 
-  footer = new LevelFooter(1, srcMain);
+  footer = createLevelFooter(1, srcMain);
   expect(footer.demo).toBe(null);
   expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
   expect(footer.getRaw()).toEqual(srcMain);
 
-  footer = new LevelFooter(1);
+  footer = createLevelFooter(1);
   expect(footer.demo).toBe(null);
   expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
   expect(footer.getRaw()).toEqual(srcMain);

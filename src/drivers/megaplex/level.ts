@@ -1,11 +1,11 @@
 import { DemoSeed, ITilesStreamItem } from "../types";
-import { LevelBody } from "../supaplex/body";
+import { createLevelBody } from "../supaplex/body";
 import { supaplexBox } from "../supaplex/box";
 import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "../supaplex/footer";
 import { isSpecPort, TILE_SPACE } from "../supaplex/tiles-id";
 import { ISupaplexSpecPortProps } from "../supaplex/internal";
 import { AnyBox } from "./box";
-import { LevelFooter } from "./footer";
+import { createLevelFooter } from "./footer";
 import { resizable } from "./resizable";
 import { IMegaplexLevel } from "./types";
 
@@ -22,15 +22,21 @@ const sliceFooter = (width: number, height: number, data?: Uint8Array) => {
   }
 };
 
-export class MegaplexLevel implements IMegaplexLevel {
+export const createLevel = (
+  width: number,
+  height: number,
+  data?: Uint8Array,
+): IMegaplexLevel => new MegaplexLevel(width, height, data);
+
+class MegaplexLevel implements IMegaplexLevel {
   readonly #box: AnyBox;
-  #body: LevelBody;
-  #footer: LevelFooter;
+  #body;
+  #footer;
 
   constructor(width: number, height: number, data?: Uint8Array) {
-    this.#footer = new LevelFooter(width, sliceFooter(width, height, data));
+    this.#footer = createLevelFooter(width, sliceFooter(width, height, data));
     this.#box = new AnyBox(width, height);
-    this.#body = new LevelBody(this.#box, data?.slice(0, this.#box.length));
+    this.#body = createLevelBody(this.#box, data?.slice(0, this.#box.length));
   }
 
   get length() {
@@ -279,3 +285,5 @@ export class MegaplexLevel implements IMegaplexLevel {
     return copy;
   }
 }
+
+export type { MegaplexLevel };

@@ -1,4 +1,4 @@
-import { DemoSeed } from "../types";
+import { DemoSeed, IWithDemoSeed } from "../types";
 import { LEVEL_WIDTH } from "./box";
 import {
   ILevelFooter,
@@ -63,7 +63,11 @@ export const specPortCoordsToOffset = (
   return [(offset >> 8) & 0xff, offset & 0xff];
 };
 
-export class LevelFooter implements ILevelFooter {
+export const createLevelFooter = (
+  data?: Uint8Array,
+): ILevelFooter & IWithDemoSeed => new LevelFooter(data);
+
+export class LevelFooter implements ILevelFooter, IWithDemoSeed {
   #src: Uint8Array;
 
   constructor(data?: Uint8Array) {

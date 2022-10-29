@@ -1,24 +1,21 @@
-import { MegaplexLevel } from "./level";
-import { MegaplexLevelset } from "./levelset";
+import { createLevel } from "./level";
+import { createLevelset } from "./levelset";
 import { dumpLevelset } from "./helpers.dev";
 
 describe("levelset", () => {
   describe("constructor", () => {
     it("none", () => {
-      const levelset = new MegaplexLevelset();
+      const levelset = createLevelset();
       expect(dumpLevelset(levelset)).toMatchSnapshot();
     });
 
     it("number", () => {
-      const levelset = new MegaplexLevelset(2);
+      const levelset = createLevelset(2);
       expect(dumpLevelset(levelset)).toMatchSnapshot();
     });
 
     it("levels", () => {
-      const levelset = new MegaplexLevelset([
-        new MegaplexLevel(5, 3),
-        new MegaplexLevel(7, 9),
-      ]);
+      const levelset = createLevelset([createLevel(5, 3), createLevel(7, 9)]);
       expect(dumpLevelset(levelset)).toMatchSnapshot();
     });
   });

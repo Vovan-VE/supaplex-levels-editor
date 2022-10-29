@@ -1,4 +1,4 @@
-import { IsPlayableResult, ITilesStreamItem } from "../types";
+import { IsPlayableResult } from "../types";
 import { IBox, ILevelBody } from "./internal";
 import { TILE_EXIT, TILE_MURPHY } from "./tiles-id";
 import { InlineTile } from "./InlineTile";
@@ -12,7 +12,10 @@ const validateByte =
         }
       };
 
-export class LevelBody implements ILevelBody {
+export const createLevelBody = (box: IBox, data?: Uint8Array): ILevelBody =>
+  new LevelBody(box, data);
+
+class LevelBody implements ILevelBody {
   readonly #box: IBox;
   readonly #raw: Uint8Array;
 
@@ -91,7 +94,7 @@ export class LevelBody implements ILevelBody {
     h: number,
     width: number,
     height: number,
-  ): Iterable<ITilesStreamItem> {
+  ) {
     if (x >= width || y >= height || x + w <= 0 || y + h <= 0) {
       return;
     }

@@ -1,4 +1,4 @@
-import { LEVEL_BYTES_LENGTH, SupaplexLevel } from "./level";
+import { createLevel, LEVEL_BYTES_LENGTH, SupaplexLevel } from "./level";
 import { dumpLevel } from "./helpers.dev";
 import { TILE_SP_PORT_R, TILE_SP_PORT_U, TILE_ZONK } from "./tiles-id";
 import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./internal";
@@ -60,24 +60,24 @@ describe("level", () => {
 
   describe("constructor", () => {
     it("no params", () => {
-      expect(dumpLevel(new SupaplexLevel())).toMatchSnapshot();
+      expect(dumpLevel(createLevel())).toMatchSnapshot();
     });
 
     it("wrong size", () => {
-      expect(() => new SupaplexLevel(Uint8Array.of(0, 1, 6, 5))).toThrow(
+      expect(() => createLevel(Uint8Array.of(0, 1, 6, 5))).toThrow(
         new Error(`Invalid buffer length 4, expected ${LEVEL_BYTES_LENGTH}`),
       );
     });
     it("buffer", () => {
-      const level = new SupaplexLevel(testLevelData);
+      const level = createLevel(testLevelData);
       expect(dumpLevel(level)).toMatchSnapshot();
     });
   });
 
   it("copy", () => {
-    const a = new SupaplexLevel()
+    const a = createLevel()
       .setTitle("First level title")
-      .setTile(10, 15, 6);
+      .setTile(10, 15, 6) as SupaplexLevel;
 
     let b = a.copy();
     expect(dumpLevel(b)).toEqual(dumpLevel(a));
@@ -89,7 +89,7 @@ describe("level", () => {
   });
 
   it("getTile", () => {
-    const level = new SupaplexLevel(testLevelData);
+    const level = createLevel(testLevelData);
 
     expect(level.getTile(0, 0)).toBe(1);
     expect(level.getTile(1, 1)).toBe(2);
@@ -102,14 +102,14 @@ describe("level", () => {
 
   describe("setTile", () => {
     it("no-op", () => {
-      const level = new SupaplexLevel(testLevelData);
+      const level = createLevel(testLevelData);
       expect(level.setTile(0, 0, 1)).toBe(level);
       expect(level.setTile(1, 1, 2)).toBe(level);
       expect(level.setTile(23, 23, 24)).toBe(level);
     });
 
     it("usual", () => {
-      const level = new SupaplexLevel(testLevelData);
+      const level = createLevel(testLevelData);
       const copy = level.setTile(10, 2, 7);
       expect(copy.getTile(10, 2)).toBe(7);
       expect(copy.specPortsCount).toBe(1);
@@ -118,7 +118,7 @@ describe("level", () => {
     });
 
     it("add spec port", () => {
-      const level = new SupaplexLevel(testLevelData);
+      const level = createLevel(testLevelData);
       const copy = level.setTile(10, 2, TILE_SP_PORT_U);
       expect(level.getTile(10, 2)).toBe(0);
       expect(level.specPortsCount).toBe(1);
@@ -143,7 +143,7 @@ describe("level", () => {
     });
 
     it("keep spec port", () => {
-      const level = new SupaplexLevel(testLevelData);
+      const level = createLevel(testLevelData);
       const copy = level.setTile(12, 12, TILE_SP_PORT_U);
       expect(level.getTile(12, 12)).toBe(TILE_SP_PORT_R);
       expect(level.specPortsCount).toBe(1);
@@ -161,7 +161,7 @@ describe("level", () => {
     });
 
     it("remove spec port", () => {
-      const level = new SupaplexLevel(testLevelData);
+      const level = createLevel(testLevelData);
       const copy = level.setTile(12, 12, TILE_ZONK);
       expect(level.getTile(12, 12)).toBe(TILE_SP_PORT_R);
       expect(level.specPortsCount).toBe(1);
@@ -172,7 +172,7 @@ describe("level", () => {
   });
 
   it("findSpecPort", () => {
-    const level = new SupaplexLevel(testLevelData);
+    const level = createLevel(testLevelData);
     expect(level.findSpecPort(12, 12)).toEqual<ISupaplexSpecPortProps>({
       setsGravity: true,
       setsFreezeZonks: true,
@@ -181,7 +181,7 @@ describe("level", () => {
   });
 
   it("setSpecPort", () => {
-    const level = new SupaplexLevel(testLevelData);
+    const level = createLevel(testLevelData);
     expect(level.setSpecPort(12, 12)).toBe(level);
     expect(
       level.setSpecPort(12, 12, {
