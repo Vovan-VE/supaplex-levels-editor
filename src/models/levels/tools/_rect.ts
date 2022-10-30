@@ -182,12 +182,14 @@ sample({
   source: doCommit,
   filter: ({ drawState }) => Boolean(drawState),
   fn: ({ level, drawState }) =>
-    drawRect(
-      level,
-      level.width,
-      level.height,
-      drawState!,
-      (level, x, y, tile) => level.setTile(x, y, tile),
+    level.batch((level) =>
+      drawRect(
+        level,
+        level.width,
+        level.height,
+        drawState!,
+        (level, x, y, tile) => level.setTile(x, y, tile),
+      ),
     ),
   target: updateCurrentLevel,
 });

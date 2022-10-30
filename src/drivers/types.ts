@@ -46,6 +46,7 @@ export interface IBaseLevel {
   readonly height: number;
   getTile(x: number, y: number): number;
   setTile(x: number, y: number, value: number): this;
+  batch(update: (b: this) => this): this;
   tilesRenderStream(
     x: number,
     y: number,

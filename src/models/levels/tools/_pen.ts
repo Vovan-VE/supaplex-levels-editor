@@ -82,10 +82,12 @@ const {
 sample({
   source: doCommit,
   fn: ({ level, drawState }) =>
-    RoMap.reduce(
-      drawState,
-      (level, { x, y, tile }) => level.setTile(x, y, tile),
-      level,
+    level.batch((level) =>
+      RoMap.reduce(
+        drawState,
+        (level, { x, y, tile }) => level.setTile(x, y, tile),
+        level,
+      ),
     ),
   target: updateCurrentLevel,
 });

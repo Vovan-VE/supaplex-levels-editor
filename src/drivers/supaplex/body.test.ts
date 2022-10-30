@@ -86,6 +86,37 @@ describe("createLevelBody", () => {
     expect(() => body.setTile(0, 0, 257)).toThrow(e2);
   });
 
+  it("batch", () => {
+    const body = createLevelBody(new AnyBox(10_000, 10_000));
+
+    // how many copies will we make in 1.5 sec?
+    let start = Date.now();
+    let result = body;
+    let count = 0;
+    let took: number;
+    for (; (took = Date.now() - start) < 1500; count++) {
+      result = result.setTile(count, count, 6);
+    }
+    expect(count).toBeGreaterThan(5);
+    expect(result).not.toBe(body);
+    expect(body.getTile(1, 1)).toBe(0);
+    expect(result.getTile(1, 1)).toBe(6);
+
+    // then doing the same in batch - it must be faster
+    start = Date.now();
+    result = body.batch((result) => {
+      for (let i = count; i-- > 0; ) {
+        result = result.setTile(i, i, 6);
+      }
+      return result;
+    });
+    // it must take time shorten then 2 copies
+    expect(Date.now() - start).toBeLessThan((took / count) * 2);
+    expect(result).not.toBe(body);
+    expect(body.getTile(1, 1)).toBe(0);
+    expect(result.getTile(1, 1)).toBe(6);
+  });
+
   describe("tilesRenderStream", () => {
     it("empty", () => {
       const data = Uint8Array.of(

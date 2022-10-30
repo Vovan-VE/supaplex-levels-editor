@@ -1,4 +1,4 @@
-import { createLevel, LEVEL_BYTES_LENGTH, SupaplexLevel } from "./level";
+import { createLevel, LEVEL_BYTES_LENGTH } from "./level";
 import { dumpLevel } from "./helpers.dev";
 import { TILE_SP_PORT_R, TILE_SP_PORT_U, TILE_ZONK } from "./tiles-id";
 import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./internal";
@@ -72,20 +72,6 @@ describe("level", () => {
       const level = createLevel(testLevelData);
       expect(dumpLevel(level)).toMatchSnapshot();
     });
-  });
-
-  it("copy", () => {
-    const a = createLevel()
-      .setTitle("First level title")
-      .setTile(10, 15, 6) as SupaplexLevel;
-
-    let b = a.copy();
-    expect(dumpLevel(b)).toEqual(dumpLevel(a));
-
-    b = b.setTitle("Copy level title").setTile(10, 15, 1);
-    let dump = dumpLevel(b);
-    expect(dump).not.toEqual(dumpLevel(a));
-    expect(dump).toMatchSnapshot();
   });
 
   it("getTile", () => {
@@ -169,6 +155,40 @@ describe("level", () => {
       expect(copy.specPortsCount).toBe(0);
       expect([...copy.getSpecPorts()]).toEqual([]);
     });
+  });
+
+  it("batch", () => {
+    const origin = createLevel();
+
+    // how many copies will we make in 1.5 sec?
+    let start = Date.now();
+    let result = origin;
+    let count = 0;
+    let took: number;
+    for (; (took = Date.now() - start) < 1000; count++) {
+      result = result.setTile(10, 10, 1 + (count % 10));
+    }
+    expect(count).toBeGreaterThan(1000);
+    expect(result).not.toBe(origin);
+    expect(origin.getTile(10, 10)).toBe(0);
+    expect(result.getTile(10, 10)).not.toBe(0);
+
+    // then doing the same in batch - it must be faster
+    start = Date.now();
+    result = origin.batch((result) => {
+      for (let i = count; i-- > 0; ) {
+        result = result.setTile(10, 10, 1 + (i % 10));
+      }
+      return result.setTitle("Foo bar");
+    });
+    // it must take less time
+    expect(Date.now() - start).toBeLessThan(took / 4);
+    // expect(Date.now() - start).toBeLessThan((took / count) * 2);
+    expect(result).not.toBe(origin);
+    expect(origin.getTile(10, 10)).toBe(0);
+    expect(result.getTile(10, 10)).not.toBe(0);
+    expect(origin.title).toBe("                       ");
+    expect(result.title).toBe("Foo bar                ");
   });
 
   it("findSpecPort", () => {

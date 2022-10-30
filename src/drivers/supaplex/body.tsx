@@ -1,5 +1,6 @@
 import { IsPlayableResult } from "../types";
 import { IBox, ILevelBody } from "./internal";
+import { tiles } from "./tiles";
 import { TILE_EXIT, TILE_MURPHY } from "./tiles-id";
 import { InlineTile } from "./InlineTile";
 
@@ -12,8 +13,18 @@ const validateByte =
         }
       };
 
-export const createLevelBody = (box: IBox, data?: Uint8Array): ILevelBody =>
-  new LevelBody(box, data);
+export const createLevelBody = (box: IBox, data?: Uint8Array): ILevelBody => {
+  if (
+    process.env.NODE_ENV !== "production" &&
+    data &&
+    data.length !== box.length
+  ) {
+    throw new Error(
+      `Invalid buffer length ${data.length}, expected ${box.length}`,
+    );
+  }
+  return new LevelBody(box, data);
+};
 
 class LevelBody implements ILevelBody {
   readonly #box: IBox;
@@ -21,20 +32,34 @@ class LevelBody implements ILevelBody {
 
   constructor(box: IBox, data?: Uint8Array) {
     this.#box = box;
-    if (data) {
-      if (process.env.NODE_ENV !== "production" && data.length !== box.length) {
-        throw new Error(
-          `Invalid buffer length ${data.length}, expected ${box.length}`,
-        );
-      }
-      this.#raw = new Uint8Array(data);
-    } else {
-      this.#raw = new Uint8Array(box.length);
-    }
+    this.#raw = data ? new Uint8Array(data) : new Uint8Array(box.length);
   }
 
-  copy(): this {
-    return new LevelBody(this.#box, this.#raw) as this;
+  #batchingLevel = 0;
+  #isBatchCopy = false;
+  copy() {
+    if (this.#isBatchCopy) {
+      return this;
+    }
+    const copy = new LevelBody(this.#box, this.#raw);
+    if (this.#batchingLevel > 0) {
+      copy.#isBatchCopy = true;
+    }
+    return copy;
+  }
+
+  batch(update: (b: this) => this) {
+    this.#batchingLevel++;
+    let result: this;
+    try {
+      result = update(this);
+    } finally {
+      this.#batchingLevel--;
+    }
+    if (!this.#batchingLevel) {
+      result.#isBatchCopy = false;
+    }
+    return result;
   }
 
   get length() {
@@ -65,26 +90,19 @@ class LevelBody implements ILevelBody {
   isPlayable(): IsPlayableResult {
     const leftToRequire = new Set([TILE_MURPHY, TILE_EXIT]);
     for (const tile of this.#raw) {
-      if (!leftToRequire.size) {
-        break;
-      }
-      if (leftToRequire.has(tile)) {
-        leftToRequire.delete(tile);
+      if (leftToRequire.delete(tile) && !leftToRequire.size) {
+        return [true];
       }
     }
-    const errors = [
-      leftToRequire.has(TILE_MURPHY) && (
+    return [
+      false,
+      [...leftToRequire].map((tile) => (
         <>
-          There is no <InlineTile tile={TILE_MURPHY} /> Murphy in the level.
+          There is no <InlineTile tile={tile} /> {tiles[tile].title} in the
+          level.
         </>
-      ),
-      leftToRequire.has(TILE_EXIT) && (
-        <>
-          There is no <InlineTile tile={TILE_EXIT} /> Exit in the level.
-        </>
-      ),
-    ].filter(Boolean);
-    return errors.length ? [false, errors] : [true];
+      )),
+    ];
   }
 
   *tilesRenderStream(

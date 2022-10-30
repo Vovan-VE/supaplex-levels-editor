@@ -30,51 +30,54 @@ sample({
     let next: IBaseLevel = level!.level.undoQueue.current;
     const prevTile = next.getTile(cell.x, cell.y);
     if (prevTile !== tile) {
-      const { width, height } = next;
-      let _limit = width * height * 3;
-      // TODO: better algorithm
-      const stack: Trace[] = [{ x: cell.x, y: cell.y, to: TO.UP }];
-      while (stack.length) {
-        if (_limit <= 0) {
-          // never happened
-          throw new Error("Too long loop");
-        }
-        const point = stack[stack.length - 1];
-        let { x, y, to } = point;
-        --_limit;
-        next = next.setTile(x, y, tile);
+      next = next.batch((next) => {
+        const { width, height } = next;
+        let _limit = width * height * 3;
+        // TODO: better algorithm
+        const stack: Trace[] = [{ x: cell.x, y: cell.y, to: TO.UP }];
+        while (stack.length) {
+          if (_limit <= 0) {
+            // never happened
+            throw new Error("Too long loop");
+          }
+          const point = stack[stack.length - 1];
+          let { x, y, to } = point;
+          --_limit;
+          next = next.setTile(x, y, tile);
 
-        if (to === TO.UP && y > 0 && next.getTile(x, y - 1) === prevTile) {
-          point.to = TO.RIGHT;
-          stack.push({ x, y: y - 1, to: TO.UP });
-          continue;
-        }
-        if (
-          to <= TO.RIGHT &&
-          x + 1 < width &&
-          next.getTile(x + 1, y) === prevTile
-        ) {
-          point.to = TO.DOWN;
-          stack.push({ x: x + 1, y, to: TO.UP });
-          continue;
-        }
-        if (
-          to <= TO.DOWN &&
-          y + 1 < height &&
-          next.getTile(x, y + 1) === prevTile
-        ) {
-          point.to = TO.LEFT;
-          stack.push({ x, y: y + 1, to: TO.RIGHT });
-          continue;
-        }
-        if (to <= TO.LEFT && x > 0 && next.getTile(x - 1, y) === prevTile) {
-          point.to = TO.RETURN;
-          stack.push({ x: x - 1, y, to: TO.UP });
-          continue;
-        }
+          if (to === TO.UP && y > 0 && next.getTile(x, y - 1) === prevTile) {
+            point.to = TO.RIGHT;
+            stack.push({ x, y: y - 1, to: TO.UP });
+            continue;
+          }
+          if (
+            to <= TO.RIGHT &&
+            x + 1 < width &&
+            next.getTile(x + 1, y) === prevTile
+          ) {
+            point.to = TO.DOWN;
+            stack.push({ x: x + 1, y, to: TO.UP });
+            continue;
+          }
+          if (
+            to <= TO.DOWN &&
+            y + 1 < height &&
+            next.getTile(x, y + 1) === prevTile
+          ) {
+            point.to = TO.LEFT;
+            stack.push({ x, y: y + 1, to: TO.RIGHT });
+            continue;
+          }
+          if (to <= TO.LEFT && x > 0 && next.getTile(x - 1, y) === prevTile) {
+            point.to = TO.RETURN;
+            stack.push({ x: x - 1, y, to: TO.UP });
+            continue;
+          }
 
-        stack.pop();
-      }
+          stack.pop();
+        }
+        return next;
+      });
     }
     return next;
   },

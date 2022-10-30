@@ -12,7 +12,8 @@ export interface ILevelBody {
   readonly length: number;
   readonly raw: Uint8Array;
   getTile(x: number, y: number): number;
-  setTile(x: number, y: number, value: number): this;
+  setTile(x: number, y: number, value: number): ILevelBody;
+  batch(update: (b: ILevelBody) => ILevelBody): ILevelBody;
   isPlayable(): IsPlayableResult;
   tilesRenderStream(
     x: number,
