@@ -4,7 +4,7 @@
 
 - Enh: Optimized rendering for level tiles. Now only visible range of tiles are
   rendering. The price is some flickering while scrolling.
-- Enh: Optimized editing. Now many operations with adequate level sizes runs
+- Enh: Optimized editing. Now most operations with adequate level sizes runs
   enough fast.
 
 ## 0.4.1 (2022-10-24)
