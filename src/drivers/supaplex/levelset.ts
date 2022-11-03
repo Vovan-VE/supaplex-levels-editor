@@ -1,3 +1,4 @@
+import { isOffsetInRange } from "utils/number";
 import { ISupaplexLevel, ISupaplexLevelset } from "./types";
 import { createLevel } from "./level";
 import { fillLevelBorder } from "./fillLevelBorder";
@@ -16,7 +17,7 @@ const validateLevelsIndex =
   process.env.NODE_ENV === "production"
     ? undefined
     : (index: number, count: number) => {
-        if (index < 0 || index >= count) {
+        if (!isOffsetInRange(index, 0, count)) {
           throw new RangeError(`Invalid level index ${index}`);
         }
       };

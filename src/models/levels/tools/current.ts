@@ -4,12 +4,13 @@ import { Tool } from "./interface";
 import { PEN } from "./_pen";
 import { FLOOD } from "./_flood";
 import { RECT } from "./_rect";
+import { SELECTION } from "./_selection";
 
 export const setTool = createEvent<number>();
 export const setToolVariant = createEvent<number>();
 export const rollbackWork = createEvent<any>();
 
-export const TOOLS: readonly Tool[] = [PEN, FLOOD, RECT];
+export const TOOLS: readonly Tool[] = [PEN, FLOOD, RECT, SELECTION];
 
 const setToolInternal = createEvent<number>();
 export const $toolIndex = createStore(0).on(setToolInternal, (_, n) => n);

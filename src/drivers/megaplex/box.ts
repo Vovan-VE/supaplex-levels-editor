@@ -1,3 +1,4 @@
+import { inRect } from "utils/rect";
 import { IBox } from "../supaplex/internal";
 
 export class AnyBox implements IBox {
@@ -8,7 +9,7 @@ export class AnyBox implements IBox {
     process.env.NODE_ENV === "production"
       ? undefined
       : (x: number, y: number) => {
-          if (x < 0 || x >= this.#width || y < 0 || y >= this.#height) {
+          if (!inRect(x, y, [0, 0, this.#width, this.#height])) {
             throw new RangeError(`Cell coords (${x}, ${y}) are out of range`);
           }
         };

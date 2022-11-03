@@ -94,8 +94,6 @@ export const FLOOD: Tool = {
     },
   ],
   $ui: createStore<ToolUI>({
-    inWork: false,
-    drawLayers: [],
     events: {
       onClick: (e, cell) => {
         e.preventDefault();

@@ -58,6 +58,7 @@ export const cellKey = ({ x, y }: CellCoords): CellKey => `${x}:${y}`;
 export const enum DrawLayerType {
   TILES = "t",
   TILE_FILL = "tf",
+  SELECT_RANGE = "sel",
   CUSTOM = "c",
 }
 interface BaseDrawLayer extends CellCoords {
@@ -78,22 +79,29 @@ interface DrawLayerTileFill extends BaseDrawLayer {
   width: number;
   height: number;
 }
+interface DrawLayerSelectRange extends BaseDrawLayer {
+  type: DrawLayerType.SELECT_RANGE;
+  width: number;
+  height: number;
+  borders: ReadonlySet<"T" | "R" | "B" | "L">;
+}
 interface DrawLayerCustom extends BaseDrawLayer {
   type: DrawLayerType.CUSTOM;
   Component: FC<CellCoords>;
 }
 
-export type DrawLayer = DrawLayerTiles | DrawLayerTileFill | DrawLayerCustom;
+export type DrawLayer =
+  | DrawLayerTiles
+  | DrawLayerTileFill
+  | DrawLayerSelectRange
+  | DrawLayerCustom;
 
 //-------------------------------
 
 export interface ToolUI {
   rollback?: Event<any>;
-  // REFACT: useless?
-  commit?: Event<any>;
-  // REFACT: useless?
-  inWork: boolean;
-  drawLayers: readonly DrawLayer[];
+  // TODO: add optional "Undo" ability to apply `rollback` in "working" state
+  drawLayers?: readonly DrawLayer[];
   events?: GridEventsProps;
   Dialogs?: FC;
 }

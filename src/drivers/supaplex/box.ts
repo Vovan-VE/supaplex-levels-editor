@@ -1,8 +1,11 @@
+import { inRect } from "utils/rect";
 import { IBox } from "./internal";
 
 export const LEVEL_WIDTH = 60;
 export const LEVEL_HEIGHT = 24;
 export const BODY_LENGTH = LEVEL_WIDTH * LEVEL_HEIGHT;
+
+const rect = [0, 0, LEVEL_WIDTH, LEVEL_HEIGHT] as const;
 
 export const supaplexBox: IBox = {
   // width: LEVEL_WIDTH,
@@ -13,7 +16,7 @@ export const supaplexBox: IBox = {
     process.env.NODE_ENV === "production"
       ? undefined
       : (x: number, y: number) => {
-          if (x < 0 || x >= LEVEL_WIDTH || y < 0 || y >= LEVEL_HEIGHT) {
+          if (!inRect(x, y, rect)) {
             throw new RangeError(`Cell coords (${x}, ${y}) are out of range`);
           }
         },

@@ -19,6 +19,7 @@ import {
   setFeedbackCell,
 } from "models/levels/tools";
 import { ContainerProps } from "ui/types";
+import { inRect } from "utils/rect";
 import cl from "./CoverGrid.module.scss";
 
 const snapshotEvent = (
@@ -47,7 +48,7 @@ const snapshotEvent = (
     y,
     width: cols,
     height: rows,
-    inBounds: x >= 0 && x < cols && y >= 0 && y < rows,
+    inBounds: inRect(x, y, [0, 0, cols, rows]),
     type,
     button,
     buttons,

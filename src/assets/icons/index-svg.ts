@@ -26,6 +26,7 @@ export { ReactComponent as RectFrame } from "./RectFrame.svg";
 export { ReactComponent as Redo } from "./Redo.svg";
 export { ReactComponent as Rename } from "./Rename.svg";
 export { ReactComponent as Save } from "./Save.svg";
+export { ReactComponent as Selection } from "./Selection.svg";
 export { ReactComponent as Trash } from "./Trash.svg";
 export { ReactComponent as Undo } from "./Undo.svg";
 export { ReactComponent as Upload } from "./Upload.svg";

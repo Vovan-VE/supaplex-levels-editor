@@ -1,7 +1,7 @@
-import { combine, sample } from "effector";
+import { combine } from "effector";
 import * as RoMap from "@cubux/readonly-map";
 import { svgs } from "ui/icon";
-import { updateCurrentLevel } from "../../levelsets";
+import { inRect } from "utils/rect";
 import { cellKey, DrawLayerType, TilesPath, Tool, ToolUI } from "./interface";
 import { createDragTool } from "./_drag-tool";
 
@@ -35,13 +35,11 @@ const {
   setVariant,
   $variant,
 
-  $isDrawing,
+  $isDragging,
   $drawState,
   rollback,
-  commit,
-  doCommit,
   eventsIdle,
-  eventsWork,
+  eventsDragging,
 } = createDragTool<DrawProps, TilesPath>({
   VARIANTS: [
     {
@@ -69,7 +67,7 @@ const {
     SHAPES[shape].reduce((path, [dx, dy]) => {
       const x = ex + dx;
       const y = ey + dy;
-      if (x >= 0 && x < width && y >= 0 && y < height) {
+      if (inRect(x, y, [0, 0, width, height])) {
         const key = cellKey({ x, y });
         if (path.get(key)?.tile !== tile) {
           return RoMap.set(path, key, { x, y, tile });
@@ -77,19 +75,16 @@ const {
       }
       return path;
     }, path),
-});
-
-sample({
-  source: doCommit,
-  fn: ({ level, drawState }) =>
-    level.batch((level) =>
+  drawEndReducer: ({ level, drawState }) => ({
+    do: "commit",
+    level: level.batch((level) =>
       RoMap.reduce(
         drawState,
         (level, { x, y, tile }) => level.setTile(x, y, tile),
         level,
       ),
     ),
-  target: updateCurrentLevel,
+  }),
 });
 
 export const PEN: Tool = {
@@ -99,14 +94,12 @@ export const PEN: Tool = {
   setVariant,
   $variant,
   $ui: combine(
-    $isDrawing,
+    $isDragging,
     $drawState,
-    (inWork, tiles): ToolUI => ({
+    (isDragging, tiles): ToolUI => ({
       rollback,
-      commit,
-      inWork,
       drawLayers: [{ x: 0, y: 0, type: DrawLayerType.TILES, tiles }],
-      events: inWork ? eventsWork : eventsIdle,
+      events: isDragging ? eventsDragging : eventsIdle,
     }),
   ),
 };

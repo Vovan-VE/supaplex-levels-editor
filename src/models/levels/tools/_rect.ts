@@ -1,9 +1,10 @@
-import { combine, sample } from "effector";
+import { combine } from "effector";
 import * as RoMap from "@cubux/readonly-map";
 import { svgs } from "ui/icon";
-import { $currentLevelSize, updateCurrentLevel } from "../../levelsets";
+import { $currentLevelSize } from "../../levelsets";
 import { cellKey, DrawLayerType, TilesPath, Tool, ToolUI } from "./interface";
 import { createDragTool } from "./_drag-tool";
+import { fromDrag } from "../../../utils/rect";
 
 export const enum RectType {
   FRAME,
@@ -78,14 +79,6 @@ const drawers: Record<RectType, DrawRectFn> = {
   },
 };
 
-const getRange = (a: number, b: number): [start: number, length: number] => {
-  if (a > b) {
-    [a, b] = [b, a];
-  }
-  // `a` can be <0 and/or `b` can be >=max
-  return [a, b - a + 1];
-};
-
 const drawRect = <T>(
   v: T,
   width: number,
@@ -93,11 +86,13 @@ const drawRect = <T>(
   { rectType, tile, startX, startY, endX, endY }: DrawState,
   draw: (v: T, x: number, y: number, tile: number) => T,
 ): T => {
-  const [x, w] = getRange(startX, endX);
-  const [y, h] = getRange(startY, endY);
-  drawers[rectType]([x, y, w, h], [width, height], (x, y) => {
-    v = draw(v, x, y, tile);
-  });
+  drawers[rectType](
+    fromDrag(startX, startY, endX, endY),
+    [width, height],
+    (x, y) => {
+      v = draw(v, x, y, tile);
+    },
+  );
   return v;
 };
 
@@ -134,13 +129,11 @@ const {
   setVariant,
   $variant,
 
-  $isDrawing,
+  $isDragging,
   $drawState,
   rollback,
-  commit,
-  doCommit,
   eventsIdle,
-  eventsWork,
+  eventsDragging,
 } = createDragTool<DrawProps, DrawState | null>({
   VARIANTS: [
     {
@@ -176,13 +169,9 @@ const {
           tile,
           rectType,
         },
-});
-
-sample({
-  source: doCommit,
-  filter: ({ drawState }) => Boolean(drawState),
-  fn: ({ level, drawState }) =>
-    level.batch((level) =>
+  drawEndReducer: ({ level, drawState }) => ({
+    do: "commit",
+    level: level.batch((level) =>
       drawRect(
         level,
         level.width,
@@ -191,7 +180,7 @@ sample({
         (level, x, y, tile) => level.setTile(x, y, tile),
       ),
     ),
-  target: updateCurrentLevel,
+  }),
 });
 
 export const RECT: Tool = {
@@ -201,13 +190,11 @@ export const RECT: Tool = {
   setVariant,
   $variant,
   $ui: combine(
-    $isDrawing,
+    $isDragging,
     $drawState,
     $currentLevelSize,
-    (inWork, drawState, size): ToolUI => ({
+    (isDragging, drawState, size): ToolUI => ({
       rollback,
-      commit,
-      inWork,
       drawLayers:
         drawState && size
           ? [
@@ -231,8 +218,8 @@ export const RECT: Tool = {
                     ...getFillRect(drawState, size.width, size.height),
                   },
             ]
-          : [],
-      events: inWork ? eventsWork : eventsIdle,
+          : undefined,
+      events: isDragging ? eventsDragging : eventsIdle,
     }),
   ),
 };
