@@ -1,6 +1,7 @@
 import { Event, Store } from "effector";
-import { FC, PointerEvent } from "react";
+import { CSSProperties, FC, PointerEvent } from "react";
 import { ITilesRegion } from "drivers";
+import { RectO } from "utils/rect";
 
 export interface CellCoords {
   x: number;
@@ -71,27 +72,27 @@ export interface TileCell extends CellCoords {
   tile: number;
 }
 export type TilesPath = ReadonlyMap<CellKey, TileCell>;
-interface DrawLayerTiles extends BaseDrawLayer {
+export interface DrawLayerTiles extends BaseDrawLayer {
   type: DrawLayerType.TILES;
   tiles: TilesPath;
 }
-interface DrawLayerTileFill extends BaseDrawLayer {
+export interface DrawLayerTileFill extends BaseDrawLayer {
   type: DrawLayerType.TILE_FILL;
   tile: number;
   width: number;
   height: number;
 }
-interface DrawLayerSelectRange extends BaseDrawLayer {
+export interface DrawLayerSelectRange extends BaseDrawLayer {
   type: DrawLayerType.SELECT_RANGE;
   width: number;
   height: number;
   borders: ReadonlySet<"T" | "R" | "B" | "L">;
 }
-interface DrawLayerTilesRegion extends BaseDrawLayer {
+export interface DrawLayerTilesRegion extends BaseDrawLayer {
   type: DrawLayerType.TILES_REGION;
   tiles: ITilesRegion;
 }
-interface DrawLayerCustom extends BaseDrawLayer {
+export interface DrawLayerCustom extends BaseDrawLayer {
   type: DrawLayerType.CUSTOM;
   Component: FC<CellCoords>;
 }
@@ -108,6 +109,12 @@ export type DrawLayerProps<T extends DrawLayerType> = Omit<
   "type"
 >;
 
+export type TCursor = Exclude<CSSProperties["cursor"], undefined>;
+export interface DrawCursor {
+  rect: readonly RectO[];
+  cursor: TCursor;
+}
+
 //-------------------------------
 
 export interface ToolUI {
@@ -115,6 +122,7 @@ export interface ToolUI {
   // TODO: add optional "Undo" ability to apply `rollback` in "working" state
   //   but will it require "Redo" to work as expected?
   drawLayers?: readonly DrawLayer[];
+  drawCursor?: readonly DrawCursor[];
   events?: GridEventsProps;
   Dialogs?: FC;
 }

@@ -5,8 +5,10 @@ import {
   createStore,
   sample,
 } from "effector";
+import { inRect, o2a } from "utils/rect";
 import { currentLevelIndexWillGone } from "../../levelsets";
 import { Tool } from "./interface";
+import { $feedbackCell } from "./feedback";
 import { PEN } from "./_pen";
 import { FLOOD } from "./_flood";
 import { RECT } from "./_rect";
@@ -53,6 +55,16 @@ export const $toolUI = combine(
   combine(TOOLS.map(({ $ui }) => $ui)),
   $toolIndex,
   (UIs, index) => UIs[index],
+);
+
+export const $cursor = combine(
+  $toolUI.map(({ drawCursor }) => drawCursor),
+  $feedbackCell,
+  (drawCursor, c) =>
+    (c &&
+      drawCursor?.find(({ rect }) => rect.some((r) => inRect(c.x, c.y, o2a(r))))
+        ?.cursor) ??
+    null,
 );
 
 const doRollbackFx = createEffect(async (rollback?: () => void) => {

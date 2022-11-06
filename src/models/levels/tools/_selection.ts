@@ -12,7 +12,13 @@ import {
   updateLevel,
 } from "../../levelsets";
 import { createDragTool } from "./_drag-tool";
-import { DrawLayer, DrawLayerType, Tool, ToolUI } from "./interface";
+import {
+  DrawLayer,
+  DrawLayerSelectRange,
+  DrawLayerType,
+  Tool,
+  ToolUI,
+} from "./interface";
 
 interface P {
   x: number;
@@ -185,7 +191,7 @@ const dragContent = (d: DrawState): DrawLayer | null => {
   return null;
 };
 
-const selectFrame = (d: DrawState, level: IBounds): DrawLayer => {
+const selectFrame = (d: DrawState, level: IBounds): DrawLayerSelectRange => {
   const fullRect =
     d.op === Op.STABLE ? o2a(d) : fromDrag(d.startX, d.startY, d.endX, d.endY);
 
@@ -257,19 +263,38 @@ export const SELECTION: Tool = {
     $isDragging,
     $drawState,
     $currentLevelSize,
-    (isDragging, drawState, size): ToolUI => ({
-      rollback: externalRollback,
-      drawLayers:
-        drawState && size
+    (isDragging, drawState, size): ToolUI => {
+      const sel = drawState && size ? selectFrame(drawState, size) : null;
+
+      return {
+        rollback: externalRollback,
+        drawLayers:
+          drawState && size
+            ? [
+                // content when dragged
+                dragContent(drawState),
+                // selection frame
+                sel,
+              ].filter(isNotNull)
+            : undefined,
+        drawCursor: sel
           ? [
-              // content when dragged
-              dragContent(drawState),
-              // selection frame
-              selectFrame(drawState, size),
-            ].filter(isNotNull)
+              {
+                cursor: drawState?.op === Op.STABLE ? "move" : "cell",
+                rect: [
+                  {
+                    x: sel.x,
+                    y: sel.y,
+                    w: sel.width,
+                    h: sel.height,
+                  },
+                ],
+              },
+            ]
           : undefined,
-      events: isDragging ? eventsDragging : eventsIdle,
-    }),
+        events: isDragging ? eventsDragging : eventsIdle,
+      };
+    },
   ),
 };
 
