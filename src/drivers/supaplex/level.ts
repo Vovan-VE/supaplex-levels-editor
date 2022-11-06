@@ -1,5 +1,6 @@
+import { clipRect, inRect, RectA } from "utils/rect";
 import { DemoSeed, ITilesStreamItem, IWithDemoSeed } from "../types";
-import { ISupaplexLevel } from "./types";
+import { ISupaplexLevel, ISupaplexLevelRegion } from "./types";
 import { createLevelBody } from "./body";
 import { BODY_LENGTH, LEVEL_HEIGHT, LEVEL_WIDTH, supaplexBox } from "./box";
 import { createLevelFooter, FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "./footer";
@@ -147,7 +148,50 @@ class SupaplexLevel implements ISupaplexLevel {
     w: number,
     h: number,
   ): Iterable<ITilesStreamItem> {
-    return this.#body.tilesRenderStream(x, y, w, h, LEVEL_WIDTH, LEVEL_HEIGHT);
+    return this.#body.tilesRenderStream(x, y, w, h);
+  }
+
+  copyRegion(x: number, y: number, w: number, h: number) {
+    const [x0, y0, tiles] = this.#body.copyRegion(x, y, w, h);
+    return {
+      tiles,
+      specPorts: this.#footer.copySpecPortsInRegion([
+        x0,
+        y0,
+        tiles.width,
+        tiles.height,
+      ]),
+    };
+  }
+
+  pasteRegion(
+    x: number,
+    y: number,
+    { tiles, specPorts }: ISupaplexLevelRegion,
+  ) {
+    //         ------------------------ level
+    //  ------------------ region
+    //         ----------- clip
+
+    const [x0, y0, w, h] = clipRect([x, y, tiles.width, tiles.height], this);
+    return this.batch((l) => {
+      for (let j = 0; j < h; j++) {
+        const cy = y0 + j;
+        for (let i = 0; i < w; i++) {
+          const cx = x0 + i;
+          l = l.setTile(cx, cy, tiles.getTile(cx - x, cy - y));
+        }
+      }
+      const r: RectA = [0, 0, this.width, this.height];
+      for (const p of specPorts) {
+        const cx = p.x + x;
+        const cy = p.y + y;
+        if (inRect(cx, cy, r)) {
+          l = l.setSpecPort(cx, cy, p);
+        }
+      }
+      return l;
+    });
   }
 
   get title() {

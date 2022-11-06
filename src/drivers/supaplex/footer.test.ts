@@ -169,6 +169,21 @@ describe("footer", () => {
     expect(() => footer.setInfotronsNeed(-2)).toThrow(/^Invalid byte -?\d+$/);
   });
 
+  it("copySpecPortsInRegion", () => {
+    const footer = createLevelFooter(testFooterData);
+    expect(footer.copySpecPortsInRegion([0, 0, 60, 12])).toEqual([]);
+    expect(footer.copySpecPortsInRegion([0, 0, 12, 24])).toEqual([]);
+    expect(footer.copySpecPortsInRegion([11, 11, 3, 3])).toEqual([
+      {
+        x: 1,
+        y: 1,
+        setsGravity: true,
+        setsFreezeZonks: true,
+        setsFreezeEnemies: true,
+      },
+    ]);
+  });
+
   it("clearSpecPorts", () => {
     const footer = createLevelFooter(testFooterData);
 

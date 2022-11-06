@@ -1,5 +1,6 @@
 import { Event, Store } from "effector";
 import { FC, PointerEvent } from "react";
+import { ITilesRegion } from "drivers";
 
 export interface CellCoords {
   x: number;
@@ -59,6 +60,7 @@ export const enum DrawLayerType {
   TILES = "t",
   TILE_FILL = "tf",
   SELECT_RANGE = "sel",
+  TILES_REGION = "tr",
   CUSTOM = "c",
 }
 interface BaseDrawLayer extends CellCoords {
@@ -85,6 +87,10 @@ interface DrawLayerSelectRange extends BaseDrawLayer {
   height: number;
   borders: ReadonlySet<"T" | "R" | "B" | "L">;
 }
+interface DrawLayerTilesRegion extends BaseDrawLayer {
+  type: DrawLayerType.TILES_REGION;
+  tiles: ITilesRegion;
+}
 interface DrawLayerCustom extends BaseDrawLayer {
   type: DrawLayerType.CUSTOM;
   Component: FC<CellCoords>;
@@ -94,13 +100,20 @@ export type DrawLayer =
   | DrawLayerTiles
   | DrawLayerTileFill
   | DrawLayerSelectRange
+  | DrawLayerTilesRegion
   | DrawLayerCustom;
+
+export type DrawLayerProps<T extends DrawLayerType> = Omit<
+  DrawLayer & { type: T },
+  "type"
+>;
 
 //-------------------------------
 
 export interface ToolUI {
   rollback?: Event<any>;
   // TODO: add optional "Undo" ability to apply `rollback` in "working" state
+  //   but will it require "Redo" to work as expected?
   drawLayers?: readonly DrawLayer[];
   events?: GridEventsProps;
   Dialogs?: FC;

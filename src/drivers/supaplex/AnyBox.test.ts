@@ -1,4 +1,4 @@
-import { AnyBox } from "./box";
+import { AnyBox } from "./AnyBox";
 
 it("box", () => {
   const box = new AnyBox(5, 3);

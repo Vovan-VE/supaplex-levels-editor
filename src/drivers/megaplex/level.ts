@@ -1,10 +1,11 @@
+import { clipRect, inRect, RectA } from "utils/rect";
 import { DemoSeed, ITilesStreamItem, IWithDemo, IWithDemoSeed } from "../types";
+import { AnyBox } from "../supaplex/AnyBox";
 import { createLevelBody } from "../supaplex/body";
-import { supaplexBox } from "../supaplex/box";
+import { ILevelBody, ISupaplexSpecPortProps } from "../supaplex/internal";
 import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "../supaplex/footer";
 import { isSpecPort, TILE_SPACE } from "../supaplex/tiles-id";
-import { ILevelBody, ISupaplexSpecPortProps } from "../supaplex/internal";
-import { AnyBox } from "./box";
+import { ISupaplexLevelRegion } from "../supaplex/types";
 import { createLevelFooter } from "./footer";
 import { resizable } from "./resizable";
 import { IMegaplexLevel } from "./types";
@@ -32,6 +33,9 @@ export const createLevel = (
   const body = createLevelBody(box, data?.slice(0, box.length));
   return new MegaplexLevel(box, body, footer);
 };
+
+// REFACT: a bunch of copy-paste between 'supaplex' and 'megaplex'
+//   refact into single base to cover both
 
 class MegaplexLevel implements IMegaplexLevel {
   readonly #box: AnyBox;
@@ -193,14 +197,50 @@ class MegaplexLevel implements IMegaplexLevel {
     w: number,
     h: number,
   ): Iterable<ITilesStreamItem> {
-    return this.#body.tilesRenderStream(
-      x,
-      y,
-      w,
-      h,
-      this.#box.width,
-      this.#box.height,
-    );
+    return this.#body.tilesRenderStream(x, y, w, h);
+  }
+
+  copyRegion(x: number, y: number, w: number, h: number) {
+    const [x0, y0, tiles] = this.#body.copyRegion(x, y, w, h);
+    return {
+      tiles,
+      specPorts: this.#footer.copySpecPortsInRegion([
+        x0,
+        y0,
+        tiles.width,
+        tiles.height,
+      ]),
+    };
+  }
+
+  pasteRegion(
+    x: number,
+    y: number,
+    { tiles, specPorts }: ISupaplexLevelRegion,
+  ) {
+    //         ------------------------ level
+    //  ------------------ region
+    //         ----------- clip
+
+    const [x0, y0, w, h] = clipRect([x, y, tiles.width, tiles.height], this);
+    return this.batch((l) => {
+      for (let j = 0; j < h; j++) {
+        const cy = y0 + j;
+        for (let i = 0; i < w; i++) {
+          const cx = x0 + i;
+          l = l.setTile(cx, cy, tiles.getTile(cx - x, cy - y));
+        }
+      }
+      const r: RectA = [0, 0, this.width, this.height];
+      for (const p of specPorts) {
+        const cx = p.x + x;
+        const cy = p.y + y;
+        if (inRect(cx, cy, r)) {
+          l = l.setSpecPort(cx, cy, p);
+        }
+      }
+      return l;
+    });
   }
 
   get title() {
@@ -257,12 +297,12 @@ class MegaplexLevel implements IMegaplexLevel {
   }
 
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps) {
-    supaplexBox.validateCoords?.(x, y);
+    this.#box.validateCoords?.(x, y);
     return this.#withFooter(this.#footer.setSpecPort(x, y, props));
   }
 
   deleteSpecPort(x: number, y: number) {
-    supaplexBox.validateCoords?.(x, y);
+    this.#box.validateCoords?.(x, y);
     return this.#withFooter(this.#footer.deleteSpecPort(x, y));
   }
 

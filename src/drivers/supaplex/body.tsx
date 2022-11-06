@@ -1,5 +1,7 @@
+import { clipRect } from "utils/rect";
 import { IsPlayableResult } from "../types";
-import { IBox, ILevelBody } from "./internal";
+import { AnyBox } from "./AnyBox";
+import { ILevelBody, ISupaplexBox } from "./internal";
 import { tiles } from "./tiles";
 import { TILE_EXIT, TILE_MURPHY } from "./tiles-id";
 import { InlineTile } from "./InlineTile";
@@ -13,7 +15,10 @@ const validateByte =
         }
       };
 
-export const createLevelBody = (box: IBox, data?: Uint8Array): ILevelBody => {
+export const createLevelBody = (
+  box: ISupaplexBox,
+  data?: Uint8Array,
+): ILevelBody => {
   if (
     process.env.NODE_ENV !== "production" &&
     data &&
@@ -27,10 +32,10 @@ export const createLevelBody = (box: IBox, data?: Uint8Array): ILevelBody => {
 };
 
 class LevelBody implements ILevelBody {
-  readonly #box: IBox;
+  readonly #box: ISupaplexBox;
   readonly #raw: Uint8Array;
 
-  constructor(box: IBox, data?: Uint8Array) {
+  constructor(box: ISupaplexBox, data?: Uint8Array) {
     this.#box = box;
     this.#raw = data ? new Uint8Array(data) : new Uint8Array(box.length);
   }
@@ -60,6 +65,14 @@ class LevelBody implements ILevelBody {
       result.#isBatchCopy = false;
     }
     return result;
+  }
+
+  get width() {
+    return this.#box.width;
+  }
+
+  get height() {
+    return this.#box.height;
   }
 
   get length() {
@@ -105,28 +118,14 @@ class LevelBody implements ILevelBody {
     ];
   }
 
-  *tilesRenderStream(
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    width: number,
-    height: number,
-  ) {
-    if (x >= width || y >= height || x + w <= 0 || y + h <= 0) {
-      return;
-    }
-    const xEnd = Math.min(width, x + w);
-    const yEnd = Math.min(height, y + h);
-    if (x < 0) {
-      x = 0;
-    }
-    if (y < 0) {
-      y = 0;
-    }
+  *tilesRenderStream(x: number, y: number, w: number, h: number) {
+    [x, y, w, h] = clipRect([x, y, w, h], this.#box);
+    const xEnd = x + w;
+    const yEnd = y + h;
     for (let j = y; j < yEnd; j++) {
-      let lastItem: [x: number, y: number, width: number, tile: number] | null =
-        [0, 0, 0, -1];
+      let lastItem: [x: number, y: number, width: number, tile: number] = [
+        0, 0, 0, -1,
+      ];
       for (let i = x; i < xEnd; i++) {
         const tile = this.#raw[this.#box.coordsToOffset(i, j)];
         if (tile === lastItem[3]) {
@@ -138,7 +137,26 @@ class LevelBody implements ILevelBody {
           lastItem = [i, j, 1, tile];
         }
       }
-      yield lastItem;
+      if (lastItem[2] > 0) {
+        yield lastItem;
+      }
     }
+  }
+
+  copyRegion(x: number, y: number, w: number, h: number) {
+    [x, y, w, h] = clipRect([x, y, w, h], this.#box);
+    if (x === 0 && y === 0 && w === this.#box.width && h === this.#box.height) {
+      return [0, 0, this] as const;
+    }
+    const b = new AnyBox(w, h);
+    const res = new LevelBody(b);
+    const dest = res.#raw;
+    for (let j = 0; j < h; j++) {
+      for (let i = 0; i < w; i++) {
+        dest[b.coordsToOffset(i, j)] =
+          this.#raw[this.#box.coordsToOffset(x + i, y + j)];
+      }
+    }
+    return [x, y, res] as const;
   }
 }

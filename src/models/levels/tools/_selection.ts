@@ -1,7 +1,16 @@
-import { combine } from "effector";
+import { combine, createEvent, Event, forward, sample } from "effector";
+import { ILevelRegion } from "drivers";
 import { svgs } from "ui/icon";
-import { a2o, fromDrag, inRect, o2a } from "utils/rect";
-import { $currentLevelSize, IBounds } from "../../levelsets";
+import { isNotNull } from "utils/fn";
+import { minmax } from "utils/number";
+import { a2o, clipRect, fromDrag, IBounds, inRect, o2a } from "utils/rect";
+import {
+  $currentKey,
+  $currentLevelIndex,
+  $currentLevelSize,
+  $currentLevelUndoQueue,
+  updateLevel,
+} from "../../levelsets";
 import { createDragTool } from "./_drag-tool";
 import { DrawLayer, DrawLayerType, Tool, ToolUI } from "./interface";
 
@@ -24,8 +33,10 @@ interface StableRect extends P {
   op: Op.STABLE;
   w: number;
   h: number;
+  // if "dragging" being grabbed in this relative point
   dragPoint?: P;
-  // TODO: content, fillOverlay
+  // content cut from level
+  content?: ILevelRegion;
 }
 type DrawState = DefineRect | StableRect;
 
@@ -50,34 +61,51 @@ const {
     },
   ],
   idleState: null,
-  drawReducer: (prev, { event: { x, y }, didDrag }) => {
-    if (prev?.op === Op.STABLE) {
-      // already has dragPoint set - that is continuous move selection
-      if (prev.dragPoint) {
-        // move selection
-        return {
-          ...prev,
-          x: x - prev.dragPoint.x,
-          y: y - prev.dragPoint.y,
-          // TODO: ...(!prev.content && (x!==prev.x || y!==prev.y)) && {content, fillOverlay},
-        };
-      }
-
-      // is it first "pointerdown" inside selection?
-      if (!didDrag && inRect(x, y, o2a(prev))) {
-        // starting drag inside selection
-        return {
-          ...prev,
+  drawStartReducer: ({ drawState, level }, { event: { x, y }, tile }) => {
+    // already have previous selection
+    if (drawState?.op === Op.STABLE) {
+      let { x: cx, y: cy } = drawState;
+      const r = o2a(drawState);
+      // starting with pointer inside previous selection
+      if (inRect(x, y, r)) {
+        // it means "drag" selected region
+        drawState = {
+          ...drawState,
           dragPoint: {
-            x: x - prev.x,
-            y: y - prev.y,
+            x: x - cx,
+            y: y - cy,
           },
         };
+        // if didn't cut content yet (didn't drag yet)
+        if (!drawState.content) {
+          // copy region from level
+          // `drawState` is already copied above, so just setting prop
+          drawState.content = level.copyRegion(...r);
+          // then fill region in level
+          level = level.batch((level) => {
+            let [x0, y0, w, h] = clipRect(r, level);
+            for (let j = 0; j < h; j++) {
+              for (let i = 0; i < w; i++) {
+                level = level.setTile(x0 + i, y0 + j, tile);
+              }
+            }
+            return level;
+          });
+        }
+      } else {
+        // starting outside previous selection
+        // means to put previous selection and forgot about that
+        if (drawState.content) {
+          // if it has cut region (if was dragged), put it to level
+          level = level.pasteRegion(cx, cy, drawState.content);
+        }
+        drawState = null;
       }
     }
 
-    if (!prev || prev.op !== Op.DEFINE) {
-      return {
+    if (!drawState) {
+      // start to define new selection
+      drawState = {
         op: Op.DEFINE,
         startX: x,
         startY: y,
@@ -86,72 +114,97 @@ const {
       };
     }
 
+    return { drawState, level };
+  },
+  drawReducer: (prev, { event: { x, y, width, height } }) => {
+    if (prev?.op === Op.STABLE) {
+      if (prev.dragPoint) {
+        // drag selection
+        return {
+          ...prev,
+          // fix offsets to not let it go out of level
+          x: minmax(x - prev.dragPoint.x, 1 - prev.w, width - 1),
+          y: minmax(y - prev.dragPoint.y, 1 - prev.h, height - 1),
+        };
+      }
+
+      // impossible case due to `start` reducer logic
+      return prev;
+    }
+
+    if (!prev) {
+      // impossible case due to `start` reducer logic
+      return prev;
+    }
+
     return {
       ...prev,
       endX: x,
       endY: y,
     };
   },
-  drawEndReducer: ({ drawState, level }) => ({
-    do: "continue",
-    level: level,
-    drawState:
-      drawState?.op === Op.DEFINE
-        ? {
-            op: Op.STABLE,
-            ...a2o(
-              fromDrag(
-                drawState.startX,
-                drawState.startY,
-                drawState.endX,
-                drawState.endY,
-              ),
-            ),
-          }
-        : drawState?.dragPoint
-        ? {
-            ...drawState,
-            dragPoint: undefined,
-            // TODO: ...content ? paste to level AND {-content, -fillOverlay} : null
-          }
-        : drawState,
-  }),
+  drawEndReducer: ({ drawState, level }) => {
+    if (drawState) {
+      if (drawState.op === Op.DEFINE) {
+        // end of "define" phase lead to "stable" phase
+        const r = fromDrag(
+          drawState.startX,
+          drawState.startY,
+          drawState.endX,
+          drawState.endY,
+        );
+        drawState = {
+          op: Op.STABLE,
+          ...a2o(r),
+        };
+      } else if (drawState.dragPoint) {
+        // end of "dragging"
+        drawState = {
+          ...drawState,
+          dragPoint: undefined,
+        };
+      }
+    }
+    return {
+      do: "continue",
+      level,
+      drawState,
+    };
+  },
 });
 
-const selectFrame = (d: DrawState, level: IBounds): DrawLayer => {
-  let x: number;
-  let y: number;
-  let width: number;
-  let height: number;
-  if (d.op === Op.STABLE) {
-    ({ x, y, w: width, h: height } = d);
-  } else {
-    [x, y, width, height] = fromDrag(d.startX, d.startY, d.endX, d.endY);
+const dragContent = (d: DrawState): DrawLayer | null => {
+  if (d.op === Op.STABLE && d.content) {
+    return {
+      type: DrawLayerType.TILES_REGION,
+      x: d.x,
+      y: d.y,
+      tiles: d.content.tiles,
+    };
   }
+  return null;
+};
+
+const selectFrame = (d: DrawState, level: IBounds): DrawLayer => {
+  const fullRect =
+    d.op === Op.STABLE ? o2a(d) : fromDrag(d.startX, d.startY, d.endX, d.endY);
+
   const borders = new Set<"T" | "R" | "B" | "L">();
-  if (x + width > level.width) {
-    width = level.width - x;
-  } else {
+  const [fX, fY, fW, fH] = fullRect;
+  if (fX + fW <= level.width) {
     borders.add("R");
   }
-  if (y + height > level.height) {
-    height = level.height - y;
-  } else {
+  if (fY + fH <= level.height) {
     borders.add("B");
   }
-  if (x < 0) {
-    width += x;
-    x = 0;
-  } else {
+  if (fX >= 0) {
     borders.add("L");
   }
-  if (y < 0) {
-    height += y;
-    y = 0;
-  } else {
+  if (fY >= 0) {
     borders.add("T");
   }
 
+  const [x, y, width, height] = clipRect(fullRect, level);
   return {
     type: DrawLayerType.SELECT_RANGE,
     x,
@@ -162,9 +215,41 @@ const selectFrame = (d: DrawState, level: IBounds): DrawLayer => {
   };
 };
 
+const commitOnEnd = (target: Event<any>) => {
+  const willEndWork = createEvent<any>();
+  const doEndWork = sample({
+    clock: willEndWork,
+    source: {
+      s: $drawState,
+      q: $currentLevelUndoQueue,
+      key: $currentKey,
+      index: $currentLevelIndex,
+    },
+    fn: ({ s, q, key, index }) =>
+      q && s?.op === Op.STABLE && s.content && key !== null && index !== null
+        ? { key, index, level: q.current.pasteRegion(s.x, s.y, s.content) }
+        : null,
+  });
+  sample({
+    source: doEndWork,
+    filter: Boolean,
+    target: updateLevel,
+  });
+  forward({
+    from: doEndWork,
+    to: target,
+  });
+  return willEndWork;
+};
+
+const externalFree = createEvent<any>();
+const externalRollback = createEvent<any>();
+forward({ from: externalFree, to: commitOnEnd(free) });
+forward({ from: externalRollback, to: commitOnEnd(rollback) });
+
 export const SELECTION: Tool = {
   internalName: "selection",
-  free,
+  free: externalFree,
   variants,
   setVariant,
   $variant,
@@ -173,20 +258,21 @@ export const SELECTION: Tool = {
     $drawState,
     $currentLevelSize,
     (isDragging, drawState, size): ToolUI => ({
-      rollback,
+      rollback: externalRollback,
       drawLayers:
         drawState && size
           ? [
-              // fill overlay when dragged
               // content when dragged
+              dragContent(drawState),
               // selection frame
               selectFrame(drawState, size),
-            ]
+            ].filter(isNotNull)
           : undefined,
       events: isDragging ? eventsDragging : eventsIdle,
     }),
   ),
 };
 
-// $drawState.watch(console.log);
+// $drawState.watch((v) => console.log("state", v));
+// $levelRef.watch((v) => console.log("$levelRef", v));
 // SELECTION.$ui.watch((d) => console.log(d.drawLayers));

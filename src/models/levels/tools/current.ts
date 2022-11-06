@@ -1,5 +1,11 @@
-import { combine, createEvent, createStore, sample } from "effector";
-import { $currentKey, $currentLevelIndex } from "../../levelsets";
+import {
+  combine,
+  createEffect,
+  createEvent,
+  createStore,
+  sample,
+} from "effector";
+import { currentLevelIndexWillGone } from "../../levelsets";
 import { Tool } from "./interface";
 import { PEN } from "./_pen";
 import { FLOOD } from "./_flood";
@@ -49,15 +55,16 @@ export const $toolUI = combine(
   (UIs, index) => UIs[index],
 );
 
+const doRollbackFx = createEffect(async (rollback?: () => void) => {
+  await rollback?.();
+});
 // current file or level probably can be changed on touch screen with secondary
 // touch, so rollback current tool work if any
 sample({
-  clock: [$currentLevelIndex.updates, $currentKey.updates, rollbackWork],
-  source: $toolIndex,
-}).watch((index) => {
-  const { $ui } = TOOLS[index];
-  const { rollback } = $ui.getState();
-  rollback?.();
+  clock: [currentLevelIndexWillGone, rollbackWork],
+  source: $toolUI,
+  fn: ({ rollback }) => rollback,
+  target: doRollbackFx,
 });
 
 sample({

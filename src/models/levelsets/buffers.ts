@@ -1,5 +1,6 @@
 import {
   combine,
+  createEffect,
   createEvent,
   createStore,
   Event,
@@ -18,12 +19,15 @@ import {
   IBaseLevelset,
   levelSupportsDemo,
 } from "drivers";
+import { IBounds } from "utils/rect";
 import { localStorageDriver } from "../_utils/persistent";
 import {
   $currentKey,
   $currentLevelsetFile,
   $levelsets,
+  currentKeyBeforeWillGone,
   fileDidOpen,
+  setCurrentLevelset,
 } from "./files";
 import {
   DemoData,
@@ -44,6 +48,19 @@ import {
  */
 const AUTO_FLUSH_DELAY = 300;
 
+type _LevelRef = readonly [LevelsetFileKey, number | null];
+type _LevelRefStrict = readonly [LevelsetFileKey, number];
+
+const _willSetCurrentLevelFx = createEffect((next: number | null) => {
+  const key = $currentKey.getState();
+  if (key) {
+    _unsetCurrentLevel();
+    _setCurrentLevel([key, next]);
+  }
+});
+const _unsetCurrentLevel = createEvent();
+const _setCurrentLevel = createEvent<_LevelRef>();
+
 /**
  * Switch level with the given index in current levelset to opened state
  */
@@ -51,14 +68,18 @@ export const openLevel = createEvent<number>();
 /**
  * Switch level with the given index in current levelset to closed state
  */
-export const closeLevel = createEvent<number | undefined>();
+export const closeCurrentLevel = createEvent<any>();
+const _closeLevel = createEvent<_LevelRefStrict>();
 /**
  * Set current level with the given index (open it if not yet)
  */
 export const setCurrentLevel = createEvent<number>();
-forward({ from: setCurrentLevel, to: openLevel });
+forward({ from: setCurrentLevel, to: [openLevel, _willSetCurrentLevelFx] });
 // open first level after file created/opened
-fileDidOpen.watch(() => setCurrentLevel(0));
+fileDidOpen.watch((key) => {
+  setCurrentLevelset(key);
+  setCurrentLevel(0);
+});
 /**
  * Insert new level in current level index in current levelset
  */
@@ -71,10 +92,16 @@ export const appendLevel = createEvent<any>();
  * Delete current level in current levelset
  */
 export const deleteCurrentLevel = createEvent<any>();
+const _deleteLevel = createEvent<_LevelRefStrict>();
 /**
  * Update current level in current levelset
  */
 export const updateCurrentLevel = createEvent<IBaseLevel>();
+export const updateLevel = createEvent<{
+  key: LevelsetFileKey;
+  index: number;
+  level: IBaseLevel;
+}>();
 export const internalUpdateLevelDemo = createEvent<{
   key: LevelsetFileKey;
   index: number;
@@ -169,14 +196,14 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     updateBufferLevel(map, key, index, (b) => ({ ...b, isOpened: true })),
   )
   // switch per-level "is opened" state
-  .on(_withCurrentKey(closeLevel), (map, { current: key, value: index }) => {
-    const next = updateBufferLevel(map, key, index, (b) => ({
+  .on(_closeLevel, (map, [key, index]) => {
+    let next = updateBufferLevel(map, key, index, (b) => ({
       ...b,
       isOpened: false,
     }));
-    if (index === undefined || index === map.get(key)?.currentIndex) {
+    if (index === next.get(key)?.currentIndex) {
       // when closing current level, unset current index
-      return RoMap.update(next, key, (buf) => ({
+      next = RoMap.update(next, key, (buf) => ({
         ...buf,
         currentIndex: undefined,
       }));
@@ -184,9 +211,11 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     return next;
   })
   // switch current level in the given levelset
-  .on(_withCurrentKey(setCurrentLevel), (map, { current: key, value: index }) =>
+  .on(_setCurrentLevel, (map, [key, index]) =>
     RoMap.update(map, key, (buf) =>
-      index >= 0 && index < buf.levels.length
+      index === null
+        ? { ...buf, currentIndex: index ?? undefined }
+        : index >= 0 && index < buf.levels.length
         ? { ...buf, currentIndex: index }
         : buf,
     ),
@@ -217,22 +246,16 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
               ...buf.levels,
               { ...readToBuffer(createLevelForFile(file)), isOpened: true },
             ],
-            currentIndex: buf.levels.length,
+            // currentIndex: buf.levels.length,
           },
     ),
   )
   // delete the level from current levelset
-  .on(_withCurrentFile(deleteCurrentLevel), (map, { current: file }) =>
-    RoMap.update(map, file.key, (buf) =>
-      buf.currentIndex === undefined ||
-      buf.levels.length <= file.levelset.minLevelsCount
-        ? buf
-        : {
-            ...buf,
-            levels: RoArray.remove(buf.levels, buf.currentIndex),
-            currentIndex: undefined,
-          },
-    ),
+  .on(_deleteLevel, (map, [key, index]) =>
+    RoMap.update(map, key, (buf) => ({
+      ...buf,
+      levels: RoArray.remove(buf.levels, index),
+    })),
   )
   // operations with current levels in current levelset
   .on(
@@ -242,6 +265,12 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
         ...b,
         undoQueue: b.undoQueue.done(level),
       })),
+  )
+  .on(updateLevel, (map, { key, index, level }) =>
+    updateBufferLevel(map, key, index, (b) => ({
+      ...b,
+      undoQueue: b.undoQueue.done(level),
+    })),
   )
   .on(
     internalUpdateLevelDemo,
@@ -272,6 +301,91 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
       b.undoQueue.canRedo ? { ...b, undoQueue: b.undoQueue.redo() } : b,
     ),
   );
+
+export const currentLevelIndexWillGone = sample({
+  clock: [_unsetCurrentLevel, currentKeyBeforeWillGone],
+  source: {
+    files: _$buffersMap,
+    key: $currentKey,
+  },
+  filter: ({ files, key }) =>
+    Boolean(
+      key && files.has(key) && files.get(key)!.currentIndex !== undefined,
+    ),
+  fn: ({ files, key }) => files.get(key!)!.currentIndex!,
+});
+
+const _willCloseLevelFx = createEffect(async (ref: _LevelRefStrict) => {
+  await _willSetCurrentLevelFx(null);
+  _closeLevel(ref);
+});
+sample({
+  clock: closeCurrentLevel,
+  source: {
+    files: _$buffersMap,
+    key: $currentKey,
+  },
+  filter: ({ files, key }) =>
+    Boolean(
+      key && files.has(key) && files.get(key)!.currentIndex !== undefined,
+    ),
+  fn: ({ files, key }): _LevelRefStrict => [
+    key!,
+    files.get(key!)!.currentIndex!,
+  ],
+  target: _willCloseLevelFx,
+});
+
+sample({
+  clock: insertAtCurrentLevel,
+  source: {
+    files: _$buffersMap,
+    key: $currentKey,
+  },
+  filter: ({ files, key }) =>
+    Boolean(
+      key && files.has(key) && files.get(key)!.currentIndex !== undefined,
+    ),
+  fn: ({ files, key }) => files.get(key!)!.currentIndex!,
+  target: _willSetCurrentLevelFx,
+});
+sample({
+  clock: appendLevel,
+  source: {
+    files: _$buffersMap,
+    key: $currentKey,
+  },
+  filter: ({ files, key }) => Boolean(key && files.has(key)),
+  fn: ({ files, key }) => files.get(key!)!.levels.length,
+  target: _willSetCurrentLevelFx,
+});
+
+const _willDeleteLevelFx = createEffect(async (ref: _LevelRefStrict) => {
+  await _willSetCurrentLevelFx(null);
+  _deleteLevel(ref);
+});
+sample({
+  clock: deleteCurrentLevel,
+  source: {
+    files: _$buffersMap,
+    key: $currentKey,
+    _files: $levelsets,
+  },
+  filter: ({ files, key, _files }) =>
+    Boolean(
+      key &&
+        files.has(key) &&
+        _files.has(key) &&
+        files.get(key)!.currentIndex !== undefined &&
+        files.get(key)!.levels.length >
+          _files.get(key)!.levelset.minLevelsCount,
+    ),
+  fn: ({ files, key }): _LevelRefStrict => [
+    key!,
+    files.get(key!)!.currentIndex!,
+  ],
+  target: _willDeleteLevelFx,
+});
 
 // opened indices in loaded buffers
 const _$openedIndices = _$buffersMap.map((map) =>
@@ -497,10 +611,6 @@ export const $currentLevelBuffer = $currentLevel.map(
 export const $currentLevelUndoQueue = $currentLevelBuffer.map((level) =>
   level ? level.undoQueue : null,
 );
-export interface IBounds {
-  width: number;
-  height: number;
-}
 export const $currentLevelSize = $currentLevelUndoQueue.map<IBounds | null>(
   (q) => (q ? { width: q.current.width, height: q.current.height } : null),
 );

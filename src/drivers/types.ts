@@ -40,19 +40,26 @@ export type ITilesStreamItem = readonly [
   tile: number,
 ];
 
-export interface IBaseLevel {
-  readonly raw: Uint8Array;
+export interface ITilesRegion {
   readonly width: number;
   readonly height: number;
   getTile(x: number, y: number): number;
-  setTile(x: number, y: number, value: number): this;
-  batch(update: (b: this) => this): this;
   tilesRenderStream(
     x: number,
     y: number,
     w: number,
     h: number,
   ): Iterable<ITilesStreamItem>;
+}
+
+export interface ILevelRegion {
+  readonly tiles: ITilesRegion;
+}
+
+export interface IBaseLevel extends ITilesRegion {
+  readonly raw: Uint8Array;
+  setTile(x: number, y: number, value: number): this;
+  batch(update: (b: this) => this): this;
   readonly resizable?: ISizeLimit;
   // TODO: probably add optional argument to set border with the given tile
   resize?(width: number, height: number): this;
@@ -62,6 +69,8 @@ export interface IBaseLevel {
   // REFACT: add api for batch changes without intermediate `copy()` calls
 
   isPlayable(): IsPlayableResult;
+  copyRegion(x: number, y: number, w: number, h: number): ILevelRegion;
+  pasteRegion(x: number, y: number, region: ILevelRegion): this;
 }
 
 export interface IBaseLevelset<L extends IBaseLevel> {

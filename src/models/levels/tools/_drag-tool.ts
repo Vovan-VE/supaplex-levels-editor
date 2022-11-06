@@ -16,21 +16,26 @@ import {
 import { $tileIndex } from "../current";
 import { CellEventSnapshot, GridEventsProps, ToolVariantUI } from "./interface";
 
-interface Variant<T> extends ToolVariantUI {
-  drawProps: T;
+interface Variant<P> extends ToolVariantUI {
+  drawProps: P;
 }
-interface IDrawStart<T> {
+interface IDrawStart<P> {
   // extends DrawEndParams<T>
   event: CellEventSnapshot;
   tile: number;
-  drawProps: T;
+  drawProps: P;
 }
-interface IDrawData<T> extends IDrawStart<T> {
+interface IDrawData<P> extends IDrawStart<P> {
   didDrag: boolean;
 }
 
-interface DrawEndParams<T> {
-  drawState: T;
+interface DrawStartState<S> {
+  drawState: S;
+  level: IBaseLevel;
+}
+
+interface DrawEndParams<S> {
+  drawState: S;
   level: IBaseLevel;
 }
 
@@ -38,21 +43,26 @@ interface DrawEndCommit {
   do: "commit";
   level: IBaseLevel;
 }
-interface DrawEndContinue<T> {
+interface DrawEndContinue<S> {
   do: "continue";
-  drawState: T;
+  drawState: S;
   level: IBaseLevel;
 }
-type DrawEndResult<T> = DrawEndCommit | DrawEndContinue<T>;
+type DrawEndResult<S> = DrawEndCommit | DrawEndContinue<S>;
 
 export const createDragTool = <DrawProps, DrawState>({
   VARIANTS,
   idleState,
+  drawStartReducer,
   drawReducer,
   drawEndReducer,
 }: {
   VARIANTS: readonly Variant<DrawProps>[];
   idleState: DrawState;
+  drawStartReducer?: (
+    prev: DrawStartState<DrawState>,
+    draw: IDrawStart<DrawProps>,
+  ) => DrawStartState<DrawState>;
   drawReducer: (prev: DrawState, draw: IDrawData<DrawProps>) => DrawState;
   drawEndReducer: (
     params: DrawEndParams<DrawState>,
@@ -90,9 +100,35 @@ export const createDragTool = <DrawProps, DrawState>({
     .reset(rollback, didCommit)
     .on(doDraw, drawReducer)
     .on(doContinue, (_, { drawState }) => drawState);
+
+  let didStart: Event<any> = doStart;
+  if (drawStartReducer) {
+    const temp = sample({
+      clock: doStart,
+      source: {
+        drawState: $drawState,
+        level: $currentLevelUndoQueue,
+      },
+      filter: ({ level }) => level !== null,
+      fn: ({ drawState, level }, start) =>
+        drawStartReducer({ drawState, level: level!.current }, start),
+    });
+    sample({
+      source: temp,
+      fn: ({ level }) => level,
+      target: updateCurrentLevel,
+    });
+    sample({
+      source: temp,
+      fn: ({ drawState }) => drawState,
+      target: $drawState,
+    });
+    didStart = temp;
+  }
+
   const $isDragging = createStore(false)
     .reset(rollback, didDragEnd)
-    .on(doStart, () => true);
+    .on(didStart, () => true);
   const $didDrag = createStore(false)
     .reset($isDragging.updates.filter({ fn: (b) => !b }))
     .on(doDraw, () => true);
