@@ -1,16 +1,34 @@
-import { combine, createEvent, Event, forward, sample } from "effector";
-import { ILevelRegion } from "drivers";
+import {
+  combine,
+  createEffect,
+  createEvent,
+  createStore,
+  Event,
+  forward,
+  sample,
+} from "effector";
+import { IBaseLevel, ILevelRegion } from "drivers";
 import { svgs } from "ui/icon";
 import { isNotNull } from "utils/fn";
 import { minmax } from "utils/number";
-import { a2o, clipRect, fromDrag, IBounds, inRect, o2a } from "utils/rect";
+import {
+  a2o,
+  clipRect,
+  fromDrag,
+  IBounds,
+  inRect,
+  o2a,
+  RectA,
+} from "utils/rect";
 import {
   $currentKey,
   $currentLevelIndex,
   $currentLevelSize,
   $currentLevelUndoQueue,
+  updateCurrentLevel,
   updateLevel,
 } from "../../levelsets";
+import { $tileIndex } from "../current";
 import { createDragTool } from "./_drag-tool";
 import {
   DrawLayer,
@@ -45,6 +63,17 @@ interface StableRect extends P {
   content?: ILevelRegion;
 }
 type DrawState = DefineRect | StableRect;
+
+const fillRegionInLevel = (level: IBaseLevel, r: RectA, tile: number) =>
+  level.batch((level) => {
+    let [x0, y0, w, h] = clipRect(r, level);
+    for (let j = 0; j < h; j++) {
+      for (let i = 0; i < w; i++) {
+        level = level.setTile(x0 + i, y0 + j, tile);
+      }
+    }
+    return level;
+  });
 
 const {
   free,
@@ -88,15 +117,7 @@ const {
           // `drawState` is already copied above, so just setting prop
           drawState.content = level.copyRegion(...r);
           // then fill region in level
-          level = level.batch((level) => {
-            let [x0, y0, w, h] = clipRect(r, level);
-            for (let j = 0; j < h; j++) {
-              for (let i = 0; i < w; i++) {
-                level = level.setTile(x0 + i, y0 + j, tile);
-              }
-            }
-            return level;
-          });
+          level = fillRegionInLevel(level, r, tile);
         }
       } else {
         // starting outside previous selection
@@ -298,6 +319,63 @@ export const SELECTION: Tool = {
   ),
 };
 
+// $isDragging.watch((v) => console.log("isDragging", v));
 // $drawState.watch((v) => console.log("state", v));
-// $levelRef.watch((v) => console.log("$levelRef", v));
-// SELECTION.$ui.watch((d) => console.log(d.drawLayers));
+// SELECTION.$ui.watch((d) => console.log("ui", d.drawLayers, d.drawCursor));
+
+const _setState = createEvent<DrawState>();
+forward({ from: _setState, to: $drawState });
+$isDragging.reset(_setState);
+
+export const $hasSelection = $drawState.map((d) => d?.op === Op.STABLE);
+
+export const deleteSelectionFx = createEffect(async () => {
+  const drawState = $drawState.getState();
+  const q = $currentLevelUndoQueue.getState();
+  if (q && drawState?.op === Op.STABLE && !drawState.content) {
+    const tile = $tileIndex.getState();
+    updateCurrentLevel(fillRegionInLevel(q.current, o2a(drawState), tile));
+  }
+  rollback();
+});
+
+export const copySelection = createEvent<any>();
+// TODO: driver compatibility?
+export const $clipboardRegion = createStore<ILevelRegion | null>(null).on(
+  sample({
+    clock: sample({
+      clock: copySelection,
+      source: $drawState,
+      filter: (d): d is StableRect => d?.op === Op.STABLE,
+    }),
+    source: $currentLevelUndoQueue,
+    filter: Boolean,
+    fn: (q, s) => s.content ?? q.current.copyRegion(s.x, s.y, s.w, s.h),
+  }),
+  (_, next) => next,
+);
+export const $clipboardRegionSizeStr = $clipboardRegion.map((r) =>
+  r ? `${r.tiles.width}x${r.tiles.height}` : null,
+);
+
+export const cutSelectionFx = createEffect(() => {
+  copySelection();
+  return deleteSelectionFx();
+});
+
+// only run after activating selection tool
+export const pasteSelectionFx = createEffect(async (visibleRect?: RectA) => {
+  externalRollback();
+  const region = $clipboardRegion.getState();
+  if (region) {
+    const [x, y] = visibleRect || [0, 0];
+    _setState({
+      op: Op.STABLE,
+      x,
+      y,
+      w: region.tiles.width,
+      h: region.tiles.height,
+      content: region,
+    });
+  }
+});

@@ -25,9 +25,7 @@ interface IDrawStart<P> {
   tile: number;
   drawProps: P;
 }
-interface IDrawData<P> extends IDrawStart<P> {
-  didDrag: boolean;
-}
+interface IDrawData<P> extends IDrawStart<P> {}
 
 interface DrawStartState<S> {
   drawState: S;
@@ -129,9 +127,6 @@ export const createDragTool = <DrawProps, DrawState>({
   const $isDragging = createStore(false)
     .reset(rollback, didDragEnd)
     .on(didStart, () => true);
-  const $didDrag = createStore(false)
-    .reset($isDragging.updates.filter({ fn: (b) => !b }))
-    .on(doDraw, () => true);
 
   // -----
   // start
@@ -162,17 +157,15 @@ export const createDragTool = <DrawProps, DrawState>({
     clock: tryDrawMove,
     source: {
       isDragging: $isDragging,
-      didDrag: $didDrag,
       isLevelSelected: $currentLevelIsSelected,
       tile: $tileIndex,
       variant: $variant,
     },
     filter: ({ isDragging, isLevelSelected }) => isDragging && isLevelSelected,
-    fn: ({ didDrag, tile, variant }, event): IContinue => ({
+    fn: ({ tile, variant }, event): IContinue => ({
       event,
       tile,
       drawProps: VARIANTS[variant].drawProps,
-      didDrag,
     }),
     target: doDraw,
   });

@@ -19,6 +19,12 @@ export const setToolVariant = createEvent<number>();
 export const rollbackWork = createEvent<any>();
 
 export const TOOLS: readonly Tool[] = [PEN, FLOOD, RECT, SELECTION];
+export const setToolO = createEvent<Tool>();
+sample({
+  source: setToolO.map((o) => TOOLS.findIndex((v) => v === o)),
+  filter: (n) => n >= 0,
+  target: setTool,
+});
 
 const setToolInternal = createEvent<number>();
 export const $toolIndex = createStore(0).on(setToolInternal, (_, n) => n);
@@ -58,7 +64,7 @@ export const $toolUI = combine(
 );
 
 export const $cursor = combine(
-  $toolUI.map(({ drawCursor }) => drawCursor),
+  $toolUI.map(({ drawCursor = null }) => drawCursor),
   $feedbackCell,
   (drawCursor, c) =>
     (c &&
