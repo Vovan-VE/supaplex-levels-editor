@@ -182,7 +182,7 @@ describe("level", () => {
       return result.setTitle("Foo bar");
     });
     // it must take less time
-    expect(Date.now() - start).toBeLessThan(took / 4);
+    expect(Date.now() - start).toBeLessThan(took / 3);
     // expect(Date.now() - start).toBeLessThan((took / count) * 2);
     expect(result).not.toBe(origin);
     expect(origin.getTile(10, 10)).toBe(0);
@@ -217,5 +217,164 @@ describe("level", () => {
         setsFreezeEnemies: true,
       }),
     ).not.toBe(level);
+  });
+
+  it("copyRegion", () => {
+    const level = createLevel(testLevelData);
+    const region = level.copyRegion(11, 11, 3, 3);
+    expect([
+      ...region.tiles.tilesRenderStream(
+        0,
+        0,
+        region.tiles.width,
+        region.tiles.height,
+      ),
+    ]).toEqual([
+      [0, 0, 1, 0xc],
+      [1, 0, 2, 0],
+      [0, 1, 1, 0],
+      [1, 1, 1, 0xd],
+      [2, 1, 1, 0],
+      [0, 2, 2, 0],
+      [2, 2, 1, 0xe],
+    ]);
+    expect(region.tiles.getTile(0, 0)).toBe(0xc);
+    expect(region.tiles.getTile(1, 0)).toBe(0);
+    expect(region.tiles.getTile(2, 0)).toBe(0);
+    expect(region.tiles.getTile(0, 1)).toBe(0);
+    expect(region.tiles.getTile(1, 1)).toBe(0xd);
+    expect(region.tiles.getTile(2, 1)).toBe(0);
+    expect(region.tiles.getTile(0, 2)).toBe(0);
+    expect(region.tiles.getTile(1, 2)).toBe(0);
+    expect(region.tiles.getTile(2, 2)).toBe(0xe);
+    expect(region.specPorts).toEqual([
+      {
+        x: 1,
+        y: 1,
+        setsGravity: true,
+        setsFreezeZonks: true,
+        setsFreezeEnemies: true,
+      },
+    ]);
+  });
+
+  describe("pasteRegion", () => {
+    const level = createLevel(testLevelData);
+    const region = level.copyRegion(11, 11, 3, 3);
+
+    it("other place", () => {
+      // (10;11)
+      // 00 0c 00 00
+      // 00 00 0d 00
+      // 00 00 00 0e
+      // 00 00 00 00
+      expect([...level.tilesRenderStream(10, 11, 4, 4)]).toEqual([
+        [10, 11, 1, 0],
+        [11, 11, 1, 0xc],
+        [12, 11, 2, 0],
+        [10, 12, 2, 0],
+        [12, 12, 1, 0xd],
+        [13, 12, 1, 0],
+        [10, 13, 3, 0],
+        [13, 13, 1, 0xe],
+        [10, 14, 4, 0],
+      ]);
+      const next = level.pasteRegion(10, 12, region);
+      // 00 0c 00 00
+      // 0c 00 00 00
+      // 00 0d 00 0e
+      // 00 00 0e 00
+      expect([...next.tilesRenderStream(10, 11, 4, 4)]).toEqual([
+        [10, 11, 1, 0],
+        [11, 11, 1, 0xc],
+        [12, 11, 2, 0],
+        [10, 12, 1, 0xc],
+        [11, 12, 3, 0],
+        [10, 13, 1, 0],
+        [11, 13, 1, 0xd],
+        [12, 13, 1, 0],
+        [13, 13, 1, 0xe],
+        [10, 14, 2, 0],
+        [12, 14, 1, 0xe],
+        [13, 14, 1, 0],
+      ]);
+      expect(next.specPortsCount).toBe(2);
+      expect([...next.getSpecPorts()]).toEqual([
+        {
+          x: 11,
+          y: 13,
+          setsGravity: true,
+          setsFreezeZonks: true,
+          setsFreezeEnemies: true,
+        },
+        {
+          x: 12,
+          y: 14,
+          setsGravity: false,
+          setsFreezeZonks: false,
+          setsFreezeEnemies: false,
+        },
+      ]);
+    });
+
+    it("outside partial", () => {
+      // (0;0)
+      // 01 00 00 00
+      // 00 02 00 00
+      // 00 00 03 00
+      // 00 00 00 04
+      expect([...level.tilesRenderStream(0, 0, 4, 4)]).toEqual([
+        [0, 0, 1, 1],
+        [1, 0, 3, 0],
+        [0, 1, 1, 0],
+        [1, 1, 1, 2],
+        [2, 1, 2, 0],
+        [0, 2, 2, 0],
+        [2, 2, 1, 3],
+        [3, 2, 1, 0],
+        [0, 3, 3, 0],
+        [3, 3, 1, 4],
+      ]);
+      const next = level.pasteRegion(-2, 1, region);
+      // 01 00 00 00
+      // 00 02 00 00
+      // 00 00 03 00
+      // 0e 00 00 04
+      expect([...next.tilesRenderStream(0, 0, 4, 4)]).toEqual([
+        [0, 0, 1, 1],
+        [1, 0, 3, 0],
+        [0, 1, 1, 0],
+        [1, 1, 1, 2],
+        [2, 1, 2, 0],
+        [0, 2, 2, 0],
+        [2, 2, 1, 3],
+        [3, 2, 1, 0],
+        [0, 3, 1, 0xe],
+        [1, 3, 2, 0],
+        [3, 3, 1, 4],
+      ]);
+      expect(next.specPortsCount).toBe(2);
+      expect([...next.getSpecPorts()]).toEqual([
+        {
+          x: 12,
+          y: 12,
+          setsGravity: true,
+          setsFreezeZonks: true,
+          setsFreezeEnemies: true,
+        },
+        {
+          x: 0,
+          y: 3,
+          setsGravity: false,
+          setsFreezeZonks: false,
+          setsFreezeEnemies: false,
+        },
+      ]);
+    });
+
+    it("outside noop", () => {
+      expect(level.pasteRegion(-5, 10, region)).toBe(level);
+      expect(level.raw).toEqual(testLevelData);
+    });
   });
 });

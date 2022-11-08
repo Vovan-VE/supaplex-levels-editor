@@ -1,28 +1,81 @@
 .root {
 }
 
+%_starts_xy {
+  grid-column-start: calc(1 + var(--x));
+  grid-row-start: calc(1 + var(--y));
+}
+%_span_1x1 {
+  grid-column-end: span 1;
+  grid-row-end: span 1;
+}
+%_span_w {
+  grid-column-end: span var(--w);
+  grid-row-end: span 1;
+}
+%_span_wh {
+  grid-column-end: span var(--w);
+  grid-row-end: span var(--h);
+}
+
+%_tiles_repeat {
+  background-size: var(--tile-size);
+  background-repeat: repeat;
+  aspect-ratio: auto;
+}
+
 .typeTiles {
   > * {
-    grid-column: calc(1 + var(--x));
-    grid-row: calc(1 + var(--y));
+    @extend %_starts_xy, %_span_1x1;
   }
 }
 .typeTileFill {
   > * {
-    grid-column-start: calc(1 + var(--x));
-    grid-column-end: span var(--w);
-    grid-row-start: calc(1 + var(--y));
-    grid-row-end: span var(--h);
-    background-size: var(--tile-size);
-    background-repeat: repeat;
-    aspect-ratio: auto;
+    @extend %_starts_xy, %_span_wh, %_tiles_repeat;
+    opacity: 0.75;
+  }
+}
+.typeSelectRange {
+  > * {
+    @extend %_starts_xy, %_span_wh;
+    background: rgba(255, 255, 255, 0.25);
+    position: relative;
+
+    &::before,
+    &::after {
+      content: " ";
+      position: absolute;
+      inset: 0;
+    }
+    &::before {
+      border: #fff solid 2px;
+    }
+    &::after {
+      border: #000 dotted 2px;
+    }
+    &._bt::after {
+      border-top-style: dashed;
+    }
+    &._br::after {
+      border-right-style: dashed;
+    }
+    &._bb::after {
+      border-bottom-style: dashed;
+    }
+    &._bl::after {
+      border-left-style: dashed;
+    }
+  }
+}
+.typeTilesRegion {
+  > * {
+    @extend %_starts_xy, %_span_w, %_tiles_repeat;
   }
 }
 
 .typeFeedback {
   .cell {
-    grid-column: calc(1 + var(--x));
-    grid-row: calc(1 + var(--y));
+    @extend %_starts_xy, %_span_1x1;
 
     border: black solid 1px;
     box-shadow: inset 0 0 0 1px #fff;

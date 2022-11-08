@@ -55,7 +55,11 @@ export const LevelBody: FC<Props> = ({ className, ...rest }) => {
       >
         <div ref={refCanvas} className={cl.canvas}>
           <div className={cl.tiles}>{nodes}</div>
-          <DrawLayers drawLayers={drawLayers} className={cl.drawLayer} />
+          <DrawLayers
+            drawLayers={drawLayers}
+            visibleRect={rect}
+            className={cl.drawLayer}
+          />
           <CoverGrid
             cols={width}
             rows={height}

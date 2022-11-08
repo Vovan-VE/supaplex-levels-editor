@@ -9,6 +9,7 @@ import {
   insertAtCurrentLevel,
   internalUpdateLevelDemo,
 } from "./buffers";
+import { isOffsetInRange } from "../../utils/number";
 
 export const $fileSupportsDemo = $currentDriverName.map(
   (driverName) => (driverName && getDriver(driverName)?.demoSupport) || false,
@@ -27,10 +28,8 @@ const decodeDemoMessage = (data: any): DemoData | null => {
         typeof data.data === "string" &&
         typeof data.seed_hi === "number" &&
         typeof data.seed_lo === "number" &&
-        data.seed_hi >= 0 &&
-        data.seed_hi <= 255 &&
-        data.seed_lo >= 0 &&
-        data.seed_lo <= 255
+        isOffsetInRange(data.seed_hi, 0, 256) &&
+        isOffsetInRange(data.seed_lo, 0, 256)
       ) {
         return {
           data: Uint8Array.from(

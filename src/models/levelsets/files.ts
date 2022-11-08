@@ -3,6 +3,7 @@ import {
   createEffect,
   createEvent,
   createStore,
+  forward,
   sample,
 } from "effector";
 import { withPersistent, withPersistentMap } from "@cubux/effector-persistent";
@@ -80,6 +81,16 @@ export const setCurrentLevelset = createEvent<LevelsetFileKey>();
 
 export const fileDidOpen = addLevelsetFileFx.doneData.map(({ key }) => key);
 
+const _willSetCurrentKeyFx = createEffect((next: LevelsetFileKey | null) => {
+  _unsetCurrentKey();
+  _setCurrentKey(next);
+});
+const _unsetCurrentKey = createEvent();
+const _setCurrentKey = createEvent<LevelsetFileKey | null>();
+forward({
+  from: setCurrentLevelset,
+  to: _willSetCurrentKeyFx,
+});
 /**
  * Key of current selected file within `$levelsets`
  */
@@ -87,16 +98,26 @@ export const $currentKey = withPersistent(
   createStore<LevelsetFileKey | null>(null),
   localStorageDriver,
   "currentFile",
-)
-  .on(setCurrentLevelset, (_, c) => c)
-  .on(fileDidOpen, (_, key) => key);
+).on(_setCurrentKey, (_, c) => c);
+
+export const currentKeyWillGone = createEvent<LevelsetFileKey>();
+export const currentKeyBeforeWillGone = sample({
+  clock: _unsetCurrentKey,
+  source: $currentKey,
+  filter: Boolean,
+});
+currentKeyBeforeWillGone.watch(currentKeyWillGone);
 
 const _removeLevelsetFile = sample({
   clock: removeCurrentLevelsetFile,
   source: $currentKey,
   filter: Boolean,
 });
-$currentKey.on(_removeLevelsetFile, (c, del) => (del === c ? null : undefined));
+sample({
+  source: _removeLevelsetFile,
+  fn: () => null,
+  target: _willSetCurrentKeyFx,
+});
 
 interface _DbLevelsetFile extends Omit<LevelsetFileData, "file"> {
   fileBuffer: ArrayBuffer;
@@ -152,13 +173,13 @@ export const $levelsets = withPersistentMap(
 export const $hasFiles = $levelsets.map((m) => m.size > 0);
 
 // reset current file key when is refers to non-existing file
-$currentKey.reset(
-  sample({
-    clock: $levelsets,
-    source: { key: $currentKey, files: $levelsets },
-    filter: ({ key, files }) => typeof key === "string" && !files.has(key),
-  }),
-);
+sample({
+  clock: $levelsets,
+  source: { key: $currentKey, files: $levelsets },
+  filter: ({ key, files }) => typeof key === "string" && !files.has(key),
+  fn: () => null,
+  target: _willSetCurrentKeyFx,
+});
 
 /**
  * Reference to current file and key together

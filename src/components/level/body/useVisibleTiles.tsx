@@ -3,9 +3,9 @@ import { FC, ReactElement } from "react";
 import { IBaseLevel, TileRenderProps } from "drivers";
 import { $currentLevelUndoQueue } from "models/levelsets";
 import { UndoQueue } from "utils/data";
+import { RectA } from "utils/rect/types";
 
-type R = readonly [x: number, y: number, w: number, h: number];
-type RR = readonly [...R, FC<TileRenderProps>];
+type RR = readonly [...RectA, FC<TileRenderProps>];
 
 const clipTilesRect = (
   q: UndoQueue<IBaseLevel> | null,
@@ -29,7 +29,7 @@ const clipTilesRect = (
   return nodes;
 };
 
-export const useVisibleTiles = (rect: R, TileRender: FC<TileRenderProps>) =>
+export const useVisibleTiles = (rect: RectA, TileRender: FC<TileRenderProps>) =>
   useStoreMap({
     store: $currentLevelUndoQueue,
     keys: [...rect, TileRender],

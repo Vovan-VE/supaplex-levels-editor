@@ -5,6 +5,7 @@ import {
   IBaseReader,
   IBaseTile,
   IBaseWriter,
+  ILevelRegion,
 } from "../types";
 import {
   ILevelBody,
@@ -12,7 +13,12 @@ import {
   ISupaplexSpecPortProps,
 } from "./internal";
 
+export interface ISupaplexLevelRegion extends ILevelRegion {
+  readonly specPorts: readonly ISupaplexSpecPort[];
+}
 export interface ISupaplexLevel extends IBaseLevel {
+  copyRegion(x: number, y: number, w: number, h: number): ISupaplexLevelRegion;
+  pasteRegion(x: number, y: number, region: ISupaplexLevelRegion): this;
   readonly raw: Uint8Array;
   readonly body: ILevelBody;
   readonly initialGravity: boolean;

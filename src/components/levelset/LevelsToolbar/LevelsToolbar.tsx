@@ -5,7 +5,7 @@ import {
   $currentLevel,
   $currentLevelset,
   appendLevel,
-  closeLevel,
+  closeCurrentLevel,
   deleteCurrentLevel,
   insertAtCurrentLevel,
 } from "models/levelsets";
@@ -14,8 +14,6 @@ import { ask } from "ui/feedback";
 import { svgs } from "ui/icon";
 import { ColorType } from "ui/types";
 import { fmtLevelFull, fmtLevelNumber } from "../fmt";
-
-const handleClose = () => closeLevel();
 
 export const LevelsToolbar: FC = () => {
   const fileLevelset = useStore($currentLevelset)!;
@@ -120,7 +118,7 @@ export const LevelsToolbar: FC = () => {
       <Button
         icon={<svgs.Cross />}
         disabled={!level}
-        onClick={handleClose}
+        onClick={closeCurrentLevel}
         title={
           levelFullReference ? `Close level tab (${levelFullReference})` : ""
         }
