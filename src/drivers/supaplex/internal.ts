@@ -26,6 +26,7 @@ export interface ILevelBody extends IBounds {
     w: number,
     h: number,
   ): readonly [x: number, y: number, region: ITilesRegion];
+  findPlayer(): [x: number, y: number] | null;
 }
 
 export interface ISupaplexSpecPortProps {

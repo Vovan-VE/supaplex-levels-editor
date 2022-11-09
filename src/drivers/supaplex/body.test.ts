@@ -207,4 +207,20 @@ describe("createLevelBody", () => {
       expect(cut.getTile(3, 2)).toBe(0);
     });
   });
+
+  it("findPlayer", () => {
+    let body = createLevelBody(supaplexBox);
+    expect(body.findPlayer()).toBeNull();
+
+    body = body.setTile(37, 19, TILE_MURPHY);
+    expect(body.findPlayer()).toEqual([37, 19]);
+
+    body = body.setTile(38, 19, TILE_MURPHY);
+    expect(body.findPlayer()).toEqual([37, 19]);
+    body = body.setTile(30, 20, TILE_MURPHY);
+    expect(body.findPlayer()).toEqual([37, 19]);
+
+    body = body.setTile(40, 15, TILE_MURPHY);
+    expect(body.findPlayer()).toEqual([40, 15]);
+  });
 });

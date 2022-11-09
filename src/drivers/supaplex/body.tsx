@@ -159,4 +159,11 @@ class LevelBody implements ILevelBody {
     }
     return [x, y, res] as const;
   }
+
+  findPlayer(): [x: number, y: number] | null {
+    const i = this.#raw.indexOf(TILE_MURPHY);
+    return i >= 0
+      ? [i % this.#box.width, Math.floor(i / this.#box.width)]
+      : null;
+  }
 }

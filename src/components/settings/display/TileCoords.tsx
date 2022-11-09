@@ -22,10 +22,17 @@ interface Props {
   base?: 0 | 1;
 }
 
-export const TileCoords: FC<Props> = ({ x, y, format, base }) => {
+export const useTileCoordsDisplay = ({
+  x,
+  y,
+  format = CoordsFormat.Bracket,
+  base,
+}: Props) => {
   const b = useStore($coordsDisplayBasis);
   base ??= b;
-  return (
-    <>{fmt[format ?? CoordsFormat.Bracket](base + x, base + y, BASE[base])}</>
-  );
+  return fmt[format](base + x, base + y, BASE[base]);
 };
+
+export const TileCoords: FC<Props> = (props) => (
+  <>{useTileCoordsDisplay(props)}</>
+);

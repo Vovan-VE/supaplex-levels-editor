@@ -615,6 +615,25 @@ export const $currentLevelSize = $currentLevelUndoQueue.map<IBounds | null>(
   (q) => (q ? { width: q.current.width, height: q.current.height } : null),
 );
 
+export const $playerPos = $currentLevelUndoQueue.map<
+  [x: number, y: number] | null
+>((q, prev = null) => {
+  if (!q) {
+    return null;
+  }
+  const next = q.current.findPlayer();
+  if (next && prev && next[0] === prev[0] && next[1] === prev[1]) {
+    return prev;
+  }
+  return next;
+});
+export const findPlayer = createEvent<any>();
+export const scrollToPlayer = sample({
+  clock: findPlayer,
+  source: $playerPos,
+  filter: Boolean,
+});
+
 /**
  * Shortcut for indices of opened levels in current levelset
  */

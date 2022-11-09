@@ -243,6 +243,10 @@ class MegaplexLevel implements IMegaplexLevel {
     });
   }
 
+  findPlayer() {
+    return this.#body.findPlayer();
+  }
+
   get title() {
     return this.#footer.title;
   }

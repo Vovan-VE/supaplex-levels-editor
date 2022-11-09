@@ -13,6 +13,7 @@ import {
 } from "models/levels/tools/_selection";
 import { Button, ToolbarSeparator } from "ui/button";
 import { svgs } from "ui/icon";
+import { FindPlayerButton } from "./FindPlayerButton";
 import { TestingButtons } from "./TestingButtons";
 import { UndoButton } from "./UndoButton";
 
@@ -72,6 +73,8 @@ export const EditToolbar: FC<Props> = ({ withUndo = true }) => {
       {/*<Button disabled>Paste level from clipboard</Button>*/}
       {/*<Button disabled>Internal/System clipboard? (via textarea?)</Button>*/}
       <TestingButtons />
+      <ToolbarSeparator />
+      <FindPlayerButton />
     </>
   );
 };

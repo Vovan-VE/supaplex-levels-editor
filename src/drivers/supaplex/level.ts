@@ -194,6 +194,10 @@ class SupaplexLevel implements ISupaplexLevel {
     });
   }
 
+  findPlayer() {
+    return this.#body.findPlayer();
+  }
+
   get title() {
     return this.#footer.title;
   }

@@ -71,6 +71,7 @@ export interface IBaseLevel extends ITilesRegion {
   isPlayable(): IsPlayableResult;
   copyRegion(x: number, y: number, w: number, h: number): ILevelRegion;
   pasteRegion(x: number, y: number, region: ILevelRegion): this;
+  findPlayer(): [x: number, y: number] | null;
 }
 
 export interface IBaseLevelset<L extends IBaseLevel> {

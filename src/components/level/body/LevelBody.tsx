@@ -17,6 +17,7 @@ import { ContainerProps } from "ui/types";
 import { CoverGrid } from "./CoverGrid";
 import { DrawLayers } from "./DrawLayers";
 import { DriverInteractions } from "./DriverInteractions";
+import { PlayerLocator } from "./PlayerLocator";
 import { useVisibleBodyRect } from "./useVisibleBodyRect";
 import { useVisibleTiles } from "./useVisibleTiles";
 import cl from "./LevelBody.module.scss";
@@ -55,6 +56,7 @@ export const LevelBody: FC<Props> = ({ className, ...rest }) => {
       >
         <div ref={refCanvas} className={cl.canvas}>
           <div className={cl.tiles}>{nodes}</div>
+          <PlayerLocator />
           <DrawLayers
             drawLayers={drawLayers}
             visibleRect={rect}
