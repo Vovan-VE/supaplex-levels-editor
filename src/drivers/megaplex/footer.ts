@@ -1,10 +1,16 @@
+import { IWithDemo } from "../types";
 import {
   FOOTER_BYTE_LENGTH,
   LevelFooter as SpLevelFooter,
 } from "../supaplex/footer";
 import { ILevelFooter } from "./internal";
 
-export class LevelFooter extends SpLevelFooter implements ILevelFooter {
+export const createLevelFooter = (
+  width: number,
+  data?: Uint8Array,
+): ILevelFooter & IWithDemo => new LevelFooter(width, data);
+
+class LevelFooter extends SpLevelFooter implements ILevelFooter, IWithDemo {
   #width: number;
   #demo: Uint8Array | null = null;
 

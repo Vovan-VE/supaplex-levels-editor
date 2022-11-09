@@ -1,7 +1,8 @@
-import { MegaplexLevel } from "./level";
+import { createLevel } from "./level";
 import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "../supaplex/footer";
-import { dumpLevel } from "./helpers.dev";
+import { dumpLevel, readExampleFile } from "./helpers.dev";
 import {
+  TILE_HARDWARE,
   TILE_INFOTRON,
   TILE_SP_PORT_D,
   TILE_SP_PORT_R,
@@ -12,6 +13,7 @@ import {
   ISupaplexSpecPort,
   ISupaplexSpecPortProps,
 } from "../supaplex/internal";
+import { reader } from "./io";
 
 describe("level", () => {
   const testFooter = Uint8Array.of(
@@ -51,7 +53,7 @@ describe("level", () => {
 
   describe("constructor", () => {
     it("no data", () => {
-      const level = new MegaplexLevel(3, 2);
+      const level = createLevel(3, 2);
 
       expect(level.width).toBe(3);
       expect(level.height).toBe(2);
@@ -63,13 +65,13 @@ describe("level", () => {
     });
 
     it("data", () => {
-      const level = new MegaplexLevel(3, 2, testLevelData);
+      const level = createLevel(3, 2, testLevelData);
 
       expect(dumpLevel(level)).toMatchSnapshot();
     });
 
     it("throw", () => {
-      expect(() => new MegaplexLevel(3, 2, new Uint8Array(42))).toThrow(
+      expect(() => createLevel(3, 2, new Uint8Array(42))).toThrow(
         new Error(
           `Invalid buffer length 42, expected at least ${
             6 + FOOTER_BYTE_LENGTH
@@ -80,7 +82,7 @@ describe("level", () => {
   });
 
   it("raw", () => {
-    const level = new MegaplexLevel(3, 2, testLevelData);
+    const level = createLevel(3, 2, testLevelData);
     expect(level.raw).toEqual(testLevelData);
     expect(level.length).toEqual(testLevelData.length);
 
@@ -108,23 +110,9 @@ describe("level", () => {
     );
   });
 
-  it("copy", () => {
-    const a = new MegaplexLevel(3, 2)
-      .setTitle("First level title")
-      .setTile(1, 0, 6);
-
-    let b = a.copy();
-    expect(dumpLevel(b)).toEqual(dumpLevel(a));
-
-    b = b.setTitle("Copy level title").setTile(1, 0, 1);
-    let dump = dumpLevel(b);
-    expect(dump).not.toEqual(dumpLevel(a));
-    expect(dump).toMatchSnapshot();
-  });
-
   describe("resize", () => {
     it("simple", () => {
-      const a = new MegaplexLevel(3, 2, testLevelData);
+      const a = createLevel(3, 2, testLevelData);
 
       let b = a.resize(5, 4);
       expect(dumpLevel(b)).toMatchSnapshot();
@@ -152,7 +140,7 @@ describe("level", () => {
   });
 
   it("getTile", () => {
-    const level = new MegaplexLevel(3, 2, testLevelData);
+    const level = createLevel(3, 2, testLevelData);
 
     expect(level.getTile(0, 0)).toEqual(0);
     expect(level.getTile(1, 0)).toEqual(TILE_SP_PORT_U);
@@ -164,7 +152,7 @@ describe("level", () => {
 
   describe("setTile", () => {
     it("usual", () => {
-      const level = new MegaplexLevel(3, 2, testLevelData);
+      const level = createLevel(3, 2, testLevelData);
       const copy = level.setTile(2, 0, 7);
       expect(level.getTile(2, 0)).toBe(4);
       expect(level.specPortsCount).toBe(1);
@@ -173,12 +161,12 @@ describe("level", () => {
     });
 
     it("noop", () => {
-      const level = new MegaplexLevel(3, 2, testLevelData);
+      const level = createLevel(3, 2, testLevelData);
       expect(level.setTile(2, 0, level.getTile(2, 0))).toBe(level);
     });
 
     it("add spec port", () => {
-      const level = new MegaplexLevel(3, 2, testLevelData);
+      const level = createLevel(3, 2, testLevelData);
       const copy = level.setTile(2, 0, TILE_SP_PORT_U);
       expect(level.getTile(2, 0)).toBe(4);
       expect(level.specPortsCount).toBe(1);
@@ -203,7 +191,7 @@ describe("level", () => {
     });
 
     it("keep spec port", () => {
-      const level = new MegaplexLevel(3, 2, testLevelData);
+      const level = createLevel(3, 2, testLevelData);
       const copy = level.setTile(1, 0, TILE_SP_PORT_R);
       expect(level.getTile(1, 0)).toBe(TILE_SP_PORT_U);
       expect(level.specPortsCount).toBe(1);
@@ -221,7 +209,7 @@ describe("level", () => {
     });
 
     it("remove spec port", () => {
-      const level = new MegaplexLevel(3, 2, testLevelData);
+      const level = createLevel(3, 2, testLevelData);
       const copy = level.setTile(1, 0, TILE_ZONK);
       expect(copy.getTile(1, 0)).toBe(TILE_ZONK);
       expect(copy.specPortsCount).toBe(0);
@@ -229,12 +217,57 @@ describe("level", () => {
     });
   });
 
+  it("batch", () => {
+    const origin = createLevel(10_000, 10_000);
+
+    // how many copies will we make in 1.5 sec?
+    let start = Date.now();
+    let result = origin;
+    let count = 0;
+    let took: number;
+    for (; (took = Date.now() - start) < 1000; count++) {
+      result = result.setTile(10, 10, 1 + (count % 10));
+    }
+    expect(count).toBeGreaterThan(2);
+    expect(result).not.toBe(origin);
+    expect(origin.getTile(10, 10)).toBe(0);
+    expect(result.getTile(10, 10)).not.toBe(0);
+
+    // then doing the same in batch - it must be faster
+    start = Date.now();
+    result = origin.batch((result) => {
+      for (let i = count; i-- > 0; ) {
+        result = result.setTile(10, 10, 1 + (i % 10));
+      }
+      return result.setTitle("Foo bar");
+    });
+    // it must take time shorten then 2 copies
+    expect(Date.now() - start).toBeLessThan((took / count) * 2);
+    expect(result).not.toBe(origin);
+    expect(origin.getTile(10, 10)).toBe(0);
+    expect(result.getTile(10, 10)).not.toBe(0);
+    expect(origin.title).toBe("                       ");
+    expect(result.title).toBe("Foo bar                ");
+  });
+
   it("findSpecPort", () => {
-    const level = new MegaplexLevel(3, 2, testLevelData);
+    const level = createLevel(3, 2, testLevelData);
     expect(level.findSpecPort(1, 0)).toEqual<ISupaplexSpecPortProps>({
       setsGravity: true,
       setsFreezeZonks: true,
       setsFreezeEnemies: true,
+    });
+  });
+
+  describe("tilesRenderStream", () => {
+    it("huge maze", async () => {
+      const data = await readExampleFile("HUDEMAZ1.mpx");
+      const level = reader.readLevelset(data.buffer).getLevel(0);
+
+      const a = [...level.tilesRenderStream(0, 0, 202, 202)];
+      expect(a.length).toBeLessThan(202 * 202);
+      expect(a[0]).toEqual([0, 0, 202, TILE_HARDWARE]);
+      expect(a[a.length - 1]).toEqual([0, 201, 202, TILE_HARDWARE]);
     });
   });
 });

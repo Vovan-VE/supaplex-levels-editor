@@ -30,28 +30,6 @@ Object {
 }
 `;
 
-exports[`level copy 1`] = `
-Object {
-  "cells": Array [
-    " o ",
-    "   ",
-  ],
-  "demo": null,
-  "height": 2,
-  "infotronsNeed": 0,
-  "initialFreezeZonks": false,
-  "initialGravity": false,
-  "maxTitleLength": 23,
-  "resizable": Object {
-    "maxHeight": 32767,
-    "maxWidth": 32767,
-  },
-  "specialPorts": Array [],
-  "title": "Copy level title       ",
-  "width": 3,
-}
-`;
-
 exports[`level resize simple 1`] = `
 Object {
   "cells": Array [

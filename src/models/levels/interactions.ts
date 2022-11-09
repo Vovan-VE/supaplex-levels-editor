@@ -1,6 +1,6 @@
 import { createEvent, createStore, sample } from "effector";
 import { IBaseLevel, Interaction } from "drivers";
-import { $currentKey, $currentLevelIndex } from "../levelsets";
+import { currentKeyWillGone, currentLevelIndexWillGone } from "../levelsets";
 
 type I = Interaction<IBaseLevel>;
 interface R {
@@ -17,7 +17,7 @@ export const addInteraction = createEvent<I | undefined>();
 export const removeInteraction = createEvent<I>();
 
 export const $interactions = createStore<readonly R[]>([])
-  .reset($currentKey, $currentLevelIndex)
+  .reset(currentKeyWillGone, currentLevelIndexWillGone)
   .on(
     sample({
       source: addInteraction,

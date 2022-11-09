@@ -6,4 +6,5 @@
   bottom: 0;
   @extend %panel-colors;
   padding: 0.2rem;
+  z-index: var(--z-index-interactive);
 }

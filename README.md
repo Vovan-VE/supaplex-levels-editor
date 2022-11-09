@@ -64,10 +64,6 @@ Also:
 - Draggable files buttons to reorder many opened files.
 - Electron based desktop application.
 
-## Known Issues
-
-- Large MPX levels are laggy.
-
 ## Contribution, Development
 
 This project was bootstrapped with [Create React App][cra].

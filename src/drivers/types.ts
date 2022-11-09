@@ -17,11 +17,14 @@ export interface DemoSeed {
   hi: number;
 }
 
-export interface IWithDemo {
-  readonly demo: Uint8Array | null;
-  setDemo(demo: Uint8Array | null): this;
+export interface IWithDemoSeed {
   readonly demoSeed: DemoSeed;
   setDemoSeed(seed: DemoSeed): this;
+}
+
+export interface IWithDemo extends IWithDemoSeed {
+  readonly demo: Uint8Array | null;
+  setDemo(demo: Uint8Array | null): this;
 }
 
 export const levelSupportsDemo = (level: any): level is IWithDemo =>
@@ -30,12 +33,33 @@ export const levelSupportsDemo = (level: any): level is IWithDemo =>
   typeof level.setDemo === "function" &&
   typeof level.setDemoSeed === "function";
 
-export interface IBaseLevel {
-  readonly raw: Uint8Array;
+export type ITilesStreamItem = readonly [
+  x: number,
+  y: number,
+  width: number,
+  tile: number,
+];
+
+export interface ITilesRegion {
   readonly width: number;
   readonly height: number;
   getTile(x: number, y: number): number;
+  tilesRenderStream(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+  ): Iterable<ITilesStreamItem>;
+}
+
+export interface ILevelRegion {
+  readonly tiles: ITilesRegion;
+}
+
+export interface IBaseLevel extends ITilesRegion {
+  readonly raw: Uint8Array;
   setTile(x: number, y: number, value: number): this;
+  batch(update: (b: this) => this): this;
   readonly resizable?: ISizeLimit;
   // TODO: probably add optional argument to set border with the given tile
   resize?(width: number, height: number): this;
@@ -45,6 +69,9 @@ export interface IBaseLevel {
   // REFACT: add api for batch changes without intermediate `copy()` calls
 
   isPlayable(): IsPlayableResult;
+  copyRegion(x: number, y: number, w: number, h: number): ILevelRegion;
+  pasteRegion(x: number, y: number, region: ILevelRegion): this;
+  findPlayer(): [x: number, y: number] | null;
 }
 
 export interface IBaseLevelset<L extends IBaseLevel> {

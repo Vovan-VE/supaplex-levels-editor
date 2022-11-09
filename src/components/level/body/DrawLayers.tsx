@@ -1,41 +1,47 @@
 import cn from "classnames";
 import { useStore } from "effector-react";
-import { FC, memo } from "react";
+import { FC, memo, ReactElement } from "react";
 import { $drvTileRender } from "models/levels";
 import {
   $feedbackCell,
   $toolIndex,
   $toolVariant,
   DrawLayer,
+  DrawLayerProps,
   DrawLayerType,
   TOOLS,
 } from "models/levels/tools";
 import { $currentLevelSize } from "models/levelsets";
 import { ContainerProps } from "ui/types";
+import { inRect, RectA } from "utils/rect";
 import cl from "./DrawLayers.module.scss";
 
 const TYPE_CLASSES: Partial<Record<DrawLayerType, string>> = {
   [DrawLayerType.TILES]: cl.typeTiles,
   [DrawLayerType.TILE_FILL]: cl.typeTileFill,
+  [DrawLayerType.SELECT_RANGE]: cl.typeSelectRange,
+  [DrawLayerType.TILES_REGION]: cl.typeTilesRegion,
 };
 
 interface ListProps extends ContainerProps {
-  drawLayers: readonly DrawLayer[];
+  drawLayers?: readonly DrawLayer[];
+  visibleRect: RectA;
 }
 
 export const DrawLayers: FC<ListProps> = ({
   drawLayers,
+  visibleRect,
   className,
   ...rest
 }) => (
   <>
-    {drawLayers.map((layer, i) => (
+    {drawLayers?.map((layer, i) => (
       <div
         {...rest}
         key={i}
         className={cn(className, TYPE_CLASSES[layer.type])}
       >
-        <DrawLayerItem layer={layer} />
+        <DrawLayerItem layer={layer} visibleRect={visibleRect} />
       </div>
     ))}
     <FeedbackLayer {...rest} className={className} />
@@ -44,17 +50,48 @@ export const DrawLayers: FC<ListProps> = ({
 
 interface LayerProps {
   layer: DrawLayer;
+  visibleRect: RectA;
 }
-const DrawLayerItem = memo<LayerProps>(({ layer }) => {
-  const TileRender = useStore($drvTileRender)!;
+const DrawLayerItem: FC<LayerProps> = ({ layer, visibleRect }) => {
   const { x: LX, y: LY } = layer;
 
   switch (layer.type) {
-    case DrawLayerType.TILES: {
-      const { tiles } = layer;
-      return (
-        <>
-          {[...tiles.values()].map(({ x, y, tile }) => (
+    case DrawLayerType.TILES:
+      return <DrawLayerTiles {...layer} visibleRect={visibleRect} />;
+
+    case DrawLayerType.TILE_FILL:
+      return <DrawLayerTileFill {...layer} />;
+
+    case DrawLayerType.SELECT_RANGE:
+      return <DrawLayerSelectRange {...layer} />;
+
+    case DrawLayerType.TILES_REGION:
+      return <DrawLayerTilesRegion {...layer} visibleRect={visibleRect} />;
+
+    case DrawLayerType.CUSTOM: {
+      const { Component } = layer;
+      return <Component x={LX} y={LY} />;
+    }
+
+    default:
+      return null;
+  }
+};
+
+type VR = { visibleRect: RectA };
+
+const DrawLayerTiles: FC<DrawLayerProps<DrawLayerType.TILES> & VR> = ({
+  x: LX,
+  y: LY,
+  tiles,
+  visibleRect,
+}) => {
+  const TileRender = useStore($drvTileRender)!;
+  return (
+    <>
+      {[...tiles.values()].reduce<ReactElement[]>((nodes, { x, y, tile }) => {
+        if (inRect(x, y, visibleRect)) {
+          nodes.push(
             <TileRender
               key={`${x}:${y}`}
               tile={tile}
@@ -64,38 +101,91 @@ const DrawLayerItem = memo<LayerProps>(({ layer }) => {
                   "--y": LY + y,
                 } as {}
               }
-            />
-          ))}
-        </>
-      );
-    }
+            />,
+          );
+        }
+        return nodes;
+      }, [])}
+    </>
+  );
+};
 
-    case DrawLayerType.TILE_FILL: {
-      const { tile, width, height } = layer;
-      return (
-        <TileRender
-          tile={tile}
-          style={
-            {
-              "--x": LX,
-              "--y": LY,
-              "--w": width,
-              "--h": height,
-            } as {}
-          }
-        />
-      );
-    }
-
-    case DrawLayerType.CUSTOM: {
-      const { Component } = layer;
-      return <Component x={LX} y={LX} />;
-    }
-
-    default:
-      return null;
+const DrawLayerTilesRegion: FC<
+  DrawLayerProps<DrawLayerType.TILES_REGION> & VR
+> = ({ x: LX, y: LY, tiles, visibleRect }) => {
+  const TileRender = useStore($drvTileRender)!;
+  // -----------------------------------> canvas
+  //     ----------------------           layer region
+  //        ----------------              visible
+  // c   l  v
+  // ----|---------> x'
+  //     0
+  // => -lx + vx
+  const [vx, vy, w, h] = visibleRect;
+  const nodes: ReactElement[] = [];
+  for (const [x, y, n, tile] of tiles.tilesRenderStream(
+    vx - LX,
+    vy - LY,
+    w,
+    h,
+  )) {
+    nodes.push(
+      <TileRender
+        key={`${x}:${y}`}
+        tile={tile}
+        style={
+          {
+            "--x": x + LX,
+            "--y": y + LY,
+            "--w": n,
+          } as {}
+        }
+      />,
+    );
   }
-});
+
+  return <>{nodes}</>;
+};
+
+const DrawLayerTileFill = memo<DrawLayerProps<DrawLayerType.TILE_FILL>>(
+  ({ x, y, width, height, tile }) => {
+    const TileRender = useStore($drvTileRender)!;
+    return (
+      <TileRender
+        tile={tile}
+        style={
+          {
+            "--x": x,
+            "--y": y,
+            "--w": width,
+            "--h": height,
+          } as {}
+        }
+      />
+    );
+  },
+);
+
+const DrawLayerSelectRange = memo<DrawLayerProps<DrawLayerType.SELECT_RANGE>>(
+  ({ x, y, width, height, borders }) => (
+    <span
+      className={cn(
+        borders.has("T") && cl._bt,
+        borders.has("R") && cl._br,
+        borders.has("B") && cl._bb,
+        borders.has("L") && cl._bl,
+      )}
+      style={
+        {
+          "--x": x,
+          "--y": y,
+          "--w": width,
+          "--h": height,
+        } as {}
+      }
+    />
+  ),
+);
 
 const FeedbackLayer: FC<ContainerProps> = ({ className, ...rest }) => {
   const feedback = useStore($feedbackCell);
@@ -115,21 +205,17 @@ const FeedbackLayer: FC<ContainerProps> = ({ className, ...rest }) => {
         `${clTool}-${variantName}`,
       )}
     >
-      {feedback &&
-        feedback.x >= 0 &&
-        feedback.y >= 0 &&
-        feedback.x < width &&
-        feedback.y < height && (
-          <div
-            className={cl.cell}
-            style={
-              {
-                "--x": feedback.x,
-                "--y": feedback.y,
-              } as {}
-            }
-          />
-        )}
+      {feedback && inRect(feedback.x, feedback.y, [0, 0, width, height]) && (
+        <div
+          className={cl.cell}
+          style={
+            {
+              "--x": feedback.x,
+              "--y": feedback.y,
+            } as {}
+          }
+        />
+      )}
     </div>
   );
 };

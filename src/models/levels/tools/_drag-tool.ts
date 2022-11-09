@@ -1,33 +1,80 @@
-import { createEvent, createStore, forward, sample } from "effector";
-import { $currentLevel, $currentLevelIsSelected } from "../../levelsets";
+import {
+  createEvent,
+  createStore,
+  Event,
+  forward,
+  merge,
+  sample,
+  split,
+} from "effector";
+import { IBaseLevel } from "drivers";
+import {
+  $currentLevelIsSelected,
+  $currentLevelUndoQueue,
+  updateCurrentLevel,
+} from "../../levelsets";
 import { $tileIndex } from "../current";
 import { CellEventSnapshot, GridEventsProps, ToolVariantUI } from "./interface";
 
-interface Variant<T> extends ToolVariantUI {
-  drawProps: T;
+interface Variant<P> extends ToolVariantUI {
+  drawProps: P;
 }
-interface IStart_<T> {
+interface IDrawStart<P> {
+  // extends DrawEndParams<T>
   event: CellEventSnapshot;
   tile: number;
-  drawProps: T;
+  drawProps: P;
 }
+interface IDrawData<P> extends IDrawStart<P> {}
+
+interface DrawStartState<S> {
+  drawState: S;
+  level: IBaseLevel;
+}
+
+interface DrawEndParams<S> {
+  drawState: S;
+  level: IBaseLevel;
+}
+
+interface DrawEndCommit {
+  do: "commit";
+  level: IBaseLevel;
+}
+interface DrawEndContinue<S> {
+  do: "continue";
+  drawState: S;
+  level: IBaseLevel;
+}
+type DrawEndResult<S> = DrawEndCommit | DrawEndContinue<S>;
 
 export const createDragTool = <DrawProps, DrawState>({
   VARIANTS,
   idleState,
+  drawStartReducer,
   drawReducer,
+  drawEndReducer,
 }: {
   VARIANTS: readonly Variant<DrawProps>[];
   idleState: DrawState;
-  drawReducer: (prev: DrawState, draw: IStart_<DrawProps>) => DrawState;
+  drawStartReducer?: (
+    prev: DrawStartState<DrawState>,
+    draw: IDrawStart<DrawProps>,
+  ) => DrawStartState<DrawState>;
+  drawReducer: (prev: DrawState, draw: IDrawData<DrawProps>) => DrawState;
+  drawEndReducer: (
+    params: DrawEndParams<DrawState>,
+  ) => DrawEndResult<DrawState>;
 }) => {
-  type IStart = IStart_<DrawProps>;
+  type IStart = IDrawStart<DrawProps>;
+  type IContinue = IDrawData<DrawProps>;
 
   const free = createEvent<any>();
   const rollback = createEvent<any>();
   forward({ from: free, to: rollback });
-  const commit = createEvent<any>();
+  const doCommit = createEvent<DrawEndCommit>();
   const didCommit = createEvent<any>();
+  const doContinue = createEvent<DrawEndContinue<DrawState>>();
 
   const setVariant = createEvent<number>();
   const $variant = createStore<number>(0).on(setVariant, (_, n) => {
@@ -37,18 +84,49 @@ export const createDragTool = <DrawProps, DrawState>({
   });
 
   const doStart = createEvent<IStart>();
-  const doDraw = createEvent<IStart>();
-
-  const $isDrawing = createStore(false)
-    .reset(rollback, didCommit)
-    .on(doStart, () => true);
-  const $drawState = createStore(idleState)
-    .reset(rollback, didCommit)
-    .on(doDraw, drawReducer);
+  const doDraw = createEvent<IContinue>();
 
   const tryDrawStart = createEvent<CellEventSnapshot>();
   const tryDrawMove = createEvent<CellEventSnapshot>();
   const tryDrawEnd = createEvent<CellEventSnapshot>();
+  const didDragEnd: Event<DrawEndResult<DrawState>> = merge([
+    doCommit,
+    doContinue,
+  ]);
+
+  const $drawState = createStore(idleState)
+    .reset(rollback, didCommit)
+    .on(doDraw, drawReducer)
+    .on(doContinue, (_, { drawState }) => drawState);
+
+  let didStart: Event<any> = doStart;
+  if (drawStartReducer) {
+    const temp = sample({
+      clock: doStart,
+      source: {
+        drawState: $drawState,
+        level: $currentLevelUndoQueue,
+      },
+      filter: ({ level }) => level !== null,
+      fn: ({ drawState, level }, start) =>
+        drawStartReducer({ drawState, level: level!.current }, start),
+    });
+    sample({
+      source: temp,
+      fn: ({ level }) => level,
+      target: updateCurrentLevel,
+    });
+    sample({
+      source: temp,
+      fn: ({ drawState }) => drawState,
+      target: $drawState,
+    });
+    didStart = temp;
+  }
+
+  const $isDragging = createStore(false)
+    .reset(rollback, didDragEnd)
+    .on(didStart, () => true);
 
   // -----
   // start
@@ -57,12 +135,12 @@ export const createDragTool = <DrawProps, DrawState>({
   sample({
     clock: tryDrawStart,
     source: {
-      inWork: $isDrawing,
+      isDragging: $isDragging,
       isLevelSelected: $currentLevelIsSelected,
       tile: $tileIndex,
       variant: $variant,
     },
-    filter: ({ inWork, isLevelSelected }) => !inWork && isLevelSelected,
+    filter: ({ isDragging, isLevelSelected }) => !isDragging && isLevelSelected,
     fn: ({ tile, variant }, event): IStart => ({
       event,
       tile,
@@ -78,13 +156,13 @@ export const createDragTool = <DrawProps, DrawState>({
   sample({
     clock: tryDrawMove,
     source: {
-      inWork: $isDrawing,
+      isDragging: $isDragging,
       isLevelSelected: $currentLevelIsSelected,
       tile: $tileIndex,
       variant: $variant,
     },
-    filter: ({ inWork, isLevelSelected }) => inWork && isLevelSelected,
-    fn: ({ tile, variant }, event): IStart => ({
+    filter: ({ isDragging, isLevelSelected }) => isDragging && isLevelSelected,
+    fn: ({ tile, variant }, event): IContinue => ({
       event,
       tile,
       drawProps: VARIANTS[variant].drawProps,
@@ -92,23 +170,39 @@ export const createDragTool = <DrawProps, DrawState>({
     target: doDraw,
   });
 
-  // -----------
-  // end, commit
-  // -----------
+  // ---------------------
+  // end, commit, continue
+  // ---------------------
 
-  forward({ from: tryDrawEnd, to: commit });
-  const doCommit = sample({
-    clock: commit,
-    source: {
-      inWork: $isDrawing,
-      level: $currentLevel,
-      drawState: $drawState,
-    },
-    filter: ({ inWork, level }) => inWork && level !== null,
-    fn: ({ level, drawState }) => ({
-      drawState,
-      level: level!.level.undoQueue.current,
+  split({
+    source: sample({
+      clock: tryDrawEnd,
+      source: {
+        isDragging: $isDragging,
+        level: $currentLevelUndoQueue,
+        drawState: $drawState,
+      },
+      filter: ({ isDragging, level }) => isDragging && level !== null,
+      fn: ({ drawState, level }) =>
+        drawEndReducer({
+          drawState,
+          level: level!.current,
+        }),
     }),
+    match: {
+      commit: (r) => r.do === "commit",
+      continue: (r) => r.do === "continue",
+    },
+    cases: {
+      commit: doCommit,
+      continue: doContinue,
+    },
+  });
+
+  sample({
+    source: didDragEnd,
+    fn: (r) => r.level,
+    target: updateCurrentLevel,
   });
   forward({ from: doCommit, to: didCommit });
 
@@ -124,7 +218,7 @@ export const createDragTool = <DrawProps, DrawState>({
     },
   };
 
-  const eventsWork: GridEventsProps = {
+  const eventsDragging: GridEventsProps = {
     onPointerMove: (e, cell) => {
       if (e.buttons === 1) {
         tryDrawMove(cell);
@@ -146,12 +240,10 @@ export const createDragTool = <DrawProps, DrawState>({
     setVariant,
     $variant,
 
-    $isDrawing,
+    $isDragging,
     $drawState,
     rollback,
-    commit,
-    doCommit,
     eventsIdle,
-    eventsWork,
+    eventsDragging,
   };
 };

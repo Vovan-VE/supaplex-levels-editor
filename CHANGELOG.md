@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0 (2022-11-09)
+
+- Add: Selection tool with basic Cut/Copy/Paste/Delete functionality.
+- Add: Button to locate primary Murphy in level.
+- Enh: Optimized rendering for level tiles. Now only visible range of tiles are
+  rendering. The price is some flickering while scrolling.
+- Enh: Optimized editing. Now most operations with adequate level sizes runs
+  enough fast.
+
 ## 0.4.1 (2022-10-24)
 
 - Fix: Demo recording don't work due to wrong configuration.

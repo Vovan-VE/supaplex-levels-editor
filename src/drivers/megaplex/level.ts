@@ -1,17 +1,18 @@
-import { DemoSeed } from "../types";
-import { LevelBody } from "../supaplex/body";
-import { supaplexBox } from "../supaplex/box";
+import { clipRect, inRect, RectA } from "utils/rect";
+import { DemoSeed, ITilesStreamItem, IWithDemo, IWithDemoSeed } from "../types";
+import { AnyBox } from "../supaplex/AnyBox";
+import { createLevelBody } from "../supaplex/body";
+import { ILevelBody, ISupaplexSpecPortProps } from "../supaplex/internal";
 import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "../supaplex/footer";
 import { isSpecPort, TILE_SPACE } from "../supaplex/tiles-id";
-import { ISupaplexSpecPortProps } from "../supaplex/internal";
-import { AnyBox } from "./box";
-import { LevelFooter } from "./footer";
+import { ISupaplexLevelRegion } from "../supaplex/types";
+import { createLevelFooter } from "./footer";
 import { resizable } from "./resizable";
 import { IMegaplexLevel } from "./types";
+import { ILevelFooter } from "./internal";
 
-const sliceFooter = (width: number, height: number, data?: Uint8Array) => {
+const sliceFooter = (bodyLength: number, data?: Uint8Array) => {
   if (data) {
-    const bodyLength = width * height;
     const minLength = bodyLength + FOOTER_BYTE_LENGTH;
     if (process.env.NODE_ENV !== "production" && data.length < minLength) {
       throw new Error(
@@ -22,15 +23,29 @@ const sliceFooter = (width: number, height: number, data?: Uint8Array) => {
   }
 };
 
-export class MegaplexLevel implements IMegaplexLevel {
-  readonly #box: AnyBox;
-  #body: LevelBody;
-  #footer: LevelFooter;
+export const createLevel = (
+  width: number,
+  height: number,
+  data?: Uint8Array,
+): IMegaplexLevel => {
+  const box = new AnyBox(width, height);
+  const footer = createLevelFooter(box.width, sliceFooter(box.length, data));
+  const body = createLevelBody(box, data?.slice(0, box.length));
+  return new MegaplexLevel(box, body, footer);
+};
 
-  constructor(width: number, height: number, data?: Uint8Array) {
-    this.#footer = new LevelFooter(width, sliceFooter(width, height, data));
-    this.#box = new AnyBox(width, height);
-    this.#body = new LevelBody(this.#box, data?.slice(0, this.#box.length));
+// REFACT: a bunch of copy-paste between 'supaplex' and 'megaplex'
+//   refact into single base to cover both
+
+class MegaplexLevel implements IMegaplexLevel {
+  readonly #box: AnyBox;
+  #body;
+  #footer;
+
+  constructor(box: AnyBox, body: ILevelBody, footer: ILevelFooter & IWithDemo) {
+    this.#box = box;
+    this.#body = body;
+    this.#footer = footer;
   }
 
   get length() {
@@ -60,12 +75,53 @@ export class MegaplexLevel implements IMegaplexLevel {
     return resizable;
   }
 
-  copy(): this {
-    return new MegaplexLevel(
-      this.#box.width,
-      this.#box.height,
-      this.raw,
-    ) as this;
+  #batchingLevel = 0;
+  #isBatchCopy = false;
+  #withBody(body: ILevelBody): this {
+    if (body === this.#body) {
+      return this;
+    }
+    if (this.#isBatchCopy) {
+      this.#body = body;
+      return this;
+    }
+    const next = new MegaplexLevel(this.#box, body, this.#footer) as this;
+    if (this.#batchingLevel > 0) {
+      next.#isBatchCopy = true;
+    }
+    return next;
+  }
+  #withFooter(footer: ILevelFooter & IWithDemoSeed): this {
+    if (footer === this.#footer) {
+      return this;
+    }
+    if (this.#isBatchCopy) {
+      this.#footer = footer;
+      return this;
+    }
+    const next = new MegaplexLevel(this.#box, this.#body, footer) as this;
+    if (this.#batchingLevel > 0) {
+      next.#isBatchCopy = true;
+    }
+    return next;
+  }
+  batch(update: (b: this) => this) {
+    let nextFooter: ILevelFooter & IWithDemoSeed;
+    const nextBody = this.#body.batch((body) => {
+      this.#batchingLevel++;
+      let result: this;
+      try {
+        result = update(this.#withBody(body));
+      } finally {
+        this.#batchingLevel--;
+      }
+      if (!this.#batchingLevel) {
+        result.#isBatchCopy = false;
+      }
+      nextFooter = result.#footer;
+      return result.#body;
+    });
+    return this.#withBody(nextBody).#withFooter(nextFooter!);
   }
 
   resize(width: number, height: number) {
@@ -77,7 +133,6 @@ export class MegaplexLevel implements IMegaplexLevel {
       (width < this.#box.width && origSpecPorts.some((p) => p.x >= width)) ||
       (height < this.#box.height && origSpecPorts.some((p) => p.y >= height))
     ) {
-      src = this.copy();
       // delete spec ports entry
       for (let p of origSpecPorts) {
         if (
@@ -89,17 +144,25 @@ export class MegaplexLevel implements IMegaplexLevel {
       }
     }
 
-    const temp = new Uint8Array(width * height + this.#footer.length);
-    temp.set(src.#footer.getRaw(), width * height);
-    let result = new MegaplexLevel(width, height, temp) as this;
-
-    for (let y = Math.min(height, this.#box.height); y-- > 0; ) {
-      for (let x = Math.min(width, this.#box.width); x-- > 0; ) {
-        result = result.setTile(x, y, src.getTile(x, y));
+    const box = new AnyBox(width, height);
+    const body = createLevelBody(box).batch((body) => {
+      for (let y = Math.min(height, this.#box.height); y-- > 0; ) {
+        for (let x = Math.min(width, this.#box.width); x-- > 0; ) {
+          body = body.setTile(x, y, src.getTile(x, y));
+        }
       }
+      return body;
+    });
+
+    let footer = createLevelFooter(
+      width,
+      src.#footer.getRaw(),
+    ).clearSpecPorts();
+    for (const p of src.getSpecPorts()) {
+      footer = footer.setSpecPort(p.x, p.y, p);
     }
 
-    return result;
+    return new MegaplexLevel(box, body, footer) as this;
   }
 
   getTile(x: number, y: number) {
@@ -107,13 +170,11 @@ export class MegaplexLevel implements IMegaplexLevel {
   }
 
   setTile(x: number, y: number, value: number) {
-    const nextBody = this.#body.setTile(x, y, value);
-    if (nextBody === this.#body) {
+    const prev = this.#body.getTile(x, y);
+    if (prev === value) {
       return this;
     }
-    const prev = this.#body.getTile(x, y);
-    let next = this.copy();
-    next.#body = nextBody;
+    let next = this.#withBody(this.#body.setTile(x, y, value));
     if (isSpecPort(prev)) {
       if (!isSpecPort(value)) {
         next = next.deleteSpecPort(x, y);
@@ -130,18 +191,68 @@ export class MegaplexLevel implements IMegaplexLevel {
     return this.#body.isPlayable();
   }
 
+  tilesRenderStream(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+  ): Iterable<ITilesStreamItem> {
+    return this.#body.tilesRenderStream(x, y, w, h);
+  }
+
+  copyRegion(x: number, y: number, w: number, h: number) {
+    const [x0, y0, tiles] = this.#body.copyRegion(x, y, w, h);
+    return {
+      tiles,
+      specPorts: this.#footer.copySpecPortsInRegion([
+        x0,
+        y0,
+        tiles.width,
+        tiles.height,
+      ]),
+    };
+  }
+
+  pasteRegion(
+    x: number,
+    y: number,
+    { tiles, specPorts }: ISupaplexLevelRegion,
+  ) {
+    //         ------------------------ level
+    //  ------------------ region
+    //         ----------- clip
+
+    const [x0, y0, w, h] = clipRect([x, y, tiles.width, tiles.height], this);
+    return this.batch((l) => {
+      for (let j = 0; j < h; j++) {
+        const cy = y0 + j;
+        for (let i = 0; i < w; i++) {
+          const cx = x0 + i;
+          l = l.setTile(cx, cy, tiles.getTile(cx - x, cy - y));
+        }
+      }
+      const r: RectA = [0, 0, this.width, this.height];
+      for (const p of specPorts) {
+        const cx = p.x + x;
+        const cy = p.y + y;
+        if (inRect(cx, cy, r)) {
+          l = l.setSpecPort(cx, cy, p);
+        }
+      }
+      return l;
+    });
+  }
+
+  findPlayer() {
+    return this.#body.findPlayer();
+  }
+
   get title() {
     return this.#footer.title;
   }
 
   setTitle(title: string) {
-    const nextFooter = this.#footer.setTitle(title);
-    if (nextFooter === this.#footer) {
-      return this;
-    }
-    const copy = this.copy();
-    copy.#footer = nextFooter;
-    return copy;
+    return this.#withFooter(this.#footer.setTitle(title));
   }
 
   get maxTitleLength() {
@@ -153,13 +264,7 @@ export class MegaplexLevel implements IMegaplexLevel {
   }
 
   setInitialGravity(on: boolean) {
-    const nextFooter = this.#footer.setInitialGravity(on);
-    if (nextFooter === this.#footer) {
-      return this;
-    }
-    const copy = this.copy();
-    copy.#footer = nextFooter;
-    return copy;
+    return this.#withFooter(this.#footer.setInitialGravity(on));
   }
 
   get initialFreezeZonks() {
@@ -167,13 +272,7 @@ export class MegaplexLevel implements IMegaplexLevel {
   }
 
   setInitialFreezeZonks(on: boolean) {
-    const nextFooter = this.#footer.setInitialFreezeZonks(on);
-    if (nextFooter === this.#footer) {
-      return this;
-    }
-    const copy = this.copy();
-    copy.#footer = nextFooter;
-    return copy;
+    return this.#withFooter(this.#footer.setInitialFreezeZonks(on));
   }
 
   get infotronsNeed() {
@@ -181,13 +280,7 @@ export class MegaplexLevel implements IMegaplexLevel {
   }
 
   setInfotronsNeed(value: number) {
-    const nextFooter = this.#footer.setInfotronsNeed(value);
-    if (nextFooter === this.#footer) {
-      return this;
-    }
-    const copy = this.copy();
-    copy.#footer = nextFooter;
-    return copy;
+    return this.#withFooter(this.#footer.setInfotronsNeed(value));
   }
 
   get specPortsCount() {
@@ -199,13 +292,7 @@ export class MegaplexLevel implements IMegaplexLevel {
   }
 
   clearSpecPorts() {
-    const nextFooter = this.#footer.clearSpecPorts();
-    if (nextFooter !== this.#footer) {
-      return this;
-    }
-    const copy = this.copy();
-    copy.#footer = nextFooter;
-    return copy;
+    return this.#withFooter(this.#footer.clearSpecPorts());
   }
 
   findSpecPort(x: number, y: number) {
@@ -214,25 +301,13 @@ export class MegaplexLevel implements IMegaplexLevel {
   }
 
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps) {
-    supaplexBox.validateCoords?.(x, y);
-    const nextFooter = this.#footer.setSpecPort(x, y, props);
-    if (nextFooter === this.#footer) {
-      return this;
-    }
-    const copy = this.copy();
-    copy.#footer = nextFooter;
-    return copy;
+    this.#box.validateCoords?.(x, y);
+    return this.#withFooter(this.#footer.setSpecPort(x, y, props));
   }
 
   deleteSpecPort(x: number, y: number) {
-    supaplexBox.validateCoords?.(x, y);
-    const nextFooter = this.#footer.deleteSpecPort(x, y);
-    if (nextFooter === this.#footer) {
-      return this;
-    }
-    const copy = this.copy();
-    copy.#footer = nextFooter;
-    return copy;
+    this.#box.validateCoords?.(x, y);
+    return this.#withFooter(this.#footer.deleteSpecPort(x, y));
   }
 
   get demoSeed() {
@@ -240,13 +315,7 @@ export class MegaplexLevel implements IMegaplexLevel {
   }
 
   setDemoSeed(seed: DemoSeed) {
-    const nextFooter = this.#footer.setDemoSeed(seed);
-    if (nextFooter === this.#footer) {
-      return this;
-    }
-    const copy = this.copy();
-    copy.#footer = nextFooter;
-    return copy;
+    return this.#withFooter(this.#footer.setDemoSeed(seed));
   }
 
   get demo() {
@@ -254,12 +323,6 @@ export class MegaplexLevel implements IMegaplexLevel {
   }
 
   setDemo(demo: Uint8Array | null) {
-    const nextFooter = this.#footer.setDemo(demo);
-    if (nextFooter === this.#footer) {
-      return this;
-    }
-    const copy = this.copy();
-    copy.#footer = nextFooter;
-    return copy;
+    return this.#withFooter(this.#footer.setDemo(demo));
   }
 }

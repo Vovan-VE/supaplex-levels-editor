@@ -1,31 +1,16 @@
-import fs from "fs";
 import { reader, writer } from "./io";
-import { dumpLevelset } from "./helpers.dev";
+import { dumpLevelset, readExampleFile } from "./helpers.dev";
 
-it("read original levelset", (done) => {
-  fs.readFile(
-    `${__dirname}/examples.dev/levels.dat`,
-    async (err, data: Buffer) => {
-      if (err) {
-        throw err;
-      }
+it("read original levelset", async () => {
+  const data = await readExampleFile("levels.dat");
+  expect(data.length).toBe(1536 * 111);
 
-      try {
-        expect(data.length).toBe(1536 * 111);
+  const levelset = reader.readLevelset(data.buffer);
 
-        const levelset = reader.readLevelset(data.buffer);
+  expect(dumpLevelset(levelset)).toMatchSnapshot("levelset");
 
-        expect(dumpLevelset(levelset)).toMatchSnapshot("levelset");
-
-        const result = writer.writeLevelset(levelset);
-        expect(result).toEqual(data.buffer);
-
-        done();
-      } catch (e) {
-        done(e);
-      }
-    },
-  );
+  const result = writer.writeLevelset(levelset);
+  expect(result).toEqual(data.buffer);
 });
 
 it("invalid file size", () => {

@@ -15,6 +15,7 @@ import { IconStack, IconStackType } from "ui/icon";
 import { Checkbox } from "ui/input";
 import { ColorType } from "ui/types";
 
+const CL_SVG_ANIMATE_HOVERABLE = "svg-animate_hover-target";
 const TEST_WITH_DEMO_STACK: IconStack = [[IconStackType.Index, <DiskYellow />]];
 const PLAY_DEMO_STACK: IconStack = [[IconStackType.Index, <HwLampGreen />]];
 
@@ -32,6 +33,7 @@ export const TestingButtons: FC = () => {
         onClick={handleTestClick}
         icon={<MurphyRuns />}
         iconStack={demoSupport ? TEST_WITH_DEMO_STACK : undefined}
+        className={CL_SVG_ANIMATE_HOVERABLE}
         title={`Test level at ${TEST_LEVEL_TITLE}${
           demoSupport ? " (+record a demo)" : ""
         }`}
@@ -41,6 +43,7 @@ export const TestingButtons: FC = () => {
           onClick={handleDemoClick}
           icon={<MurphyRuns />}
           iconStack={PLAY_DEMO_STACK}
+          className={CL_SVG_ANIMATE_HOVERABLE}
           title={`Play embedded demo with ${TEST_LEVEL_TITLE}`}
           disabled={!hasDemo}
         />

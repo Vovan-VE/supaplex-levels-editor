@@ -1,15 +1,30 @@
-import { combine, createEvent, createStore, sample } from "effector";
-import { $currentKey, $currentLevelIndex } from "../../levelsets";
+import {
+  combine,
+  createEffect,
+  createEvent,
+  createStore,
+  sample,
+} from "effector";
+import { inRect, o2a } from "utils/rect";
+import { currentLevelIndexWillGone } from "../../levelsets";
 import { Tool } from "./interface";
+import { $feedbackCell } from "./feedback";
 import { PEN } from "./_pen";
 import { FLOOD } from "./_flood";
 import { RECT } from "./_rect";
+import { SELECTION } from "./_selection";
 
 export const setTool = createEvent<number>();
 export const setToolVariant = createEvent<number>();
 export const rollbackWork = createEvent<any>();
 
-export const TOOLS: readonly Tool[] = [PEN, FLOOD, RECT];
+export const TOOLS: readonly Tool[] = [PEN, FLOOD, RECT, SELECTION];
+export const setToolO = createEvent<Tool>();
+sample({
+  source: setToolO.map((o) => TOOLS.findIndex((v) => v === o)),
+  filter: (n) => n >= 0,
+  target: setTool,
+});
 
 const setToolInternal = createEvent<number>();
 export const $toolIndex = createStore(0).on(setToolInternal, (_, n) => n);
@@ -48,15 +63,26 @@ export const $toolUI = combine(
   (UIs, index) => UIs[index],
 );
 
+export const $cursor = combine(
+  $toolUI.map(({ drawCursor = null }) => drawCursor),
+  $feedbackCell,
+  (drawCursor, c) =>
+    (c &&
+      drawCursor?.find(({ rect }) => rect.some((r) => inRect(c.x, c.y, o2a(r))))
+        ?.cursor) ??
+    null,
+);
+
+const doRollbackFx = createEffect(async (rollback?: () => void) => {
+  await rollback?.();
+});
 // current file or level probably can be changed on touch screen with secondary
 // touch, so rollback current tool work if any
 sample({
-  clock: [$currentLevelIndex.updates, $currentKey.updates, rollbackWork],
-  source: $toolIndex,
-}).watch((index) => {
-  const { $ui } = TOOLS[index];
-  const { rollback } = $ui.getState();
-  rollback?.();
+  clock: [currentLevelIndexWillGone, rollbackWork],
+  source: $toolUI,
+  fn: ({ rollback }) => rollback,
+  target: doRollbackFx,
 });
 
 sample({

@@ -1,4 +1,5 @@
-import { DemoSeed } from "../types";
+import { inRect, RectA } from "utils/rect";
+import { DemoSeed, IWithDemoSeed } from "../types";
 import { LEVEL_WIDTH } from "./box";
 import {
   ILevelFooter,
@@ -63,7 +64,11 @@ export const specPortCoordsToOffset = (
   return [(offset >> 8) & 0xff, offset & 0xff];
 };
 
-export class LevelFooter implements ILevelFooter {
+export const createLevelFooter = (
+  data?: Uint8Array,
+): ILevelFooter & IWithDemoSeed => new LevelFooter(data);
+
+export class LevelFooter implements ILevelFooter, IWithDemoSeed {
   #src: Uint8Array;
 
   constructor(data?: Uint8Array) {
@@ -181,6 +186,20 @@ export class LevelFooter implements ILevelFooter {
       const [x, y] = specPortOffsetToCoords(raw[0], raw[1], this.width);
       yield { x, y, ...getSpecPortProps(raw) };
     }
+  }
+
+  copySpecPortsInRegion(r: RectA) {
+    const [x, y] = r;
+    return [...this.getSpecPorts()].reduce<ISupaplexSpecPort[]>((list, p) => {
+      if (inRect(p.x, p.y, r)) {
+        list.push({
+          ...p,
+          x: p.x - x,
+          y: p.y - y,
+        });
+      }
+      return list;
+    }, []);
   }
 
   clearSpecPorts() {

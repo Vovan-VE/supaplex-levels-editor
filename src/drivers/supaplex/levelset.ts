@@ -1,5 +1,6 @@
+import { isOffsetInRange } from "utils/number";
 import { ISupaplexLevel, ISupaplexLevelset } from "./types";
-import { SupaplexLevel } from "./level";
+import { createLevel } from "./level";
 import { fillLevelBorder } from "./fillLevelBorder";
 import { IBaseLevelset } from "../types";
 
@@ -16,7 +17,7 @@ const validateLevelsIndex =
   process.env.NODE_ENV === "production"
     ? undefined
     : (index: number, count: number) => {
-        if (index < 0 || index >= count) {
+        if (!isOffsetInRange(index, 0, count)) {
           throw new RangeError(`Invalid level index ${index}`);
         }
       };
@@ -88,14 +89,18 @@ export class Levelset<L extends ISupaplexLevel> implements IBaseLevelset<L> {
 const newLevels = (count: number) => {
   validateLevelsCount?.(count);
   const result: ISupaplexLevel[] = [];
-  const level = fillLevelBorder(new SupaplexLevel());
+  const level = fillLevelBorder(createLevel());
   for (let i = count; i-- > 0; ) {
     result.push(level);
   }
   return result;
 };
 
-export class SupaplexLevelset
+export const createLevelset = (
+  levels: readonly ISupaplexLevel[] | Iterable<ISupaplexLevel> | number = 111,
+): ISupaplexLevelset => new SupaplexLevelset(levels);
+
+class SupaplexLevelset
   extends Levelset<ISupaplexLevel>
   implements ISupaplexLevelset
 {

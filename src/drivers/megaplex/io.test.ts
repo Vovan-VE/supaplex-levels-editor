@@ -1,70 +1,34 @@
-import fs from "fs";
 import { reader, writer } from "./io";
-import { dumpLevelset } from "./helpers.dev";
+import { dumpLevelset, readExampleFile } from "./helpers.dev";
 
-const examplesDir = `${__dirname}/examples.dev`;
+it("read mpx levelset", async () => {
+  const data = await readExampleFile("levels.mpx");
+  const levelset = reader.readLevelset(data.buffer);
 
-it("read mpx levelset", (done) => {
-  fs.readFile(`${examplesDir}/levels.mpx`, async (err, data: Buffer) => {
-    if (err) {
-      throw err;
-    }
+  expect(dumpLevelset(levelset)).toMatchSnapshot("levelset");
 
-    try {
-      const levelset = reader.readLevelset(data.buffer);
-
-      expect(dumpLevelset(levelset)).toMatchSnapshot("levelset");
-
-      const result = writer.writeLevelset(levelset);
-      expect(result).toEqual(data.buffer);
-
-      done();
-    } catch (e) {
-      done(e);
-    }
-  });
+  const result = writer.writeLevelset(levelset);
+  expect(result).toEqual(data.buffer);
 });
 
-it("read mpx levelset 1 5x3", (done) => {
-  fs.readFile(`${examplesDir}/5x3.mpx`, async (err, data: Buffer) => {
-    if (err) {
-      throw err;
-    }
+it("read mpx levelset 1 5x3", async () => {
+  const data = await readExampleFile("5x3.mpx");
+  const levelset = reader.readLevelset(data.buffer);
 
-    try {
-      const levelset = reader.readLevelset(data.buffer);
+  expect(dumpLevelset(levelset)).toMatchSnapshot();
 
-      expect(dumpLevelset(levelset)).toMatchSnapshot();
-
-      const result = writer.writeLevelset(levelset);
-      expect(result).toEqual(data.buffer);
-
-      done();
-    } catch (e) {
-      done(e);
-    }
-  });
+  const result = writer.writeLevelset(levelset);
+  expect(result).toEqual(data.buffer);
 });
 
-it("read mpx levelset 1 5x3 winplex", (done) => {
-  fs.readFile(`${examplesDir}/5x3.winplex.mpx`, async (err, data: Buffer) => {
-    if (err) {
-      throw err;
-    }
+it("read mpx levelset 1 5x3 winplex", async () => {
+  const data = await readExampleFile("5x3.winplex.mpx");
+  const levelset = reader.readLevelset(data.buffer);
 
-    try {
-      const levelset = reader.readLevelset(data.buffer);
+  expect(dumpLevelset(levelset)).toMatchSnapshot();
 
-      expect(dumpLevelset(levelset)).toMatchSnapshot();
-
-      const result = writer.writeLevelset(levelset);
-      expect(result).toEqual(data.buffer);
-
-      done();
-    } catch (e) {
-      done(e);
-    }
-  });
+  const result = writer.writeLevelset(levelset);
+  expect(result).toEqual(data.buffer);
 });
 
 it("invalid file format", () => {

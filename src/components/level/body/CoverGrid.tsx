@@ -1,4 +1,5 @@
 import cn from "classnames";
+import { useStore } from "effector-react";
 import equal from "fast-deep-equal";
 import {
   FC,
@@ -11,7 +12,9 @@ import {
   useState,
 } from "react";
 import {
+  $cursor,
   CellEventSnapshot,
+  DrawCursor,
   GridEventsProps,
   GridPointerEvent,
   GridPointerEventHandler,
@@ -19,6 +22,7 @@ import {
   setFeedbackCell,
 } from "models/levels/tools";
 import { ContainerProps } from "ui/types";
+import { inRect } from "utils/rect";
 import cl from "./CoverGrid.module.scss";
 
 const snapshotEvent = (
@@ -47,7 +51,7 @@ const snapshotEvent = (
     y,
     width: cols,
     height: rows,
-    inBounds: x >= 0 && x < cols && y >= 0 && y < rows,
+    inBounds: inRect(x, y, [0, 0, cols, rows]),
     type,
     button,
     buttons,
@@ -81,6 +85,7 @@ const useGridPointerEventHandler = (
 interface Props extends ContainerProps, GridEventsProps {
   cols: number;
   rows: number;
+  drawCursor?: readonly DrawCursor[];
 }
 
 const enum TouchPhase {
@@ -98,6 +103,7 @@ const TOUCH_CLASSES: Partial<Record<TouchPhase, string>> = {
 export const CoverGrid: FC<Props> = ({
   cols,
   rows,
+  drawCursor,
   onPointerDown,
   onPointerMove,
   onPointerUp,
@@ -113,10 +119,10 @@ export const CoverGrid: FC<Props> = ({
     (e: PointerEvent) => snapshotEvent(e, cols, rows),
     [cols, rows],
   );
-
   const prev = useRef<CellEventSnapshot>();
-
   const [touchPhase, setTouchPhase] = useState(TouchPhase.NO);
+
+  const cursor = useStore($cursor);
 
   const handleDown = useGridPointerEventHandler(
     useCallback<GridPointerEventHandler>(
@@ -259,6 +265,7 @@ export const CoverGrid: FC<Props> = ({
       onTouchCancel={handleTouchCancel}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
+      style={cursor ? { cursor } : undefined}
     />
   );
 };
