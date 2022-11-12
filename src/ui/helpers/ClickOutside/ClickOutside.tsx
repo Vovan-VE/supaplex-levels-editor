@@ -28,7 +28,7 @@ interface ChildrenRenderProps {
    * ```
    * @param props
    */
-  getClickProps: <P>(
+  getClickProps: <P extends Partial<ChildrenExtraProps>>(
     props?: P,
   ) => ChildrenExtraProps & Omit<P, keyof ChildrenExtraProps>;
 }

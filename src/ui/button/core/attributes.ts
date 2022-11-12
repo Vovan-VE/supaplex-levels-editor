@@ -36,7 +36,10 @@ export interface AttributesProps
     ButtonUniqProps,
     CommonExtraProp {}
 
-const makeHelpers = <Me, Opposite>(
+const makeHelpers = <
+  Me extends AttributesProps,
+  Opposite extends AttributesProps,
+>(
   specificKeys: readonly (keyof AttributesProps)[],
 ) => ({
   is: (props: AttributesProps): props is Me =>
