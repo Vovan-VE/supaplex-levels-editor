@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.5.0 (DEV)
+## 0.6.0 (DEV)
+
+- ...
+
+## 0.5.0 (2022-11-09)
 
 - Add: Selection tool with basic Cut/Copy/Paste/Delete functionality.
 - Add: Button to locate primary Murphy in level.
