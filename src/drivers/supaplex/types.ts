@@ -29,12 +29,8 @@ export interface ISupaplexLevel extends IBaseLevel {
   setInfotronsNeed(value: number): this;
   readonly specPortsCount: number;
   getSpecPorts(): Iterable<ISupaplexSpecPort>;
-  /** @deprecated Useless outside */
-  clearSpecPorts(): this;
   findSpecPort(x: number, y: number): ISupaplexSpecPortProps | undefined;
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps): this;
-  /** @deprecated Useless outside */
-  deleteSpecPort(x: number, y: number): this;
 }
 
 export interface ISupaplexTile extends IBaseTile<ISupaplexLevel> {}

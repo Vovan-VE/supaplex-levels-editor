@@ -174,10 +174,10 @@ class MegaplexLevel implements IMegaplexLevel {
     if (prev === value) {
       return this;
     }
-    let next = this.#withBody(this.#body.setTile(x, y, value));
+    let next: this = this.#withBody(this.#body.setTile(x, y, value));
     if (isSpecPort(prev)) {
       if (!isSpecPort(value)) {
-        next = next.deleteSpecPort(x, y);
+        next = next.#withFooter(next.#footer.deleteSpecPort(x, y));
       }
     } else {
       if (isSpecPort(value)) {
@@ -291,10 +291,6 @@ class MegaplexLevel implements IMegaplexLevel {
     return this.#footer.getSpecPorts();
   }
 
-  clearSpecPorts() {
-    return this.#withFooter(this.#footer.clearSpecPorts());
-  }
-
   findSpecPort(x: number, y: number) {
     this.#box.validateCoords?.(x, y);
     return this.#footer.findSpecPort(x, y);
@@ -303,11 +299,6 @@ class MegaplexLevel implements IMegaplexLevel {
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps) {
     this.#box.validateCoords?.(x, y);
     return this.#withFooter(this.#footer.setSpecPort(x, y, props));
-  }
-
-  deleteSpecPort(x: number, y: number) {
-    this.#box.validateCoords?.(x, y);
-    return this.#withFooter(this.#footer.deleteSpecPort(x, y));
   }
 
   get demoSeed() {

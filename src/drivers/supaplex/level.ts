@@ -125,10 +125,10 @@ class SupaplexLevel implements ISupaplexLevel {
     if (prevTile === value) {
       return this;
     }
-    let next = this.#withBody(this.#body.setTile(x, y, value));
+    let next: this = this.#withBody(this.#body.setTile(x, y, value));
     if (isSpecPort(prevTile)) {
       if (!isSpecPort(value)) {
-        next = next.deleteSpecPort(x, y);
+        next = next.#withFooter(next.#footer.deleteSpecPort(x, y));
       }
     } else {
       if (isSpecPort(value)) {
@@ -242,10 +242,6 @@ class SupaplexLevel implements ISupaplexLevel {
     return this.#footer.getSpecPorts();
   }
 
-  clearSpecPorts() {
-    return this.#withFooter(this.#footer.clearSpecPorts());
-  }
-
   findSpecPort(x: number, y: number) {
     supaplexBox.validateCoords?.(x, y);
     return this.#footer.findSpecPort(x, y);
@@ -254,11 +250,6 @@ class SupaplexLevel implements ISupaplexLevel {
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps) {
     supaplexBox.validateCoords?.(x, y);
     return this.#withFooter(this.#footer.setSpecPort(x, y, props));
-  }
-
-  deleteSpecPort(x: number, y: number) {
-    supaplexBox.validateCoords?.(x, y);
-    return this.#withFooter(this.#footer.deleteSpecPort(x, y));
   }
 
   get demoSeed() {
