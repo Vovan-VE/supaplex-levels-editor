@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { detectDriver } from "drivers";
+import { detectDriverFormat } from "drivers";
 import { addLevelsetFileFx } from "models/levelsets";
 import { msgBox } from "ui/feedback";
 
@@ -24,17 +24,19 @@ export const handleOpenClick = () => {
         const detected = await Promise.allSettled(
           Array.from(files).map(
             async (file) =>
-              [file, detectDriver(await file.arrayBuffer())] as const,
+              [file, detectDriverFormat(await file.arrayBuffer())] as const,
           ),
         );
         const errors: ReactNode[] = [];
         for (const [i, item] of detected.entries()) {
           if (item.status === "fulfilled") {
-            const [file, driverName] = item.value;
-            if (driverName) {
+            const [file, d] = item.value;
+            if (d) {
+              const [driverName, driverFormat] = d;
               addLevelsetFileFx({
                 file,
                 driverName,
+                driverFormat,
                 name: file.name,
               });
             } else {

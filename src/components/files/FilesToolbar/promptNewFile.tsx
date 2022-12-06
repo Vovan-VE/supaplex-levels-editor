@@ -3,10 +3,11 @@ import {
   FC,
   FormEvent,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
-import { DISPLAY_ORDER, DriverName, getDriver } from "drivers";
+import { DISPLAY_ORDER, DriverName, getDriver, getDriverFormat } from "drivers";
 import { addLevelsetFileFx } from "models/levelsets";
 import { NoticeSizeLags } from "../../level/toolbars/LevelConfig/NoticeSizeLags";
 import { Button } from "ui/button";
@@ -28,11 +29,29 @@ const driversOptions = DISPLAY_ORDER.map<SelectOption<DriverName>>((value) => ({
   value,
   label: getDriver(value).title,
 }));
+const formatOptions = new Map<DriverName, readonly SelectOption<string>[]>(
+  DISPLAY_ORDER.map((d) => [
+    d,
+    Object.entries(getDriver(d).formats).map(([value, f]) => ({
+      value,
+      label: f.title,
+    })),
+  ]),
+);
 
 interface Props extends RenderPromptProps<true> {}
 
 const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const [driverName, setDriverName] = useState<DriverName>(DISPLAY_ORDER[0]);
+  const [driverFormat, setDriverFormat] = useState(
+    formatOptions.get(DISPLAY_ORDER[0])![0].value,
+  );
+  const curFormatsOptions = formatOptions.get(driverName)!;
+  useEffect(
+    () => setDriverFormat(curFormatsOptions[0].value),
+    [curFormatsOptions],
+  );
+
   const [filename, setFilename] = useState("new-levelset");
   const [levelsCount, setLevelsCount] = useState<number | null>(111);
   const [title, setTitle] = useState("EMPTY");
@@ -47,18 +66,18 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     minLevelsCount,
     maxLevelsCount,
   } = useMemo(() => {
-    const drv = getDriver(driverName as string)!;
-    const { fileExtensionDefault, newLevelResizable } = drv;
-    const level = drv.createLevel();
-    const { minLevelsCount, maxLevelsCount } = drv.createLevelset([level]);
+    const format = getDriverFormat(driverName, driverFormat)!;
+    const { fileExtensionDefault, resizable, minLevelsCount, maxLevelsCount } =
+      format;
+    const level = format.createLevel();
     return {
       level,
-      resizable: newLevelResizable,
+      resizable,
       fileExtensionDefault,
       minLevelsCount,
       maxLevelsCount,
     };
-  }, [driverName]);
+  }, [driverName, driverFormat]);
   const titleError = useMemo(() => {
     try {
       level.setTitle(title);
@@ -76,6 +95,11 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     },
     [],
   );
+  const handleFormatChange = useCallback((o: SelectOption<string> | null) => {
+    if (o) {
+      setDriverFormat(o.value);
+    }
+  }, []);
   const handleFilenameChange = useCallback<
     ChangeEventHandler<HTMLInputElement>
   >(({ target: { value } }) => setFilename(value), []);
@@ -84,17 +108,20 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     [],
   );
 
-  const fileExt = parseFilename(filename, driverName);
+  const fileExt = parseFilename(filename, driverName, driverFormat);
 
   const handleOk = useCallback(async () => {
     if ((fileExt.hasExt && !fileExt.isExtValid) || levelsCount === null) {
       return;
     }
-    const drv = getDriver(driverName as string)!;
-    const { fileExtensionDefault, writer, newLevelResizable: resizable } = drv;
-    if (!writer) {
-      return;
-    }
+    const format = getDriverFormat(driverName as string, driverFormat)!;
+    const {
+      fileExtensionDefault,
+      writeLevelset,
+      resizable,
+      minLevelsCount,
+      maxLevelsCount,
+    } = format;
 
     if (resizable && (width !== null || height !== null)) {
       if (
@@ -113,7 +140,7 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
       }
     }
 
-    let level = drv.createLevel({
+    let level = format.createLevel({
       width: width ?? undefined,
       height: height ?? undefined,
       // TODO: `borderTile` can be configured too
@@ -124,11 +151,9 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
       return;
     }
 
-    const levelset = drv.createLevelset([level]);
     if (
-      levelsCount < levelset.minLevelsCount ||
-      (levelset.maxLevelsCount !== null &&
-        levelsCount > levelset.maxLevelsCount)
+      levelsCount < minLevelsCount ||
+      (maxLevelsCount !== null && levelsCount > maxLevelsCount)
     ) {
       return;
     }
@@ -142,8 +167,9 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
 
     try {
       await addLevelsetFileFx({
-        file: new Blob([writer.writeLevelset(drv.createLevelset(levels))]),
+        file: new Blob([writeLevelset(format.createLevelset(levels))]),
         driverName,
+        driverFormat,
         name: newFilename,
       });
       onSubmit(true);
@@ -157,6 +183,7 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     }
   }, [
     driverName,
+    driverFormat,
     filename,
     fileExt.hasExt,
     fileExt.isExtValid,
@@ -194,11 +221,20 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
       onClose={onCancel}
     >
       <div className={cl.root}>
-        <Field label="File type">
+        <Field label="Driver*">
           <Select
             options={driversOptions}
             value={driversOptions.find((o) => o.value === driverName) ?? null}
             onChange={handleDriverChange}
+          />
+        </Field>
+        <Field label="File type">
+          <Select
+            options={curFormatsOptions}
+            value={
+              curFormatsOptions.find((o) => o.value === driverFormat) ?? null
+            }
+            onChange={handleFormatChange}
           />
         </Field>
         <Field
@@ -294,13 +330,20 @@ interface _FN {
   hasExt: boolean;
   isExtValid: boolean;
 }
-const parseFilename = (filename: string, driverName: DriverName): _FN => {
+const parseFilename = (
+  filename: string,
+  driverName: DriverName,
+  driverFormat: string,
+): _FN => {
   const ext = filename.match(/.\.([^.]*)$/)?.[1];
   if (ext === undefined) {
     return { hasExt: false, isExtValid: false };
   }
 
-  const { fileExtensionDefault, fileExtensions } = getDriver(driverName);
+  const { fileExtensionDefault, fileExtensions } = getDriverFormat(
+    driverName,
+    driverFormat,
+  );
 
   return {
     hasExt: true,

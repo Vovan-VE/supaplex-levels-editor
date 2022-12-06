@@ -14,7 +14,7 @@ import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
 import { APP_TITLE } from "configs";
 import {
-  getDriver,
+  getDriverFormat,
   IBaseLevel,
   IBaseLevelset,
   levelSupportsDemo,
@@ -33,7 +33,7 @@ import {
   DemoData,
   IBaseLevelsList,
   isEqualLevels,
-  LevelsetFile,
+  LevelsetFileF,
   LevelsetFileKey,
   LevelsetFlushBuffer,
   LevelsetsBuffers,
@@ -141,12 +141,12 @@ const _withCurrent =
 const _withCurrentKey = _withCurrent($currentKey);
 const _withCurrentFile = _withCurrent($currentLevelsetFile);
 
-const createLevelForFile = (file: LevelsetFile) => {
-  const d = getDriver(file.driverName);
-  if (!d) {
-    throw new Error("Invalid driver name");
+const createLevelForFile = (file: LevelsetFileF) => {
+  const f = getDriverFormat(file.driverName, file.driverFormat);
+  if (!f) {
+    throw new Error("Invalid driver or format name");
   }
-  return d.createLevel();
+  return f.createLevel();
 };
 
 interface _OpenedIndicesWakeUp {
@@ -472,9 +472,13 @@ sample({
 });
 
 {
-  const _writeBuffersToFile = ({ driverName, levels }: LevelsetFlushBuffer) => {
-    const d = getDriver(driverName);
-    return (d && d.writer?.writeLevelset(d.createLevelset(levels))) || null;
+  const _writeBuffersToFile = ({
+    driverName,
+    driverFormat,
+    levels,
+  }: LevelsetFlushBuffer) => {
+    const f = getDriverFormat(driverName, driverFormat);
+    return (f && f.writeLevelset(f.createLevelset(levels))) || null;
   };
 
   // internal intermediate event to actually flush specific buffers
@@ -536,13 +540,17 @@ sample({
           const ab = _writeBuffersToFile({
             key,
             driverName: file.driverName,
+            driverFormat: file.driverFormat,
             levels,
           });
           if (ab) {
             list.push({
               key,
               ab,
-              levelset: getDriver(file.driverName)!.createLevelset(levels),
+              levelset: getDriverFormat(
+                file.driverName,
+                file.driverFormat,
+              )!.createLevelset(levels),
             });
           }
         }

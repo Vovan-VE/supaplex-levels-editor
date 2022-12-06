@@ -1,5 +1,6 @@
 import {
   IBaseDriver,
+  IBaseFormat,
   IBaseLevelset,
   IBaseReader,
   IBaseWriter,
@@ -17,6 +18,9 @@ export interface IMegaplexLevelset extends IBaseLevelset<IMegaplexLevel> {}
 
 export interface IMegaplexReader extends IBaseReader<IMegaplexLevelset> {}
 export interface IMegaplexWriter extends IBaseWriter<IMegaplexLevelset> {}
+
+export interface IMegaplexFormat
+  extends IBaseFormat<IMegaplexLevel, IMegaplexLevelset> {}
 
 export interface IMegaplexDriver
   extends IBaseDriver<IMegaplexLevel, IMegaplexLevelset> {}

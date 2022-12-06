@@ -12,12 +12,22 @@ export interface LevelsetFileSource {
   file: Blob;
   name: string;
   driverName: string;
+  driverFormat: string | undefined;
+}
+export interface LevelsetFileSourceF extends LevelsetFileSource {
+  driverFormat: string;
 }
 export interface LevelsetFileData extends LevelsetFileSource {
   key: LevelsetFileKey;
 }
+export interface LevelsetFileDataF extends LevelsetFileData {
+  driverFormat: string;
+}
 export interface LevelsetFile extends LevelsetFileData {
   levelset: IBaseLevelset<IBaseLevel>;
+}
+export interface LevelsetFileF extends LevelsetFile {
+  driverFormat: string;
 }
 
 export interface LevelBuffer<L> {
@@ -44,6 +54,7 @@ export type LevelsetsBuffers = ReadonlyMap<
 export interface LevelsetFlushBuffer {
   key: LevelsetFileKey;
   driverName: string;
+  driverFormat: string;
   levels: IBaseLevelsList;
 }
 

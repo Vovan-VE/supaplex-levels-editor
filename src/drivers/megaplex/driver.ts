@@ -8,6 +8,7 @@ import { reader, writer } from "./io";
 import { createLevel } from "./level";
 import { createLevelset } from "./levelset";
 import { resizable } from "./resizable";
+import { MPX } from "./formats";
 
 export const MegaplexDriver: IMegaplexDriver = {
   title: "Megaplex",
@@ -25,4 +26,7 @@ export const MegaplexDriver: IMegaplexDriver = {
   newLevelResizable: resizable,
   demoSupport: true,
   LevelConfigurator,
+  formats: {
+    mpx: MPX,
+  },
 };

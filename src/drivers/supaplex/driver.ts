@@ -6,6 +6,7 @@ import { createLevel } from "./level";
 import { createLevelset } from "./levelset";
 import { LevelConfigurator } from "./LevelConfigurator";
 import { fillLevelBorder } from "./fillLevelBorder";
+import { DAT } from "./formats";
 
 export const SupaplexDriver: ISupaplexDriver = {
   title: "Supaplex",
@@ -19,4 +20,7 @@ export const SupaplexDriver: ISupaplexDriver = {
   createLevel: ({ borderTile } = {}) =>
     fillLevelBorder(createLevel(), borderTile),
   LevelConfigurator,
+  formats: {
+    dat: DAT,
+  },
 };

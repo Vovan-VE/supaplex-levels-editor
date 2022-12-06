@@ -10,26 +10,25 @@ import { withPersistent, withPersistentMap } from "@cubux/effector-persistent";
 import * as RoMap from "@cubux/readonly-map";
 import { createIndexedDBDriver, createNullDriver } from "@cubux/storage-driver";
 import { APP_STORAGE_PREFIX } from "configs";
-import { getDriver } from "drivers";
+import { getDriverFormat } from "drivers";
 import { generateKey } from "utils/strings";
 import { localStorageDriver } from "../_utils/persistent";
 import {
-  LevelsetFile,
   LevelsetFileData,
+  LevelsetFileDataF,
+  LevelsetFileF,
   LevelsetFileKey,
-  LevelsetFileSource,
+  LevelsetFileSourceF,
 } from "./types";
 
 const fulfillFileLevels = async (
-  input: LevelsetFileData,
-): Promise<LevelsetFile> => {
-  const driver = getDriver(input.driverName);
-  if (!driver) {
-    throw new Error("Invalid driver name: " + input.driverName);
-  }
-  const reader = driver.reader;
-  if (!reader) {
-    throw new Error("No reader in driver: " + input.driverName);
+  input: LevelsetFileDataF,
+): Promise<LevelsetFileF> => {
+  const format = getDriverFormat(input.driverName, input.driverFormat);
+  if (!format) {
+    throw new Error(
+      `Invalid driver or format: ${input.driverName}, ${input.driverFormat}`,
+    );
   }
   let ab: ArrayBuffer;
   try {
@@ -43,7 +42,7 @@ const fulfillFileLevels = async (
   }
   return {
     ...input,
-    levelset: reader.readLevelset(ab),
+    levelset: format.readLevelset(ab),
   };
 };
 
@@ -51,7 +50,7 @@ const fulfillFileLevels = async (
  * Add new file from whatever source
  */
 export const addLevelsetFileFx = createEffect(
-  (source: LevelsetFileSource): Promise<LevelsetFile> =>
+  (source: LevelsetFileSourceF): Promise<LevelsetFileF> =>
     fulfillFileLevels({
       ...source,
       key: generateKey() as LevelsetFileKey,
@@ -68,7 +67,7 @@ export const removeCurrentLevelsetFile = createEvent<any>();
 /**
  * Update loaded file in memory
  */
-export const updateLevelsetFile = createEvent<LevelsetFile>();
+export const updateLevelsetFile = createEvent<LevelsetFileF>();
 /**
  * Rename currently selected file
  */
@@ -119,6 +118,10 @@ sample({
   target: _willSetCurrentKeyFx,
 });
 
+const FALLBACK_FORMAT: Partial<Record<string, string>> = {
+  supaplex: "dat",
+  mpx: "mpx",
+};
 interface _DbLevelsetFile extends Omit<LevelsetFileData, "file"> {
   fileBuffer: ArrayBuffer;
 }
@@ -126,7 +129,7 @@ interface _DbLevelsetFile extends Omit<LevelsetFileData, "file"> {
  * Loaded files in memory
  */
 export const $levelsets = withPersistentMap(
-  createStore<ReadonlyMap<LevelsetFileKey, LevelsetFile>>(new Map()),
+  createStore<ReadonlyMap<LevelsetFileKey, LevelsetFileF>>(new Map()),
   process.env.NODE_ENV === "test"
     ? createNullDriver<LevelsetFileKey, _DbLevelsetFile>()
     : createIndexedDBDriver<LevelsetFileKey, _DbLevelsetFile>({
@@ -139,18 +142,27 @@ export const $levelsets = withPersistentMap(
       file,
       name,
       driverName,
+      driverFormat,
       key,
-    }: LevelsetFile): Promise<_DbLevelsetFile> => ({
+    }: LevelsetFileF): Promise<_DbLevelsetFile> => ({
       name,
       driverName,
+      driverFormat,
       key,
       fileBuffer: await file.arrayBuffer(),
     }),
-    unserialize: ({ name, driverName, key, fileBuffer }: _DbLevelsetFile) =>
+    unserialize: ({
+      name,
+      driverName,
+      driverFormat = FALLBACK_FORMAT[driverName] ?? "_unknown_",
+      key,
+      fileBuffer,
+    }: _DbLevelsetFile) =>
       fulfillFileLevels({
         file: new Blob([fileBuffer]),
         name,
         driverName,
+        driverFormat,
         key,
       }),
   },
@@ -195,6 +207,9 @@ export const $currentFileName = $currentLevelsetFile.map((f) =>
 );
 export const $currentDriverName = $currentLevelsetFile.map((f) =>
   f ? f.driverName : null,
+);
+export const $currentDriverFormat = $currentLevelsetFile.map((f) =>
+  f ? f.driverFormat : null,
 );
 export const $currentLevelset = $currentLevelsetFile.map((f) =>
   f ? f.levelset : null,

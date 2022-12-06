@@ -60,6 +60,7 @@ export interface IBaseLevel extends ITilesRegion {
   readonly raw: Uint8Array;
   setTile(x: number, y: number, value: number): this;
   batch(update: (b: this) => this): this;
+  /** @deprecated */
   readonly resizable?: ISizeLimit;
   // TODO: probably add optional argument to set border with the given tile
   resize?(width: number, height: number): this;
@@ -76,7 +77,9 @@ export interface IBaseLevel extends ITilesRegion {
 
 export interface IBaseLevelset<L extends IBaseLevel> {
   readonly levelsCount: number;
+  /** @deprecated */
   readonly minLevelsCount: number;
+  /** @deprecated */
   readonly maxLevelsCount: number | null;
   getLevels(): readonly L[];
   getLevel(index: number): L;
@@ -86,11 +89,15 @@ export interface IBaseLevelset<L extends IBaseLevel> {
   removeLevel(index: number): this;
 }
 
+/** @deprecated */
 export interface IBaseReader<S extends IBaseLevelset<any>> {
+  /** @deprecated */
   readLevelset(file: ArrayBuffer): S;
 }
 
+/** @deprecated */
 export interface IBaseWriter<S extends IBaseLevelset<any>> {
+  /** @deprecated */
   writeLevelset(levelset: S): ArrayBuffer;
 }
 
@@ -136,6 +143,21 @@ export interface INewLevelOptions {
   borderTile?: number;
 }
 
+export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
+  readonly title: string;
+  readonly fileExtensions?: RegExp;
+  readonly fileExtensionDefault: string;
+  readonly resizable: ISizeLimit;
+  readonly minLevelsCount: number;
+  readonly maxLevelsCount: number | null;
+  readonly demoSupport?: boolean;
+  supportReport(levelset: S): readonly ReactNode[] | null;
+  readLevelset(file: ArrayBuffer): S;
+  writeLevelset(levelset: S): ArrayBuffer;
+  createLevelset(levels?: readonly L[] | Iterable<L>): S;
+  createLevel(options?: INewLevelOptions): L;
+}
+
 export interface TileRenderProps {
   tile?: number;
   style?: CSSProperties;
@@ -153,14 +175,23 @@ export interface IBaseDriver<
   title: string;
   tiles: readonly IBaseTile<L>[];
   TileRender: FC<TileRenderProps>;
+  /** @deprecated */
   reader?: IBaseReader<S>;
+  /** @deprecated */
   writer?: IBaseWriter<S>;
+  /** @deprecated */
   fileExtensions?: RegExp;
+  /** @deprecated */
   fileExtensionDefault: string;
+  /** @deprecated */
   createLevelset: (levels?: readonly L[] | Iterable<L>) => S;
+  /** @deprecated */
   createLevel: (options?: INewLevelOptions) => L;
+  /** @deprecated */
   newLevelResizable?: ISizeLimit;
+  /** @deprecated */
   demoSupport?: boolean;
   LevelConfigurator?: FC<LevelConfiguratorProps<L>>;
+  formats: Record<string, IBaseFormat<L, S>>;
   // TODO: create levelset config
 }
