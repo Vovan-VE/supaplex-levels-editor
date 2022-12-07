@@ -1,6 +1,6 @@
-import { ISupaplexLevelset } from "./types";
-import { createLevelFromArrayBuffer, LEVEL_BYTES_LENGTH } from "./level";
-import { createLevelset } from "./levelset";
+import { ISupaplexLevelset } from "../../types";
+import { createLevelFromArrayBuffer, LEVEL_BYTES_LENGTH } from "../../level";
+import { createLevelset } from "../../levelset";
 
 function* levelsFromBuffer(buffer: ArrayBuffer) {
   if (buffer.byteLength % LEVEL_BYTES_LENGTH) {

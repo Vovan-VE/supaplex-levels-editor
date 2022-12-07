@@ -13,7 +13,7 @@ import {
   ISupaplexSpecPort,
   ISupaplexSpecPortProps,
 } from "../supaplex/internal";
-import { readLevelset } from "./io";
+import { readLevelset } from "./formats/mpx/io";
 
 describe("level", () => {
   const testFooter = Uint8Array.of(

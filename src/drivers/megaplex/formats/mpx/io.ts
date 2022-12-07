@@ -1,7 +1,7 @@
-import { IMegaplexLevel, IMegaplexLevelset } from "./types";
-import { FOOTER_BYTE_LENGTH } from "../supaplex/footer";
-import { createLevel } from "./level";
-import { createLevelset } from "./levelset";
+import { IMegaplexLevel, IMegaplexLevelset } from "../../types";
+import { FOOTER_BYTE_LENGTH } from "../../../supaplex/footer";
+import { createLevel } from "../../level";
+import { createLevelset } from "../../levelset";
 
 // MPX format
 // 04 : "MPX "

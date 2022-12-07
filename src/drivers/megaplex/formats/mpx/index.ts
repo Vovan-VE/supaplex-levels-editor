@@ -3,13 +3,15 @@ import { fillLevelBorder } from "../../../supaplex/fillLevelBorder";
 import { IMegaplexFormat } from "../../types";
 import { createLevel } from "../../level";
 import { createLevelset } from "../../levelset";
-import { resizable } from "../../resizable";
-import { readLevelset, writeLevelset } from "../../io";
+import { readLevelset, writeLevelset } from "./io";
 
 export const MPX: IMegaplexFormat = {
   title: "MPX",
   fileExtensionDefault: "mpx",
-  resizable,
+  resizable: {
+    maxWidth: 0x7fff,
+    maxHeight: 0x7fff,
+  },
   minLevelsCount: 1,
   maxLevelsCount: 0x7fff,
   demoSupport: true,
