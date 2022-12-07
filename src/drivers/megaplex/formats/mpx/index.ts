@@ -4,7 +4,7 @@ import { IMegaplexFormat } from "../../types";
 import { createLevel } from "../../level";
 import { createLevelset } from "../../levelset";
 import { resizable } from "../../resizable";
-import { reader, writer } from "../../io";
+import { readLevelset, writeLevelset } from "../../io";
 
 export const MPX: IMegaplexFormat = {
   title: "MPX",
@@ -14,8 +14,8 @@ export const MPX: IMegaplexFormat = {
   maxLevelsCount: 0x7fff,
   demoSupport: true,
   supportReport: () => null,
-  readLevelset: reader.readLevelset,
-  writeLevelset: writer.writeLevelset,
+  readLevelset,
+  writeLevelset,
   createLevelset,
   createLevel: ({
     width = LEVEL_WIDTH,

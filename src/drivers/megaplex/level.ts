@@ -7,7 +7,6 @@ import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "../supaplex/footer";
 import { isSpecPort, TILE_SPACE } from "../supaplex/tiles-id";
 import { ISupaplexLevelRegion } from "../supaplex/types";
 import { createLevelFooter } from "./footer";
-import { resizable } from "./resizable";
 import { IMegaplexLevel } from "./types";
 import { ILevelFooter } from "./internal";
 
@@ -69,10 +68,6 @@ class MegaplexLevel implements IMegaplexLevel {
 
   get height() {
     return this.#box.height;
-  }
-
-  get resizable() {
-    return resizable;
   }
 
   #batchingLevel = 0;

@@ -15,10 +15,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "                       ",
       "width": 5,
@@ -41,18 +37,12 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "                       ",
       "width": 7,
     },
   ],
   "levelsCount": 2,
-  "maxLevelsCount": 32767,
-  "minLevelsCount": 1,
 }
 `;
 
@@ -92,18 +82,12 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "                       ",
       "width": 60,
     },
   ],
   "levelsCount": 1,
-  "maxLevelsCount": 32767,
-  "minLevelsCount": 1,
 }
 `;
 
@@ -143,10 +127,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "                       ",
       "width": 60,
@@ -184,17 +164,11 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "                       ",
       "width": 60,
     },
   ],
   "levelsCount": 2,
-  "maxLevelsCount": 32767,
-  "minLevelsCount": 1,
 }
 `;

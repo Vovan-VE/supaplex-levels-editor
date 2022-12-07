@@ -38,14 +38,6 @@ export class Levelset<L extends ISupaplexLevel> implements IBaseLevelset<L> {
     return this.#levels.length;
   }
 
-  get minLevelsCount() {
-    return 1;
-  }
-
-  get maxLevelsCount(): number | null {
-    return null;
-  }
-
   getLevels() {
     return [...this.#levels];
   }

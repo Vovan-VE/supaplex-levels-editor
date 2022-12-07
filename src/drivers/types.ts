@@ -60,14 +60,11 @@ export interface IBaseLevel extends ITilesRegion {
   readonly raw: Uint8Array;
   setTile(x: number, y: number, value: number): this;
   batch(update: (b: this) => this): this;
-  /** @deprecated */
-  readonly resizable?: ISizeLimit;
   // TODO: probably add optional argument to set border with the given tile
   resize?(width: number, height: number): this;
   readonly title: string;
   setTitle(title: string): this;
   readonly maxTitleLength: number;
-  // REFACT: add api for batch changes without intermediate `copy()` calls
 
   isPlayable(): IsPlayableResult;
   copyRegion(x: number, y: number, w: number, h: number): ILevelRegion;
@@ -77,28 +74,12 @@ export interface IBaseLevel extends ITilesRegion {
 
 export interface IBaseLevelset<L extends IBaseLevel> {
   readonly levelsCount: number;
-  /** @deprecated */
-  readonly minLevelsCount: number;
-  /** @deprecated */
-  readonly maxLevelsCount: number | null;
   getLevels(): readonly L[];
   getLevel(index: number): L;
   setLevel(index: number, level: L): this;
   appendLevel(level: L): this;
   insertLevel(index: number, level: L): this;
   removeLevel(index: number): this;
-}
-
-/** @deprecated */
-export interface IBaseReader<S extends IBaseLevelset<any>> {
-  /** @deprecated */
-  readLevelset(file: ArrayBuffer): S;
-}
-
-/** @deprecated */
-export interface IBaseWriter<S extends IBaseLevelset<any>> {
-  /** @deprecated */
-  writeLevelset(levelset: S): ArrayBuffer;
 }
 
 export const enum InteractionType {
@@ -175,22 +156,6 @@ export interface IBaseDriver<
   title: string;
   tiles: readonly IBaseTile<L>[];
   TileRender: FC<TileRenderProps>;
-  /** @deprecated */
-  reader?: IBaseReader<S>;
-  /** @deprecated */
-  writer?: IBaseWriter<S>;
-  /** @deprecated */
-  fileExtensions?: RegExp;
-  /** @deprecated */
-  fileExtensionDefault: string;
-  /** @deprecated */
-  createLevelset: (levels?: readonly L[] | Iterable<L>) => S;
-  /** @deprecated */
-  createLevel: (options?: INewLevelOptions) => L;
-  /** @deprecated */
-  newLevelResizable?: ISizeLimit;
-  /** @deprecated */
-  demoSupport?: boolean;
   LevelConfigurator?: FC<LevelConfiguratorProps<L>>;
   formats: Record<string, IBaseFormat<L, S>>;
   // TODO: create levelset config

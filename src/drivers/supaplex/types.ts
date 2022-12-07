@@ -3,9 +3,7 @@ import {
   IBaseFormat,
   IBaseLevel,
   IBaseLevelset,
-  IBaseReader,
   IBaseTile,
-  IBaseWriter,
   ILevelRegion,
 } from "../types";
 import {
@@ -37,8 +35,6 @@ export interface ISupaplexLevel extends IBaseLevel {
 export interface ISupaplexTile extends IBaseTile<ISupaplexLevel> {}
 
 export interface ISupaplexLevelset extends IBaseLevelset<ISupaplexLevel> {}
-export interface ISupaplexReader extends IBaseReader<ISupaplexLevelset> {}
-export interface ISupaplexWriter extends IBaseWriter<ISupaplexLevelset> {}
 
 export interface ISupaplexFormat
   extends IBaseFormat<ISupaplexLevel, ISupaplexLevelset> {}

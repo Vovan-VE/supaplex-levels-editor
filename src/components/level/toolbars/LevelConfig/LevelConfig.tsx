@@ -1,7 +1,8 @@
 import { FC, useCallback } from "react";
 import { useStore } from "effector-react";
-import { getDriver } from "drivers";
+import { getDriver, getDriverFormat } from "drivers";
 import {
+  $currentDriverFormat,
   $currentDriverName,
   $currentLevelUndoQueue,
   updateCurrentLevel,
@@ -20,6 +21,10 @@ interface Props {
 export const LevelConfig: FC<Props> = ({ onDidResize }) => {
   const driverName = useStore($currentDriverName)!;
   const { LevelConfigurator } = getDriver(driverName)!;
+  const { resizable } = getDriverFormat(
+    driverName,
+    useStore($currentDriverFormat)!,
+  )!;
   const undoQueue = useStore($currentLevelUndoQueue)!;
   const rawLevel = undoQueue.current;
 
@@ -31,7 +36,7 @@ export const LevelConfig: FC<Props> = ({ onDidResize }) => {
 
   return (
     <>
-      <Button disabled={!rawLevel.resizable} onClick={handleResizeClick}>
+      <Button disabled={!resizable} onClick={handleResizeClick}>
         {rawLevel.width}x{rawLevel.height}
       </Button>
       <ValueInput

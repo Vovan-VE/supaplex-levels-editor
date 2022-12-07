@@ -33,7 +33,6 @@ Object {
   "initialFreezeZonks": true,
   "initialGravity": true,
   "maxTitleLength": 23,
-  "resizable": undefined,
   "specialPorts": Array [
     Object {
       "setsFreezeEnemies": true,
@@ -81,7 +80,6 @@ Object {
   "initialFreezeZonks": false,
   "initialGravity": false,
   "maxTitleLength": 23,
-  "resizable": undefined,
   "specialPorts": Array [],
   "title": "                       ",
   "width": 60,

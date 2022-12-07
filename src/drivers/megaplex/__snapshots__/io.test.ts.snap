@@ -15,18 +15,12 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": true,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-----------------------",
       "width": 5,
     },
   ],
   "levelsCount": 1,
-  "maxLevelsCount": 32767,
-  "minLevelsCount": 1,
 }
 `;
 
@@ -45,18 +39,12 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": true,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-----------------------",
       "width": 5,
     },
   ],
   "levelsCount": 1,
-  "maxLevelsCount": 32767,
-  "minLevelsCount": 1,
 }
 `;
 
@@ -96,10 +84,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------- WARM UP -------",
       "width": 60,
@@ -137,10 +121,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-------- EXIT! --------",
       "width": 60,
@@ -178,10 +158,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ STONE-AGE ------",
       "width": 60,
@@ -219,10 +195,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ COLLECTOR ------",
       "width": 60,
@@ -260,10 +232,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ EASY DEAL ------",
       "width": 60,
@@ -301,10 +269,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "--- DOWN THEY FALL! ---",
       "width": 60,
@@ -342,10 +306,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- GO THROUGH! -----",
       "width": 60,
@@ -383,10 +343,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "--- GET THOSE TOO!! ---",
       "width": 60,
@@ -424,10 +380,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ BUG FUNNY ------",
       "width": 60,
@@ -465,10 +417,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "- EASY COME, EASY GO! -",
       "width": 60,
@@ -506,10 +454,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- RUN FOR LIFE! ----",
       "width": 60,
@@ -547,10 +491,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- IGNORE THEM -----",
       "width": 60,
@@ -588,10 +528,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ ANONYMOUS ------",
       "width": 60,
@@ -629,10 +565,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ FALL OUT! ------",
       "width": 60,
@@ -670,10 +602,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- ONE THING ... ----",
       "width": 60,
@@ -711,10 +639,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- JUST DO IT! -----",
       "width": 60,
@@ -752,10 +676,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-------- BANG! --------",
       "width": 60,
@@ -793,10 +713,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------- QUICKY! -------",
       "width": 60,
@@ -834,10 +750,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- CRAZY HARRY -----",
       "width": 60,
@@ -875,10 +787,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- MINOTAURUS! -----",
       "width": 60,
@@ -916,10 +824,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": true,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------- GRAVITY -------",
       "width": 60,
@@ -957,10 +861,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": true,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- UP AND DOWN -----",
       "width": 60,
@@ -998,10 +898,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ BOMB TIME ------",
       "width": 60,
@@ -1039,10 +935,6 @@ Object {
       "initialFreezeZonks": true,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": true,
@@ -1088,10 +980,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-------- YAWN! --------",
       "width": 60,
@@ -1129,10 +1017,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "--------- ONE ---------",
       "width": 60,
@@ -1170,10 +1054,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": true,
@@ -1219,10 +1099,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- BABA'S WORK -----",
       "width": 60,
@@ -1260,10 +1136,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "--------- TNT ---------",
       "width": 60,
@@ -1301,10 +1173,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- NO PROBLEM! -----",
       "width": 60,
@@ -1342,10 +1210,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- TIME TO OPEN! ----",
       "width": 60,
@@ -1383,10 +1247,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- EASY BUSINESS ----",
       "width": 60,
@@ -1424,10 +1284,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-INSIDE-OUTSIDE-INSIDE-",
       "width": 60,
@@ -1465,10 +1321,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": false,
@@ -1521,10 +1373,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- NO MIRACLE! -----",
       "width": 60,
@@ -1562,10 +1410,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-------- PUSH! --------",
       "width": 60,
@@ -1603,10 +1447,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- NEARLY BORING ----",
       "width": 60,
@@ -1644,10 +1484,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ BOMBASTIC ------",
       "width": 60,
@@ -1685,10 +1521,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------- SIMPLE! -------",
       "width": 60,
@@ -1726,10 +1558,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "--- MIND THE STONES ---",
       "width": 60,
@@ -1767,10 +1595,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- TIME-RUNNER -----",
       "width": 60,
@@ -1808,10 +1632,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "--- LITTLE PLEASURE ---",
       "width": 60,
@@ -1849,10 +1669,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "--- ANTI-CLOCKWISE! ---",
       "width": 60,
@@ -1890,10 +1706,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ TELEPATHY ------",
       "width": 60,
@@ -1931,10 +1743,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ EASY WORK ------",
       "width": 60,
@@ -1972,10 +1780,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- CHAMBER-MUSIC ----",
       "width": 60,
@@ -2013,10 +1817,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "--- LOOKS DIFFICULT ---",
       "width": 60,
@@ -2054,10 +1854,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-- READY-STEADY-GO!! --",
       "width": 60,
@@ -2095,10 +1891,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": true,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- FALL-FESTIVAL ----",
       "width": 60,
@@ -2136,10 +1928,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- DON'T WORRY!! ----",
       "width": 60,
@@ -2177,10 +1965,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- STATE OF MIND ----",
       "width": 60,
@@ -2218,10 +2002,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "--- DO IT YOURSELF! ---",
       "width": 60,
@@ -2259,10 +2039,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------- FILL IN -------",
       "width": 60,
@@ -2300,10 +2076,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-- CORNER CONFUSION! --",
       "width": 60,
@@ -2341,10 +2113,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": false,
@@ -2390,10 +2158,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": false,
@@ -2446,10 +2210,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "--- THOSE WE LIKE!! ---",
       "width": 60,
@@ -2487,10 +2247,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- ALL TOGETHER! ----",
       "width": 60,
@@ -2528,10 +2284,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-------- VICE- --------",
       "width": 60,
@@ -2569,10 +2321,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-------- VERSA --------",
       "width": 60,
@@ -2610,10 +2358,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": false,
@@ -2666,10 +2410,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-------- GUMBO --------",
       "width": 60,
@@ -2707,10 +2447,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": false,
@@ -2763,10 +2499,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- THERE YOU GO! ----",
       "width": 60,
@@ -2804,10 +2536,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": true,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- PATHFINDER! -----",
       "width": 60,
@@ -2845,10 +2573,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- ISLAND HOPPER ----",
       "width": 60,
@@ -2886,10 +2610,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- GET THEM OUT! ----",
       "width": 60,
@@ -2927,10 +2647,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- TOUGH GOING -----",
       "width": 60,
@@ -2968,10 +2684,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ HURRY UP! ------",
       "width": 60,
@@ -3009,10 +2721,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "- TOUGH BUT POSSIBLE! -",
       "width": 60,
@@ -3050,10 +2758,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- HEAD-HUNTER -----",
       "width": 60,
@@ -3091,10 +2795,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "--- COMMUNITY WORK! ---",
       "width": 60,
@@ -3132,10 +2832,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": false,
@@ -3202,10 +2898,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "--- INSPIN-OUTSPIN! ---",
       "width": 60,
@@ -3243,10 +2935,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-------- NICE ---------",
       "width": 60,
@@ -3284,10 +2972,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": false,
@@ -3340,10 +3024,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- LITTLE DETAIL ----",
       "width": 60,
@@ -3381,10 +3061,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- TRANSPORT IT! ----",
       "width": 60,
@@ -3422,10 +3098,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-- DON'T WASTE THEM! --",
       "width": 60,
@@ -3463,10 +3135,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-CLASSIC ENTERTAINMENT-",
       "width": 60,
@@ -3504,10 +3172,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ DIAGONAL! ------",
       "width": 60,
@@ -3545,10 +3209,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- TIME IS INFO! ----",
       "width": 60,
@@ -3586,10 +3246,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- FUN-TASTIC! -----",
       "width": 60,
@@ -3627,10 +3283,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- ALL THAT FUSS ----",
       "width": 60,
@@ -3668,10 +3320,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- A PRO'S WORK! ----",
       "width": 60,
@@ -3709,10 +3357,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-------- CRASH --------",
       "width": 60,
@@ -3750,10 +3394,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-- SEE YOU TOMORROW! --",
       "width": 60,
@@ -3791,10 +3431,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- FLIP AND FLOP ----",
       "width": 60,
@@ -3832,10 +3468,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- TRIPLE FORK -----",
       "width": 60,
@@ -3873,10 +3505,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- KNOW THAT ? -----",
       "width": 60,
@@ -3914,10 +3542,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- VOYAGER III -----",
       "width": 60,
@@ -3955,10 +3579,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "HAM AND CHEESE SANDWICH",
       "width": 60,
@@ -3996,10 +3616,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": false,
@@ -4045,10 +3661,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-EINSTEIN'S FAVOURITE!-",
       "width": 60,
@@ -4086,10 +3698,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ GOOD LUCK ------",
       "width": 60,
@@ -4127,10 +3735,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------- CRACKER -------",
       "width": 60,
@@ -4168,10 +3772,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": false,
@@ -4224,10 +3824,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- MIXED SALAD -----",
       "width": 60,
@@ -4265,10 +3861,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-- JOYSTICK-HANDLING --",
       "width": 60,
@@ -4306,10 +3898,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "--------- IQ! ---------",
       "width": 60,
@@ -4347,10 +3935,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": true,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": false,
@@ -4431,10 +4015,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- SUB-EFFECTS -----",
       "width": 60,
@@ -4472,10 +4052,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ KNOW-HOW! ------",
       "width": 60,
@@ -4513,10 +4089,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "-------- CHAOS --------",
       "width": 60,
@@ -4554,10 +4126,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- ONE'S MISSING ----",
       "width": 60,
@@ -4595,10 +4163,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "----- WATCH OUT!! -----",
       "width": 60,
@@ -4636,10 +4200,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "---- FIND THE WAY! ----",
       "width": 60,
@@ -4677,10 +4237,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": false,
@@ -4740,10 +4296,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "- UPSTAIRS-DOWNSTAIRS -",
       "width": 60,
@@ -4781,10 +4333,6 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [
         Object {
           "setsFreezeEnemies": false,
@@ -4844,17 +4392,11 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
-      "resizable": Object {
-        "maxHeight": 32767,
-        "maxWidth": 32767,
-      },
       "specialPorts": Array [],
       "title": "------ BRAINMAN! ------",
       "width": 60,
     },
   ],
   "levelsCount": 111,
-  "maxLevelsCount": 32767,
-  "minLevelsCount": 1,
 }
 `;

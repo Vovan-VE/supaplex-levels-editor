@@ -12,10 +12,6 @@ Object {
   "initialFreezeZonks": true,
   "initialGravity": true,
   "maxTitleLength": 23,
-  "resizable": Object {
-    "maxHeight": 32767,
-    "maxWidth": 32767,
-  },
   "specialPorts": Array [
     Object {
       "setsFreezeEnemies": true,
@@ -44,10 +40,6 @@ Object {
   "initialFreezeZonks": true,
   "initialGravity": true,
   "maxTitleLength": 23,
-  "resizable": Object {
-    "maxHeight": 32767,
-    "maxWidth": 32767,
-  },
   "specialPorts": Array [
     Object {
       "setsFreezeEnemies": true,
@@ -76,10 +68,6 @@ Object {
   "initialFreezeZonks": true,
   "initialGravity": true,
   "maxTitleLength": 23,
-  "resizable": Object {
-    "maxHeight": 32767,
-    "maxWidth": 32767,
-  },
   "specialPorts": Array [
     Object {
       "setsFreezeEnemies": true,

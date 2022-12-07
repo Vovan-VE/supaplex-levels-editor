@@ -22,6 +22,8 @@ import {
 import { IBounds } from "utils/rect";
 import { localStorageDriver } from "../_utils/persistent";
 import {
+  $currentDriverFormat,
+  $currentDriverName,
   $currentKey,
   $currentLevelsetFile,
   $levelsets,
@@ -224,7 +226,9 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
   .on(_withCurrentFile(insertAtCurrentLevel), (map, { current: file }) =>
     RoMap.update(map, file.key, (buf) =>
       buf.currentIndex === undefined ||
-      buf.levels.length >= (file.levelset.maxLevelsCount ?? Infinity)
+      buf.levels.length >=
+        (getDriverFormat(file.driverName, file.driverFormat)?.maxLevelsCount ??
+          Infinity)
         ? buf
         : {
             ...buf,
@@ -238,7 +242,9 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
   // append new level into current levelset
   .on(_withCurrentFile(appendLevel), (map, { current: file }) =>
     RoMap.update(map, file.key, (buf) =>
-      buf.levels.length >= (file.levelset.maxLevelsCount ?? Infinity)
+      buf.levels.length >=
+      (getDriverFormat(file.driverName, file.driverFormat)?.maxLevelsCount ??
+        Infinity)
         ? buf
         : {
             ...buf,
@@ -370,15 +376,19 @@ sample({
     files: _$buffersMap,
     key: $currentKey,
     _files: $levelsets,
+    _drv: $currentDriverName,
+    _fmt: $currentDriverFormat,
   },
-  filter: ({ files, key, _files }) =>
+  filter: ({ files, key, _files, _drv, _fmt }) =>
     Boolean(
       key &&
+        _drv &&
+        _fmt &&
         files.has(key) &&
         _files.has(key) &&
         files.get(key)!.currentIndex !== undefined &&
         files.get(key)!.levels.length >
-          _files.get(key)!.levelset.minLevelsCount,
+          (getDriverFormat(_drv, _fmt)?.minLevelsCount ?? 1),
     ),
   fn: ({ files, key }): _LevelRefStrict => [
     key!,
