@@ -88,6 +88,13 @@ class LevelFooter implements ILevelFooter {
       }
 
       if (data.length > FOOTER_BYTE_LENGTH && data[data.length - 1] === 0xff) {
+        // SPFIX63a.pdf:
+        //
+        // Original *.BIN demo used first byte to store target level index.
+        // In *.SP file the level is attached, but the first byte is still
+        // presented and unused.
+        //
+        // This is why here is `+1`.
         this.#demo = data.slice(FOOTER_BYTE_LENGTH + 1, data.length - 1);
       }
     } else {
@@ -122,6 +129,7 @@ class LevelFooter implements ILevelFooter {
       result.set(main, 0);
       result[main.length] = 0;
       result.set(demo, main.length + 1);
+      // See the comment for similar `+1` in `constructor`.
       result[main.length + 1 + demo.length] = 0xff;
       return result;
     }

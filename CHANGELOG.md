@@ -2,6 +2,7 @@
 
 ## 0.6.0 (DEV)
 
+- Add: `*.sp` files support.
 - Enh: Minor UI enhancements.
 - Internal: Refactored Drivers, so now it's only one "Supaplex" Driver with
   different file formats.

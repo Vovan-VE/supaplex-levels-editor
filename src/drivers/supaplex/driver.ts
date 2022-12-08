@@ -1,4 +1,4 @@
-import { DAT, MPX } from "./formats";
+import { DAT, MPX, SP } from "./formats";
 import { LevelConfigurator } from "./LevelConfigurator";
 import { ISupaplexDriver } from "./types";
 import { Tile } from "./Tile";
@@ -12,6 +12,7 @@ export const SupaplexDriver: ISupaplexDriver = {
   formats: {
     mpx: MPX,
     dat: DAT,
+    sp: SP,
   },
   defaultFormat: "dat",
 };

@@ -1,5 +1,5 @@
 import { clipRect, inRect, RectA } from "utils/rect";
-import { DemoSeed, ITilesStreamItem, IWithDemo, IWithDemoSeed } from "../types";
+import { DemoSeed, ITilesStreamItem } from "../types";
 import { AnyBox } from "./AnyBox";
 import { createLevelBody } from "./body";
 import { createLevelFooter } from "./footer";
@@ -36,7 +36,7 @@ class SupaplexLevel implements ISupaplexLevel {
   #body;
   #footer;
 
-  constructor(box: AnyBox, body: ILevelBody, footer: ILevelFooter & IWithDemo) {
+  constructor(box: AnyBox, body: ILevelBody, footer: ILevelFooter) {
     this.#box = box;
     this.#body = body;
     this.#footer = footer;
@@ -81,7 +81,7 @@ class SupaplexLevel implements ISupaplexLevel {
     }
     return next;
   }
-  #withFooter(footer: ILevelFooter & IWithDemoSeed): this {
+  #withFooter(footer: ILevelFooter): this {
     if (footer === this.#footer) {
       return this;
     }
@@ -96,7 +96,7 @@ class SupaplexLevel implements ISupaplexLevel {
     return next;
   }
   batch(update: (b: this) => this) {
-    let nextFooter: ILevelFooter & IWithDemoSeed;
+    let nextFooter: ILevelFooter;
     const nextBody = this.#body.batch((body) => {
       this.#batchingLevel++;
       let result: this;

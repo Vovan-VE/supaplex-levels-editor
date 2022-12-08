@@ -56,7 +56,6 @@ Also:
 ## Planned features (unsorted)
 
 - More editing tools at least those from Winplex Collection Editor.
-- More file formats to support.
 - Conversion between formats.
 - Compare levels.
 - End User Manual.
