@@ -28,6 +28,7 @@ import {
 } from "ui/feedback";
 import { Field, Input, IntegerInput, Select, SelectOption } from "ui/input";
 import { ColorType } from "ui/types";
+import { minmax } from "utils/number";
 import { strCmp } from "utils/strings";
 import cl from "./NewFile.module.scss";
 
@@ -82,7 +83,20 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const [height, setHeight] = useState<number | null>(null);
 
   const format = getDriverFormat(driverName, driverFormat)!;
-  const { resizable } = format;
+  const { resizable, minLevelsCount, maxLevelsCount } = format;
+  useEffect(
+    () =>
+      setLevelsCount((n) =>
+        n === null
+          ? null
+          : minmax(
+              n,
+              minLevelsCount,
+              maxLevelsCount ?? Number.MAX_SAFE_INTEGER,
+            ),
+      ),
+    [minLevelsCount, maxLevelsCount],
+  );
   const level = useMemo(() => format.createLevel(), [format]);
   const { maxTitleLength, width: defaultWidth, height: defaultHeight } = level;
 
@@ -258,11 +272,7 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
         </Field>
         <Field
           label="Levels count"
-          error={intRangeError(
-            levelsCount,
-            format.minLevelsCount,
-            format.maxLevelsCount,
-          )}
+          error={intRangeError(levelsCount, minLevelsCount, maxLevelsCount)}
         >
           <IntegerInput
             value={levelsCount}
