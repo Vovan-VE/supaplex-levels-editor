@@ -1,34 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`level constructor buffer 1`] = `
+exports[`level constructor data 1`] = `
 Object {
   "cells": Array [
-    "o                                                           ",
-    " ·                                                          ",
-    "  @                                                         ",
-    "   &                                                        ",
-    "    ▢                                                       ",
-    "     ▓                                                      ",
-    "      E                                                     ",
-    "⚡      D                                                    ",
-    " ⊏      >                                                   ",
-    "  ⊐      v                                                  ",
-    "   0      <                                                 ",
-    "    1      ^                                                ",
-    "     2      ⊃                                               ",
-    "      3      ∪                                              ",
-    "       ▧      ⊂                                             ",
-    "        5      ∩                                            ",
-    "         6      ✂                                           ",
-    "          7      Y                                          ",
-    "           8      T                                         ",
-    "            9      R                                        ",
-    "             ⊓      |                                       ",
-    "              ⊔      -                                      ",
-    "               ⬚      +                                     ",
-    "                WW     ✧                                    ",
+    " ∩&",
+    "o@▢",
   ],
-  "height": 24,
+  "demo": null,
+  "height": 2,
   "infotronsNeed": 42,
   "initialFreezeZonks": true,
   "initialGravity": true,
@@ -38,12 +17,12 @@ Object {
       "setsFreezeEnemies": true,
       "setsFreezeZonks": true,
       "setsGravity": true,
-      "x": 12,
-      "y": 12,
+      "x": 1,
+      "y": 0,
     },
   ],
   "title": "-- Lorem ipsum --      ",
-  "width": 60,
+  "width": 3,
 }
 `;
 
@@ -75,6 +54,7 @@ Object {
     "                                                            ",
     "                                                            ",
   ],
+  "demo": null,
   "height": 24,
   "infotronsNeed": 0,
   "initialFreezeZonks": false,
@@ -83,5 +63,75 @@ Object {
   "specialPorts": Array [],
   "title": "                       ",
   "width": 60,
+}
+`;
+
+exports[`level resize simple 1`] = `
+Object {
+  "cells": Array [
+    " ∩&  ",
+    "o@▢  ",
+    "     ",
+    "     ",
+  ],
+  "demo": null,
+  "height": 4,
+  "infotronsNeed": 42,
+  "initialFreezeZonks": true,
+  "initialGravity": true,
+  "maxTitleLength": 23,
+  "specialPorts": Array [
+    Object {
+      "setsFreezeEnemies": true,
+      "setsFreezeZonks": true,
+      "setsGravity": true,
+      "x": 1,
+      "y": 0,
+    },
+  ],
+  "title": "-- Lorem ipsum --      ",
+  "width": 5,
+}
+`;
+
+exports[`level resize simple 2`] = `
+Object {
+  "cells": Array [
+    " ∩&&⊃",
+    "o@▢  ",
+    "o    ",
+    "∪    ",
+  ],
+  "demo": null,
+  "height": 4,
+  "infotronsNeed": 42,
+  "initialFreezeZonks": true,
+  "initialGravity": true,
+  "maxTitleLength": 23,
+  "specialPorts": Array [
+    Object {
+      "setsFreezeEnemies": true,
+      "setsFreezeZonks": true,
+      "setsGravity": true,
+      "x": 1,
+      "y": 0,
+    },
+    Object {
+      "setsFreezeEnemies": true,
+      "setsFreezeZonks": false,
+      "setsGravity": true,
+      "x": 4,
+      "y": 0,
+    },
+    Object {
+      "setsFreezeEnemies": true,
+      "setsFreezeZonks": true,
+      "setsGravity": false,
+      "x": 0,
+      "y": 3,
+    },
+  ],
+  "title": "-- Lorem ipsum --      ",
+  "width": 5,
 }
 `;

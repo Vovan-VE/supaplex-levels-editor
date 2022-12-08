@@ -1,11 +1,11 @@
-import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../../../supaplex/box";
-import { fillLevelBorder } from "../../../supaplex/fillLevelBorder";
-import { IMegaplexFormat } from "../../types";
+import { fillLevelBorder } from "../../fillLevelBorder";
 import { createLevel } from "../../level";
 import { createLevelset } from "../../levelset";
+import { ISupaplexFormat } from "../../types";
+import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../std";
 import { readLevelset, writeLevelset } from "./io";
 
-export const MPX: IMegaplexFormat = {
+export const MPX: ISupaplexFormat = {
   title: "MPX",
   fileExtensionDefault: "mpx",
   resizable: {
@@ -18,7 +18,7 @@ export const MPX: IMegaplexFormat = {
   supportReport: () => null,
   readLevelset,
   writeLevelset,
-  createLevelset,
+  createLevelset: (levels) => createLevelset(levels ?? 1),
   createLevel: ({
     width = LEVEL_WIDTH,
     height = LEVEL_HEIGHT,

@@ -1,47 +1,68 @@
 import { clipRect, inRect, RectA } from "utils/rect";
-import { DemoSeed, ITilesStreamItem, IWithDemoSeed } from "../types";
-import { ISupaplexLevel, ISupaplexLevelRegion } from "./types";
+import { DemoSeed, ITilesStreamItem, IWithDemo, IWithDemoSeed } from "../types";
+import { AnyBox } from "./AnyBox";
 import { createLevelBody } from "./body";
-import { BODY_LENGTH, LEVEL_HEIGHT, LEVEL_WIDTH, supaplexBox } from "./box";
-import { createLevelFooter, FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "./footer";
-import { isSpecPort } from "./tiles-id";
+import { createLevelFooter } from "./footer";
+import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "./formats/std";
 import { ILevelBody, ILevelFooter, ISupaplexSpecPortProps } from "./internal";
+import { isSpecPort, TILE_SPACE } from "./tiles-id";
+import { ISupaplexLevel, ISupaplexLevelRegion } from "./types";
 
-export const LEVEL_BYTES_LENGTH = BODY_LENGTH + FOOTER_BYTE_LENGTH;
-
-const sliceFooter = (data?: Uint8Array) => {
+const sliceFooter = (bodyLength: number, data?: Uint8Array) => {
   if (data) {
-    if (
-      process.env.NODE_ENV !== "production" &&
-      data.length !== LEVEL_BYTES_LENGTH
-    ) {
+    const minLength = bodyLength + FOOTER_BYTE_LENGTH;
+    if (process.env.NODE_ENV !== "production" && data.length < minLength) {
       throw new Error(
-        `Invalid buffer length ${data.length}, expected ${LEVEL_BYTES_LENGTH}`,
+        `Invalid buffer length ${data.length}, expected at least ${minLength}`,
       );
     }
-    return data.slice(BODY_LENGTH);
+    return data.slice(bodyLength);
   }
 };
 
-export const createLevel = (data?: Uint8Array): ISupaplexLevel => {
-  const footer = createLevelFooter(sliceFooter(data));
-  const body = createLevelBody(supaplexBox, data?.slice(0, BODY_LENGTH));
-  return new SupaplexLevel(body, footer);
+export const createLevel = (
+  width: number,
+  height: number,
+  data?: Uint8Array,
+): ISupaplexLevel => {
+  const box = new AnyBox(width, height);
+  const footer = createLevelFooter(box.width, sliceFooter(box.length, data));
+  const body = createLevelBody(box, data?.slice(0, box.length));
+  return new SupaplexLevel(box, body, footer);
 };
 
-export const createLevelFromArrayBuffer = (
-  buffer: ArrayBufferLike,
-  byteOffset?: number,
-): ISupaplexLevel =>
-  createLevel(new Uint8Array(buffer, byteOffset, LEVEL_BYTES_LENGTH));
-
 class SupaplexLevel implements ISupaplexLevel {
+  readonly #box: AnyBox;
   #body;
   #footer;
 
-  constructor(body: ILevelBody, footer: ILevelFooter & IWithDemoSeed) {
+  constructor(box: AnyBox, body: ILevelBody, footer: ILevelFooter & IWithDemo) {
+    this.#box = box;
     this.#body = body;
     this.#footer = footer;
+  }
+
+  get length() {
+    return this.#box.length + this.#footer.length;
+  }
+
+  get raw() {
+    const result = new Uint8Array(this.length);
+    result.set(this.#footer.getRaw(), this.#box.length);
+    result.set(this.#body.raw, 0);
+    return result;
+  }
+
+  get body() {
+    return this.#body;
+  }
+
+  get width() {
+    return this.#box.width;
+  }
+
+  get height() {
+    return this.#box.height;
   }
 
   #batchingLevel = 0;
@@ -54,7 +75,7 @@ class SupaplexLevel implements ISupaplexLevel {
       this.#body = body;
       return this;
     }
-    const next = new SupaplexLevel(body, this.#footer) as this;
+    const next = new SupaplexLevel(this.#box, body, this.#footer) as this;
     if (this.#batchingLevel > 0) {
       next.#isBatchCopy = true;
     }
@@ -68,7 +89,7 @@ class SupaplexLevel implements ISupaplexLevel {
       this.#footer = footer;
       return this;
     }
-    const next = new SupaplexLevel(this.#body, footer) as this;
+    const next = new SupaplexLevel(this.#box, this.#body, footer) as this;
     if (this.#batchingLevel > 0) {
       next.#isBatchCopy = true;
     }
@@ -93,27 +114,45 @@ class SupaplexLevel implements ISupaplexLevel {
     return this.#withBody(nextBody).#withFooter(nextFooter!);
   }
 
-  get length() {
-    return BODY_LENGTH + this.#footer.length;
-  }
+  resize(width: number, height: number) {
+    const origSpecPorts = [...this.getSpecPorts()];
 
-  get raw() {
-    const result = new Uint8Array(this.length);
-    result.set(this.#footer.getRaw(), BODY_LENGTH);
-    result.set(this.#body.raw, 0);
-    return result;
-  }
+    let src: this = this;
+    // reducing any dimension with spec port deletion
+    if (
+      (width < this.#box.width && origSpecPorts.some((p) => p.x >= width)) ||
+      (height < this.#box.height && origSpecPorts.some((p) => p.y >= height))
+    ) {
+      // delete spec ports entry
+      for (let p of origSpecPorts) {
+        if (
+          (width < this.#box.width && p.x >= width) ||
+          (height < this.#box.height && p.y >= height)
+        ) {
+          src = src.setTile(p.x, p.y, TILE_SPACE);
+        }
+      }
+    }
 
-  get body() {
-    return this.#body;
-  }
+    const box = new AnyBox(width, height);
+    const body = createLevelBody(box).batch((body) => {
+      for (let y = Math.min(height, this.#box.height); y-- > 0; ) {
+        for (let x = Math.min(width, this.#box.width); x-- > 0; ) {
+          body = body.setTile(x, y, src.getTile(x, y));
+        }
+      }
+      return body;
+    });
 
-  get width() {
-    return LEVEL_WIDTH;
-  }
+    let footer = createLevelFooter(
+      width,
+      src.#footer.getRaw(),
+    ).clearSpecPorts();
+    for (const p of src.getSpecPorts()) {
+      footer = footer.setSpecPort(p.x, p.y, p);
+    }
 
-  get height() {
-    return LEVEL_HEIGHT;
+    return new SupaplexLevel(box, body, footer) as this;
   }
 
   getTile(x: number, y: number) {
@@ -121,12 +160,12 @@ class SupaplexLevel implements ISupaplexLevel {
   }
 
   setTile(x: number, y: number, value: number) {
-    const prevTile = this.#body.getTile(x, y);
-    if (prevTile === value) {
+    const prev = this.#body.getTile(x, y);
+    if (prev === value) {
       return this;
     }
     let next: this = this.#withBody(this.#body.setTile(x, y, value));
-    if (isSpecPort(prevTile)) {
+    if (isSpecPort(prev)) {
       if (!isSpecPort(value)) {
         next = next.#withFooter(next.#footer.deleteSpecPort(x, y));
       }
@@ -243,12 +282,12 @@ class SupaplexLevel implements ISupaplexLevel {
   }
 
   findSpecPort(x: number, y: number) {
-    supaplexBox.validateCoords?.(x, y);
+    this.#box.validateCoords?.(x, y);
     return this.#footer.findSpecPort(x, y);
   }
 
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps) {
-    supaplexBox.validateCoords?.(x, y);
+    this.#box.validateCoords?.(x, y);
     return this.#withFooter(this.#footer.setSpecPort(x, y, props));
   }
 
@@ -258,5 +297,13 @@ class SupaplexLevel implements ISupaplexLevel {
 
   setDemoSeed(seed: DemoSeed) {
     return this.#withFooter(this.#footer.setDemoSeed(seed));
+  }
+
+  get demo() {
+    return this.#footer.demo;
+  }
+
+  setDemo(demo: Uint8Array | null) {
+    return this.#withFooter(this.#footer.setDemo(demo));
   }
 }

@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { Checkbox, IntegerInput, useInputDebounce } from "ui/input";
 import { LevelConfiguratorProps } from "../types";
+import { InlineTile } from "./InlineTile";
 import { ISupaplexLevel } from "./types";
 import { TILE_ELECTRON, TILE_INFOTRON } from "./tiles-id";
-import { InlineTile } from "./InlineTile";
 import cl from "./LevelConfigurator.module.scss";
 
 export const LevelConfigurator = <L extends ISupaplexLevel>({

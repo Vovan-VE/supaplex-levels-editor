@@ -10,7 +10,7 @@ import { withPersistent, withPersistentMap } from "@cubux/effector-persistent";
 import * as RoMap from "@cubux/readonly-map";
 import { createIndexedDBDriver, createNullDriver } from "@cubux/storage-driver";
 import { APP_STORAGE_PREFIX } from "configs";
-import { getDriverFormat } from "drivers";
+import { FALLBACK_FORMAT, getDriverFormat, REPLACED_DRIVERS } from "drivers";
 import { generateKey } from "utils/strings";
 import { localStorageDriver } from "../_utils/persistent";
 import {
@@ -118,10 +118,6 @@ sample({
   target: _willSetCurrentKeyFx,
 });
 
-const FALLBACK_FORMAT: Partial<Record<string, string>> = {
-  supaplex: "dat",
-  mpx: "mpx",
-};
 interface _DbLevelsetFile extends Omit<LevelsetFileData, "file"> {
   fileBuffer: ArrayBuffer;
 }
@@ -154,15 +150,16 @@ export const $levelsets = withPersistentMap(
     unserialize: ({
       name,
       driverName,
-      driverFormat = FALLBACK_FORMAT[driverName] ?? "_unknown_",
+      driverFormat,
       key,
       fileBuffer,
     }: _DbLevelsetFile) =>
       fulfillFileLevels({
         file: new Blob([fileBuffer]),
         name,
-        driverName,
-        driverFormat,
+        driverName: REPLACED_DRIVERS[driverName] || driverName,
+        driverFormat:
+          driverFormat ?? FALLBACK_FORMAT[driverName] ?? "_unknown_",
         key,
       }),
   },
@@ -210,7 +207,4 @@ export const $currentDriverName = $currentLevelsetFile.map((f) =>
 );
 export const $currentDriverFormat = $currentLevelsetFile.map((f) =>
   f ? f.driverFormat : null,
-);
-export const $currentLevelset = $currentLevelsetFile.map((f) =>
-  f ? f.levelset : null,
 );

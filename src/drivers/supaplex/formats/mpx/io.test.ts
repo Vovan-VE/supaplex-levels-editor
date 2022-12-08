@@ -1,5 +1,5 @@
-import { readLevelset, writeLevelset } from "./io";
 import { dumpLevelset, readExampleFile } from "../../helpers.dev";
+import { readLevelset, writeLevelset } from "./io";
 
 it("read mpx levelset", async () => {
   const data = await readExampleFile("levels.mpx");

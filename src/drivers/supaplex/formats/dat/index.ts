@@ -1,8 +1,8 @@
-import { ISupaplexFormat } from "../../types";
 import { fillLevelBorder } from "../../fillLevelBorder";
-import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../../box";
 import { createLevel } from "../../level";
 import { createLevelset } from "../../levelset";
+import { ISupaplexFormat } from "../../types";
+import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../std";
 import { readLevelset, writeLevelset } from "./io";
 
 export const DAT: ISupaplexFormat = {
@@ -20,7 +20,7 @@ export const DAT: ISupaplexFormat = {
   supportReport: () => null,
   readLevelset,
   writeLevelset,
-  createLevelset,
+  createLevelset: (levels) => createLevelset(levels ?? 111),
   createLevel: ({ borderTile } = {}) =>
-    fillLevelBorder(createLevel(), borderTile),
+    fillLevelBorder(createLevel(LEVEL_WIDTH, LEVEL_HEIGHT), borderTile),
 };

@@ -1,21 +1,35 @@
 import { SupaplexDriver } from "./supaplex";
-import { MegaplexDriver } from "./megaplex";
 import { IBaseDriver } from "./types";
 
 export * from "./types";
 
 const Drivers = {
   supaplex: SupaplexDriver,
-  mpx: MegaplexDriver,
 } as const;
 
+const ReplacedDrivers = {
+  mpx: "supaplex",
+} as const;
+export const REPLACED_DRIVERS: Readonly<Partial<Record<string, string>>> =
+  ReplacedDrivers;
+// type ReplacedDriverName = keyof typeof ReplacedDrivers;
+
+export const FALLBACK_FORMAT: Partial<Record<string, string>> = {
+  supaplex: "dat",
+  mpx: "mpx",
+};
+
 const DriversHash: Partial<Record<string, IBaseDriver>> = Drivers as any;
+for (const [old, actual] of Object.entries(ReplacedDrivers)) {
+  DriversHash[old] = DriversHash[actual];
+}
 
 type TDrivers = typeof Drivers;
 export type DriverName = keyof TDrivers;
+// export type StoredDriverName = DriverName | ReplacedDriverName;
 
-export const DISPLAY_ORDER: readonly DriverName[] = ["supaplex", "mpx"];
-const DETECT_ORDER: readonly DriverName[] = ["mpx", "supaplex"];
+export const DISPLAY_ORDER: readonly DriverName[] = ["supaplex"];
+const DETECT_ORDER: readonly DriverName[] = ["supaplex"];
 
 export const detectDriverFormat = (
   file: ArrayBuffer,

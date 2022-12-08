@@ -1,15 +1,20 @@
-import { ISupaplexLevelset } from "../../types";
-import { createLevelFromArrayBuffer, LEVEL_BYTES_LENGTH } from "../../level";
+import { createLevel } from "../../level";
 import { createLevelset } from "../../levelset";
+import { ISupaplexLevel, ISupaplexLevelset } from "../../types";
+import { LEVEL_BYTES_LENGTH, LEVEL_HEIGHT, LEVEL_WIDTH } from "../std";
 
-function* levelsFromBuffer(buffer: ArrayBuffer) {
+function* levelsFromBuffer(buffer: ArrayBuffer): Iterable<ISupaplexLevel> {
   if (buffer.byteLength % LEVEL_BYTES_LENGTH) {
     throw new Error("Invalid file size: not a module of level size");
   }
 
   const count = Math.floor(buffer.byteLength / LEVEL_BYTES_LENGTH);
   for (let i = 0; i < count; i++) {
-    yield createLevelFromArrayBuffer(buffer, i * LEVEL_BYTES_LENGTH);
+    yield createLevel(
+      LEVEL_WIDTH,
+      LEVEL_HEIGHT,
+      new Uint8Array(buffer, i * LEVEL_BYTES_LENGTH, LEVEL_BYTES_LENGTH),
+    );
   }
 }
 

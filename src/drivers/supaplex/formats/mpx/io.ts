@@ -1,7 +1,7 @@
-import { IMegaplexLevel, IMegaplexLevelset } from "../../types";
-import { FOOTER_BYTE_LENGTH } from "../../../supaplex/footer";
 import { createLevel } from "../../level";
 import { createLevelset } from "../../levelset";
+import { ISupaplexLevel, ISupaplexLevelset } from "../../types";
+import { FOOTER_BYTE_LENGTH } from "../std";
 
 // MPX format
 // 04 : "MPX "
@@ -47,7 +47,7 @@ const setInt32LE = (buffer: Uint8Array, byteOffset: number, value: number) => {
   new DataView(buffer.buffer).setInt32(byteOffset, value, true);
 };
 
-export const readLevelset = (file: ArrayBuffer): IMegaplexLevelset => {
+export const readLevelset = (file: ArrayBuffer): ISupaplexLevelset => {
   if (file.byteLength < MIN_FILE_SIZE || !cmpUint8Array(file, 0, MPX_SIGN)) {
     throw new Error("Unrecognized file format");
   }
@@ -78,7 +78,7 @@ export const readLevelset = (file: ArrayBuffer): IMegaplexLevelset => {
     }
   }
 
-  const levels: IMegaplexLevel[] = [];
+  const levels: ISupaplexLevel[] = [];
   for (let i = 0; i < levelsCount; i++) {
     levels.push(
       createLevel(
@@ -92,7 +92,7 @@ export const readLevelset = (file: ArrayBuffer): IMegaplexLevelset => {
   return createLevelset(levels);
 };
 
-export const writeLevelset = (levelset: IMegaplexLevelset): ArrayBuffer => {
+export const writeLevelset = (levelset: ISupaplexLevelset): ArrayBuffer => {
   const levelsCount = levelset.levelsCount;
   const widths: number[] = [];
   const heights: number[] = [];

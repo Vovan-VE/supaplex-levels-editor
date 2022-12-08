@@ -5,6 +5,7 @@ import {
   IBaseLevelset,
   IBaseTile,
   ILevelRegion,
+  IWithDemo,
 } from "../types";
 import {
   ILevelBody,
@@ -15,11 +16,13 @@ import {
 export interface ISupaplexLevelRegion extends ILevelRegion {
   readonly specPorts: readonly ISupaplexSpecPort[];
 }
-export interface ISupaplexLevel extends IBaseLevel {
+export interface ISupaplexLevel extends IBaseLevel, IWithDemo {
   copyRegion(x: number, y: number, w: number, h: number): ISupaplexLevelRegion;
   pasteRegion(x: number, y: number, region: ISupaplexLevelRegion): this;
+  readonly length: number;
   readonly raw: Uint8Array;
   readonly body: ILevelBody;
+  resize(width: number, height: number): this;
   readonly initialGravity: boolean;
   setInitialGravity(on: boolean): this;
   readonly initialFreezeZonks: boolean;

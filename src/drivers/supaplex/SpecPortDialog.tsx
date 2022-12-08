@@ -5,7 +5,7 @@ import { Dialog } from "ui/feedback";
 import { Checkbox } from "ui/input";
 import { ColorType } from "ui/types";
 import { InteractionDialogProps } from "../types";
-import { ISupaplexLevel } from "./types";
+import { InlineTile } from "./InlineTile";
 import { ISupaplexSpecPortProps } from "./internal";
 import {
   TILE_ELECTRON,
@@ -13,7 +13,7 @@ import {
   TILE_SNIK_SNAK,
   TILE_ZONK,
 } from "./tiles-id";
-import { InlineTile } from "./InlineTile";
+import { ISupaplexLevel } from "./types";
 
 const fallbackProps: ISupaplexSpecPortProps = {
   setsGravity: false,

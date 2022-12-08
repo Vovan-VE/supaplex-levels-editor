@@ -15,4 +15,5 @@ export const dumpLevel = (level: ISupaplexLevel) => ({
   maxTitleLength: level.maxTitleLength,
   title: level.title,
   specialPorts: [...level.getSpecPorts()],
+  demo: level.demo,
 });

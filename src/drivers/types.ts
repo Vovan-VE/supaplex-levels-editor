@@ -1,5 +1,5 @@
 import { CSSProperties, FC, ReactNode } from "react";
-import { CellContextEventSnapshot } from "models/levels/tools";
+import { CellContextEventSnapshot } from "models/levels/tools/interface";
 
 export interface ISizeLimit {
   readonly minWidth?: number;
@@ -157,6 +157,8 @@ export interface IBaseDriver<
   tiles: readonly IBaseTile<L>[];
   TileRender: FC<TileRenderProps>;
   LevelConfigurator?: FC<LevelConfiguratorProps<L>>;
+  // TODO: optional separate display order
+  // TODO: optional default format for new levelset
   formats: Record<string, IBaseFormat<L, S>>;
   // TODO: create levelset config
 }
