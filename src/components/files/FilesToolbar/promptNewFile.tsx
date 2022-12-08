@@ -20,6 +20,7 @@ import {
 } from "ui/feedback";
 import { Field, Input, IntegerInput, Select, SelectOption } from "ui/input";
 import { ColorType } from "ui/types";
+import { strCmp } from "utils/strings";
 import cl from "./NewFile.module.scss";
 
 export const promptNewFile = () =>
@@ -29,30 +30,44 @@ const driversOptions = DISPLAY_ORDER.map<SelectOption<DriverName>>((value) => ({
   value,
   label: getDriver(value).title,
 }));
-const formatOptions = new Map<DriverName, readonly SelectOption<string>[]>(
-  DISPLAY_ORDER.map((d) => [
-    d,
-    Object.entries(getDriver(d).formats).map(([value, f]) => ({
-      value,
-      label: f.title,
-    })),
-  ]),
+
+interface FormatOption extends SelectOption<string> {
+  _default?: boolean;
+}
+
+const formatOptions = new Map<DriverName, readonly FormatOption[]>(
+  DISPLAY_ORDER.map((d) => {
+    const driver = getDriver(d);
+    return [
+      d,
+      Object.entries(driver.formats)
+        .map<FormatOption>(([value, f]) => ({
+          value,
+          label: f.title,
+          _default: driver.defaultFormat === value,
+        }))
+        .sort((a, b) => strCmp(a.label, b.label)),
+    ];
+  }),
 );
+
+const getDefaultFormat = (o: readonly FormatOption[]) =>
+  o.find((o) => o._default) || o[0];
 
 interface Props extends RenderPromptProps<true> {}
 
 const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const [driverName, setDriverName] = useState<DriverName>(DISPLAY_ORDER[0]);
-  const [driverFormat, setDriverFormat] = useState(
-    formatOptions.get(DISPLAY_ORDER[0])![0].value,
-  );
   const curFormatsOptions = formatOptions.get(driverName)!;
+  const [driverFormat, setDriverFormat] = useState(
+    getDefaultFormat(curFormatsOptions).value,
+  );
   useEffect(
-    () => setDriverFormat(curFormatsOptions[0].value),
+    () => setDriverFormat(getDefaultFormat(curFormatsOptions).value),
     [curFormatsOptions],
   );
 
-  const [filename, setFilename] = useState("new-levelset");
+  const [filename, setFilename] = useState("new");
   const [levelsCount, setLevelsCount] = useState<number | null>(111);
   const [title, setTitle] = useState("EMPTY");
   const [width, setWidth] = useState<number | null>(null);
@@ -95,7 +110,7 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     },
     [],
   );
-  const handleFormatChange = useCallback((o: SelectOption<string> | null) => {
+  const handleFormatChange = useCallback((o: FormatOption | null) => {
     if (o) {
       setDriverFormat(o.value);
     }

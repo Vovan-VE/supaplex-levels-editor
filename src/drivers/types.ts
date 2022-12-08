@@ -157,8 +157,12 @@ export interface IBaseDriver<
   tiles: readonly IBaseTile<L>[];
   TileRender: FC<TileRenderProps>;
   LevelConfigurator?: FC<LevelConfiguratorProps<L>>;
-  // TODO: optional separate display order
-  // TODO: optional default format for new levelset
+  /**
+   * Available formats in "detect" order.
+   * Display order now is just sorted titles.
+   */
   formats: Record<string, IBaseFormat<L, S>>;
+  defaultFormat?: string;
+  // TODO: optional separate display order
   // TODO: create levelset config
 }

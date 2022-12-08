@@ -13,4 +13,5 @@ export const SupaplexDriver: ISupaplexDriver = {
     mpx: MPX,
     dat: DAT,
   },
+  defaultFormat: "dat",
 };
