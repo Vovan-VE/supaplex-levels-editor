@@ -3,6 +3,8 @@
 ## 0.6.0 (DEV)
 
 - Enh: Minor UI enhancements.
+- Internal: Refactored Drivers, so now it's only one "Supaplex" Driver with
+  different file formats.
 
 ## 0.5.0 (2022-11-09)
 
