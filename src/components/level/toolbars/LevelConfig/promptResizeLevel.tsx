@@ -104,26 +104,28 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
                 {rawLevel.width}x{rawLevel.height}
               </b>
             </p>
-            <Field
-              label="New Width"
-              error={intRangeError(
-                width,
-                resizable.minWidth ?? 1,
-                resizable.maxWidth,
-              )}
-            >
-              <IntegerInput value={width} onChange={setWidth} required />
-            </Field>
-            <Field
-              label="New Height"
-              error={intRangeError(
-                height,
-                resizable.minHeight ?? 1,
-                resizable.maxHeight,
-              )}
-            >
-              <IntegerInput value={height} onChange={setHeight} required />
-            </Field>
+            <div className={cl.row}>
+              <Field
+                label="New Width"
+                error={intRangeError(
+                  width,
+                  resizable.minWidth ?? 1,
+                  resizable.maxWidth,
+                )}
+              >
+                <IntegerInput value={width} onChange={setWidth} required />
+              </Field>
+              <Field
+                label="New Height"
+                error={intRangeError(
+                  height,
+                  resizable.minHeight ?? 1,
+                  resizable.maxHeight,
+                )}
+              >
+                <IntegerInput value={height} onChange={setHeight} required />
+              </Field>
+            </div>
 
             {width !== null && height !== null && (
               <NoticeSizeLags totalTiles={width * height} />

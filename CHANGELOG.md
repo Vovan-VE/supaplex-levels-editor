@@ -2,7 +2,7 @@
 
 ## 0.6.0 (DEV)
 
-- ...
+- Enh: Minor UI enhancements.
 
 ## 0.5.0 (2022-11-09)
 

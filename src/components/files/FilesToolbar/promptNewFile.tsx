@@ -277,6 +277,7 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
               ? `Up to ${maxTitleLength} characters`
               : titleError && `Invalid value: ${titleError}`
           }
+          className={cl.long}
         >
           <Input
             value={title}
@@ -334,7 +335,7 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
             </Field>
 
             {width !== null && height !== null && (
-              <NoticeSizeLags totalTiles={width * height} />
+              <NoticeSizeLags totalTiles={width * height} className={cl.long} />
             )}
           </>
         )}
