@@ -113,7 +113,7 @@ describe("createLevelBody", () => {
       return result;
     });
     // it must take time shorten then 2 copies
-    expect(Date.now() - start).toBeLessThan((took / count) * 2);
+    expect(Date.now() - start).toBeLessThan((took / count) * 5);
     expect(result).not.toBe(body);
     expect(body.getTile(1, 1)).toBe(0);
     expect(result.getTile(1, 1)).toBe(6);
