@@ -1,5 +1,5 @@
 import { SupaplexDriver } from "./supaplex";
-import { IBaseDriver } from "./types";
+import { IBaseDriver, ISizeLimit } from "./types";
 
 export * from "./types";
 
@@ -66,3 +66,18 @@ export const getDriverFormat: GetDriverFormatFn = (
   driverName: string,
   formatName: string,
 ) => DriversHash[driverName]?.formats[formatName];
+
+export const canResizeWidth = ({
+  minWidth = 1,
+  maxWidth,
+}: Pick<ISizeLimit, "minWidth" | "maxWidth">): boolean =>
+  maxWidth === undefined || minWidth < maxWidth;
+
+export const canResizeHeight = ({
+  minHeight = 1,
+  maxHeight,
+}: Pick<ISizeLimit, "minHeight" | "maxHeight">): boolean =>
+  maxHeight === undefined || minHeight < maxHeight;
+
+export const canResize = (r: ISizeLimit): boolean =>
+  canResizeWidth(r) || canResizeHeight(r);

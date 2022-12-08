@@ -1,6 +1,6 @@
 import { FC, useCallback } from "react";
 import { useStore } from "effector-react";
-import { getDriver, getDriverFormat } from "drivers";
+import { canResize, getDriver, getDriverFormat } from "drivers";
 import {
   $currentDriverFormat,
   $currentDriverName,
@@ -36,7 +36,7 @@ export const LevelConfig: FC<Props> = ({ onDidResize }) => {
 
   return (
     <>
-      <Button disabled={!resizable} onClick={handleResizeClick}>
+      <Button disabled={!canResize(resizable)} onClick={handleResizeClick}>
         {rawLevel.width}x{rawLevel.height}
       </Button>
       <ValueInput

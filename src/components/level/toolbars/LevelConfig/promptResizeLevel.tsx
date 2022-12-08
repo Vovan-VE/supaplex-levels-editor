@@ -7,7 +7,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { getDriverFormat } from "drivers";
+import { canResize, getDriverFormat } from "drivers";
 import {
   $currentDriverFormat,
   $currentDriverName,
@@ -41,7 +41,12 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const [height, setHeight] = useState<number | null>(rawLevel.height);
 
   const handleOk = useCallback(() => {
-    if (!resizable || !rawLevel.resize || width === null || height === null) {
+    if (
+      !canResize(resizable) ||
+      !rawLevel.resize ||
+      width === null ||
+      height === null
+    ) {
       return;
     }
     const { minWidth = 1, minHeight = 1, maxWidth, maxHeight } = resizable;
@@ -60,6 +65,8 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
     onSubmit(true);
   }, [onSubmit, width, height, resizable, rawLevel]);
 
+  const isResizable = canResize(resizable);
+
   return (
     <Dialog
       title="Resize level"
@@ -76,7 +83,7 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
       )}
       buttons={
         <>
-          {resizable && (
+          {isResizable && (
             <Button uiColor={ColorType.SUCCESS} type="submit">
               OK
             </Button>
@@ -89,7 +96,7 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
       onClose={onCancel}
     >
       <div className={cl.root}>
-        {resizable ? (
+        {isResizable ? (
           <>
             <p>
               Current size:{" "}
