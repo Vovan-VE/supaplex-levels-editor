@@ -1,9 +1,8 @@
+import { FOOTER_BYTE_LENGTH, LEVEL_WIDTH, TITLE_LENGTH } from "./formats/std";
 import {
   createLevelFooter,
-  FOOTER_BYTE_LENGTH,
   specPortCoordsToOffset,
   specPortOffsetToCoords,
-  TITLE_LENGTH,
 } from "./footer";
 import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./internal";
 
@@ -59,7 +58,7 @@ describe("footer", () => {
 
   describe("constructor", () => {
     it("no params", () => {
-      const footer = createLevelFooter(testFooterData);
+      const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
       expect(footer.initialGravity).toBe(true);
       expect(footer.title).toBe("-- Lorem ipsum --      ");
       expect(footer.initialFreezeZonks).toBe(true);
@@ -77,14 +76,16 @@ describe("footer", () => {
     });
 
     it("wrong size", () => {
-      expect(() => createLevelFooter(Uint8Array.of(0, 1, 6, 5))).toThrow(
+      expect(() =>
+        createLevelFooter(LEVEL_WIDTH, Uint8Array.of(0, 1, 6, 5)),
+      ).toThrow(
         new Error(
           `Invalid buffer length 4, expected exactly ${FOOTER_BYTE_LENGTH}`,
         ),
       );
     });
     it("buffer", () => {
-      const footer = createLevelFooter(testFooterData);
+      const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
 
       const copy = footer.setTitle("");
       // and origin was not changed
@@ -94,7 +95,7 @@ describe("footer", () => {
   });
 
   it("initialGravity", () => {
-    const footer = createLevelFooter(testFooterData);
+    const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
 
     expect(footer.initialGravity).toBe(true);
 
@@ -109,7 +110,7 @@ describe("footer", () => {
   });
 
   it("title", () => {
-    const footer = createLevelFooter(testFooterData);
+    const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
 
     expect(footer.title).toBe("-- Lorem ipsum --      ");
     expect(footer.setTitle("-- Lorem ipsum --      ")).toBe(footer);
@@ -143,7 +144,7 @@ describe("footer", () => {
   });
 
   it("initialFreezeZonks", () => {
-    const footer = createLevelFooter(testFooterData);
+    const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
 
     expect(footer.initialFreezeZonks).toBe(true);
 
@@ -158,7 +159,7 @@ describe("footer", () => {
   });
 
   it("infotronsNeed", () => {
-    const footer = createLevelFooter(testFooterData);
+    const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
     expect(footer.infotronsNeed).toBe(42);
 
     expect(footer.setInfotronsNeed(42)).toBe(footer);
@@ -170,7 +171,7 @@ describe("footer", () => {
   });
 
   it("copySpecPortsInRegion", () => {
-    const footer = createLevelFooter(testFooterData);
+    const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
     expect(footer.copySpecPortsInRegion([0, 0, 60, 12])).toEqual([]);
     expect(footer.copySpecPortsInRegion([0, 0, 12, 24])).toEqual([]);
     expect(footer.copySpecPortsInRegion([11, 11, 3, 3])).toEqual([
@@ -185,7 +186,7 @@ describe("footer", () => {
   });
 
   it("clearSpecPorts", () => {
-    const footer = createLevelFooter(testFooterData);
+    const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
 
     const next = footer.clearSpecPorts();
     expect(next.specPortsCount).toBe(0);
@@ -194,7 +195,7 @@ describe("footer", () => {
   });
 
   it("findSpecPort", () => {
-    const footer = createLevelFooter(testFooterData);
+    const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
 
     expect(footer.findSpecPort(12, 12)).toEqual<ISupaplexSpecPortProps>({
       setsGravity: true,
@@ -206,7 +207,7 @@ describe("footer", () => {
 
   describe("setSpecPort", () => {
     it("overflow", () => {
-      const footer = createLevelFooter(testFooterData);
+      const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
 
       const copy = footer
         .setSpecPort(2, 1)
@@ -227,7 +228,7 @@ describe("footer", () => {
     });
 
     it("no op", () => {
-      const footer = createLevelFooter(testFooterData);
+      const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
 
       expect(footer.setSpecPort(12, 12)).toBe(footer);
       expect(
@@ -240,7 +241,7 @@ describe("footer", () => {
     });
 
     it("update", () => {
-      const footer = createLevelFooter(testFooterData);
+      const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
 
       const copy = footer.setSpecPort(12, 12, {
         setsGravity: false,
@@ -273,7 +274,7 @@ describe("footer", () => {
 
   describe("deleteSpecPort", () => {
     it("no op", () => {
-      const footer = createLevelFooter(testFooterData);
+      const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
 
       expect(footer.deleteSpecPort(10, 1)).toBe(footer);
 
@@ -290,7 +291,7 @@ describe("footer", () => {
     });
 
     it("mid", () => {
-      const footer = createLevelFooter(testFooterData);
+      const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
 
       const copy = footer
         .setSpecPort(10, 1, {
@@ -314,7 +315,7 @@ describe("footer", () => {
   });
 
   it("demo seed", () => {
-    const footer = createLevelFooter(testFooterData);
+    const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
 
     const seed1 = { lo: 0x34, hi: 0x12 };
     const seed2 = { lo: 0xdd, hi: 0xcc };
@@ -326,5 +327,66 @@ describe("footer", () => {
     expect(next.demoSeed).toEqual(seed2);
     expect(next).not.toBe(footer);
     expect(footer.demoSeed).toEqual(seed1);
+  });
+
+  it("demo", () => {
+    const srcMain = new Uint8Array(FOOTER_BYTE_LENGTH);
+    srcMain.set(
+      ""
+        .padEnd(23)
+        .split("")
+        .map((ch) => ch.charCodeAt(0)),
+      6,
+    );
+
+    const src = Uint8Array.of(
+      ...srcMain,
+      0,
+      10,
+      20,
+      30,
+      40,
+      50,
+      60,
+      42,
+      0,
+      23,
+      0xff,
+    );
+
+    let footer = createLevelFooter(1, src);
+    expect(footer.demo).toEqual(
+      Uint8Array.of(10, 20, 30, 40, 50, 60, 42, 0, 23),
+    );
+    expect(footer.length).toEqual(FOOTER_BYTE_LENGTH + 9 + 2);
+
+    footer = footer.setDemo(Uint8Array.of(2, 4, 8));
+    expect(footer.demo).toEqual(Uint8Array.of(2, 4, 8));
+    expect(footer.length).toEqual(FOOTER_BYTE_LENGTH + 3 + 2);
+    expect(footer.getRaw()).toEqual(
+      Uint8Array.of(...srcMain, 0, 2, 4, 8, 0xff),
+    );
+
+    footer = footer.setDemo(Uint8Array.of(11, 13, 17, 19, 23));
+    expect(footer.demo).toEqual(Uint8Array.of(11, 13, 17, 19, 23));
+    expect(footer.length).toEqual(FOOTER_BYTE_LENGTH + 5 + 2);
+    expect(footer.getRaw()).toEqual(
+      Uint8Array.of(...srcMain, 0, 11, 13, 17, 19, 23, 0xff),
+    );
+
+    footer = footer.setDemo(null);
+    expect(footer.demo).toBe(null);
+    expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
+    expect(footer.getRaw()).toEqual(srcMain);
+
+    footer = createLevelFooter(1, srcMain);
+    expect(footer.demo).toBe(null);
+    expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
+    expect(footer.getRaw()).toEqual(srcMain);
+
+    footer = createLevelFooter(1);
+    expect(footer.demo).toBe(null);
+    expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
+    expect(footer.getRaw()).toEqual(srcMain);
   });
 });

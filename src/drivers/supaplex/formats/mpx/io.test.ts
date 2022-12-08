@@ -1,43 +1,43 @@
-import { reader, writer } from "./io";
-import { dumpLevelset, readExampleFile } from "./helpers.dev";
+import { dumpLevelset, readExampleFile } from "../../helpers.dev";
+import { readLevelset, writeLevelset } from "./io";
 
 it("read mpx levelset", async () => {
   const data = await readExampleFile("levels.mpx");
-  const levelset = reader.readLevelset(data.buffer);
+  const levelset = readLevelset(data.buffer);
 
   expect(dumpLevelset(levelset)).toMatchSnapshot("levelset");
 
-  const result = writer.writeLevelset(levelset);
+  const result = writeLevelset(levelset);
   expect(result).toEqual(data.buffer);
 });
 
 it("read mpx levelset 1 5x3", async () => {
   const data = await readExampleFile("5x3.mpx");
-  const levelset = reader.readLevelset(data.buffer);
+  const levelset = readLevelset(data.buffer);
 
   expect(dumpLevelset(levelset)).toMatchSnapshot();
 
-  const result = writer.writeLevelset(levelset);
+  const result = writeLevelset(levelset);
   expect(result).toEqual(data.buffer);
 });
 
 it("read mpx levelset 1 5x3 winplex", async () => {
   const data = await readExampleFile("5x3.winplex.mpx");
-  const levelset = reader.readLevelset(data.buffer);
+  const levelset = readLevelset(data.buffer);
 
   expect(dumpLevelset(levelset)).toMatchSnapshot();
 
-  const result = writer.writeLevelset(levelset);
+  const result = writeLevelset(levelset);
   expect(result).toEqual(data.buffer);
 });
 
 it("invalid file format", () => {
-  expect(() => reader.readLevelset(new Uint8Array(100).buffer)).toThrow(
+  expect(() => readLevelset(new Uint8Array(100).buffer)).toThrow(
     new Error("Unrecognized file format"),
   );
 
   expect(() =>
-    reader.readLevelset(
+    readLevelset(
       Uint8Array.of(
         0x4d,
         0x50,

@@ -3,10 +3,14 @@ import { useStore } from "effector-react";
 import { FC, PropsWithChildren, ReactNode } from "react";
 import { ReactComponent as MurphyRuns } from "assets/img/murphy-run-right.svg";
 import { TEST_DEMO_URL, TEST_LEVEL_TITLE, TEST_LEVEL_URL } from "configs";
-import { getDriver, levelSupportsDemo } from "drivers";
+import { getDriverFormat, levelSupportsDemo } from "drivers";
 import { ReactComponent as DiskYellow } from "drivers/supaplex/tiles-svg/12-yellow-disk.svg";
 import { ReactComponent as HwLampGreen } from "drivers/supaplex/tiles-svg/1d-hw-g-lamp.svg";
-import { $currentDriverName, $currentLevelUndoQueue } from "models/levelsets";
+import {
+  $currentDriverFormat,
+  $currentDriverName,
+  $currentLevelUndoQueue,
+} from "models/levelsets";
 import { $fileSupportsDemo, rememberDemoTarget } from "models/levelsets/demo";
 import { $prefConfirmedTestSO, setPrefAskTestSO } from "models/settings";
 import { TextButton } from "ui/button";
@@ -53,10 +57,10 @@ export const TestingButtons: FC = () => {
 };
 
 const packLevelToSend = () => {
-  const { writer, createLevelset } = getDriver($currentDriverName.getState()!)!;
-  if (!writer) {
-    return;
-  }
+  const { writeLevelset, createLevelset } = getDriverFormat(
+    $currentDriverName.getState()!,
+    $currentDriverFormat.getState()!,
+  )!;
   const level = $currentLevelUndoQueue.getState()!.current;
   const [valid, errors] = level.isPlayable();
   if (!valid) {
@@ -75,7 +79,7 @@ const packLevelToSend = () => {
 
   return window.btoa(
     String.fromCharCode(
-      ...new Uint8Array(writer.writeLevelset(createLevelset([level]))),
+      ...new Uint8Array(writeLevelset(createLevelset([level]))),
     ),
   );
 };

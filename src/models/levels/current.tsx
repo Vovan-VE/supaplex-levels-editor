@@ -1,32 +1,36 @@
-import { combine, createEvent, createStore, sample } from "effector";
+import { createEvent, createStore, sample } from "effector";
 import { withPersistent } from "@cubux/effector-persistent";
 import { getDriver } from "drivers";
 import { $currentDriverName } from "../levelsets";
 import { localStorageDriver } from "../_utils/persistent";
 
 const _$driver = $currentDriverName.map((d) => (d && getDriver(d)) || null);
+export const $drvTileRender = _$driver.map(
+  (drv) => (drv && drv.TileRender) || null,
+);
+export const $drvTiles = _$driver.map((drv) => (drv && drv.tiles) || null);
 
 // current tile
 
 export const setTile = createEvent<number>();
 
 export const $tileIndex = createStore(0)
-  .on(_$driver, (n, d) => (d && n < d.tiles.length ? n : 0))
+  .on($drvTiles, (n, tiles) => (tiles && n < tiles.length ? n : 0))
   .on(
     sample({
       clock: setTile,
-      source: _$driver,
-      filter: (d, n) => n >= 0 && d !== null && n < d.tiles.length,
+      source: $drvTiles,
+      filter: (tiles, n) => n >= 0 && tiles !== null && n < tiles.length,
       fn: (_, n) => n,
     }),
     (_, n) => n,
   );
 
-export const $tile = combine(
-  _$driver,
-  $tileIndex,
-  (d, n) => (d && d.tiles[n]) || null,
-);
+// export const $tile = combine(
+//   $drvTiles,
+//   $tileIndex,
+//   (tiles, n) => tiles?.[n] || null,
+// );
 
 // body
 
@@ -97,8 +101,3 @@ export const $bodyScale = $bodyScaleN.map(
 );
 export const $bodyScaleCanInc = $bodyScaleN.map((n) => n < SCALE_STEPS_TOTAL);
 export const $bodyScaleCanDec = $bodyScaleN.map((n) => n > 0);
-
-export const $drvTileRender = _$driver.map(
-  (drv) => (drv && drv.TileRender) || null,
-);
-export const $drvTiles = _$driver.map((drv) => (drv && drv.tiles) || null);

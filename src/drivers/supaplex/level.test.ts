@@ -1,7 +1,23 @@
-import { createLevel, LEVEL_BYTES_LENGTH } from "./level";
-import { dumpLevel } from "./helpers.dev";
-import { TILE_SP_PORT_R, TILE_SP_PORT_U, TILE_ZONK } from "./tiles-id";
+import { createLevel } from "./level";
+import {
+  BODY_LENGTH,
+  FOOTER_BYTE_LENGTH,
+  LEVEL_BYTES_LENGTH,
+  LEVEL_HEIGHT,
+  LEVEL_WIDTH,
+  TITLE_LENGTH,
+} from "./formats/std";
+import {
+  TILE_HARDWARE,
+  TILE_INFOTRON,
+  TILE_SP_PORT_D,
+  TILE_SP_PORT_R,
+  TILE_SP_PORT_U,
+  TILE_ZONK,
+} from "./tiles-id";
 import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./internal";
+import { readLevelset } from "./formats/mpx/io";
+import { dumpLevel, readExampleFile } from "./helpers.dev";
 
 describe("level", () => {
   const testLevelData = Uint8Array.of(
@@ -58,69 +74,177 @@ describe("level", () => {
   );
   expect(testLevelData.length).toBe(1536);
 
+  const testFooter3x2 = Uint8Array.of(
+    ...[0, 0, 0, 0],
+    // G
+    1,
+    ...[0],
+    // title
+    ..."-- Lorem ipsum --"
+      .padEnd(23)
+      .split("")
+      .map((c) => c.charCodeAt(0)),
+    // freeze zonks
+    2,
+    // infotrons need
+    42,
+    // spec ports count
+    1,
+    // spec port db
+    ..."\x00\x02\x01\x02\x01\x00"
+      .padEnd(10 * 6, "\x00")
+      .split("")
+      .map((c) => c.charCodeAt(0)),
+    ...[0, 0, 0, 0],
+  );
+  expect(testFooter3x2.length).toBe(96);
+
+  const testLevelData3x2 = Uint8Array.of(
+    0,
+    TILE_SP_PORT_U,
+    4,
+    1,
+    3,
+    5,
+    ...testFooter3x2,
+  );
+
   describe("constructor", () => {
     it("no params", () => {
-      expect(dumpLevel(createLevel())).toMatchSnapshot();
+      expect(dumpLevel(createLevel(60, 24))).toMatchSnapshot();
+    });
+    it("no data", () => {
+      const level = createLevel(3, 2);
+
+      expect(level.width).toBe(3);
+      expect(level.height).toBe(2);
+      expect(level.length).toBe(6 + FOOTER_BYTE_LENGTH);
+
+      expect(level.getTile(0, 0)).toEqual(0);
+      expect(level.getTile(2, 1)).toEqual(0);
+      expect(level.title).toBe("".padEnd(TITLE_LENGTH));
     });
 
     it("wrong size", () => {
-      expect(() => createLevel(Uint8Array.of(0, 1, 6, 5))).toThrow(
-        new Error(`Invalid buffer length 4, expected ${LEVEL_BYTES_LENGTH}`),
+      expect(LEVEL_WIDTH).toBe(60);
+      expect(LEVEL_HEIGHT).toBe(24);
+      expect(BODY_LENGTH).toBe(1440);
+      expect(LEVEL_BYTES_LENGTH).toBe(1536);
+      expect(() => createLevel(60, 24, Uint8Array.of(0, 1, 6, 5))).toThrow(
+        new Error(
+          `Invalid buffer length 4, expected at least ${LEVEL_BYTES_LENGTH}`,
+        ),
       );
     });
-    it("buffer", () => {
-      const level = createLevel(testLevelData);
+    it("data", () => {
+      const level = createLevel(3, 2, testLevelData3x2);
+
       expect(dumpLevel(level)).toMatchSnapshot();
     });
   });
 
+  it("raw", () => {
+    const level = createLevel(3, 2, testLevelData3x2);
+    expect(level.raw).toEqual(testLevelData3x2);
+    expect(level.length).toEqual(testLevelData3x2.length);
+
+    const demo = Uint8Array.of(10, 20, 30, 40, 50, 60, 70);
+    const next = level.setDemoSeed({ lo: 0x12, hi: 0x34 }).setDemo(demo);
+    expect(next.length).toEqual(testLevelData3x2.length + 7 + 2);
+    expect(next.length).toEqual(6 + 96 + 7 + 2);
+
+    const modFooter = new Uint8Array(testFooter3x2);
+    modFooter[94] = 0x12;
+    modFooter[95] = 0x34;
+    expect(next.raw).toEqual(
+      Uint8Array.of(
+        0,
+        TILE_SP_PORT_U,
+        4,
+        1,
+        3,
+        5,
+        ...modFooter,
+        0,
+        ...demo,
+        0xff,
+      ),
+    );
+  });
+
+  describe("resize", () => {
+    it("simple", () => {
+      const a = createLevel(3, 2, testLevelData3x2);
+
+      let b = a.resize(5, 4);
+      expect(dumpLevel(b)).toMatchSnapshot();
+
+      b = b
+        .setTile(3, 0, TILE_INFOTRON)
+        .setTile(4, 0, TILE_SP_PORT_R)
+        .setTile(0, 2, TILE_ZONK)
+        .setTile(0, 3, TILE_SP_PORT_D)
+        .setSpecPort(4, 0, {
+          setsGravity: true,
+          setsFreezeZonks: false,
+          setsFreezeEnemies: true,
+        })
+        .setSpecPort(0, 3, {
+          setsGravity: false,
+          setsFreezeZonks: true,
+          setsFreezeEnemies: true,
+        });
+      expect(dumpLevel(b)).toMatchSnapshot();
+
+      const c = b.resize(3, 2);
+      expect(dumpLevel(c)).toEqual(dumpLevel(a));
+    });
+  });
+
   it("getTile", () => {
-    const level = createLevel(testLevelData);
+    const level = createLevel(3, 2, testLevelData3x2);
 
-    expect(level.getTile(0, 0)).toBe(1);
-    expect(level.getTile(1, 1)).toBe(2);
-    expect(level.getTile(2, 2)).toBe(3);
-    expect(level.getTile(23, 23)).toBe(24);
-
-    expect(level.getTile(16, 23)).toBe(0x29);
-    expect(level.getTile(17, 23)).toBe(0x2a);
+    expect(level.getTile(0, 0)).toEqual(0);
+    expect(level.getTile(1, 0)).toEqual(TILE_SP_PORT_U);
+    expect(level.getTile(2, 0)).toEqual(4);
+    expect(level.getTile(0, 1)).toEqual(1);
+    expect(level.getTile(1, 1)).toEqual(3);
+    expect(level.getTile(2, 1)).toEqual(5);
   });
 
   describe("setTile", () => {
-    it("no-op", () => {
-      const level = createLevel(testLevelData);
-      expect(level.setTile(0, 0, 1)).toBe(level);
-      expect(level.setTile(1, 1, 2)).toBe(level);
-      expect(level.setTile(23, 23, 24)).toBe(level);
+    it("noop", () => {
+      const level = createLevel(3, 2, testLevelData3x2);
+      expect(level.setTile(2, 0, level.getTile(2, 0))).toBe(level);
     });
 
     it("usual", () => {
-      const level = createLevel(testLevelData);
-      const copy = level.setTile(10, 2, 7);
-      expect(copy.getTile(10, 2)).toBe(7);
-      expect(copy.specPortsCount).toBe(1);
-      expect(level.getTile(10, 2)).toBe(0);
+      const level = createLevel(3, 2, testLevelData3x2);
+      const copy = level.setTile(2, 0, 7);
+      expect(level.getTile(2, 0)).toBe(4);
       expect(level.specPortsCount).toBe(1);
+      expect(copy.getTile(2, 0)).toBe(7);
+      expect(copy.specPortsCount).toBe(1);
     });
 
     it("add spec port", () => {
-      const level = createLevel(testLevelData);
-      const copy = level.setTile(10, 2, TILE_SP_PORT_U);
-      expect(level.getTile(10, 2)).toBe(0);
+      const level = createLevel(3, 2, testLevelData3x2);
+      const copy = level.setTile(2, 0, TILE_SP_PORT_U);
+      expect(level.getTile(2, 0)).toBe(4);
       expect(level.specPortsCount).toBe(1);
-      expect(copy.getTile(10, 2)).toBe(TILE_SP_PORT_U);
+      expect(copy.getTile(2, 0)).toBe(TILE_SP_PORT_U);
       expect(copy.specPortsCount).toBe(2);
       expect([...copy.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
         {
-          x: 12,
-          y: 12,
+          x: 1,
+          y: 0,
           setsGravity: true,
           setsFreezeZonks: true,
           setsFreezeEnemies: true,
         },
         {
-          x: 10,
-          y: 2,
+          x: 2,
+          y: 0,
           setsGravity: false,
           setsFreezeZonks: false,
           setsFreezeEnemies: false,
@@ -129,16 +253,16 @@ describe("level", () => {
     });
 
     it("keep spec port", () => {
-      const level = createLevel(testLevelData);
-      const copy = level.setTile(12, 12, TILE_SP_PORT_U);
-      expect(level.getTile(12, 12)).toBe(TILE_SP_PORT_R);
+      const level = createLevel(3, 2, testLevelData3x2);
+      const copy = level.setTile(1, 0, TILE_SP_PORT_R);
+      expect(level.getTile(1, 0)).toBe(TILE_SP_PORT_U);
       expect(level.specPortsCount).toBe(1);
-      expect(copy.getTile(12, 12)).toBe(TILE_SP_PORT_U);
+      expect(copy.getTile(1, 0)).toBe(TILE_SP_PORT_R);
       expect(copy.specPortsCount).toBe(1);
       expect([...copy.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
         {
-          x: 12,
-          y: 12,
+          x: 1,
+          y: 0,
           setsGravity: true,
           setsFreezeZonks: true,
           setsFreezeEnemies: true,
@@ -147,53 +271,86 @@ describe("level", () => {
     });
 
     it("remove spec port", () => {
-      const level = createLevel(testLevelData);
-      const copy = level.setTile(12, 12, TILE_ZONK);
-      expect(level.getTile(12, 12)).toBe(TILE_SP_PORT_R);
-      expect(level.specPortsCount).toBe(1);
-      expect(copy.getTile(12, 12)).toBe(TILE_ZONK);
+      const level = createLevel(3, 2, testLevelData3x2);
+      const copy = level.setTile(1, 0, TILE_ZONK);
+      expect(copy.getTile(1, 0)).toBe(TILE_ZONK);
       expect(copy.specPortsCount).toBe(0);
       expect([...copy.getSpecPorts()]).toEqual([]);
     });
   });
 
-  it("batch", () => {
-    const origin = createLevel();
+  describe("batch", () => {
+    it("std", () => {
+      const origin = createLevel(60, 24);
 
-    // how many copies will we make in 1.5 sec?
-    let start = Date.now();
-    let result = origin;
-    let count = 0;
-    let took: number;
-    for (; (took = Date.now() - start) < 1000; count++) {
-      result = result.setTile(10, 10, 1 + (count % 10));
-    }
-    expect(count).toBeGreaterThan(1000);
-    expect(result).not.toBe(origin);
-    expect(origin.getTile(10, 10)).toBe(0);
-    expect(result.getTile(10, 10)).not.toBe(0);
-
-    // then doing the same in batch - it must be faster
-    start = Date.now();
-    result = origin.batch((result) => {
-      for (let i = count; i-- > 0; ) {
-        result = result.setTile(10, 10, 1 + (i % 10));
+      // how many copies will we make in 1.5 sec?
+      let start = Date.now();
+      let result = origin;
+      let count = 0;
+      let took: number;
+      for (; (took = Date.now() - start) < 1000; count++) {
+        result = result.setTile(10, 10, 1 + (count % 10));
       }
-      return result.setTitle("Foo bar");
+      expect(count).toBeGreaterThan(1000);
+      expect(result).not.toBe(origin);
+      expect(origin.getTile(10, 10)).toBe(0);
+      expect(result.getTile(10, 10)).not.toBe(0);
+
+      // then doing the same in batch - it must be faster
+      start = Date.now();
+      result = origin.batch((result) => {
+        for (let i = count; i-- > 0; ) {
+          result = result.setTile(10, 10, 1 + (i % 10));
+        }
+        return result.setTitle("Foo bar");
+      });
+      // it must take less time
+      expect(Date.now() - start).toBeLessThan(took / 3);
+      // expect(Date.now() - start).toBeLessThan((took / count) * 2);
+      expect(result).not.toBe(origin);
+      expect(origin.getTile(10, 10)).toBe(0);
+      expect(result.getTile(10, 10)).not.toBe(0);
+      expect(origin.title).toBe("                       ");
+      expect(result.title).toBe("Foo bar                ");
     });
-    // it must take less time
-    expect(Date.now() - start).toBeLessThan(took / 3);
-    // expect(Date.now() - start).toBeLessThan((took / count) * 2);
-    expect(result).not.toBe(origin);
-    expect(origin.getTile(10, 10)).toBe(0);
-    expect(result.getTile(10, 10)).not.toBe(0);
-    expect(origin.title).toBe("                       ");
-    expect(result.title).toBe("Foo bar                ");
+
+    it("10k * 10k", () => {
+      const origin = createLevel(10_000, 10_000);
+
+      // how many copies will we make in 1.5 sec?
+      let start = Date.now();
+      let result = origin;
+      let count = 0;
+      let took: number;
+      for (; (took = Date.now() - start) < 1000; count++) {
+        result = result.setTile(10, 10, 1 + (count % 10));
+      }
+      expect(count).toBeGreaterThan(2);
+      expect(result).not.toBe(origin);
+      expect(origin.getTile(10, 10)).toBe(0);
+      expect(result.getTile(10, 10)).not.toBe(0);
+
+      // then doing the same in batch - it must be faster
+      start = Date.now();
+      result = origin.batch((result) => {
+        for (let i = count; i-- > 0; ) {
+          result = result.setTile(10, 10, 1 + (i % 10));
+        }
+        return result.setTitle("Foo bar");
+      });
+      // it must take time shorten then 2 copies, but sometimes
+      expect(Date.now() - start).toBeLessThan((took / count) * 3);
+      expect(result).not.toBe(origin);
+      expect(origin.getTile(10, 10)).toBe(0);
+      expect(result.getTile(10, 10)).not.toBe(0);
+      expect(origin.title).toBe("                       ");
+      expect(result.title).toBe("Foo bar                ");
+    });
   });
 
   it("findSpecPort", () => {
-    const level = createLevel(testLevelData);
-    expect(level.findSpecPort(12, 12)).toEqual<ISupaplexSpecPortProps>({
+    const level = createLevel(3, 2, testLevelData3x2);
+    expect(level.findSpecPort(1, 0)).toEqual<ISupaplexSpecPortProps>({
       setsGravity: true,
       setsFreezeZonks: true,
       setsFreezeEnemies: true,
@@ -201,7 +358,7 @@ describe("level", () => {
   });
 
   it("setSpecPort", () => {
-    const level = createLevel(testLevelData);
+    const level = createLevel(60, 24, testLevelData);
     expect(level.setSpecPort(12, 12)).toBe(level);
     expect(
       level.setSpecPort(12, 12, {
@@ -219,8 +376,20 @@ describe("level", () => {
     ).not.toBe(level);
   });
 
+  describe("tilesRenderStream", () => {
+    it("huge maze", async () => {
+      const data = await readExampleFile("HUDEMAZ1.mpx");
+      const level = readLevelset(data.buffer).getLevel(0);
+
+      const a = [...level.tilesRenderStream(0, 0, 202, 202)];
+      expect(a.length).toBeLessThan(202 * 202);
+      expect(a[0]).toEqual([0, 0, 202, TILE_HARDWARE]);
+      expect(a[a.length - 1]).toEqual([0, 201, 202, TILE_HARDWARE]);
+    });
+  });
+
   it("copyRegion", () => {
-    const level = createLevel(testLevelData);
+    const level = createLevel(60, 24, testLevelData);
     const region = level.copyRegion(11, 11, 3, 3);
     expect([
       ...region.tiles.tilesRenderStream(
@@ -259,7 +428,7 @@ describe("level", () => {
   });
 
   describe("pasteRegion", () => {
-    const level = createLevel(testLevelData);
+    const level = createLevel(60, 24, testLevelData);
     const region = level.copyRegion(11, 11, 3, 3);
 
     it("other place", () => {

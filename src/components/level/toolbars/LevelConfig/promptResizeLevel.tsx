@@ -7,7 +7,13 @@ import {
   useMemo,
   useState,
 } from "react";
-import { $currentLevelUndoQueue, updateCurrentLevel } from "models/levelsets";
+import { canResize, getDriverFormat } from "drivers";
+import {
+  $currentDriverFormat,
+  $currentDriverName,
+  $currentLevelUndoQueue,
+  updateCurrentLevel,
+} from "models/levelsets";
 import { Button } from "ui/button";
 import {
   Dialog,
@@ -23,21 +29,27 @@ import cl from "./ResizeLevel.module.scss";
 interface Props extends RenderPromptProps<true> {}
 
 const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
-  // const tile=useStore($tileIndex);
+  const { resizable } = getDriverFormat(
+    useStore($currentDriverName)!,
+    useStore($currentDriverFormat)!,
+  )!;
   const undoQueue = useStore($currentLevelUndoQueue)!;
   const rawLevel = undoQueue.current;
   useEffect(() => onCancel, [rawLevel, onCancel]);
-
-  const resizeable = rawLevel.resizable;
 
   const [width, setWidth] = useState<number | null>(rawLevel.width);
   const [height, setHeight] = useState<number | null>(rawLevel.height);
 
   const handleOk = useCallback(() => {
-    if (!resizeable || !rawLevel.resize || width === null || height === null) {
+    if (
+      !canResize(resizable) ||
+      !rawLevel.resize ||
+      width === null ||
+      height === null
+    ) {
       return;
     }
-    const { minWidth = 1, minHeight = 1, maxWidth, maxHeight } = resizeable;
+    const { minWidth = 1, minHeight = 1, maxWidth, maxHeight } = resizable;
     if (width < minWidth || height < minHeight) {
       return;
     }
@@ -51,7 +63,9 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
     let newLevel = rawLevel.resize(width, height);
     updateCurrentLevel(newLevel);
     onSubmit(true);
-  }, [onSubmit, width, height, resizeable, rawLevel]);
+  }, [onSubmit, width, height, resizable, rawLevel]);
+
+  const isResizable = canResize(resizable);
 
   return (
     <Dialog
@@ -69,7 +83,7 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
       )}
       buttons={
         <>
-          {resizeable && (
+          {isResizable && (
             <Button uiColor={ColorType.SUCCESS} type="submit">
               OK
             </Button>
@@ -82,7 +96,7 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
       onClose={onCancel}
     >
       <div className={cl.root}>
-        {resizeable ? (
+        {isResizable ? (
           <>
             <p>
               Current size:{" "}
@@ -94,8 +108,8 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
               label="New Width"
               error={intRangeError(
                 width,
-                resizeable.minWidth ?? 1,
-                resizeable.maxWidth,
+                resizable.minWidth ?? 1,
+                resizable.maxWidth,
               )}
             >
               <IntegerInput value={width} onChange={setWidth} required />
@@ -104,8 +118,8 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
               label="New Height"
               error={intRangeError(
                 height,
-                resizeable.minHeight ?? 1,
-                resizeable.maxHeight,
+                resizable.minHeight ?? 1,
+                resizable.maxHeight,
               )}
             >
               <IntegerInput value={height} onChange={setHeight} required />

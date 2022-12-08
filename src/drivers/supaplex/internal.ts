@@ -1,5 +1,10 @@
 import { IBounds, RectA } from "utils/rect";
-import { IsPlayableResult, ITilesRegion, ITilesStreamItem } from "../types";
+import {
+  IsPlayableResult,
+  ITilesRegion,
+  ITilesStreamItem,
+  IWithDemo,
+} from "../types";
 
 export interface ISupaplexBox extends IBounds {
   readonly length: number;
@@ -40,7 +45,7 @@ export interface ISupaplexSpecPort extends ISupaplexSpecPortProps {
   y: number;
 }
 
-export interface ILevelFooter {
+export interface ILevelFooter extends IWithDemo {
   readonly length: number;
   getRaw(): Uint8Array;
   readonly title: string;

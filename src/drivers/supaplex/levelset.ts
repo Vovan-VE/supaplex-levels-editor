@@ -1,15 +1,14 @@
 import { isOffsetInRange } from "utils/number";
-import { ISupaplexLevel, ISupaplexLevelset } from "./types";
-import { createLevel } from "./level";
 import { fillLevelBorder } from "./fillLevelBorder";
-import { IBaseLevelset } from "../types";
+import { createLevel } from "./level";
+import { ISupaplexLevel, ISupaplexLevelset } from "./types";
 
 const validateLevelsCount =
   process.env.NODE_ENV === "production"
     ? undefined
     : (count: number) => {
         if (count < 1) {
-          throw new RangeError(`Invalid levels count ${count}`);
+          throw new RangeError("Invalid levels count");
         }
       };
 
@@ -22,28 +21,40 @@ const validateLevelsIndex =
         }
       };
 
-export class Levelset<L extends ISupaplexLevel> implements IBaseLevelset<L> {
-  readonly #levels: L[];
+const newLevels = (count: number) => {
+  const result: ISupaplexLevel[] = [];
+  const level = fillLevelBorder(createLevel(60, 24));
+  for (let i = count; i-- > 0; ) {
+    result.push(level);
+  }
+  return result;
+};
 
-  constructor(levels: readonly L[] | Iterable<L>) {
-    this.#levels = [...levels];
-    validateLevelsCount?.(this.#levels.length);
+export const createLevelset = (
+  levels: readonly ISupaplexLevel[] | Iterable<ISupaplexLevel> | number,
+): ISupaplexLevelset => new SupaplexLevelset(levels);
+
+class SupaplexLevelset implements ISupaplexLevelset {
+  readonly #levels: ISupaplexLevel[];
+
+  constructor(
+    levels: readonly ISupaplexLevel[] | Iterable<ISupaplexLevel> | number,
+  ) {
+    if (typeof levels === "number") {
+      validateLevelsCount?.(levels);
+      this.#levels = newLevels(levels);
+    } else {
+      this.#levels = [...levels];
+      validateLevelsCount?.(this.#levels.length);
+    }
   }
 
   copy(): this {
-    return new Levelset(this.#levels) as this;
+    return new SupaplexLevelset(this.getLevels()) as this;
   }
 
   get levelsCount() {
     return this.#levels.length;
-  }
-
-  get minLevelsCount() {
-    return 1;
-  }
-
-  get maxLevelsCount(): number | null {
-    return null;
   }
 
   getLevels() {
@@ -55,20 +66,20 @@ export class Levelset<L extends ISupaplexLevel> implements IBaseLevelset<L> {
     return this.#levels[index];
   }
 
-  setLevel(index: number, level: L) {
+  setLevel(index: number, level: ISupaplexLevel) {
     validateLevelsIndex?.(index, this.levelsCount);
     const copy = this.copy();
     copy.#levels[index] = level;
     return copy;
   }
 
-  appendLevel(level: L) {
+  appendLevel(level: ISupaplexLevel) {
     const copy = this.copy();
     copy.#levels.push(level);
     return copy;
   }
 
-  insertLevel(index: number, level: L) {
+  insertLevel(index: number, level: ISupaplexLevel) {
     validateLevelsIndex?.(index, this.levelsCount);
     const copy = this.copy();
     copy.#levels.splice(index, 0, level);
@@ -83,34 +94,5 @@ export class Levelset<L extends ISupaplexLevel> implements IBaseLevelset<L> {
     const copy = this.copy();
     copy.#levels.splice(index, 1);
     return copy;
-  }
-}
-
-const newLevels = (count: number) => {
-  validateLevelsCount?.(count);
-  const result: ISupaplexLevel[] = [];
-  const level = fillLevelBorder(createLevel());
-  for (let i = count; i-- > 0; ) {
-    result.push(level);
-  }
-  return result;
-};
-
-export const createLevelset = (
-  levels: readonly ISupaplexLevel[] | Iterable<ISupaplexLevel> | number = 111,
-): ISupaplexLevelset => new SupaplexLevelset(levels);
-
-class SupaplexLevelset
-  extends Levelset<ISupaplexLevel>
-  implements ISupaplexLevelset
-{
-  constructor(
-    levels: readonly ISupaplexLevel[] | Iterable<ISupaplexLevel> | number = 111,
-  ) {
-    super(typeof levels === "number" ? newLevels(levels) : levels);
-  }
-
-  copy(): this {
-    return new SupaplexLevelset(this.getLevels()) as this;
   }
 }

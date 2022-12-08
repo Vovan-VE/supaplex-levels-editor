@@ -1,9 +1,11 @@
 import { useStore } from "effector-react";
 import { FC, useMemo } from "react";
+import { getDriverFormat } from "drivers";
 import {
   $currentBuffer,
+  $currentDriverFormat,
+  $currentDriverName,
   $currentLevel,
-  $currentLevelset,
   appendLevel,
   closeCurrentLevel,
   deleteCurrentLevel,
@@ -16,7 +18,11 @@ import { ColorType } from "ui/types";
 import { fmtLevelFull, fmtLevelNumber } from "../fmt";
 
 export const LevelsToolbar: FC = () => {
-  const fileLevelset = useStore($currentLevelset)!;
+  const format = getDriverFormat(
+    useStore($currentDriverName)!,
+    useStore($currentDriverFormat)!,
+  );
+  const { minLevelsCount = 1, maxLevelsCount = null } = format || {};
   const levelset = useStore($currentBuffer)!;
   const level = useStore($currentLevel);
 
@@ -71,13 +77,12 @@ export const LevelsToolbar: FC = () => {
   );
 
   const cannotAddLevelMessage =
-    fileLevelset.maxLevelsCount !== null &&
-    levelsCount >= fileLevelset.maxLevelsCount
-      ? `Cannot add more level than ${fileLevelset.maxLevelsCount}`
+    maxLevelsCount !== null && levelsCount >= maxLevelsCount
+      ? `Cannot add more level than ${maxLevelsCount}`
       : undefined;
   const cannotRemoveLevelMessage =
-    levelsCount <= fileLevelset.minLevelsCount
-      ? `Cannot remove level because it's already minimum ${fileLevelset.minLevelsCount}`
+    levelsCount <= minLevelsCount
+      ? `Cannot remove level because it's already minimum ${minLevelsCount}`
       : undefined;
 
   return (

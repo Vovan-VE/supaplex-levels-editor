@@ -1,0 +1,6 @@
+export const LEVEL_WIDTH = 60;
+export const LEVEL_HEIGHT = 24;
+export const BODY_LENGTH = LEVEL_WIDTH * LEVEL_HEIGHT;
+export const FOOTER_BYTE_LENGTH = 96;
+export const LEVEL_BYTES_LENGTH = BODY_LENGTH + FOOTER_BYTE_LENGTH;
+export const TITLE_LENGTH = 23;

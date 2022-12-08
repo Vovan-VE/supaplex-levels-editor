@@ -2,9 +2,9 @@ import { clipRect } from "utils/rect";
 import { IsPlayableResult } from "../types";
 import { AnyBox } from "./AnyBox";
 import { ILevelBody, ISupaplexBox } from "./internal";
+import { InlineTile } from "./InlineTile";
 import { tiles } from "./tiles";
 import { TILE_EXIT, TILE_MURPHY } from "./tiles-id";
-import { InlineTile } from "./InlineTile";
 
 const validateByte =
   process.env.NODE_ENV === "production"

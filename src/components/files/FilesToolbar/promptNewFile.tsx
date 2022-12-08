@@ -3,10 +3,19 @@ import {
   FC,
   FormEvent,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
-import { DISPLAY_ORDER, DriverName, getDriver } from "drivers";
+import {
+  canResize,
+  canResizeHeight,
+  canResizeWidth,
+  DISPLAY_ORDER,
+  DriverName,
+  getDriver,
+  getDriverFormat,
+} from "drivers";
 import { addLevelsetFileFx } from "models/levelsets";
 import { NoticeSizeLags } from "../../level/toolbars/LevelConfig/NoticeSizeLags";
 import { Button } from "ui/button";
@@ -19,6 +28,7 @@ import {
 } from "ui/feedback";
 import { Field, Input, IntegerInput, Select, SelectOption } from "ui/input";
 import { ColorType } from "ui/types";
+import { strCmp } from "utils/strings";
 import cl from "./NewFile.module.scss";
 
 export const promptNewFile = () =>
@@ -29,36 +39,53 @@ const driversOptions = DISPLAY_ORDER.map<SelectOption<DriverName>>((value) => ({
   label: getDriver(value).title,
 }));
 
+interface FormatOption extends SelectOption<string> {
+  _default?: boolean;
+}
+
+const formatOptions = new Map<DriverName, readonly FormatOption[]>(
+  DISPLAY_ORDER.map((d) => {
+    const driver = getDriver(d);
+    return [
+      d,
+      Object.entries(driver.formats)
+        .map<FormatOption>(([value, f]) => ({
+          value,
+          label: f.title,
+          _default: driver.defaultFormat === value,
+        }))
+        .sort((a, b) => strCmp(a.label, b.label)),
+    ];
+  }),
+);
+
+const getDefaultFormat = (o: readonly FormatOption[]) =>
+  o.find((o) => o._default) || o[0];
+
 interface Props extends RenderPromptProps<true> {}
 
 const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const [driverName, setDriverName] = useState<DriverName>(DISPLAY_ORDER[0]);
-  const [filename, setFilename] = useState("new-levelset");
+  const curFormatsOptions = formatOptions.get(driverName)!;
+  const [driverFormat, setDriverFormat] = useState(
+    getDefaultFormat(curFormatsOptions).value,
+  );
+  useEffect(
+    () => setDriverFormat(getDefaultFormat(curFormatsOptions).value),
+    [curFormatsOptions],
+  );
+
+  const [filename, setFilename] = useState("new");
   const [levelsCount, setLevelsCount] = useState<number | null>(111);
   const [title, setTitle] = useState("EMPTY");
   const [width, setWidth] = useState<number | null>(null);
   const [height, setHeight] = useState<number | null>(null);
 
-  const {
-    level,
-    level: { maxTitleLength, width: defaultWidth, height: defaultHeight },
-    resizable,
-    fileExtensionDefault,
-    minLevelsCount,
-    maxLevelsCount,
-  } = useMemo(() => {
-    const drv = getDriver(driverName as string)!;
-    const { fileExtensionDefault, newLevelResizable } = drv;
-    const level = drv.createLevel();
-    const { minLevelsCount, maxLevelsCount } = drv.createLevelset([level]);
-    return {
-      level,
-      resizable: newLevelResizable,
-      fileExtensionDefault,
-      minLevelsCount,
-      maxLevelsCount,
-    };
-  }, [driverName]);
+  const format = getDriverFormat(driverName, driverFormat)!;
+  const { resizable } = format;
+  const level = useMemo(() => format.createLevel(), [format]);
+  const { maxTitleLength, width: defaultWidth, height: defaultHeight } = level;
+
   const titleError = useMemo(() => {
     try {
       level.setTitle(title);
@@ -76,6 +103,11 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     },
     [],
   );
+  const handleFormatChange = useCallback((o: FormatOption | null) => {
+    if (o) {
+      setDriverFormat(o.value);
+    }
+  }, []);
   const handleFilenameChange = useCallback<
     ChangeEventHandler<HTMLInputElement>
   >(({ target: { value } }) => setFilename(value), []);
@@ -84,36 +116,31 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     [],
   );
 
-  const fileExt = parseFilename(filename, driverName);
+  const fileExt = parseFilename(filename, driverName, driverFormat);
 
   const handleOk = useCallback(async () => {
     if ((fileExt.hasExt && !fileExt.isExtValid) || levelsCount === null) {
       return;
     }
-    const drv = getDriver(driverName as string)!;
-    const { fileExtensionDefault, writer, newLevelResizable: resizable } = drv;
-    if (!writer) {
-      return;
-    }
-
-    if (resizable && (width !== null || height !== null)) {
+    const format = getDriverFormat(driverName as string, driverFormat)!;
+    const { resizable } = format;
+    if (canResize(resizable) && (width !== null || height !== null)) {
+      const { minWidth = 1, minHeight = 1, maxWidth, maxHeight } = resizable;
       if (
         width !== null &&
-        ((resizable.minWidth !== undefined && width < resizable.minWidth) ||
-          (resizable.maxWidth !== undefined && width > resizable.maxWidth))
+        (width < minWidth || (maxWidth !== undefined && width > maxWidth))
       ) {
         return;
       }
       if (
         height !== null &&
-        ((resizable.minHeight !== undefined && height < resizable.minHeight) ||
-          (resizable.maxHeight !== undefined && height > resizable.maxHeight))
+        (height < minHeight || (maxHeight !== undefined && height > maxHeight))
       ) {
         return;
       }
     }
 
-    let level = drv.createLevel({
+    let level = format.createLevel({
       width: width ?? undefined,
       height: height ?? undefined,
       // TODO: `borderTile` can be configured too
@@ -124,11 +151,9 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
       return;
     }
 
-    const levelset = drv.createLevelset([level]);
     if (
-      levelsCount < levelset.minLevelsCount ||
-      (levelset.maxLevelsCount !== null &&
-        levelsCount > levelset.maxLevelsCount)
+      levelsCount < format.minLevelsCount ||
+      (format.maxLevelsCount !== null && levelsCount > format.maxLevelsCount)
     ) {
       return;
     }
@@ -137,13 +162,14 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
 
     let newFilename = filename;
     if (!fileExt.hasExt) {
-      newFilename += "." + fileExtensionDefault;
+      newFilename += "." + format.fileExtensionDefault;
     }
 
     try {
       await addLevelsetFileFx({
-        file: new Blob([writer.writeLevelset(drv.createLevelset(levels))]),
+        file: new Blob([format.writeLevelset(format.createLevelset(levels))]),
         driverName,
+        driverFormat,
         name: newFilename,
       });
       onSubmit(true);
@@ -157,6 +183,7 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     }
   }, [
     driverName,
+    driverFormat,
     filename,
     fileExt.hasExt,
     fileExt.isExtValid,
@@ -166,6 +193,9 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     height,
     onSubmit,
   ]);
+
+  const isResizableW = canResizeWidth(resizable);
+  const isResizableH = canResizeHeight(resizable);
 
   return (
     <Dialog
@@ -194,11 +224,20 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
       onClose={onCancel}
     >
       <div className={cl.root}>
-        <Field label="File type">
+        <Field label="Driver">
           <Select
             options={driversOptions}
             value={driversOptions.find((o) => o.value === driverName) ?? null}
             onChange={handleDriverChange}
+          />
+        </Field>
+        <Field label="File type">
+          <Select
+            options={curFormatsOptions}
+            value={
+              curFormatsOptions.find((o) => o.value === driverFormat) ?? null
+            }
+            onChange={handleFormatChange}
           />
         </Field>
         <Field
@@ -206,8 +245,8 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
           help={
             !fileExt.hasExt && (
               <>
-                Default extension <code>{fileExtensionDefault}</code> will be
-                appended.
+                Default extension <code>{format.fileExtensionDefault}</code>{" "}
+                will be appended.
               </>
             )
           }
@@ -219,7 +258,11 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
         </Field>
         <Field
           label="Levels count"
-          error={intRangeError(levelsCount, minLevelsCount, maxLevelsCount)}
+          error={intRangeError(
+            levelsCount,
+            format.minLevelsCount,
+            format.maxLevelsCount,
+          )}
         >
           <IntegerInput
             value={levelsCount}
@@ -243,45 +286,57 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
           />
         </Field>
 
-        <Field
-          label="Levels Width"
-          error={
-            resizable &&
-            width !== null &&
-            intRangeError(width, resizable.minWidth ?? 1, resizable.maxWidth)
-          }
-        >
-          {resizable ? (
-            <IntegerInput
-              value={width}
-              onChange={setWidth}
-              placeholder={String(defaultWidth)}
-            />
-          ) : (
-            <IntegerInput value={defaultWidth} readOnly disabled />
-          )}
-        </Field>
-        <Field
-          label="Levels Height"
-          error={
-            resizable &&
-            height !== null &&
-            intRangeError(height, resizable.minHeight ?? 1, resizable.maxHeight)
-          }
-        >
-          {resizable ? (
-            <IntegerInput
-              value={height}
-              onChange={setHeight}
-              placeholder={String(defaultHeight)}
-            />
-          ) : (
-            <IntegerInput value={defaultHeight} readOnly disabled />
-          )}
-        </Field>
+        {(isResizableW || isResizableH) && (
+          <>
+            <Field
+              label="Levels Width"
+              error={
+                isResizableW &&
+                width !== null &&
+                intRangeError(
+                  width,
+                  resizable.minWidth ?? 1,
+                  resizable.maxWidth,
+                )
+              }
+            >
+              {isResizableW ? (
+                <IntegerInput
+                  value={width}
+                  onChange={setWidth}
+                  placeholder={String(defaultWidth)}
+                />
+              ) : (
+                <IntegerInput value={defaultWidth} readOnly disabled />
+              )}
+            </Field>
+            <Field
+              label="Levels Height"
+              error={
+                isResizableH &&
+                height !== null &&
+                intRangeError(
+                  height,
+                  resizable.minHeight ?? 1,
+                  resizable.maxHeight,
+                )
+              }
+            >
+              {isResizableH ? (
+                <IntegerInput
+                  value={height}
+                  onChange={setHeight}
+                  placeholder={String(defaultHeight)}
+                />
+              ) : (
+                <IntegerInput value={defaultHeight} readOnly disabled />
+              )}
+            </Field>
 
-        {resizable && width !== null && height !== null && (
-          <NoticeSizeLags totalTiles={width * height} />
+            {width !== null && height !== null && (
+              <NoticeSizeLags totalTiles={width * height} />
+            )}
+          </>
         )}
 
         {/* TODO: prompt dialog: driver & its options */}
@@ -294,13 +349,20 @@ interface _FN {
   hasExt: boolean;
   isExtValid: boolean;
 }
-const parseFilename = (filename: string, driverName: DriverName): _FN => {
+const parseFilename = (
+  filename: string,
+  driverName: DriverName,
+  driverFormat: string,
+): _FN => {
   const ext = filename.match(/.\.([^.]*)$/)?.[1];
   if (ext === undefined) {
     return { hasExt: false, isExtValid: false };
   }
 
-  const { fileExtensionDefault, fileExtensions } = getDriver(driverName);
+  const { fileExtensionDefault, fileExtensions } = getDriverFormat(
+    driverName,
+    driverFormat,
+  );
 
   return {
     hasExt: true,
