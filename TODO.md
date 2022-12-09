@@ -5,6 +5,7 @@
 - Toasts.
   - Level title invalid chars.
   - Some errors which now goes to `console.error()`.
+  - Internal editing exception from store manipulations.
 - Import/export single level.
 
 ## Wishes from users (unsorted)

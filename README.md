@@ -5,6 +5,10 @@
 ![Version](https://img.shields.io/github/package-json/v/vovan-ve/supaplex-levels-editor)
 [![sple.me](https://img.shields.io/badge/https-sple.me-blue)](https://sple.me)
 ![License](https://img.shields.io/github/license/vovan-ve/supaplex-levels-editor)
+<br>
+In dev:
+![Version@devel](https://img.shields.io/github/package-json/v/vovan-ve/supaplex-levels-editor/devel)
+![Version@devel](https://img.shields.io/github/last-commit/vovan-ve/supaplex-levels-editor/devel)
 
 [sple.me](https://sple.me) is **Supaplex Levels Editor** in browser. Inspired by
 [Supaplex.Online][spo] and its community.
