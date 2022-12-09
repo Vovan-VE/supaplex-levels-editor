@@ -8,26 +8,35 @@ export type LevelsetFileKey = CodeOf<"LevelsetFile">;
 
 export type IBaseLevelsList = readonly IBaseLevel[];
 
-export interface LevelsetFileSource {
+/**
+ * Old < 0.6 interface before formats
+ *
+ * Any user can skip several >=0.6 versions, so `driverFormat` can still be
+ * `undefined` for someone.
+ */
+interface LevelsetFileSourceOld {
   file: Blob;
   name: string;
   driverName: string;
   driverFormat: string | undefined;
 }
-export interface LevelsetFileSourceF extends LevelsetFileSource {
+export interface LevelsetFileSource extends LevelsetFileSourceOld {
   driverFormat: string;
 }
-export interface LevelsetFileData extends LevelsetFileSource {
+/**
+ * Old < 0.6 interface before formats
+ *
+ * Any user can skip several >=0.6 versions, so `driverFormat` can still be
+ * `undefined` for someone.
+ */
+export interface LevelsetFileDataOld extends LevelsetFileSourceOld {
   key: LevelsetFileKey;
 }
-export interface LevelsetFileDataF extends LevelsetFileData {
+export interface LevelsetFileData extends LevelsetFileDataOld {
   driverFormat: string;
 }
 export interface LevelsetFile extends LevelsetFileData {
   levelset: IBaseLevelset<IBaseLevel>;
-}
-export interface LevelsetFileF extends LevelsetFile {
-  driverFormat: string;
 }
 
 export interface LevelBuffer<L> {

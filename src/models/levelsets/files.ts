@@ -14,16 +14,16 @@ import { FALLBACK_FORMAT, getDriverFormat, REPLACED_DRIVERS } from "drivers";
 import { generateKey } from "utils/strings";
 import { localStorageDriver } from "../_utils/persistent";
 import {
+  LevelsetFile,
   LevelsetFileData,
-  LevelsetFileDataF,
-  LevelsetFileF,
+  LevelsetFileDataOld,
   LevelsetFileKey,
-  LevelsetFileSourceF,
+  LevelsetFileSource,
 } from "./types";
 
 const fulfillFileLevels = async (
-  input: LevelsetFileDataF,
-): Promise<LevelsetFileF> => {
+  input: LevelsetFileData,
+): Promise<LevelsetFile> => {
   const format = getDriverFormat(input.driverName, input.driverFormat);
   if (!format) {
     throw new Error(
@@ -50,7 +50,7 @@ const fulfillFileLevels = async (
  * Add new file from whatever source
  */
 export const addLevelsetFileFx = createEffect(
-  (source: LevelsetFileSourceF): Promise<LevelsetFileF> =>
+  (source: LevelsetFileSource): Promise<LevelsetFile> =>
     fulfillFileLevels({
       ...source,
       key: generateKey() as LevelsetFileKey,
@@ -67,7 +67,7 @@ export const removeCurrentLevelsetFile = createEvent<any>();
 /**
  * Update loaded file in memory
  */
-export const updateLevelsetFile = createEvent<LevelsetFileF>();
+export const updateLevelsetFile = createEvent<LevelsetFile>();
 /**
  * Rename currently selected file
  */
@@ -118,14 +118,20 @@ sample({
   target: _willSetCurrentKeyFx,
 });
 
-interface _DbLevelsetFile extends Omit<LevelsetFileData, "file"> {
+/**
+ * Old < 0.6 interface before formats
+ *
+ * Any user can skip several >=0.6 versions, so `driverFormat` can still be
+ * `undefined` for someone.
+ */
+interface _DbLevelsetFile extends Omit<LevelsetFileDataOld, "file"> {
   fileBuffer: ArrayBuffer;
 }
 /**
  * Loaded files in memory
  */
 export const $levelsets = withPersistentMap(
-  createStore<ReadonlyMap<LevelsetFileKey, LevelsetFileF>>(new Map()),
+  createStore<ReadonlyMap<LevelsetFileKey, LevelsetFile>>(new Map()),
   process.env.NODE_ENV === "test"
     ? createNullDriver<LevelsetFileKey, _DbLevelsetFile>()
     : createIndexedDBDriver<LevelsetFileKey, _DbLevelsetFile>({
@@ -140,7 +146,7 @@ export const $levelsets = withPersistentMap(
       driverName,
       driverFormat,
       key,
-    }: LevelsetFileF): Promise<_DbLevelsetFile> => ({
+    }: LevelsetFile): Promise<_DbLevelsetFile> => ({
       name,
       driverName,
       driverFormat,

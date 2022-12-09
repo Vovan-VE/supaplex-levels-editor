@@ -35,7 +35,7 @@ import {
   DemoData,
   IBaseLevelsList,
   isEqualLevels,
-  LevelsetFileF,
+  LevelsetFile,
   LevelsetFileKey,
   LevelsetFlushBuffer,
   LevelsetsBuffers,
@@ -143,7 +143,7 @@ const _withCurrent =
 const _withCurrentKey = _withCurrent($currentKey);
 const _withCurrentFile = _withCurrent($currentLevelsetFile);
 
-const createLevelForFile = (file: LevelsetFileF) => {
+const createLevelForFile = (file: LevelsetFile) => {
   const f = getDriverFormat(file.driverName, file.driverFormat);
   if (!f) {
     throw new Error("Invalid driver or format name");
