@@ -93,14 +93,31 @@ export const readLevelset = (file: ArrayBuffer): ISupaplexLevelset => {
 };
 
 export const writeLevelset = (levelset: ISupaplexLevelset): ArrayBuffer => {
-  const levelsCount = levelset.levelsCount;
+  // warnings covered by "support report"
+  const levelsCount = Math.min(0x7fff, levelset.levelsCount);
+  const levels = levelset.getLevels().slice(0, levelsCount);
+
   const widths: number[] = [];
   const heights: number[] = [];
   const offsets: number[] = [];
   const sizes: number[] = [];
 
   let offset = 8 + 12 * levelsCount;
-  for (const level of levelset.getLevels()) {
+  for (const [i, level] of levels.entries()) {
+    // errors covered by "support report"
+    if (level.width > 0x7fff || level.height > 0x7fff) {
+      throw new Error(
+        `Level ${i + 1} is too large: ${level.width}x${level.height}`,
+      );
+    }
+    if (offset >= 0x7fffffff - 1) {
+      throw new Error(
+        `Level ${
+          i + 1
+        } cannot be saved due to MPX file format limitations (offset+1 exceeds maximum)`,
+      );
+    }
+
     widths.push(level.width);
     heights.push(level.height);
     offsets.push(offset);
@@ -110,7 +127,7 @@ export const writeLevelset = (levelset: ISupaplexLevelset): ArrayBuffer => {
 
   const result = new Uint8Array(offset);
   result.set(MPX_SIGN, 0);
-  if (levelsCount === 1 && !levelset.getLevel(0).demo) {
+  if (levelsCount === 1 && !levels[0].demo) {
     setInt32LE(result, 4, 0x20202020);
   } else {
     setInt16LE(result, 4, 1);
@@ -122,7 +139,7 @@ export const writeLevelset = (levelset: ISupaplexLevelset): ArrayBuffer => {
     setInt32LE(result, at + 4, offsets[i] + 1);
     setInt32LE(result, at + 8, sizes[i]);
 
-    result.set(levelset.getLevel(i).raw, offsets[i]);
+    result.set(levels[i].raw, offsets[i]);
   }
 
   return result.buffer;

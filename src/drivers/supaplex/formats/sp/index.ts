@@ -5,6 +5,7 @@ import { createLevelset } from "../../levelset";
 import { fillLevelBorder } from "../../fillLevelBorder";
 import { createLevel } from "../../level";
 import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../std";
+import { supportReport } from "./supportReport";
 
 export const SP: ISupaplexFormat = {
   title: "SP",
@@ -13,7 +14,7 @@ export const SP: ISupaplexFormat = {
   minLevelsCount: 1,
   maxLevelsCount: 1,
   demoSupport: true,
-  supportReport: () => null,
+  supportReport,
   readLevelset,
   writeLevelset,
   createLevelset: (levels) => createLevelset(levels ?? 1),

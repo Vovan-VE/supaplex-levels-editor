@@ -4,6 +4,7 @@ import { createLevelset } from "../../levelset";
 import { ISupaplexFormat } from "../../types";
 import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../std";
 import { readLevelset, writeLevelset } from "./io";
+import { supportReport } from "./supportReport";
 
 export const MPX: ISupaplexFormat = {
   title: "MPX",
@@ -15,7 +16,7 @@ export const MPX: ISupaplexFormat = {
   minLevelsCount: 1,
   maxLevelsCount: 0x7fff,
   demoSupport: true,
-  supportReport: () => null,
+  supportReport,
   readLevelset,
   writeLevelset,
   createLevelset: (levels) => createLevelset(levels ?? 1),

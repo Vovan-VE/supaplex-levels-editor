@@ -60,10 +60,11 @@ export interface IBaseLevel extends ITilesRegion {
   readonly raw: Uint8Array;
   setTile(x: number, y: number, value: number): this;
   batch(update: (b: this) => this): this;
-  // TODO: probably add optional argument to set border with the given tile
+  // TODO: probably add optional argument to set border or fill new space with the given tile(s)
   resize?(width: number, height: number): this;
   readonly title: string;
   setTitle(title: string): this;
+  // REFACT: move to format?
   readonly maxTitleLength: number;
 
   isPlayable(): IsPlayableResult;
@@ -124,6 +125,17 @@ export interface INewLevelOptions {
   borderTile?: number;
 }
 
+export const enum SupportReportType {
+  ERR = 0,
+  WARN = 1,
+}
+
+export interface ISupportReportMessage {
+  type: SupportReportType;
+  message: ReactNode;
+  levelIndex?: number | null;
+}
+
 export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
   readonly title: string;
   readonly fileExtensions?: RegExp;
@@ -132,7 +144,7 @@ export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
   readonly minLevelsCount: number;
   readonly maxLevelsCount: number | null;
   readonly demoSupport?: boolean;
-  supportReport(levelset: S): readonly ReactNode[] | null;
+  supportReport(levelset: S): Iterable<ISupportReportMessage>;
   readLevelset(file: ArrayBuffer): S;
   writeLevelset(levelset: S): ArrayBuffer;
   createLevelset(levels?: readonly L[] | Iterable<L>): S;
