@@ -2,6 +2,7 @@
 
 ## 0.7.0 (DEV)
 
+- Add: Option in Settings to switch Double Chips graphics.
 - Enh: Reorder tiles in toolbar by at least some logic for better UX.
 
 ## 0.6.0 (2022-12-10)

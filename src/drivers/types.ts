@@ -158,6 +158,7 @@ export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
 
 export interface TileRenderProps {
   tile?: number;
+  className?: string;
   style?: CSSProperties;
 }
 

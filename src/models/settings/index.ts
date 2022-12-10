@@ -38,3 +38,14 @@ export const $layoutType = withPersistent(
   "layout",
   { unserialize: (v) => (isLayoutType(v) ? v : LayoutType.AUTO) },
 ).on(setLayoutType, (_, v) => v);
+
+type SpChipType = 0 | 1;
+const isSpChipType = (v: any): v is SpChipType =>
+  typeof v === "number" && v === ~v && v >= 0 && v <= 1;
+export const setSpChip = createEvent<SpChipType>();
+export const $spChip = withPersistent(
+  createStore<SpChipType>(0),
+  localStorageDriver,
+  "spChip",
+  { unserialize: (v) => (isSpChipType(v) ? v : 0) },
+).on(setSpChip, (_, v) => v);
