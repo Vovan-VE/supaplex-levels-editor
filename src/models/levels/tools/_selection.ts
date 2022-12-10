@@ -28,7 +28,7 @@ import {
   updateCurrentLevel,
   updateLevel,
 } from "../../levelsets";
-import { $tileIndex } from "../current";
+import { $tileIndex, BodyVisibleRectGate } from "../current";
 import { createDragTool } from "./_drag-tool";
 import {
   DrawLayer,
@@ -37,6 +37,7 @@ import {
   Tool,
   ToolUI,
 } from "./interface";
+import { $feedbackCell } from "./feedback";
 
 interface P {
   x: number;
@@ -368,7 +369,23 @@ export const pasteSelectionFx = createEffect(async (visibleRect?: RectA) => {
   externalRollback();
   const region = $clipboardRegion.getState();
   if (region) {
-    const [x, y] = visibleRect || [0, 0];
+    let x = 0;
+    let y = 0;
+    if (visibleRect) {
+      [x, y] = visibleRect;
+    } else {
+      const hoverCell = $feedbackCell.getState();
+      if (hoverCell) {
+        x = hoverCell.x - Math.floor(region.tiles.width / 2);
+        y = hoverCell.y - Math.floor(region.tiles.height / 2);
+      } else {
+        const bodyRect = BodyVisibleRectGate.state.getState().rect;
+        if (bodyRect) {
+          [x, y] = bodyRect;
+        }
+      }
+    }
+
     _setState({
       op: Op.STABLE,
       x,

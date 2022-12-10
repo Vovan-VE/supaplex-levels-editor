@@ -22,6 +22,5 @@
 - Clone selection reflected vertically and horizontally in order to facilitate
   the symmetries.
   - UI toolbar, too many buttons, too few space.
-- Paste selection in center where your mouse pointer is located.
 - Some additional (temp?) tile selection ways, like "take this specially clicked
   in body tile". Some graphical editors have something similar.

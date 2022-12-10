@@ -6,6 +6,8 @@
 - Add: Convert entire file to a different format.
 - Enh: Hot Key shortcuts:
   - `Ctrl+X`, `Ctrl+C`, `Ctrl+V` and `Del` for Selection.
+- Enh: Selection on Paste now will be placed at cell under mouse pointer first,
+  or otherwise at top left corner or _visible_ area.
 - Enh: Minor UI enhancements.
 - Internal: Refactored Drivers, so now it's only one "Supaplex" Driver with
   different file formats.
