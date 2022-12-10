@@ -15,6 +15,22 @@ describe("supportReport", () => {
   it("ok", () => {
     expect([...supportReport(levelset)]).toEqual([]);
   });
+
+  it("ignores rest levels", () => {
+    expect([...supportReport(levelset.appendLevel(createLevel(2, 3)))]).toEqual<
+      ISupportReportMessage[]
+    >([
+      {
+        type: SupportReportType.WARN,
+        message: (
+          <>
+            Only first level will be used, and all the rest (<b>{1}</b>) will be
+            removed.
+          </>
+        ),
+      },
+    ]);
+  });
 });
 
 describe("levelsetReporter", () => {

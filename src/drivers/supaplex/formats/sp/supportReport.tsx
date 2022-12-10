@@ -1,10 +1,14 @@
 import { ISupportReportMessage } from "../../../types";
 import { ISupaplexLevel, ISupaplexLevelset } from "../../types";
 import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../std";
-import { err, supportLevelsetReporter, warn } from "../supportLevelsetReporter";
+import { err, warn } from "../supportLevelsetReporter";
 
-export const supportReport = (levelset: ISupaplexLevelset) =>
-  supportLevelsetReporter(levelset, levelsetReporter, levelReporter);
+export function* supportReport(levelset: ISupaplexLevelset) {
+  yield* levelsetReporter(levelset);
+  for (const item of levelReporter(levelset.getLevel(0))) {
+    yield { ...item, levelIndex: 0 };
+  }
+}
 
 export function* levelsetReporter(
   levelset: ISupaplexLevelset,
