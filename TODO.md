@@ -7,6 +7,7 @@
   - Some errors which now goes to `console.error()`.
   - Internal editing exception from store manipulations.
 - Import/export single level.
+  - Yet more UI buttons again.
 
 ## Wishes from users (unsorted)
 
