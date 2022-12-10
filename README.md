@@ -60,7 +60,6 @@ Also:
 ## Planned features (unsorted)
 
 - More editing tools at least those from Winplex Collection Editor.
-- Conversion between formats.
 - Compare levels.
 - End User Manual.
 - Visualized level resizing with crop.

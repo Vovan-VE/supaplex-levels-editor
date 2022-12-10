@@ -1,12 +1,16 @@
 import { useStore } from "effector-react";
 import { useMemo } from "react";
+import { SupportReportType } from "drivers";
 import {
   $currentFileName,
+  convertLevelsetTryFx,
   removeCurrentLevelsetFile,
   renameCurrentLevelset,
 } from "models/levelsets";
-import { ask, promptString } from "ui/feedback";
+import { ask, msgBox, promptString } from "ui/feedback";
 import { ColorType } from "ui/types";
+import { promptFormat } from "./promptFormat";
+import { SupportReport } from "./SupportReport";
 
 const handleRename = async (filename: string) => {
   const newName = await promptString({
@@ -21,6 +25,36 @@ const handleRename = async (filename: string) => {
   });
   if (newName !== undefined) {
     renameCurrentLevelset(newName);
+  }
+};
+
+const handleConvert = async () => {
+  const toDriverFormat = await promptFormat();
+  if (toDriverFormat) {
+    const report = await convertLevelsetTryFx({ toDriverFormat });
+    if (report) {
+      if (report.type === SupportReportType.ERR) {
+        return msgBox(<SupportReport report={report} />, {
+          button: { uiColor: ColorType.MUTE, text: "Close" },
+        });
+      }
+      if (
+        await ask(<SupportReport report={report} />, {
+          buttons: {
+            okText: "Create",
+            ok: {
+              uiColor: ColorType.SUCCESS,
+              autoFocus: false,
+            },
+            cancel: {
+              autoFocus: true,
+            },
+          },
+        })
+      ) {
+        return convertLevelsetTryFx({ toDriverFormat, confirmWarnings: true });
+      }
+    }
   }
 };
 
@@ -63,6 +97,7 @@ export const useFileButtonsProps = () => {
         filename
           ? {
               rename: () => handleRename(filename),
+              convert: handleConvert,
               remove: () => handleRemove(filename),
             }
           : undefined,

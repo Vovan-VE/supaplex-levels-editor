@@ -1,5 +1,11 @@
 import { SupaplexDriver } from "./supaplex";
-import { IBaseDriver, ISizeLimit } from "./types";
+import {
+  IBaseDriver,
+  ISizeLimit,
+  ISupportReport,
+  ISupportReportMessage,
+  SupportReportType,
+} from "./types";
 
 export * from "./types";
 
@@ -81,3 +87,67 @@ export const canResizeHeight = ({
 
 export const canResize = (r: ISizeLimit): boolean =>
   canResizeWidth(r) || canResizeHeight(r);
+
+interface _FN {
+  hasExt: boolean;
+  isExtValid: boolean;
+  basename: string;
+  ext: string;
+}
+export const parseFormatFilename = (
+  filename: string,
+  driverName: DriverName,
+  driverFormat: string,
+): _FN => {
+  const ext = filename.match(/.\.([^.]*)$/)?.[1];
+  if (ext === undefined) {
+    return {
+      hasExt: false,
+      isExtValid: false,
+      basename: filename,
+      ext: "",
+    };
+  }
+
+  return {
+    hasExt: true,
+    isExtValid: isExtValid(ext, driverName, driverFormat),
+    basename: filename.substring(0, filename.length - ext.length - 1),
+    ext,
+  };
+};
+
+export const isExtValid = (
+  ext: string,
+  driverName: DriverName,
+  driverFormat: string,
+) => {
+  const { fileExtensionDefault, fileExtensions } = getDriverFormat(
+    driverName,
+    driverFormat,
+  );
+
+  return fileExtensions
+    ? new RegExp(`^${fileExtensions.source}$`, "i").test(ext)
+    : ext.toLowerCase() === fileExtensionDefault.toLowerCase();
+};
+
+export const summarySupportReport = (
+  input: Iterable<ISupportReportMessage>,
+): ISupportReport | null => {
+  let type: SupportReportType | null = null;
+  const messages: ISupportReportMessage[] = [];
+  for (const m of input) {
+    messages.push(m);
+    if (type === null || m.type < type) {
+      type = m.type;
+    }
+  }
+  if (type === null) {
+    return null;
+  }
+  return {
+    type,
+    messages,
+  };
+};

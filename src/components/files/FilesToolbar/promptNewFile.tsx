@@ -15,6 +15,7 @@ import {
   DriverName,
   getDriver,
   getDriverFormat,
+  parseFormatFilename,
 } from "drivers";
 import { addLevelsetFileFx } from "models/levelsets";
 import { NoticeSizeLags } from "../../level/toolbars/LevelConfig/NoticeSizeLags";
@@ -130,7 +131,7 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     [],
   );
 
-  const fileExt = parseFilename(filename, driverName, driverFormat);
+  const fileExt = parseFormatFilename(filename, driverName, driverFormat);
 
   const handleOk = useCallback(async () => {
     if ((fileExt.hasExt && !fileExt.isExtValid) || levelsCount === null) {
@@ -216,15 +217,12 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
       title="New file"
       size="small"
       open={show}
-      wrapForm={useMemo(
-        () => ({
-          onSubmit: (e: FormEvent) => {
-            e.preventDefault();
-            handleOk();
-          },
-        }),
-        [handleOk],
-      )}
+      wrapForm={{
+        onSubmit: (e: FormEvent) => {
+          e.preventDefault();
+          handleOk();
+        },
+      }}
       buttons={
         <>
           <Button uiColor={ColorType.SUCCESS} type="submit">
@@ -354,31 +352,4 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
       </div>
     </Dialog>
   );
-};
-
-interface _FN {
-  hasExt: boolean;
-  isExtValid: boolean;
-}
-const parseFilename = (
-  filename: string,
-  driverName: DriverName,
-  driverFormat: string,
-): _FN => {
-  const ext = filename.match(/.\.([^.]*)$/)?.[1];
-  if (ext === undefined) {
-    return { hasExt: false, isExtValid: false };
-  }
-
-  const { fileExtensionDefault, fileExtensions } = getDriverFormat(
-    driverName,
-    driverFormat,
-  );
-
-  return {
-    hasExt: true,
-    isExtValid: fileExtensions
-      ? new RegExp(`^${fileExtensions.source}$`, "i").test(ext)
-      : ext.toLowerCase() === fileExtensionDefault.toLowerCase(),
-  };
 };

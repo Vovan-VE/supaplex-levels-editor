@@ -39,6 +39,13 @@ export interface LevelsetFile extends LevelsetFileData {
   levelset: IBaseLevelset<IBaseLevel>;
 }
 
+export interface LevelsetConvertOpt {
+  toDriverFormat: string;
+}
+export interface LevelsetConvertTry extends LevelsetConvertOpt {
+  confirmWarnings?: boolean;
+}
+
 export interface LevelBuffer<L> {
   undoQueue: UndoQueue<L>;
   isOpened?: boolean;

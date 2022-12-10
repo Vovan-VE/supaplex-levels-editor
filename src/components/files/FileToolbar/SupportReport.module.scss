@@ -1,0 +1,31 @@
+@use "styles/themes";
+@use "styles/mixins";
+
+.root {
+}
+
+._err,
+._warn {
+  font-size: 1.5rem;
+}
+._err {
+  color: themes.$color-danger;
+}
+._warn {
+  color: themes.$color-warn;
+}
+
+.head {
+  font-size: 1.2rem;
+}
+
+.messages {
+  margin-top: 1em;
+  max-height: 15rem;
+  overflow-y: auto;
+  @include mixins.default-scrollbar;
+}
+
+.foot {
+  margin-top: 1em;
+}

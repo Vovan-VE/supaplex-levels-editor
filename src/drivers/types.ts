@@ -135,6 +135,10 @@ export interface ISupportReportMessage {
   message: ReactNode;
   levelIndex?: number | null;
 }
+export interface ISupportReport {
+  type: SupportReportType;
+  messages: readonly ISupportReportMessage[];
+}
 
 export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
   readonly title: string;

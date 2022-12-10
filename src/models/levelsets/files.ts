@@ -10,10 +10,21 @@ import { withPersistent, withPersistentMap } from "@cubux/effector-persistent";
 import * as RoMap from "@cubux/readonly-map";
 import { createIndexedDBDriver, createNullDriver } from "@cubux/storage-driver";
 import { APP_STORAGE_PREFIX } from "configs";
-import { FALLBACK_FORMAT, getDriverFormat, REPLACED_DRIVERS } from "drivers";
+import {
+  DriverName,
+  FALLBACK_FORMAT,
+  getDriverFormat,
+  isExtValid,
+  parseFormatFilename,
+  REPLACED_DRIVERS,
+  summarySupportReport,
+} from "drivers";
 import { generateKey } from "utils/strings";
+import * as MapOrder from "utils/map/order";
 import { localStorageDriver } from "../_utils/persistent";
 import {
+  LevelsetConvertOpt,
+  LevelsetConvertTry,
   LevelsetFile,
   LevelsetFileData,
   LevelsetFileDataOld,
@@ -46,19 +57,83 @@ const fulfillFileLevels = async (
   };
 };
 
+interface AddFileParams extends LevelsetFileSource {
+  insertAfterKey?: LevelsetFileKey;
+}
+interface AddFileResult {
+  file: LevelsetFile;
+  insertAfterKey: LevelsetFileKey | undefined;
+}
 /**
  * Add new file from whatever source
  */
 export const addLevelsetFileFx = createEffect(
-  (source: LevelsetFileSource): Promise<LevelsetFile> =>
-    fulfillFileLevels({
+  async ({
+    insertAfterKey,
+    ...source
+  }: AddFileParams): Promise<AddFileResult> => ({
+    insertAfterKey,
+    file: await fulfillFileLevels({
       ...source,
       key: generateKey() as LevelsetFileKey,
     }),
+  }),
 );
 addLevelsetFileFx.fail.watch(({ params, error }) => {
   console.log("Could not load file", params, error);
 });
+
+interface LevelsetConvertContinue extends LevelsetConvertOpt {
+  file: LevelsetFile;
+}
+const convertLevelsetContinueFx = createEffect(
+  ({ file, toDriverFormat }: LevelsetConvertContinue) => {
+    const to = getDriverFormat(file.driverName, toDriverFormat);
+    if (to) {
+      let newFileName = file.name;
+      if (file.driverFormat !== toDriverFormat) {
+        const origFN = parseFormatFilename(
+          file.name,
+          file.driverName as DriverName,
+          file.driverFormat,
+        );
+        if (
+          !origFN.hasExt ||
+          !isExtValid(origFN.ext, file.driverName as DriverName, toDriverFormat)
+        ) {
+          newFileName = `${origFN.basename}.${to.fileExtensionDefault}`;
+        }
+      }
+
+      return addLevelsetFileFx({
+        file: new Blob([to.writeLevelset(file.levelset)]),
+        name: newFileName,
+        driverName: file.driverName,
+        driverFormat: toDriverFormat,
+        insertAfterKey: file.key,
+      });
+    }
+  },
+);
+
+export const convertLevelsetTryFx = createEffect(
+  async ({ toDriverFormat, confirmWarnings }: LevelsetConvertTry) => {
+    const file = $currentLevelsetFile.getState();
+    if (file) {
+      if (!confirmWarnings) {
+        const { supportReport } = getDriverFormat(
+          file.driverName,
+          toDriverFormat,
+        )!;
+        const report = summarySupportReport(supportReport(file.levelset));
+        if (report) {
+          return report;
+        }
+      }
+      await convertLevelsetContinueFx({ file, toDriverFormat });
+    }
+  },
+);
 
 /**
  * Close file and forget everything about it
@@ -78,7 +153,9 @@ export const renameCurrentLevelset = createEvent<string>();
  */
 export const setCurrentLevelset = createEvent<LevelsetFileKey>();
 
-export const fileDidOpen = addLevelsetFileFx.doneData.map(({ key }) => key);
+export const fileDidOpen = addLevelsetFileFx.doneData.map(
+  ({ file: { key } }) => key,
+);
 
 const _willSetCurrentKeyFx = createEffect((next: LevelsetFileKey | null) => {
   _unsetCurrentKey();
@@ -170,9 +247,14 @@ export const $levelsets = withPersistentMap(
       }),
   },
 )
-  .on([updateLevelsetFile, addLevelsetFileFx.doneData], (map, file) =>
-    RoMap.set(map, file.key, file),
-  )
+  .on(updateLevelsetFile, (map, file) => RoMap.set(map, file.key, file))
+  .on(addLevelsetFileFx.doneData, (map, { file, insertAfterKey }) => {
+    let next = RoMap.set(map, file.key, file);
+    if (insertAfterKey) {
+      next = MapOrder.moveAfter(next, file.key, insertAfterKey);
+    }
+    return next;
+  })
   .on(
     sample({
       clock: renameCurrentLevelset,
