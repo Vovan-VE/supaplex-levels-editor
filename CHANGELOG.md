@@ -8,6 +8,7 @@
   - `Ctrl+Z` Undo and `Ctrl+Y` Redo.
   - `Ctrl+X` Cut, `Ctrl+C` Copy, `Ctrl+V` Paste and `Del` Delete for Selection.
   - `Ctrl++` Zoom In, `Ctrl+-` Zoom Out.
+  - `Escape` now closes a topmost dialog.
 - Enh: Selection on Paste now will be placed at cell under mouse pointer first,
   or otherwise at top left corner or _visible_ area.
 - Enh: Minor UI enhancements.
