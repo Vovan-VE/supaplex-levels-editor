@@ -1,7 +1,7 @@
 import { FC, Fragment, useMemo } from "react";
 import cn from "classnames";
 import { useStore } from "effector-react";
-import { getDriver } from "drivers";
+import { getDriver, getTilesForToolbar } from "drivers";
 import { $tileIndex, setTile } from "models/levels";
 import { $currentDriverName } from "models/levelsets";
 import { Button, Toolbar } from "ui/button";
@@ -13,6 +13,7 @@ interface Props extends ContainerProps {}
 export const TilesToolbar: FC<Props> = ({ className, ...rest }) => {
   const driverName = useStore($currentDriverName)!;
   const { tiles, TileRender } = getDriver(driverName)!;
+  const tilesSorted = useMemo(() => getTilesForToolbar(tiles), [tiles]);
 
   const tileIndex = useStore($tileIndex);
   const handleTile = useMemo(
@@ -25,7 +26,7 @@ export const TilesToolbar: FC<Props> = ({ className, ...rest }) => {
 
   return (
     <Toolbar {...rest} className={cn(cl.root, className)}>
-      {tiles.map(({ title, value }, i) => (
+      {tilesSorted.map(([i, { title, value }]) => (
         <Fragment key={value ?? `?${i}`}>
           {i > 0 && <wbr />}
           <Button

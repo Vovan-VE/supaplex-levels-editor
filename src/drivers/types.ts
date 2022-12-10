@@ -114,6 +114,7 @@ export interface IBaseTileInteraction<L extends IBaseLevel> {
 export interface IBaseTile<L extends IBaseLevel> {
   value?: number;
   title: string;
+  toolbarOrder?: number;
   interaction?: IBaseTileInteraction<L>;
   // TODO: limits like spec ports counts and coords<=>offset, Murphy presence
   //   and like notices for infotrons % 256 in case of 'all'

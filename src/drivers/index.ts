@@ -1,6 +1,7 @@
 import { SupaplexDriver } from "./supaplex";
 import {
   IBaseDriver,
+  IBaseTile,
   ISizeLimit,
   ISupportReport,
   ISupportReportMessage,
@@ -151,3 +152,15 @@ export const summarySupportReport = (
     messages,
   };
 };
+
+export const getTilesForToolbar = <T extends IBaseTile<any>>(
+  tiles: readonly T[],
+): readonly (readonly [number, T])[] =>
+  tiles
+    .map((tile, i) => [i, tile] as const)
+    .sort(
+      (
+        [aI, { toolbarOrder: aO = Number.MAX_SAFE_INTEGER }],
+        [bI, { toolbarOrder: bO = Number.MAX_SAFE_INTEGER }],
+      ) => aO - bO || aI - bI,
+    );

@@ -16,6 +16,7 @@ export const $drvTiles = _$driver.map((drv) => (drv && drv.tiles) || null);
 
 export const setTile = createEvent<number>();
 
+// FIXME: may be messed up "tile index" <=> "tile value", because it's equal for Supaplex
 export const $tileIndex = createStore(0)
   .on($drvTiles, (n, tiles) => (tiles && n < tiles.length ? n : 0))
   .on(

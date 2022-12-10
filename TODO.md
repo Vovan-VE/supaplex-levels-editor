@@ -8,6 +8,13 @@
   - Internal editing exception from store manipulations.
 - Import/export single level.
   - Yet more UI buttons again.
+- Tools:
+  - Double chip
+  - Random
+  - Maze
+  - Replace
+  - Chess
+  - Gradient
 
 ## Wishes from users (unsorted)
 
