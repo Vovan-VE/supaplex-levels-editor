@@ -1,2 +1,8 @@
 .root {
 }
+
+.row {
+  display: grid;
+  grid-gap: 0 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}

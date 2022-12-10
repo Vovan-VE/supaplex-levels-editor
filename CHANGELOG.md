@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.6.0 (2022-12-10)
+
+- Add: `*.sp` files support.
+- Add: Convert entire file to a different format.
+- Enh: Hot Key shortcuts:
+  - `Ctrl+Z` Undo and `Ctrl+Y` Redo.
+  - `Ctrl+X` Cut, `Ctrl+C` Copy, `Ctrl+V` Paste and `Del` Delete for Selection.
+  - `Ctrl++` Zoom In, `Ctrl+-` Zoom Out.
+  - `Escape` now closes a topmost dialog.
+- Enh: Selection on Paste now will be placed at cell under mouse pointer first,
+  or otherwise at top left corner or _visible_ area.
+- Enh: Minor UI enhancements.
+- Internal: Refactored Drivers, so now it's only one "Supaplex" Driver with
+  different file formats.
+
 ## 0.5.0 (2022-11-09)
 
 - Add: Selection tool with basic Cut/Copy/Paste/Delete functionality.

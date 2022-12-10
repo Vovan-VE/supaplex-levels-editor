@@ -1,22 +1,22 @@
+import { DAT, MPX, SP } from "./formats";
+import { LevelConfigurator } from "./LevelConfigurator";
 import { ISupaplexDriver } from "./types";
 import { Tile } from "./Tile";
 import { tiles } from "./tiles";
-import { reader, writer } from "./io";
-import { createLevel } from "./level";
-import { createLevelset } from "./levelset";
-import { LevelConfigurator } from "./LevelConfigurator";
-import { fillLevelBorder } from "./fillLevelBorder";
 
 export const SupaplexDriver: ISupaplexDriver = {
   title: "Supaplex",
   tiles,
   TileRender: Tile,
-  reader,
-  writer,
-  fileExtensions: /(dat|d\d{2})/i,
-  fileExtensionDefault: "dat",
-  createLevelset,
-  createLevel: ({ borderTile } = {}) =>
-    fillLevelBorder(createLevel(), borderTile),
   LevelConfigurator,
+  formats: {
+    // "detect" order:
+    // MPX first since it has "MPX " header
+    mpx: MPX,
+    // DAT second because I check its length to be a module of 1536
+    dat: DAT,
+    // SP has only min size limit
+    sp: SP,
+  },
+  defaultFormat: "dat",
 };

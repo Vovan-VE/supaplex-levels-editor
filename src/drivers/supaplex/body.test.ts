@@ -1,7 +1,9 @@
-import { BODY_LENGTH, supaplexBox } from "./box";
+import { AnyBox } from "./AnyBox";
+import { BODY_LENGTH, LEVEL_HEIGHT, LEVEL_WIDTH } from "./formats/std";
 import { createLevelBody } from "./body";
 import { TILE_EXIT, TILE_HARDWARE, TILE_MURPHY, TILE_SPACE } from "./tiles-id";
-import { AnyBox } from "./AnyBox";
+
+const supaplexBox = new AnyBox(LEVEL_WIDTH, LEVEL_HEIGHT);
 
 describe("createLevelBody", () => {
   const data = new Uint8Array(BODY_LENGTH);
@@ -111,7 +113,7 @@ describe("createLevelBody", () => {
       return result;
     });
     // it must take time shorten then 2 copies
-    expect(Date.now() - start).toBeLessThan((took / count) * 2);
+    expect(Date.now() - start).toBeLessThan((took / count) * 5);
     expect(result).not.toBe(body);
     expect(body.getTile(1, 1)).toBe(0);
     expect(result.getTile(1, 1)).toBe(6);

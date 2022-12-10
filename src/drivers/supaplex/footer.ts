@@ -1,17 +1,14 @@
 import { inRect, RectA } from "utils/rect";
-import { DemoSeed, IWithDemoSeed } from "../types";
-import { LEVEL_WIDTH } from "./box";
+import { DemoSeed } from "../types";
+import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "./formats/std";
 import {
   ILevelFooter,
   ISupaplexSpecPort,
   ISupaplexSpecPortProps,
 } from "./internal";
 
-export const FOOTER_BYTE_LENGTH = 96;
-
 const GRAVITY_OFFSET = 4;
 const TITLE_OFFSET = GRAVITY_OFFSET + 2;
-export const TITLE_LENGTH = 23;
 const FREEZE_ZONKS_OFFSET = TITLE_OFFSET + TITLE_LENGTH;
 const INFOTRONS_NEED_OFFSET = FREEZE_ZONKS_OFFSET + 1;
 const SPEC_PORT_COUNT_OFFSET = INFOTRONS_NEED_OFFSET + 1;
@@ -65,26 +62,44 @@ export const specPortCoordsToOffset = (
 };
 
 export const createLevelFooter = (
+  width: number,
   data?: Uint8Array,
-): ILevelFooter & IWithDemoSeed => new LevelFooter(data);
+): ILevelFooter => new LevelFooter(width, data);
 
-export class LevelFooter implements ILevelFooter, IWithDemoSeed {
-  #src: Uint8Array;
+class LevelFooter implements ILevelFooter {
+  readonly #width: number;
+  readonly #src: Uint8Array;
+  #demo: Uint8Array | null = null;
 
-  constructor(data?: Uint8Array) {
+  constructor(width: number, data?: Uint8Array) {
+    this.#width = width;
+
     if (data) {
+      this.#src = data.slice(0, FOOTER_BYTE_LENGTH);
       if (
         process.env.NODE_ENV !== "production" &&
-        data.length !== FOOTER_BYTE_LENGTH
+        this.#src.length !== FOOTER_BYTE_LENGTH
       ) {
         throw new Error(
-          `Invalid buffer length ${data.length}, expected exactly ${FOOTER_BYTE_LENGTH}`,
+          `Invalid buffer length ${
+            this.#src.length
+          }, expected exactly ${FOOTER_BYTE_LENGTH}`,
         );
       }
-      data = new Uint8Array(data);
+
+      if (data.length > FOOTER_BYTE_LENGTH && data[data.length - 1] === 0xff) {
+        // SPFIX63a.pdf:
+        //
+        // Original *.BIN demo used first byte to store target level index.
+        // In *.SP file the level is attached, but the first byte is still
+        // presented and unused.
+        //
+        // This is why here is `+1`.
+        this.#demo = data.slice(FOOTER_BYTE_LENGTH + 1, data.length - 1);
+      }
     } else {
-      data = new Uint8Array(FOOTER_BYTE_LENGTH);
-      data.set(
+      this.#src = new Uint8Array(FOOTER_BYTE_LENGTH);
+      this.#src.set(
         ""
           .padEnd(TITLE_LENGTH)
           .split("")
@@ -92,23 +107,33 @@ export class LevelFooter implements ILevelFooter, IWithDemoSeed {
         TITLE_OFFSET,
       );
     }
-    this.#src = data;
+  }
+
+  copy() {
+    return new LevelFooter(this.width, this.getRaw()) as this;
   }
 
   get width() {
-    return LEVEL_WIDTH;
-  }
-
-  copy(): this {
-    return new LevelFooter(this.#src) as this;
+    return this.#width;
   }
 
   get length() {
-    return this.#src.length;
+    return this.#src.length + (this.#demo ? this.#demo.length + 2 : 0);
   }
 
   getRaw() {
-    return new Uint8Array(this.#src);
+    const main = new Uint8Array(this.#src);
+    const demo = this.#demo;
+    if (demo) {
+      const result = new Uint8Array(main.length + demo.length + 2);
+      result.set(main, 0);
+      result[main.length] = 0;
+      result.set(demo, main.length + 1);
+      // See the comment for similar `+1` in `constructor`.
+      result[main.length + 1 + demo.length] = 0xff;
+      return result;
+    }
+    return main;
   }
 
   get title() {
@@ -317,6 +342,29 @@ export class LevelFooter implements ILevelFooter, IWithDemoSeed {
     copy.#src[DEMO_SPEED_B_OFFSET] = 0;
     copy.#src[DEMO_RNG_SEED_LO_OFFSET] = lo;
     copy.#src[DEMO_RNG_SEED_HI_OFFSET] = hi;
+    return copy;
+  }
+
+  get demo() {
+    return this.#demo && new Uint8Array(this.#demo);
+  }
+
+  setDemo(demo: Uint8Array | null) {
+    if (demo) {
+      if (
+        this.#demo &&
+        demo.length === this.#demo.length &&
+        demo.every((v, i) => v === this.#demo![i])
+      ) {
+        return this;
+      }
+    } else {
+      if (!this.#demo) {
+        return this;
+      }
+    }
+    const copy = this.copy();
+    copy.#demo = demo && new Uint8Array(demo);
     return copy;
   }
 }

@@ -1,11 +1,12 @@
 import { FC, useEffect, useMemo } from "react";
 import cn from "classnames";
-import { useStore, useStoreMap } from "effector-react";
+import { useGate, useStore, useStoreMap } from "effector-react";
 import {
   $bodyScale,
   $drvTileRender,
   $drvTiles,
   addInteraction,
+  BodyVisibleRectGate,
 } from "models/levels";
 import {
   $toolUI,
@@ -38,6 +39,7 @@ export const LevelBody: FC<Props> = ({ className, ...rest }) => {
     height,
     bodyScale,
   );
+  useGate(BodyVisibleRectGate, { rect });
   const nodes = useVisibleTiles(rect, TileRender);
 
   return (

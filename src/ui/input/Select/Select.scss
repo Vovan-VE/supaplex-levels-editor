@@ -5,7 +5,7 @@
   .app-react-select {
     &__control {
       @extend %button, %button-primary;
-      display: inline-flex;
+      display: flex;
       border-radius: 0;
       min-height: 0;
     }

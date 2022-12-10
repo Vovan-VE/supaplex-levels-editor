@@ -1,8 +1,15 @@
 @use "styles/mixins";
 
 .root {
+  display: grid;
+  grid-gap: 0 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  > .long {
+    grid-column-end: span 2;
+  }
 }
 
-.title {
+input.title {
   @extend %font-family-mono;
 }

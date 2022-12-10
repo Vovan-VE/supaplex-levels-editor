@@ -18,6 +18,13 @@ export const FileToolbar: FC = () => {
         onClick={downloadCurrentFile}
       />
       <Button
+        uiColor={ColorType.SUCCESS}
+        icon={<svgs.FileConvert />}
+        disabled={!filename}
+        title="Convert format..."
+        onClick={handlers?.convert}
+      />
+      <Button
         icon={<svgs.Rename />}
         disabled={!filename}
         title="Rename file"

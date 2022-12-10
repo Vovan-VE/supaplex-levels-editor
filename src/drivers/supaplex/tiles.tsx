@@ -1,8 +1,8 @@
 import { CellContextEventSnapshot } from "models/levels/tools/interface";
-import { ISupaplexLevel, ISupaplexTile } from "./types";
 import { IBaseTileInteraction, InteractionType } from "../types";
-import * as tid from "./tiles-id";
 import { SpecPortDialog } from "./SpecPortDialog";
+import * as tid from "./tiles-id";
+import { ISupaplexLevel, ISupaplexTile } from "./types";
 
 const specPInt: IBaseTileInteraction<ISupaplexLevel> = {
   onContextMenu: <T extends ISupaplexLevel>(

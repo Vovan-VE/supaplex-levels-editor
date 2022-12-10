@@ -10,12 +10,24 @@ import { withPersistent, withPersistentMap } from "@cubux/effector-persistent";
 import * as RoMap from "@cubux/readonly-map";
 import { createIndexedDBDriver, createNullDriver } from "@cubux/storage-driver";
 import { APP_STORAGE_PREFIX } from "configs";
-import { getDriver } from "drivers";
+import {
+  DriverName,
+  FALLBACK_FORMAT,
+  getDriverFormat,
+  isExtValid,
+  parseFormatFilename,
+  REPLACED_DRIVERS,
+  summarySupportReport,
+} from "drivers";
 import { generateKey } from "utils/strings";
+import * as MapOrder from "utils/map/order";
 import { localStorageDriver } from "../_utils/persistent";
 import {
+  LevelsetConvertOpt,
+  LevelsetConvertTry,
   LevelsetFile,
   LevelsetFileData,
+  LevelsetFileDataOld,
   LevelsetFileKey,
   LevelsetFileSource,
 } from "./types";
@@ -23,13 +35,11 @@ import {
 const fulfillFileLevels = async (
   input: LevelsetFileData,
 ): Promise<LevelsetFile> => {
-  const driver = getDriver(input.driverName);
-  if (!driver) {
-    throw new Error("Invalid driver name: " + input.driverName);
-  }
-  const reader = driver.reader;
-  if (!reader) {
-    throw new Error("No reader in driver: " + input.driverName);
+  const format = getDriverFormat(input.driverName, input.driverFormat);
+  if (!format) {
+    throw new Error(
+      `Invalid driver or format: ${input.driverName}, ${input.driverFormat}`,
+    );
   }
   let ab: ArrayBuffer;
   try {
@@ -43,23 +53,87 @@ const fulfillFileLevels = async (
   }
   return {
     ...input,
-    levelset: reader.readLevelset(ab),
+    levelset: format.readLevelset(ab),
   };
 };
 
+interface AddFileParams extends LevelsetFileSource {
+  insertAfterKey?: LevelsetFileKey;
+}
+interface AddFileResult {
+  file: LevelsetFile;
+  insertAfterKey: LevelsetFileKey | undefined;
+}
 /**
  * Add new file from whatever source
  */
 export const addLevelsetFileFx = createEffect(
-  (source: LevelsetFileSource): Promise<LevelsetFile> =>
-    fulfillFileLevels({
+  async ({
+    insertAfterKey,
+    ...source
+  }: AddFileParams): Promise<AddFileResult> => ({
+    insertAfterKey,
+    file: await fulfillFileLevels({
       ...source,
       key: generateKey() as LevelsetFileKey,
     }),
+  }),
 );
 addLevelsetFileFx.fail.watch(({ params, error }) => {
   console.log("Could not load file", params, error);
 });
+
+interface LevelsetConvertContinue extends LevelsetConvertOpt {
+  file: LevelsetFile;
+}
+const convertLevelsetContinueFx = createEffect(
+  ({ file, toDriverFormat }: LevelsetConvertContinue) => {
+    const to = getDriverFormat(file.driverName, toDriverFormat);
+    if (to) {
+      let newFileName = file.name;
+      if (file.driverFormat !== toDriverFormat) {
+        const origFN = parseFormatFilename(
+          file.name,
+          file.driverName as DriverName,
+          file.driverFormat,
+        );
+        if (
+          !origFN.hasExt ||
+          !isExtValid(origFN.ext, file.driverName as DriverName, toDriverFormat)
+        ) {
+          newFileName = `${origFN.basename}.${to.fileExtensionDefault}`;
+        }
+      }
+
+      return addLevelsetFileFx({
+        file: new Blob([to.writeLevelset(file.levelset)]),
+        name: newFileName,
+        driverName: file.driverName,
+        driverFormat: toDriverFormat,
+        insertAfterKey: file.key,
+      });
+    }
+  },
+);
+
+export const convertLevelsetTryFx = createEffect(
+  async ({ toDriverFormat, confirmWarnings }: LevelsetConvertTry) => {
+    const file = $currentLevelsetFile.getState();
+    if (file) {
+      if (!confirmWarnings) {
+        const { supportReport } = getDriverFormat(
+          file.driverName,
+          toDriverFormat,
+        )!;
+        const report = summarySupportReport(supportReport(file.levelset));
+        if (report) {
+          return report;
+        }
+      }
+      await convertLevelsetContinueFx({ file, toDriverFormat });
+    }
+  },
+);
 
 /**
  * Close file and forget everything about it
@@ -79,7 +153,9 @@ export const renameCurrentLevelset = createEvent<string>();
  */
 export const setCurrentLevelset = createEvent<LevelsetFileKey>();
 
-export const fileDidOpen = addLevelsetFileFx.doneData.map(({ key }) => key);
+export const fileDidOpen = addLevelsetFileFx.doneData.map(
+  ({ file: { key } }) => key,
+);
 
 const _willSetCurrentKeyFx = createEffect((next: LevelsetFileKey | null) => {
   _unsetCurrentKey();
@@ -119,7 +195,13 @@ sample({
   target: _willSetCurrentKeyFx,
 });
 
-interface _DbLevelsetFile extends Omit<LevelsetFileData, "file"> {
+/**
+ * Old < 0.6 interface before formats
+ *
+ * Any user can skip several >=0.6 versions, so `driverFormat` can still be
+ * `undefined` for someone.
+ */
+interface _DbLevelsetFile extends Omit<LevelsetFileDataOld, "file"> {
   fileBuffer: ArrayBuffer;
 }
 /**
@@ -139,25 +221,40 @@ export const $levelsets = withPersistentMap(
       file,
       name,
       driverName,
+      driverFormat,
       key,
     }: LevelsetFile): Promise<_DbLevelsetFile> => ({
       name,
       driverName,
+      driverFormat,
       key,
       fileBuffer: await file.arrayBuffer(),
     }),
-    unserialize: ({ name, driverName, key, fileBuffer }: _DbLevelsetFile) =>
+    unserialize: ({
+      name,
+      driverName,
+      driverFormat,
+      key,
+      fileBuffer,
+    }: _DbLevelsetFile) =>
       fulfillFileLevels({
         file: new Blob([fileBuffer]),
         name,
-        driverName,
+        driverName: REPLACED_DRIVERS[driverName] || driverName,
+        driverFormat:
+          driverFormat ?? FALLBACK_FORMAT[driverName] ?? "_unknown_",
         key,
       }),
   },
 )
-  .on([updateLevelsetFile, addLevelsetFileFx.doneData], (map, file) =>
-    RoMap.set(map, file.key, file),
-  )
+  .on(updateLevelsetFile, (map, file) => RoMap.set(map, file.key, file))
+  .on(addLevelsetFileFx.doneData, (map, { file, insertAfterKey }) => {
+    let next = RoMap.set(map, file.key, file);
+    if (insertAfterKey) {
+      next = MapOrder.moveAfter(next, file.key, insertAfterKey);
+    }
+    return next;
+  })
   .on(
     sample({
       clock: renameCurrentLevelset,
@@ -196,6 +293,6 @@ export const $currentFileName = $currentLevelsetFile.map((f) =>
 export const $currentDriverName = $currentLevelsetFile.map((f) =>
   f ? f.driverName : null,
 );
-export const $currentLevelset = $currentLevelsetFile.map((f) =>
-  f ? f.levelset : null,
+export const $currentDriverFormat = $currentLevelsetFile.map((f) =>
+  f ? f.driverFormat : null,
 );

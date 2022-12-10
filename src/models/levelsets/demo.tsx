@@ -1,18 +1,26 @@
-import { createEvent, createStore, Event, sample } from "effector";
-import { getDriver } from "drivers";
+import { combine, createEvent, createStore, Event, sample } from "effector";
+import { getDriverFormat } from "drivers";
 import { ask } from "ui/feedback";
+import { isOffsetInRange } from "utils/number";
 import { DemoData, LevelsetFileKey } from "./types";
-import { $currentDriverName, $currentKey, $levelsets } from "./files";
+import {
+  $currentDriverFormat,
+  $currentDriverName,
+  $currentKey,
+  $levelsets,
+} from "./files";
 import {
   $currentLevelIndex,
   deleteCurrentLevel,
   insertAtCurrentLevel,
   internalUpdateLevelDemo,
 } from "./buffers";
-import { isOffsetInRange } from "../../utils/number";
 
-export const $fileSupportsDemo = $currentDriverName.map(
-  (driverName) => (driverName && getDriver(driverName)?.demoSupport) || false,
+export const $fileSupportsDemo = combine(
+  $currentDriverName,
+  $currentDriverFormat,
+  (name, format) =>
+    (name && format && getDriverFormat(name, format)?.demoSupport) || false,
 );
 
 const decodeDemoMessage = (data: any): DemoData | null => {

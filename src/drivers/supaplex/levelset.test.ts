@@ -1,14 +1,13 @@
-import { createLevelset } from "./levelset";
-import { dumpLevel } from "./helpers.dev";
-import { createLevel } from "./level";
 import { fillLevelBorder } from "./fillLevelBorder";
+import { createLevel } from "./level";
+import { createLevelset } from "./levelset";
+import { dumpLevel, dumpLevelset } from "./helpers.dev";
 
 describe("levelset", () => {
   describe("constructor", () => {
-    it("throw", () => {
-      expect(() => createLevelset(-2)).toThrow(
-        new RangeError("Invalid levels count -2"),
-      );
+    it("none", () => {
+      const levelset = createLevelset(1);
+      expect(dumpLevelset(levelset)).toMatchSnapshot();
     });
 
     it("number", () => {
@@ -16,12 +15,23 @@ describe("levelset", () => {
 
       expect(levelset.levelsCount).toBe(3);
 
-      const empty = dumpLevel(fillLevelBorder(createLevel()));
+      const empty = dumpLevel(fillLevelBorder(createLevel(60, 24)));
       for (const level of levelset.getLevels()) {
         expect(dumpLevel(level)).toEqual(empty);
       }
 
-      expect(createLevelset().levelsCount).toBe(111);
+      expect(createLevelset(7).levelsCount).toBe(7);
+    });
+
+    it("levels", () => {
+      const levelset = createLevelset([createLevel(5, 3), createLevel(7, 9)]);
+      expect(dumpLevelset(levelset)).toMatchSnapshot();
+    });
+
+    it("throw", () => {
+      expect(() => createLevelset(0)).toThrow(
+        new RangeError("Invalid levels count"),
+      );
     });
   });
 
@@ -53,7 +63,7 @@ describe("levelset", () => {
     const a = levelset.getLevel(0);
     const b = levelset.getLevel(1);
 
-    const c = createLevel().setTitle("3rd");
+    const c = createLevel(5, 3).setTitle("3rd");
     const copy = levelset.appendLevel(c);
 
     expect(copy.levelsCount).toBe(3);
@@ -66,7 +76,7 @@ describe("levelset", () => {
     const a = levelset.getLevel(0);
     const c = levelset.getLevel(1);
 
-    const b = createLevel().setTitle("2nd");
+    const b = createLevel(5, 3).setTitle("2nd");
 
     expect(() => levelset.insertLevel(-1, b)).toThrow(
       new RangeError(`Invalid level index -1`),
