@@ -5,7 +5,9 @@
 - Add: `*.sp` files support.
 - Add: Convert entire file to a different format.
 - Enh: Hot Key shortcuts:
-  - `Ctrl+X`, `Ctrl+C`, `Ctrl+V` and `Del` for Selection.
+  - `Ctrl+Z` Undo and `Ctrl+Y` Redo.
+  - `Ctrl+X` Cut, `Ctrl+C` Copy, `Ctrl+V` Paste and `Del` Delete for Selection.
+  - `Ctrl++` Zoom In, `Ctrl+-` Zoom Out.
 - Enh: Selection on Paste now will be placed at cell under mouse pointer first,
   or otherwise at top left corner or _visible_ area.
 - Enh: Minor UI enhancements.

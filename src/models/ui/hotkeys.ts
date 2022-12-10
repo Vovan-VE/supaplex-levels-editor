@@ -45,8 +45,13 @@ const eventToShortcutString = (e: KeyboardEvent) =>
 
 type Consumer = (e: KeyboardEvent) => void;
 interface HotkeyRef {
+  // TODO: multiple shortcuts, use first to display
   shortcut: HotKeyShortcut;
+  // TODO: Make optional with `preventDefault`
   handler: Consumer;
+  // TODO: add `preventDefault` to auto `preventDefault()`,
+  //   then different flag should be used to "immediate stop propagation" instead
+  //   of `defaultPrevented` in real handler below
 }
 interface HotkeyRegister extends HotkeyRef {
   prepend?: boolean;

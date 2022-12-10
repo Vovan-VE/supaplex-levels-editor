@@ -31,6 +31,10 @@ const handlePaste = () => {
   return pasteSelectionFx();
 };
 
+const handleHotRedo = (e: UIEvent) => {
+  e.preventDefault();
+  redoCurrentLevel();
+};
 const handleHotCut = (e: UIEvent) => {
   e.preventDefault();
   handleCut();
@@ -47,7 +51,12 @@ const handleHotPaste = (e: UIEvent) => {
   e.preventDefault();
   handlePaste();
 };
+const noopHandler = (e: UIEvent) => {
+  e.preventDefault();
+};
 
+// TODO: also add multimedia keys
+const HK_REDO: HotKeyShortcut = ["Y", HotKeyMask.CTRL];
 const HK_CUT: HotKeyShortcut = ["X", HotKeyMask.CTRL];
 const HK_COPY: HotKeyShortcut = ["C", HotKeyMask.CTRL];
 const HK_PASTE: HotKeyShortcut = ["V", HotKeyMask.CTRL];
@@ -61,6 +70,11 @@ export const EditToolbar: FC<Props> = ({ withUndo = true }) => {
   const undoQueue = useStore($currentLevelUndoQueue)!;
   const noSelection = !useStore($hasSelection);
   const clipboardSize = useStore($clipboardRegionSizeStr);
+
+  useHotKey({
+    shortcut: HK_REDO,
+    handler: undoQueue.canRedo ? handleHotRedo : noopHandler,
+  });
 
   useHotKey({ shortcut: HK_CUT, handler: handleHotCut, disabled: noSelection });
   useHotKey({
@@ -86,6 +100,7 @@ export const EditToolbar: FC<Props> = ({ withUndo = true }) => {
         icon={<svgs.Redo />}
         disabled={!undoQueue.canRedo}
         onClick={redoCurrentLevel}
+        title={`Redo (${displayHotKey(HK_REDO)})`}
       />
       <ToolbarSeparator />
       <Button
