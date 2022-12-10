@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0 (DEV)
+
+- ...
+
 ## 0.6.0 (2022-12-10)
 
 - Add: `*.sp` files support.
