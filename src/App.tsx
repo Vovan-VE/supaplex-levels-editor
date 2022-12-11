@@ -1,3 +1,6 @@
+// start with cross-tabs semaphore first
+import "models/instanceSemaphore";
+
 import { FC } from "react";
 import { LevelsetEditor } from "components/levelset";
 import { MainLayout } from "components/layout";

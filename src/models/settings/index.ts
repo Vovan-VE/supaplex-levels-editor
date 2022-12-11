@@ -1,5 +1,6 @@
 import { createEvent, createStore } from "effector";
 import { withPersistent } from "@cubux/effector-persistent";
+import { $instanceIsReadOnly } from "../instanceSemaphore";
 import { localStorageDriver } from "../_utils/persistent";
 
 export const openSettings = createEvent<any>();
@@ -13,7 +14,10 @@ export const $prefConfirmedTestSO = withPersistent(
   createStore(false),
   localStorageDriver,
   "prefConfirmTestSO",
-  { unserialize: Boolean },
+  {
+    readOnly: $instanceIsReadOnly,
+    unserialize: Boolean,
+  },
 ).on(setPrefAskTestSO, (_, v) => v);
 
 export const setCoordsDisplayBasis = createEvent<0 | 1>();
@@ -21,7 +25,10 @@ export const $coordsDisplayBasis = withPersistent(
   createStore<0 | 1>(0),
   localStorageDriver,
   "coordsBasis",
-  { unserialize: (v) => (v ? 1 : 0) },
+  {
+    readOnly: $instanceIsReadOnly,
+    unserialize: (v) => (v ? 1 : 0),
+  },
 ).on(setCoordsDisplayBasis, (_, v) => v);
 
 export enum LayoutType {
@@ -36,7 +43,10 @@ export const $layoutType = withPersistent(
   createStore<LayoutType>(LayoutType.AUTO),
   localStorageDriver,
   "layout",
-  { unserialize: (v) => (isLayoutType(v) ? v : LayoutType.AUTO) },
+  {
+    readOnly: $instanceIsReadOnly,
+    unserialize: (v) => (isLayoutType(v) ? v : LayoutType.AUTO),
+  },
 ).on(setLayoutType, (_, v) => v);
 
 type SpChipType = 0 | 1;
@@ -47,5 +57,8 @@ export const $spChip = withPersistent(
   createStore<SpChipType>(0),
   localStorageDriver,
   "spChip",
-  { unserialize: (v) => (isSpChipType(v) ? v : 0) },
+  {
+    readOnly: $instanceIsReadOnly,
+    unserialize: (v) => (isSpChipType(v) ? v : 0),
+  },
 ).on(setSpChip, (_, v) => v);

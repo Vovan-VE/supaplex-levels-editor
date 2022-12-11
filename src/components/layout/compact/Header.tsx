@@ -6,7 +6,7 @@ import { showInfoDialog, ZoomButtons } from "components/common";
 import { EditorTabs, FilesToolbar, FileToolbar } from "components/files";
 import { EditToolbar, UndoButton } from "components/level/toolbars/EditToolbar";
 import { promptLevelConfig } from "components/level/toolbars/LevelConfig";
-import { LevelsTabs, LevelsToolbar } from "components/levelset";
+import { FlushIndicator, LevelsTabs, LevelsToolbar } from "components/levelset";
 import { APP_VERSION, REPO_URL } from "configs";
 import {
   $currentBufferLevelsCount,
@@ -86,6 +86,7 @@ export const Header: FC<Props> = (props) => {
           </Fragment>
         )}
         <span className={cl.space} />
+        <FlushIndicator />
         <ZoomButtons />
         <ButtonDropdown triggerIcon={<svgs.Menu />} noArrow>
           <Toolbar className={cl.popupToolbar}>

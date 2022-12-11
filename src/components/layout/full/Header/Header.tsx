@@ -3,6 +3,7 @@ import { FC, Fragment } from "react";
 import { EditorTabs, FilesToolbar, FileToolbar } from "components/files";
 import { LevelsHead } from "components/layout/full/Header/LevelsHead";
 import { LevelToolbars } from "components/level/toolbars/LevelToolbars";
+import { FlushIndicator } from "components/levelset";
 import {
   $currentBufferSelected,
   $currentKey,
@@ -26,6 +27,7 @@ export const Header: FC<Props> = (props) => {
           <FilesToolbar />
         </Toolbar>
         <EditorTabs className={cl.tabs} />
+        <FlushIndicator className={cl.flush} />
         <Toolbar className={cl.end}>
           <FileToolbar />
         </Toolbar>

@@ -2,8 +2,8 @@
   font-size: 1.2rem;
   display: grid;
   grid-gap: 0.5rem;
-  grid-template-columns: auto 1fr auto;
-  grid-template-areas: "start tabs end";
+  grid-template-columns: auto 1fr auto auto;
+  grid-template-areas: "start tabs flush end";
   align-items: center;
 }
 
@@ -12,6 +12,9 @@
 }
 .tabs {
   grid-area: tabs;
+}
+.flush {
+  grid-area: flush;
 }
 .end {
   grid-area: end;

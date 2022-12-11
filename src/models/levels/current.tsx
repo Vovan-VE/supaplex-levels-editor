@@ -3,6 +3,7 @@ import { createGate } from "effector-react";
 import { withPersistent } from "@cubux/effector-persistent";
 import { getDriver } from "drivers";
 import { Rect } from "utils/rect";
+import { $instanceIsReadOnly } from "../instanceSemaphore";
 import { $currentDriverName } from "../levelsets";
 import { localStorageDriver } from "../_utils/persistent";
 
@@ -84,6 +85,7 @@ const $bodyScaleN = withPersistent(
   localStorageDriver,
   "bodyScale",
   {
+    readOnly: $instanceIsReadOnly,
     unserialize: (v: unknown) => {
       const n = Number(v);
       if (isNaN(n)) {
