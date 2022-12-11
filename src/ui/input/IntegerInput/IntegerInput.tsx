@@ -11,7 +11,7 @@ export const useIntegerInput = createValueInputHook<number | null>({
     const m = s.match(re);
     if (m) {
       const n = parseInt(m[0]);
-      if (!isNaN(n) && n === ~~n) {
+      if (Number.isInteger(n)) {
         return n;
       }
     }
