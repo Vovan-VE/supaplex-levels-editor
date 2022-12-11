@@ -1,4 +1,4 @@
-import { IBounds, RectA } from "utils/rect";
+import { IBounds, Point2D, Rect } from "utils/rect";
 import {
   IsPlayableResult,
   ITilesRegion,
@@ -25,12 +25,7 @@ export interface ILevelBody extends IBounds {
     w: number,
     h: number,
   ): Iterable<ITilesStreamItem>;
-  copyRegion(
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-  ): readonly [x: number, y: number, region: ITilesRegion];
+  copyRegion(r: Rect): readonly [x: number, y: number, region: ITilesRegion];
   findPlayer(): [x: number, y: number] | null;
 }
 
@@ -40,10 +35,7 @@ export interface ISupaplexSpecPortProps {
   setsFreezeEnemies: boolean;
 }
 
-export interface ISupaplexSpecPort extends ISupaplexSpecPortProps {
-  x: number;
-  y: number;
-}
+export interface ISupaplexSpecPort extends ISupaplexSpecPortProps, Point2D {}
 
 export interface ILevelFooter extends IWithDemo {
   readonly length: number;
@@ -58,7 +50,7 @@ export interface ILevelFooter extends IWithDemo {
   setInfotronsNeed(value: number): this;
   readonly specPortsCount: number;
   getSpecPorts(): Iterable<ISupaplexSpecPort>;
-  copySpecPortsInRegion(r: RectA): readonly ISupaplexSpecPort[];
+  copySpecPortsInRegion(r: Rect): readonly ISupaplexSpecPort[];
   clearSpecPorts(): this;
   findSpecPort(x: number, y: number): ISupaplexSpecPortProps | undefined;
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps): this;

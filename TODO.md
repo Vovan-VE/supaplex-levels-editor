@@ -15,6 +15,9 @@
   - Replace
   - Chess
   - Gradient
+- Multiple tabs instance can cause data loss. It should be denied or fixed.
+- Add at least internal notice "flush completed" for `indexedDB` to see how it
+  really works.
 
 ## Wishes from users (unsorted)
 

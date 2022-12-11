@@ -1,3 +1,4 @@
+import { Rect } from "utils/rect";
 import {
   IBaseDriver,
   IBaseFormat,
@@ -17,7 +18,7 @@ export interface ISupaplexLevelRegion extends ILevelRegion {
   readonly specPorts: readonly ISupaplexSpecPort[];
 }
 export interface ISupaplexLevel extends IBaseLevel, IWithDemo {
-  copyRegion(x: number, y: number, w: number, h: number): ISupaplexLevelRegion;
+  copyRegion(r: Rect): ISupaplexLevelRegion;
   pasteRegion(x: number, y: number, region: ISupaplexLevelRegion): this;
   readonly length: number;
   readonly raw: Uint8Array;

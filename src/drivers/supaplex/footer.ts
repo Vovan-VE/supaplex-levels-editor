@@ -1,4 +1,4 @@
-import { inRect, RectA } from "utils/rect";
+import { inRect, Rect } from "utils/rect";
 import { DemoSeed } from "../types";
 import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "./formats/std";
 import {
@@ -213,14 +213,13 @@ class LevelFooter implements ILevelFooter {
     }
   }
 
-  copySpecPortsInRegion(r: RectA) {
-    const [x, y] = r;
+  copySpecPortsInRegion(r: Rect) {
     return [...this.getSpecPorts()].reduce<ISupaplexSpecPort[]>((list, p) => {
       if (inRect(p.x, p.y, r)) {
         list.push({
           ...p,
-          x: p.x - x,
-          y: p.y - y,
+          x: p.x - r.x,
+          y: p.y - r.y,
         });
       }
       return list;

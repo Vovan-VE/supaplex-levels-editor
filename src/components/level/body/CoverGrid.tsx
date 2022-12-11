@@ -38,20 +38,20 @@ const snapshotEvent = (
     metaKey,
     shiftKey,
   }: PointerEvent,
-  cols: number,
-  rows: number,
+  width: number,
+  height: number,
 ): CellEventSnapshot => {
   const div = target as Element;
   const { left, top } = div.getBoundingClientRect();
-  const x = Math.floor(((pageX - left) / div.clientWidth) * cols);
-  const y = Math.floor(((pageY - top) / div.clientHeight) * rows);
+  const x = Math.floor(((pageX - left) / div.clientWidth) * width);
+  const y = Math.floor(((pageY - top) / div.clientHeight) * height);
 
   return {
     x,
     y,
-    width: cols,
-    height: rows,
-    inBounds: inRect(x, y, [0, 0, cols, rows]),
+    width,
+    height,
+    inBounds: inRect(x, y, { x: 0, y: 0, width, height }),
     type,
     button,
     buttons,

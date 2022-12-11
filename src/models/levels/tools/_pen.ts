@@ -67,7 +67,7 @@ const {
     SHAPES[shape].reduce((path, [dx, dy]) => {
       const x = ex + dx;
       const y = ey + dy;
-      if (inRect(x, y, [0, 0, width, height])) {
+      if (inRect(x, y, { x: 0, y: 0, width, height })) {
         const key = cellKey({ x, y });
         if (path.get(key)?.tile !== tile) {
           return RoMap.set(path, key, { x, y, tile });

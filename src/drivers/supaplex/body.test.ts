@@ -175,19 +175,31 @@ describe("createLevelBody", () => {
     const body = createLevelBody(supaplexBox, data);
 
     it("full", () => {
-      expect(body.copyRegion(-1, -2, 62, 26)[2]).toBe(body);
-      expect(body.copyRegion(0, 0, 60, 24)[2]).toBe(body);
+      expect(body.copyRegion({ x: -1, y: -2, width: 62, height: 26 })[2]).toBe(
+        body,
+      );
+      expect(body.copyRegion({ x: 0, y: 0, width: 60, height: 24 })[2]).toBe(
+        body,
+      );
     });
 
     it("empty", () => {
-      expect(body.copyRegion(1, 1, 0, 10)[2].width).toBe(0);
-      expect(body.copyRegion(1, 1, 10, 0)[2].height).toBe(0);
-      expect(body.copyRegion(1, 1, 0, 0)[2].width).toBe(0);
-      expect(body.copyRegion(1, 1, 0, 0)[2].height).toBe(0);
+      expect(
+        body.copyRegion({ x: 1, y: 1, width: 0, height: 10 })[2].width,
+      ).toBe(0);
+      expect(
+        body.copyRegion({ x: 1, y: 1, width: 10, height: 0 })[2].height,
+      ).toBe(0);
+      expect(
+        body.copyRegion({ x: 1, y: 1, width: 0, height: 0 })[2].width,
+      ).toBe(0);
+      expect(
+        body.copyRegion({ x: 1, y: 1, width: 0, height: 0 })[2].height,
+      ).toBe(0);
     });
 
     it("part", () => {
-      const [, , cut] = body.copyRegion(1, 0, 4, 3);
+      const [, , cut] = body.copyRegion({ x: 1, y: 0, width: 4, height: 3 });
       expect(cut.width).toBe(4);
       expect(cut.height).toBe(3);
       expect([...cut.tilesRenderStream(0, 0, 4, 3)]).toEqual([

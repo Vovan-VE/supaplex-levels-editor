@@ -1,5 +1,6 @@
 import { CSSProperties, FC, ReactNode } from "react";
 import { CellContextEventSnapshot } from "models/levels/tools/interface";
+import { IBounds, Rect } from "utils/rect";
 
 export interface ISizeLimit {
   readonly minWidth?: number;
@@ -40,9 +41,7 @@ export type ITilesStreamItem = readonly [
   tile: number,
 ];
 
-export interface ITilesRegion {
-  readonly width: number;
-  readonly height: number;
+export interface ITilesRegion extends IBounds {
   getTile(x: number, y: number): number;
   tilesRenderStream(
     x: number,
@@ -68,7 +67,7 @@ export interface IBaseLevel extends ITilesRegion {
   readonly maxTitleLength: number;
 
   isPlayable(): IsPlayableResult;
-  copyRegion(x: number, y: number, w: number, h: number): ILevelRegion;
+  copyRegion(rect: Rect): ILevelRegion;
   pasteRegion(x: number, y: number, region: ILevelRegion): this;
   findPlayer(): [x: number, y: number] | null;
 }

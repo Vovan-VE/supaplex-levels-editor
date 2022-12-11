@@ -1,5 +1,5 @@
 import { RefObject, startTransition, useEffect, useRef, useState } from "react";
-import { RectA } from "utils/rect/types";
+import { Rect } from "utils/rect/types";
 
 type R = RefObject<HTMLDivElement | null>;
 
@@ -121,7 +121,7 @@ export const useVisibleBodyRect = (
   const [x, w] = getEdgeTiles(rootW, canvasW, scrollLeft, bodyScale, width);
   const [y, h] = getEdgeTiles(rootH, canvasH, scrollTop, bodyScale, height);
 
-  const rect: RectA = [x, y, w, h];
+  const rect: Rect = { x, y, width: w, height: h };
   return {
     refRoot,
     refCanvas,

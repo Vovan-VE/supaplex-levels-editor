@@ -2,7 +2,7 @@ import { createEvent, createStore, sample } from "effector";
 import { createGate } from "effector-react";
 import { withPersistent } from "@cubux/effector-persistent";
 import { getDriver } from "drivers";
-import { RectA } from "utils/rect";
+import { Rect } from "utils/rect";
 import { $currentDriverName } from "../levelsets";
 import { localStorageDriver } from "../_utils/persistent";
 
@@ -105,6 +105,6 @@ export const $bodyScale = $bodyScaleN.map(
 export const $bodyScaleCanInc = $bodyScaleN.map((n) => n < SCALE_STEPS_TOTAL);
 export const $bodyScaleCanDec = $bodyScaleN.map((n) => n > 0);
 
-export const BodyVisibleRectGate = createGate<{ rect: RectA | null }>({
+export const BodyVisibleRectGate = createGate<{ rect: Rect | null }>({
   defaultState: { rect: null },
 });

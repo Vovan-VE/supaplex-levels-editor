@@ -390,7 +390,7 @@ describe("level", () => {
 
   it("copyRegion", () => {
     const level = createLevel(60, 24, testLevelData);
-    const region = level.copyRegion(11, 11, 3, 3);
+    const region = level.copyRegion({ x: 11, y: 11, width: 3, height: 3 });
     expect([
       ...region.tiles.tilesRenderStream(
         0,
@@ -429,7 +429,7 @@ describe("level", () => {
 
   describe("pasteRegion", () => {
     const level = createLevel(60, 24, testLevelData);
-    const region = level.copyRegion(11, 11, 3, 3);
+    const region = level.copyRegion({ x: 11, y: 11, width: 3, height: 3 });
 
     it("other place", () => {
       // (10;11)
