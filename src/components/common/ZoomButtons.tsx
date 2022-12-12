@@ -9,15 +9,20 @@ import {
 import {
   displayHotKey,
   HotKeyMask,
-  HotKeyShortcut,
+  HotKeyShortcuts,
   useHotKey,
 } from "models/ui/hotkeys";
 import { TextButton } from "ui/button";
 import { svgs } from "ui/icon";
 
-// TODO: also add Ctrl+=
-const HK_ZOOM_IN: HotKeyShortcut = ["+", HotKeyMask.CTRL];
-const HK_ZOOM_OUT: HotKeyShortcut = ["-", HotKeyMask.CTRL];
+const HK_ZOOM_IN: HotKeyShortcuts = [
+  // Num pad <+>
+  ["+", HotKeyMask.CTRL],
+  // regular <=> which has "+" with <Shift>
+  ["=", HotKeyMask.CTRL],
+  ["ZoomIn"],
+];
+const HK_ZOOM_OUT: HotKeyShortcuts = [["-", HotKeyMask.CTRL], ["ZoomOut"]];
 
 const handleZoomIn = (e: UIEvent) => {
   e.preventDefault();
