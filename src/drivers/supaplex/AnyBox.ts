@@ -1,7 +1,7 @@
-import { inRect, Rect } from "utils/rect";
+import { inBounds } from "utils/rect";
 import { ISupaplexBox } from "./internal";
 
-export class AnyBox implements ISupaplexBox, Rect {
+export class AnyBox implements ISupaplexBox {
   readonly #width: number;
   readonly #height: number;
 
@@ -9,7 +9,7 @@ export class AnyBox implements ISupaplexBox, Rect {
     process.env.NODE_ENV === "production"
       ? undefined
       : (x: number, y: number) => {
-          if (!inRect(x, y, this)) {
+          if (!inBounds(x, y, this)) {
             throw new RangeError(`Cell coords (${x}, ${y}) are out of range`);
           }
         };
@@ -17,13 +17,6 @@ export class AnyBox implements ISupaplexBox, Rect {
   constructor(width: number, height: number) {
     this.#width = width;
     this.#height = height;
-  }
-
-  get x() {
-    return 0;
-  }
-  get y() {
-    return 0;
   }
 
   get width() {

@@ -1,7 +1,7 @@
 import { combine } from "effector";
 import * as RoMap from "@cubux/readonly-map";
 import { svgs } from "ui/icon";
-import { inRect } from "utils/rect";
+import { inBounds } from "utils/rect";
 import { cellKey, DrawLayerType, TilesPath, Tool, ToolUI } from "./interface";
 import { createDragTool } from "./_drag-tool";
 
@@ -60,14 +60,11 @@ const {
     },
   ],
   idleState: new Map(),
-  drawReducer: (
-    path,
-    { event: { x: ex, y: ey, width, height }, tile, drawProps: { shape } },
-  ) =>
+  drawReducer: (path, { event, tile, drawProps: { shape } }) =>
     SHAPES[shape].reduce((path, [dx, dy]) => {
-      const x = ex + dx;
-      const y = ey + dy;
-      if (inRect(x, y, { x: 0, y: 0, width, height })) {
+      const x = event.x + dx;
+      const y = event.y + dy;
+      if (inBounds(x, y, event)) {
         const key = cellKey({ x, y });
         if (path.get(key)?.tile !== tile) {
           return RoMap.set(path, key, { x, y, tile });

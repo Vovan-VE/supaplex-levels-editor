@@ -1,4 +1,4 @@
-import { clipRect, inRect, Rect } from "utils/rect";
+import { clipRect, IBounds, inBounds, Rect } from "utils/rect";
 import { DemoSeed, ITilesStreamItem } from "../types";
 import { AnyBox } from "./AnyBox";
 import { createLevelBody } from "./body";
@@ -212,12 +212,13 @@ class SupaplexLevel implements ISupaplexLevel {
     //  ------------------ region
     //         ----------- clip
 
+    const b: IBounds = this.#box;
     const {
       x: x0,
       y: y0,
       width,
       height,
-    } = clipRect({ x, y, width: tiles.width, height: tiles.height }, this.#box);
+    } = clipRect({ x, y, width: tiles.width, height: tiles.height }, b);
     return this.batch((l) => {
       for (let j = 0; j < height; j++) {
         const cy = y0 + j;
@@ -226,11 +227,10 @@ class SupaplexLevel implements ISupaplexLevel {
           l = l.setTile(cx, cy, tiles.getTile(cx - x, cy - y));
         }
       }
-      const r: Rect = this.#box;
       for (const p of specPorts) {
         const cx = p.x + x;
         const cy = p.y + y;
-        if (inRect(cx, cy, r)) {
+        if (inBounds(cx, cy, b)) {
           l = l.setSpecPort(cx, cy, p);
         }
       }
