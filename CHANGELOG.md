@@ -3,9 +3,9 @@
 ## 0.7.0 (DEV)
 
 - Fix: Multiple parallel instances of SpLE in a browser session may cause data
-  loss. Not it is prevented by introducing Read Only mode.
-- Fix: Data just read from browser storage on page load was flushed back
-  unnecessary on every page load.
+  loss. Now it is prevented by introducing Read Only mode.
+- Fix: Data just read from browser storage was flushed back unnecessary on every
+  page load.
 - Add: Indicator to show pending data flushes into browser storage.
 - Add: Option in Settings to switch Double Chips graphics.
 - Enh: Reorder tiles in toolbar by at least some logic for better UX.
