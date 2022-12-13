@@ -6,6 +6,8 @@
   loss. Now it is prevented by introducing Read Only mode.
 - Fix: Data just read from browser storage was flushed back unnecessary on every
   page load.
+- Fix: Writing to browser storage only edited file. Before this all opened files
+  was unnecessarily rewritten on every change in any file.
 - Add: Indicator to show pending data flushes into browser storage.
 - Add: Option in Settings to switch Double Chips graphics.
 - Enh: Reorder tiles in toolbar by at least some logic for better UX.

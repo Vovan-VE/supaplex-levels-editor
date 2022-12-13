@@ -233,6 +233,11 @@ export const $levelsets = withPersistentMap(
       driverFormat,
       key,
       fileBuffer: await file.arrayBuffer(),
+
+      // DEV update time for local debug purpose
+      ...(process.env.NODE_ENV === "development"
+        ? { _t: new Date().toISOString() }
+        : null),
     }),
     unserialize: ({
       name,

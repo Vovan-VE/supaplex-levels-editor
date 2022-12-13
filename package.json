@@ -31,7 +31,7 @@
     "typescript": "tsc"
   },
   "dependencies": {
-    "@cubux/effector-persistent": "^0.3.0",
+    "@cubux/effector-persistent": "^0.4.0",
     "@cubux/readonly-array": "^1.0.0",
     "@cubux/readonly-map": "^1.0.0",
     "@cubux/storage-driver": "^0.3.1",
