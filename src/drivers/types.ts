@@ -123,6 +123,7 @@ export interface INewLevelOptions {
   width?: number;
   height?: number;
   borderTile?: number;
+  fillTile?: number;
 }
 
 export const enum SupportReportType {

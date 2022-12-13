@@ -1,4 +1,4 @@
-import { createLevel } from "./level";
+import { createLevel, createNewLevel } from "./level";
 import {
   BODY_LENGTH,
   FOOTER_BYTE_LENGTH,
@@ -545,5 +545,54 @@ describe("level", () => {
       expect(level.pasteRegion(-5, 10, region)).toBe(level);
       expect(level.raw).toEqual(testLevelData);
     });
+  });
+});
+
+describe("createNewLevel", () => {
+  it("no options", () => {
+    expect(dumpLevel(createNewLevel())).toMatchSnapshot();
+  });
+
+  it("size", () => {
+    expect(
+      dumpLevel(createNewLevel({ width: 5, height: 3 })),
+    ).toMatchSnapshot();
+  });
+
+  it("border", () => {
+    expect(
+      dumpLevel(createNewLevel({ width: 5, height: 3, borderTile: TILE_ZONK })),
+    ).toMatchSnapshot();
+  });
+
+  it("fill", () => {
+    expect(
+      dumpLevel(
+        createNewLevel({ width: 5, height: 3, fillTile: TILE_INFOTRON }),
+      ),
+    ).toMatchSnapshot();
+  });
+
+  it("all", () => {
+    expect(
+      dumpLevel(
+        createNewLevel({
+          width: 5,
+          height: 3,
+          borderTile: TILE_ZONK,
+          fillTile: TILE_INFOTRON,
+        }),
+      ),
+    ).toMatchSnapshot();
+    expect(
+      dumpLevel(
+        createNewLevel({
+          width: 5,
+          height: 3,
+          borderTile: TILE_INFOTRON,
+          fillTile: TILE_INFOTRON,
+        }),
+      ),
+    ).toMatchSnapshot();
   });
 });

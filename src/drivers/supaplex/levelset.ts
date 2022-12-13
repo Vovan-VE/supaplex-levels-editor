@@ -1,6 +1,5 @@
 import { isOffsetInRange } from "utils/number";
-import { fillLevelBorder } from "./fillLevelBorder";
-import { createLevel } from "./level";
+import { createNewLevel } from "./level";
 import { ISupaplexLevel, ISupaplexLevelset } from "./types";
 
 const validateLevelsCount =
@@ -23,7 +22,7 @@ const validateLevelsIndex =
 
 const newLevels = (count: number) => {
   const result: ISupaplexLevel[] = [];
-  const level = fillLevelBorder(createLevel(60, 24));
+  const level = createNewLevel();
   for (let i = count; i-- > 0; ) {
     result.push(level);
   }

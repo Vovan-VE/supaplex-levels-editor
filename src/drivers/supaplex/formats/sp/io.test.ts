@@ -1,8 +1,6 @@
-import { fillLevelBorder } from "../../fillLevelBorder";
 import { dumpLevel, dumpLevelset, readExampleFile } from "../../helpers.dev";
-import { createLevel } from "../../level";
+import { createLevel, createNewLevel } from "../../level";
 import { createLevelset } from "../../levelset";
-import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../std";
 import { readLevelset, writeLevelset } from "./io";
 
 it("read original levelset", async () => {
@@ -25,9 +23,9 @@ it("invalid file size", () => {
 
 describe("writeLevelset", () => {
   it("remove extra levels", () => {
-    const level = fillLevelBorder(
-      createLevel(LEVEL_WIDTH, LEVEL_HEIGHT),
-    ).setDemo(Uint8Array.of(10, 20, 30, 40, 50, 60));
+    const level = createNewLevel().setDemo(
+      Uint8Array.of(10, 20, 30, 40, 50, 60),
+    );
     expect(
       dumpLevelset(readLevelset(writeLevelset(createLevelset([level, level])))),
     ).toMatchSnapshot();
@@ -49,9 +47,7 @@ describe("writeLevelset", () => {
     expect(
       dumpLevel(
         readLevelset(
-          writeLevelset(
-            createLevelset([fillLevelBorder(createLevel(50, LEVEL_HEIGHT))]),
-          ),
+          writeLevelset(createLevelset([createNewLevel({ width: 50 })])),
         ).getLevel(0),
       ),
     ).toMatchSnapshot();
@@ -61,9 +57,7 @@ describe("writeLevelset", () => {
     expect(
       dumpLevel(
         readLevelset(
-          writeLevelset(
-            createLevelset([fillLevelBorder(createLevel(LEVEL_WIDTH, 20))]),
-          ),
+          writeLevelset(createLevelset([createNewLevel({ height: 20 })])),
         ).getLevel(0),
       ),
     ).toMatchSnapshot();
@@ -73,7 +67,14 @@ describe("writeLevelset", () => {
     expect(
       dumpLevel(
         readLevelset(
-          writeLevelset(createLevelset([fillLevelBorder(createLevel(50, 20))])),
+          writeLevelset(
+            createLevelset([
+              createNewLevel({
+                width: 50,
+                height: 20,
+              }),
+            ]),
+          ),
         ).getLevel(0),
       ),
     ).toMatchSnapshot();

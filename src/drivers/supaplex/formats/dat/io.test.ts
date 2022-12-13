@@ -1,6 +1,6 @@
 import { fillLevelBorder } from "../../fillLevelBorder";
 import { dumpLevel, dumpLevelset, readExampleFile } from "../../helpers.dev";
-import { createLevel } from "../../level";
+import { createLevel, createNewLevel } from "../../level";
 import { createLevelset } from "../../levelset";
 import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../std";
 import { readLevelset, writeLevelset } from "./io";
@@ -42,12 +42,7 @@ describe("writeLevelset", () => {
     expect(
       dumpLevel(
         readLevelset(
-          writeLevelset(
-            createLevelset([
-              level,
-              fillLevelBorder(createLevel(50, LEVEL_HEIGHT)),
-            ]),
-          ),
+          writeLevelset(createLevelset([level, createNewLevel({ width: 50 })])),
         ).getLevel(1),
       ),
     ).toMatchSnapshot();
@@ -58,10 +53,7 @@ describe("writeLevelset", () => {
       dumpLevel(
         readLevelset(
           writeLevelset(
-            createLevelset([
-              level,
-              fillLevelBorder(createLevel(LEVEL_WIDTH, 20)),
-            ]),
+            createLevelset([level, createNewLevel({ height: 20 })]),
           ),
         ).getLevel(1),
       ),
@@ -73,7 +65,13 @@ describe("writeLevelset", () => {
       dumpLevel(
         readLevelset(
           writeLevelset(
-            createLevelset([level, fillLevelBorder(createLevel(50, 20))]),
+            createLevelset([
+              level,
+              createNewLevel({
+                width: 50,
+                height: 20,
+              }),
+            ]),
           ),
         ).getLevel(1),
       ),

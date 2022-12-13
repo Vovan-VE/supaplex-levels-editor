@@ -1,5 +1,4 @@
-import { fillLevelBorder } from "./fillLevelBorder";
-import { createLevel } from "./level";
+import { createLevel, createNewLevel } from "./level";
 import { createLevelset } from "./levelset";
 import { dumpLevel, dumpLevelset } from "./helpers.dev";
 
@@ -15,7 +14,7 @@ describe("levelset", () => {
 
       expect(levelset.levelsCount).toBe(3);
 
-      const empty = dumpLevel(fillLevelBorder(createLevel(60, 24)));
+      const empty = dumpLevel(createNewLevel());
       for (const level of levelset.getLevels()) {
         expect(dumpLevel(level)).toEqual(empty);
       }

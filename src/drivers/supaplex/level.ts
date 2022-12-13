@@ -1,11 +1,17 @@
 import { clipRect, IBounds, inBounds, Rect } from "utils/rect";
-import { DemoSeed, ITilesStreamItem } from "../types";
+import { DemoSeed, INewLevelOptions, ITilesStreamItem } from "../types";
 import { AnyBox } from "./AnyBox";
 import { createLevelBody } from "./body";
+import { fillLevelBorder } from "./fillLevelBorder";
 import { createLevelFooter } from "./footer";
-import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "./formats/std";
+import {
+  FOOTER_BYTE_LENGTH,
+  LEVEL_HEIGHT,
+  LEVEL_WIDTH,
+  TITLE_LENGTH,
+} from "./formats/std";
 import { ILevelBody, ILevelFooter, ISupaplexSpecPortProps } from "./internal";
-import { isSpecPort, TILE_SPACE } from "./tiles-id";
+import { isSpecPort, TILE_HARDWARE, TILE_SPACE } from "./tiles-id";
 import { ISupaplexLevel, ISupaplexLevelRegion } from "./types";
 
 const sliceFooter = (bodyLength: number, data?: Uint8Array) => {
@@ -18,6 +24,21 @@ const sliceFooter = (bodyLength: number, data?: Uint8Array) => {
     }
     return data.slice(bodyLength);
   }
+};
+
+export const createNewLevel = ({
+  width,
+  height,
+  borderTile = TILE_HARDWARE,
+  fillTile = TILE_SPACE,
+}: INewLevelOptions = {}) => {
+  const box = new AnyBox(width ?? LEVEL_WIDTH, height ?? LEVEL_HEIGHT);
+  const body = createLevelBody(
+    box,
+    fillTile !== 0 ? new Uint8Array(box.length).fill(fillTile) : undefined,
+  );
+  const level = new SupaplexLevel(box, body, createLevelFooter(box.width));
+  return borderTile !== fillTile ? fillLevelBorder(level, borderTile) : level;
 };
 
 export const createLevel = (
