@@ -364,7 +364,9 @@ sample({
     key: $currentKey,
   },
   filter: ({ files, key }) => Boolean(key && files.has(key)),
-  fn: ({ files, key }) => files.get(key!)!.levels.length,
+  fn: ({ files, key }) =>
+    // at this moment it already has new level in the end
+    files.get(key!)!.levels.length - 1,
   target: _willSetCurrentLevelFx,
 });
 
