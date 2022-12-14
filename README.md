@@ -61,9 +61,9 @@ Also:
 - More editing tools at least those from Winplex Collection Editor.
 - Compare levels.
 - End User Manual.
-- Visualized level resizing with crop.
 - Draggable files buttons to reorder many opened files.
 - Electron based desktop application.
+- See more in [TODO](./TODO.md).
 
 ## Contribution, Development
 

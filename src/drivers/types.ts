@@ -55,12 +55,23 @@ export interface ILevelRegion {
   readonly tiles: ITilesRegion;
 }
 
+export interface INewLevelOptions {
+  width?: number;
+  height?: number;
+  borderTile?: number;
+  fillTile?: number;
+}
+
+export interface IResizeLevelOptions extends INewLevelOptions {
+  x?: number;
+  y?: number;
+}
+
 export interface IBaseLevel extends ITilesRegion {
   readonly raw: Uint8Array;
   setTile(x: number, y: number, value: number): this;
   batch(update: (b: this) => this): this;
-  // TODO: probably add optional argument to set border or fill new space with the given tile(s)
-  resize?(width: number, height: number): this;
+  resize?(options: IResizeLevelOptions): this;
   readonly title: string;
   setTitle(title: string): this;
   // REFACT: move to format?
@@ -117,13 +128,6 @@ export interface IBaseTile<L extends IBaseLevel> {
   interaction?: IBaseTileInteraction<L>;
   // TODO: limits like spec ports counts and coords<=>offset, Murphy presence
   //   and like notices for infotrons % 256 in case of 'all'
-}
-
-export interface INewLevelOptions {
-  width?: number;
-  height?: number;
-  borderTile?: number;
-  fillTile?: number;
 }
 
 export const enum SupportReportType {

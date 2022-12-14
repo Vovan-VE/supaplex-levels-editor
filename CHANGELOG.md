@@ -5,7 +5,8 @@
 - Add: Indicator to show pending data flushes into browser storage. It will
   become visible when a flush will take more time than usual, mostly when
   editing large file.
-- Add: Options in "New File" dialog to select border and fill tiles.
+- Add: Options in "New File" and "Resize" dialogs to select border and fill
+  tiles.
 - Add: Option in Settings to switch Double Chips graphics.
 - Enh: Reorder tiles in toolbar by at least some logic for better UX.
 - Fix: Multiple parallel instances of SpLE in a browser session may cause data

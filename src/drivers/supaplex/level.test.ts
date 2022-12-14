@@ -176,7 +176,7 @@ describe("level", () => {
     it("simple", () => {
       const a = createLevel(3, 2, testLevelData3x2);
 
-      let b = a.resize(5, 4);
+      let b = a.resize({ width: 5, height: 4 });
       expect(dumpLevel(b)).toMatchSnapshot();
 
       b = b
@@ -196,8 +196,13 @@ describe("level", () => {
         });
       expect(dumpLevel(b)).toMatchSnapshot();
 
-      const c = b.resize(3, 2);
+      const c = b.resize({ width: 3, height: 2 });
       expect(dumpLevel(c)).toEqual(dumpLevel(a));
+    });
+
+    it("noop", () => {
+      const a = createLevel(3, 2);
+      expect(a.resize({ width: 3, height: 2 })).toBe(a);
     });
   });
 

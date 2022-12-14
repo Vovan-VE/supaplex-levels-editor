@@ -7,7 +7,9 @@ import {
   useMemo,
   useState,
 } from "react";
+import { TileSelect } from "components/driver/TileSelect";
 import { canResize, getDriverFormat } from "drivers";
+import { TILE_HARDWARE } from "drivers/supaplex/tiles-id";
 import {
   $currentDriverFormat,
   $currentDriverName,
@@ -29,8 +31,9 @@ import cl from "./ResizeLevel.module.scss";
 interface Props extends RenderPromptProps<true> {}
 
 const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
+  const driverName = useStore($currentDriverName);
   const { resizable } = getDriverFormat(
-    useStore($currentDriverName)!,
+    driverName!,
     useStore($currentDriverFormat)!,
   )!;
   const undoQueue = useStore($currentLevelUndoQueue)!;
@@ -39,6 +42,9 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
 
   const [width, setWidth] = useState<number | null>(rawLevel.width);
   const [height, setHeight] = useState<number | null>(rawLevel.height);
+  // TODO: define defaults in driver
+  const [borderTile, setBorderTile] = useState(TILE_HARDWARE);
+  const [fillTile, setFillTile] = useState(0);
 
   const handleOk = useCallback(() => {
     if (
@@ -59,11 +65,13 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
     if (maxHeight !== undefined && height > maxHeight) {
       return;
     }
-    // TODO: option: set border after resize
-    let newLevel = rawLevel.resize(width, height);
-    updateCurrentLevel(newLevel);
+
+    // TODO: option: x & y offset
+    updateCurrentLevel(
+      rawLevel.resize({ width, height, borderTile, fillTile }),
+    );
     onSubmit(true);
-  }, [onSubmit, width, height, resizable, rawLevel]);
+  }, [onSubmit, width, height, borderTile, fillTile, resizable, rawLevel]);
 
   const isResizable = canResize(resizable);
 
@@ -130,6 +138,24 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
             {width !== null && height !== null && (
               <NoticeSizeLags totalTiles={width * height} />
             )}
+
+            <p>When it is necessary to fill new empty space:</p>
+            <div className={cl.row}>
+              <Field label="Border">
+                <TileSelect
+                  driverName={driverName as any}
+                  tile={borderTile}
+                  onChange={setBorderTile}
+                />
+              </Field>
+              <Field label="Fill body">
+                <TileSelect
+                  driverName={driverName as any}
+                  tile={fillTile}
+                  onChange={setFillTile}
+                />
+              </Field>
+            </div>
           </>
         ) : (
           <p>Cannot change size for this level.</p>

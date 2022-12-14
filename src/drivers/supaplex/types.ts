@@ -6,6 +6,7 @@ import {
   IBaseLevelset,
   IBaseTile,
   ILevelRegion,
+  IResizeLevelOptions,
   IWithDemo,
 } from "../types";
 import {
@@ -23,7 +24,7 @@ export interface ISupaplexLevel extends IBaseLevel, IWithDemo {
   readonly length: number;
   readonly raw: Uint8Array;
   readonly body: ILevelBody;
-  resize(width: number, height: number): this;
+  resize(options: IResizeLevelOptions): this;
   readonly initialGravity: boolean;
   setInitialGravity(on: boolean): this;
   readonly initialFreezeZonks: boolean;

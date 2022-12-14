@@ -1,5 +1,10 @@
 import { clipRect, IBounds, inBounds, Rect } from "utils/rect";
-import { DemoSeed, INewLevelOptions, ITilesStreamItem } from "../types";
+import {
+  DemoSeed,
+  INewLevelOptions,
+  IResizeLevelOptions,
+  ITilesStreamItem,
+} from "../types";
 import { AnyBox } from "./AnyBox";
 import { createLevelBody } from "./body";
 import { fillLevelBorder } from "./fillLevelBorder";
@@ -135,45 +140,36 @@ class SupaplexLevel implements ISupaplexLevel {
     return this.#withBody(nextBody).#withFooter(nextFooter!);
   }
 
-  resize(width: number, height: number) {
-    const origSpecPorts = [...this.getSpecPorts()];
-
-    let src: this = this;
-    // reducing any dimension with spec port deletion
+  resize({
+    x = 0,
+    y = 0,
+    width = this.#box.width,
+    height = this.#box.height,
+    ...rest
+  }: IResizeLevelOptions): this {
     if (
-      (width < this.#box.width && origSpecPorts.some((p) => p.x >= width)) ||
-      (height < this.#box.height && origSpecPorts.some((p) => p.y >= height))
+      x === 0 &&
+      y === 0 &&
+      width === this.#box.width &&
+      height === this.#box.height
     ) {
-      // delete spec ports entry
-      for (let p of origSpecPorts) {
-        if (
-          (width < this.#box.width && p.x >= width) ||
-          (height < this.#box.height && p.y >= height)
-        ) {
-          src = src.setTile(p.x, p.y, TILE_SPACE);
-        }
-      }
+      return this;
     }
+    const inputRect: Rect = { x, y, width, height };
+    const readRect = clipRect(inputRect, this.#box);
 
-    const box = new AnyBox(width, height);
-    const body = createLevelBody(box).batch((body) => {
-      for (let y = Math.min(height, this.#box.height); y-- > 0; ) {
-        for (let x = Math.min(width, this.#box.width); x-- > 0; ) {
-          body = body.setTile(x, y, src.getTile(x, y));
-        }
-      }
-      return body;
-    });
+    const region = this.copyRegion(readRect);
 
-    let footer = createLevelFooter(
-      width,
-      src.#footer.getRaw(),
-    ).clearSpecPorts();
-    for (const p of src.getSpecPorts()) {
-      footer = footer.setSpecPort(p.x, p.y, p);
-    }
-
-    return new SupaplexLevel(box, body, footer) as this;
+    const footer = createLevelFooter(width, this.#footer.getRaw());
+    return createNewLevel({ width, height, ...rest }).batch((level) =>
+      level
+        .#withFooter(footer.clearSpecPorts())
+        .pasteRegion(
+          readRect.x - inputRect.x,
+          readRect.y - inputRect.y,
+          region,
+        ),
+    ) as this;
   }
 
   getTile(x: number, y: number) {

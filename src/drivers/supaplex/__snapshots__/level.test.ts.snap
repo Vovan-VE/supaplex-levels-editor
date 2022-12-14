@@ -204,10 +204,10 @@ Object {
 exports[`level resize simple 1`] = `
 Object {
   "cells": Array [
-    " ∩&  ",
-    "o@▢  ",
-    "     ",
-    "     ",
+    " ∩&▓▓",
+    "o@▢ ▓",
+    "▓   ▓",
+    "▓▓▓▓▓",
   ],
   "demo": null,
   "height": 4,
@@ -233,9 +233,9 @@ exports[`level resize simple 2`] = `
 Object {
   "cells": Array [
     " ∩&&⊃",
-    "o@▢  ",
-    "o    ",
-    "∪    ",
+    "o@▢ ▓",
+    "o   ▓",
+    "∪▓▓▓▓",
   ],
   "demo": null,
   "height": 4,
