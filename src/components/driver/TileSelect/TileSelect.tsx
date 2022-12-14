@@ -6,6 +6,7 @@ import {
   getTilesForToolbar,
 } from "drivers";
 import { Select, SelectOption } from "ui/input";
+import cl from "./TileSelect.module.scss";
 
 interface Props {
   driverName: DriverName;
@@ -21,7 +22,7 @@ const OPTIONS = new Map(
       getTilesForToolbar(tiles).map<SelectOption<number>>(
         ([, { value = -1, title }]) => ({
           value,
-          label: title,
+          labelSelected: title,
           icon: <TileRender tile={value} />,
         }),
       ),
@@ -43,6 +44,11 @@ export const TileSelect: FC<Props> = ({ driverName, tile, onChange }) => {
       options={options!}
       value={options?.find((o) => o.value === tile) ?? null}
       onChange={handleChange}
+      className={cl.root}
+      classNames={{
+        menuList: () => cl.menuList,
+        option: () => cl.option,
+      }}
     />
   );
 };
