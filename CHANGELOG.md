@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.7.0 (DEV)
+## 0.7.0 (2022-12-15)
 
 - Add: Indicator to show pending data flushes into browser storage. It will
   become visible when a flush will take more time than usual, mostly when
