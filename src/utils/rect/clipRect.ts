@@ -1,9 +1,9 @@
-import { IBounds, RectA } from "./types";
+import { IBounds, Rect } from "./types";
 
 export const clipRect = (
-  [x, y, w, h]: RectA,
+  { x, y, width: w, height: h }: Rect,
   { width, height }: IBounds,
-): RectA => {
+): Rect => {
   if (x >= width) {
     x = width;
     w = 0;
@@ -35,5 +35,5 @@ export const clipRect = (
       h = height - y;
     }
   }
-  return [x, y, w, h];
+  return { x, y, width: w, height: h };
 };

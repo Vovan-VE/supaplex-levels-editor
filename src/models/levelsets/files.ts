@@ -21,7 +21,8 @@ import {
 } from "drivers";
 import { generateKey } from "utils/strings";
 import * as MapOrder from "utils/map/order";
-import { localStorageDriver } from "../_utils/persistent";
+import { $instanceIsReadOnly } from "../instanceSemaphore";
+import { flushEvents, localStorageDriver } from "../_utils/persistent";
 import {
   LevelsetConvertOpt,
   LevelsetConvertTry,
@@ -174,6 +175,7 @@ export const $currentKey = withPersistent(
   createStore<LevelsetFileKey | null>(null),
   localStorageDriver,
   "currentFile",
+  { readOnly: $instanceIsReadOnly },
 ).on(_setCurrentKey, (_, c) => c);
 
 export const currentKeyWillGone = createEvent<LevelsetFileKey>();
@@ -217,6 +219,8 @@ export const $levelsets = withPersistentMap(
         table: "levelset-files",
       }),
   {
+    ...flushEvents,
+    readOnly: $instanceIsReadOnly,
     serialize: async ({
       file,
       name,
@@ -229,6 +233,11 @@ export const $levelsets = withPersistentMap(
       driverFormat,
       key,
       fileBuffer: await file.arrayBuffer(),
+
+      // DEV update time for local debug purpose
+      ...(process.env.NODE_ENV === "development"
+        ? { _t: new Date().toISOString() }
+        : null),
     }),
     unserialize: ({
       name,

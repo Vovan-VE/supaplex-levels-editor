@@ -13,7 +13,7 @@ import {
 } from "models/levels/tools";
 import { $currentLevelSize } from "models/levelsets";
 import { ContainerProps } from "ui/types";
-import { inRect, RectA } from "utils/rect";
+import { inBounds, inRect, Rect } from "utils/rect";
 import cl from "./DrawLayers.module.scss";
 
 const TYPE_CLASSES: Partial<Record<DrawLayerType, string>> = {
@@ -25,7 +25,7 @@ const TYPE_CLASSES: Partial<Record<DrawLayerType, string>> = {
 
 interface ListProps extends ContainerProps {
   drawLayers?: readonly DrawLayer[];
-  visibleRect: RectA;
+  visibleRect: Rect;
 }
 
 export const DrawLayers: FC<ListProps> = ({
@@ -50,7 +50,7 @@ export const DrawLayers: FC<ListProps> = ({
 
 interface LayerProps {
   layer: DrawLayer;
-  visibleRect: RectA;
+  visibleRect: Rect;
 }
 const DrawLayerItem: FC<LayerProps> = ({ layer, visibleRect }) => {
   const { x: LX, y: LY } = layer;
@@ -78,7 +78,7 @@ const DrawLayerItem: FC<LayerProps> = ({ layer, visibleRect }) => {
   }
 };
 
-type VR = { visibleRect: RectA };
+type VR = { visibleRect: Rect };
 
 const DrawLayerTiles: FC<DrawLayerProps<DrawLayerType.TILES> & VR> = ({
   x: LX,
@@ -121,13 +121,12 @@ const DrawLayerTilesRegion: FC<
   // ----|---------> x'
   //     0
   // => -lx + vx
-  const [vx, vy, w, h] = visibleRect;
   const nodes: ReactElement[] = [];
   for (const [x, y, n, tile] of tiles.tilesRenderStream(
-    vx - LX,
-    vy - LY,
-    w,
-    h,
+    visibleRect.x - LX,
+    visibleRect.y - LY,
+    visibleRect.width,
+    visibleRect.height,
   )) {
     nodes.push(
       <TileRender
@@ -189,7 +188,7 @@ const DrawLayerSelectRange = memo<DrawLayerProps<DrawLayerType.SELECT_RANGE>>(
 
 const FeedbackLayer: FC<ContainerProps> = ({ className, ...rest }) => {
   const feedback = useStore($feedbackCell);
-  const { width, height } = useStore($currentLevelSize)!;
+  const size = useStore($currentLevelSize)!;
   const tool = useStore($toolIndex);
   const toolVariant = useStore($toolVariant);
   const { internalName, variants } = TOOLS[tool];
@@ -205,7 +204,7 @@ const FeedbackLayer: FC<ContainerProps> = ({ className, ...rest }) => {
         `${clTool}-${variantName}`,
       )}
     >
-      {feedback && inRect(feedback.x, feedback.y, [0, 0, width, height]) && (
+      {feedback && inBounds(feedback.x, feedback.y, size) && (
         <div
           className={cl.cell}
           style={

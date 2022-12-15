@@ -1,7 +1,7 @@
 import { combine } from "effector";
 import * as RoMap from "@cubux/readonly-map";
 import { svgs } from "ui/icon";
-import { clipRect, fromDrag, IBounds } from "utils/rect";
+import { clipRect, fromDrag, IBounds, Rect } from "utils/rect";
 import { $currentLevelSize } from "../../levelsets";
 import { cellKey, DrawLayerType, TilesPath, Tool, ToolUI } from "./interface";
 import { createDragTool } from "./_drag-tool";
@@ -22,13 +22,17 @@ interface DrawState extends DrawProps {
 }
 
 type DrawRectFn = (
-  rect: readonly [x: number, y: number, w: number, h: number],
+  rect: Rect,
   limit: IBounds,
   draw: (x: number, y: number) => void,
 ) => void;
 
 const drawers: Record<RectType, DrawRectFn> = {
-  [RectType.FRAME]: ([x, y, w, h], { width, height }, draw) => {
+  [RectType.FRAME]: (
+    { x, y, width: w, height: h },
+    { width, height },
+    draw,
+  ) => {
     const preH = h - 1;
     const endX = x + w - 1;
     const endY = y + preH;
@@ -58,7 +62,7 @@ const drawers: Record<RectType, DrawRectFn> = {
       }
     }
   },
-  [RectType.FILL]: ([x, y, w, h], { width, height }, draw) => {
+  [RectType.FILL]: ({ x, y, width: w, height: h }, { width, height }, draw) => {
     let endX = x + w;
     let endY = y + h;
     if (x < 0) {
@@ -92,7 +96,7 @@ const drawRect = <T>(
 };
 
 const getFillRect = ({ startX, startY, endX, endY }: DrawState, b: IBounds) => {
-  const [x, y, width, height] = clipRect(
+  const { x, y, width, height } = clipRect(
     fromDrag(startX, startY, endX, endY),
     b,
   );

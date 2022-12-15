@@ -1,4 +1,4 @@
-import { clipRect } from "utils/rect";
+import { clipRect, Rect } from "utils/rect";
 import { IsPlayableResult } from "../types";
 import { AnyBox } from "./AnyBox";
 import { ILevelBody, ISupaplexBox } from "./internal";
@@ -118,10 +118,10 @@ class LevelBody implements ILevelBody {
     ];
   }
 
-  *tilesRenderStream(x: number, y: number, w: number, h: number) {
-    [x, y, w, h] = clipRect([x, y, w, h], this.#box);
-    const xEnd = x + w;
-    const yEnd = y + h;
+  *tilesRenderStream(x: number, y: number, width: number, height: number) {
+    ({ x, y, width, height } = clipRect({ x, y, width, height }, this.#box));
+    const xEnd = x + width;
+    const yEnd = y + height;
     for (let j = y; j < yEnd; j++) {
       let lastItem: [x: number, y: number, width: number, tile: number] = [
         0, 0, 0, -1,
@@ -143,16 +143,21 @@ class LevelBody implements ILevelBody {
     }
   }
 
-  copyRegion(x: number, y: number, w: number, h: number) {
-    [x, y, w, h] = clipRect([x, y, w, h], this.#box);
-    if (x === 0 && y === 0 && w === this.#box.width && h === this.#box.height) {
+  copyRegion(r: Rect) {
+    const { x, y, width, height } = clipRect(r, this.#box);
+    if (
+      x === 0 &&
+      y === 0 &&
+      width === this.#box.width &&
+      height === this.#box.height
+    ) {
       return [0, 0, this] as const;
     }
-    const b = new AnyBox(w, h);
+    const b = new AnyBox(width, height);
     const res = new LevelBody(b);
     const dest = res.#raw;
-    for (let j = 0; j < h; j++) {
-      for (let i = 0; i < w; i++) {
+    for (let j = 0; j < height; j++) {
+      for (let i = 0; i < width; i++) {
         dest[b.coordsToOffset(i, j)] =
           this.#raw[this.#box.coordsToOffset(x + i, y + j)];
       }

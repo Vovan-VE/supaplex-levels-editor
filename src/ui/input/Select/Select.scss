@@ -69,5 +69,23 @@
         color: var(--btn-active-color);
       }
     }
+
+    // app classes
+
+    &__single-value,
+    &__option {
+      ._icon {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 1.5rem;
+        aspect-ratio: 1;
+        margin-right: 0.5rem;
+
+        > i {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
   }
 }

@@ -4,13 +4,13 @@ import { $currentLevelUndoQueue, undoCurrentLevel } from "models/levelsets";
 import {
   displayHotKey,
   HotKeyMask,
-  HotKeyShortcut,
+  HotKeyShortcuts,
   useHotKey,
 } from "models/ui/hotkeys";
 import { Button } from "ui/button";
 import { svgs } from "ui/icon";
 
-const HK_UNDO: HotKeyShortcut = ["Z", HotKeyMask.CTRL];
+const HK_UNDO: HotKeyShortcuts = [["Z", HotKeyMask.CTRL], ["Undo"]];
 const handleHotUndo = (e: UIEvent) => {
   e.preventDefault();
   undoCurrentLevel();

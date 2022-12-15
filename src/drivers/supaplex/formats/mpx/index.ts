@@ -1,8 +1,6 @@
-import { fillLevelBorder } from "../../fillLevelBorder";
-import { createLevel } from "../../level";
+import { createNewLevel } from "../../level";
 import { createLevelset } from "../../levelset";
 import { ISupaplexFormat } from "../../types";
-import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../std";
 import { readLevelset, writeLevelset } from "./io";
 import { supportReport } from "./supportReport";
 
@@ -20,9 +18,5 @@ export const MPX: ISupaplexFormat = {
   readLevelset,
   writeLevelset,
   createLevelset: (levels) => createLevelset(levels ?? 1),
-  createLevel: ({
-    width = LEVEL_WIDTH,
-    height = LEVEL_HEIGHT,
-    borderTile,
-  } = {}) => fillLevelBorder(createLevel(width, height), borderTile),
+  createLevel: createNewLevel,
 };

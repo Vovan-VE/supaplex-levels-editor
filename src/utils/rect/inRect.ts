@@ -1,5 +1,6 @@
 import { isOffsetInRange } from "../number";
-import { RectA } from "./types";
+import { Rect } from "./types";
 
-export const inRect = (x: number, y: number, rect: RectA) =>
-  isOffsetInRange(x, rect[0], rect[2]) && isOffsetInRange(y, rect[1], rect[3]);
+export const inRect = (x: number, y: number, rect: Rect) =>
+  isOffsetInRange(x, rect.x, rect.width) &&
+  isOffsetInRange(y, rect.y, rect.height);

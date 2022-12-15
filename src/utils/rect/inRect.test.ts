@@ -1,7 +1,8 @@
 import { inRect } from "./inRect";
+import { Rect } from "./types";
 
 it("inRect", () => {
-  const rect = [3, 10, 4, 7] as const;
+  const rect: Rect = { x: 3, y: 10, width: 4, height: 7 };
 
   expect(inRect(1, 1, rect)).toBeFalsy();
   expect(inRect(3, 1, rect)).toBeFalsy();

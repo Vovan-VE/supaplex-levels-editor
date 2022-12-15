@@ -21,8 +21,16 @@ const skipElement = (element: Element) => SKIP_ELEMENTS.has(element.tagName);
 /**
  * `key` -> <https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values>
  */
-export type HotKeyShortcut = readonly [key: string, mask?: number];
-export const displayHotKey = ([key, mask = 0]: HotKeyShortcut) => {
+type HotKeyShortcut = readonly [key: string, mask?: number];
+/**
+ * Single or several shortcuts. The first will be used to display when needed.
+ */
+export type HotKeyShortcuts = HotKeyShortcut | readonly HotKeyShortcut[];
+const _isSingle = (hk: HotKeyShortcuts): hk is HotKeyShortcut =>
+  hk.length === 2 && typeof hk[0] === "string";
+
+export const displayHotKey = (hk: HotKeyShortcuts) => {
+  const [key, mask = 0] = _isSingle(hk) ? hk : hk[0];
   let s = "";
   if (mask & HotKeyMask.CTRL) {
     s += "Ctrl+";
@@ -45,8 +53,7 @@ const eventToShortcutString = (e: KeyboardEvent) =>
 
 type Consumer = (e: KeyboardEvent) => void;
 interface HotkeyRef {
-  // TODO: multiple shortcuts, use first to display
-  shortcut: HotKeyShortcut;
+  shortcut: HotKeyShortcuts;
   // TODO: Make optional with `preventDefault`
   handler: Consumer;
   // TODO: add `preventDefault` to auto `preventDefault()`,
@@ -64,7 +71,7 @@ export const HotkeysGate = createGate();
 const addHotkey = createEvent<HotkeyRegister>();
 const removeHotkey = createEvent<HotkeyRef>();
 export const useHotKey = ({
-  shortcut: [key, mask],
+  shortcut,
   handler,
   prepend = false,
   disabled = false,
@@ -73,30 +80,36 @@ export const useHotKey = ({
     if (disabled) {
       return;
     }
-    addHotkey({ shortcut: [key, mask], handler, prepend });
+    addHotkey({ shortcut, handler, prepend });
     return () => {
-      removeHotkey({ shortcut: [key, mask], handler });
+      removeHotkey({ shortcut, handler });
     };
-  }, [key, mask, handler, prepend, disabled]);
+  }, [shortcut, handler, prepend, disabled]);
 
 const $consumers = createStore<ReadonlyMap<string, readonly Consumer[]>>(
   new Map(),
 )
   .on(addHotkey, (map, { shortcut, handler, prepend }) =>
-    RoMap.updateDefault(map, shortcutToString(shortcut), [], (list) =>
-      prepend ? [handler, ...list] : [...list, handler],
+    (_isSingle(shortcut) ? [shortcut] : shortcut).reduce(
+      (map, shortcut) =>
+        RoMap.updateDefault(map, shortcutToString(shortcut), [], (list) =>
+          prepend ? [handler, ...list] : [...list, handler],
+        ),
+      map,
     ),
   )
-  .on(removeHotkey, (map, { shortcut, handler }) => {
-    const key = shortcutToString(shortcut);
-    const next = RoMap.update(map, key, (list) =>
-      list.filter((h) => h !== handler),
-    );
-    if (next.get(key)?.length === 0) {
-      return RoMap.remove(next, key);
-    }
-    return next;
-  });
+  .on(removeHotkey, (map, { shortcut, handler }) =>
+    RoMap.filter(
+      (_isSingle(shortcut) ? [shortcut] : shortcut).reduce(
+        (map, shortcut) =>
+          RoMap.update(map, shortcutToString(shortcut), (list) =>
+            list.filter((h) => h !== handler),
+          ),
+        map,
+      ),
+      (list) => list.length,
+    ),
+  );
 
 const handleKeyDown = createEvent<KeyboardEvent>();
 sample({

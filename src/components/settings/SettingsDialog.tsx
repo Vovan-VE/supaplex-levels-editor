@@ -5,8 +5,9 @@ import { Button } from "ui/button";
 import { Dialog } from "ui/feedback";
 import { ColorType } from "ui/types";
 import { CoordsChoice } from "./CoordsChoice";
-import { Confirmations } from "./ConfirmCheckbox";
+import { Confirmations } from "./Confirmations";
 import { LayoutChoice } from "./LayoutChoice";
+import { SpChips } from "./SpChips";
 
 export const SettingsDialog: FC = () => {
   const opened = useStore($opened);
@@ -26,6 +27,7 @@ export const SettingsDialog: FC = () => {
       <LayoutChoice />
       <CoordsChoice />
       <Confirmations />
+      <SpChips />
     </Dialog>
   );
 };

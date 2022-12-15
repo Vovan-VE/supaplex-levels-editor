@@ -11,15 +11,7 @@ import { IBaseLevel, ILevelRegion } from "drivers";
 import { svgs } from "ui/icon";
 import { isNotNull } from "utils/fn";
 import { minmax } from "utils/number";
-import {
-  a2o,
-  clipRect,
-  fromDrag,
-  IBounds,
-  inRect,
-  o2a,
-  RectA,
-} from "utils/rect";
+import { clipRect, fromDrag, IBounds, inRect, Point2D, Rect } from "utils/rect";
 import {
   $currentKey,
   $currentLevelIndex,
@@ -39,10 +31,6 @@ import {
 } from "./interface";
 import { $feedbackCell } from "./feedback";
 
-interface P {
-  x: number;
-  y: number;
-}
 const enum Op {
   DEFINE = "d",
   STABLE = "s",
@@ -54,23 +42,21 @@ interface DefineRect {
   endX: number;
   endY: number;
 }
-interface StableRect extends P {
+interface StableRect extends Rect {
   op: Op.STABLE;
-  w: number;
-  h: number;
   // if "dragging" being grabbed in this relative point
-  dragPoint?: P;
+  dragPoint?: Point2D;
   // content cut from level
   content?: ILevelRegion;
 }
 type DrawState = DefineRect | StableRect;
 
-const fillRegionInLevel = (level: IBaseLevel, r: RectA, tile: number) =>
+const fillRegionInLevel = (level: IBaseLevel, r: Rect, tile: number) =>
   level.batch((level) => {
-    let [x0, y0, w, h] = clipRect(r, level);
-    for (let j = 0; j < h; j++) {
-      for (let i = 0; i < w; i++) {
-        level = level.setTile(x0 + i, y0 + j, tile);
+    let { x, y, width, height } = clipRect(r, level);
+    for (let j = 0; j < height; j++) {
+      for (let i = 0; i < width; i++) {
+        level = level.setTile(x + i, y + j, tile);
       }
     }
     return level;
@@ -101,9 +87,8 @@ const {
     // already have previous selection
     if (drawState?.op === Op.STABLE) {
       let { x: cx, y: cy } = drawState;
-      const r = o2a(drawState);
       // starting with pointer inside previous selection
-      if (inRect(x, y, r)) {
+      if (inRect(x, y, drawState)) {
         // it means "drag" selected region
         drawState = {
           ...drawState,
@@ -116,9 +101,9 @@ const {
         if (!drawState.content) {
           // copy region from level
           // `drawState` is already copied above, so just setting prop
-          drawState.content = level.copyRegion(...r);
+          drawState.content = level.copyRegion(drawState);
           // then fill region in level
-          level = fillRegionInLevel(level, r, tile);
+          level = fillRegionInLevel(level, drawState, tile);
         }
       } else {
         // starting outside previous selection
@@ -151,8 +136,8 @@ const {
         return {
           ...prev,
           // fix offsets to not let it go out of level
-          x: minmax(x - prev.dragPoint.x, 1 - prev.w, width - 1),
-          y: minmax(y - prev.dragPoint.y, 1 - prev.h, height - 1),
+          x: minmax(x - prev.dragPoint.x, 1 - prev.width, width - 1),
+          y: minmax(y - prev.dragPoint.y, 1 - prev.height, height - 1),
         };
       }
 
@@ -175,15 +160,14 @@ const {
     if (drawState) {
       if (drawState.op === Op.DEFINE) {
         // end of "define" phase lead to "stable" phase
-        const r = fromDrag(
-          drawState.startX,
-          drawState.startY,
-          drawState.endX,
-          drawState.endY,
-        );
         drawState = {
           op: Op.STABLE,
-          ...a2o(r),
+          ...fromDrag(
+            drawState.startX,
+            drawState.startY,
+            drawState.endX,
+            drawState.endY,
+          ),
         };
       } else if (drawState.dragPoint) {
         // end of "dragging"
@@ -214,31 +198,26 @@ const dragContent = (d: DrawState): DrawLayer | null => {
 };
 
 const selectFrame = (d: DrawState, level: IBounds): DrawLayerSelectRange => {
-  const fullRect =
-    d.op === Op.STABLE ? o2a(d) : fromDrag(d.startX, d.startY, d.endX, d.endY);
+  const fullRect: Rect =
+    d.op === Op.STABLE ? d : fromDrag(d.startX, d.startY, d.endX, d.endY);
 
   const borders = new Set<"T" | "R" | "B" | "L">();
-  const [fX, fY, fW, fH] = fullRect;
-  if (fX + fW <= level.width) {
+  if (fullRect.x + fullRect.width <= level.width) {
     borders.add("R");
   }
-  if (fY + fH <= level.height) {
+  if (fullRect.y + fullRect.height <= level.height) {
     borders.add("B");
   }
-  if (fX >= 0) {
+  if (fullRect.x >= 0) {
     borders.add("L");
   }
-  if (fY >= 0) {
+  if (fullRect.y >= 0) {
     borders.add("T");
   }
 
-  const [x, y, width, height] = clipRect(fullRect, level);
   return {
     type: DrawLayerType.SELECT_RANGE,
-    x,
-    y,
-    width,
-    height,
+    ...clipRect(fullRect, level),
     borders,
   };
 };
@@ -307,8 +286,8 @@ export const SELECTION: Tool = {
                   {
                     x: sel.x,
                     y: sel.y,
-                    w: sel.width,
-                    h: sel.height,
+                    width: sel.width,
+                    height: sel.height,
                   },
                 ],
               },
@@ -335,7 +314,7 @@ export const deleteSelectionFx = createEffect(async () => {
   const q = $currentLevelUndoQueue.getState();
   if (q && drawState?.op === Op.STABLE && !drawState.content) {
     const tile = $tileIndex.getState();
-    updateCurrentLevel(fillRegionInLevel(q.current, o2a(drawState), tile));
+    updateCurrentLevel(fillRegionInLevel(q.current, drawState, tile));
   }
   rollback();
 });
@@ -351,7 +330,7 @@ export const $clipboardRegion = createStore<ILevelRegion | null>(null).on(
     }),
     source: $currentLevelUndoQueue,
     filter: Boolean,
-    fn: (q, s) => s.content ?? q.current.copyRegion(s.x, s.y, s.w, s.h),
+    fn: (q, s) => s.content ?? q.current.copyRegion(s),
   }),
   (_, next) => next,
 );
@@ -365,14 +344,14 @@ export const cutSelectionFx = createEffect(() => {
 });
 
 // only run after activating selection tool
-export const pasteSelectionFx = createEffect(async (visibleRect?: RectA) => {
+export const pasteSelectionFx = createEffect(async (visibleRect?: Rect) => {
   externalRollback();
   const region = $clipboardRegion.getState();
   if (region) {
     let x = 0;
     let y = 0;
     if (visibleRect) {
-      [x, y] = visibleRect;
+      ({ x, y } = visibleRect);
     } else {
       const hoverCell = $feedbackCell.getState();
       if (hoverCell) {
@@ -381,7 +360,7 @@ export const pasteSelectionFx = createEffect(async (visibleRect?: RectA) => {
       } else {
         const bodyRect = BodyVisibleRectGate.state.getState().rect;
         if (bodyRect) {
-          [x, y] = bodyRect;
+          ({ x, y } = bodyRect);
         }
       }
     }
@@ -390,8 +369,8 @@ export const pasteSelectionFx = createEffect(async (visibleRect?: RectA) => {
       op: Op.STABLE,
       x,
       y,
-      w: region.tiles.width,
-      h: region.tiles.height,
+      width: region.tiles.width,
+      height: region.tiles.height,
       content: region,
     });
   }

@@ -8,6 +8,16 @@
   - Internal editing exception from store manipulations.
 - Import/export single level.
   - Yet more UI buttons again.
+- Tools:
+  - Double chip
+  - Random
+  - Maze
+  - Replace
+  - Chess
+  - Gradient
+- Enhance Read Only mode more?
+- Visualized level resizing with crop.
+  - Separate "crop" & "extend" scenarios with Tabs, for example.
 
 ## Wishes from users (unsorted)
 

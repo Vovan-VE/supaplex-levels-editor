@@ -172,9 +172,15 @@ describe("footer", () => {
 
   it("copySpecPortsInRegion", () => {
     const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
-    expect(footer.copySpecPortsInRegion([0, 0, 60, 12])).toEqual([]);
-    expect(footer.copySpecPortsInRegion([0, 0, 12, 24])).toEqual([]);
-    expect(footer.copySpecPortsInRegion([11, 11, 3, 3])).toEqual([
+    expect(
+      footer.copySpecPortsInRegion({ x: 0, y: 0, width: 60, height: 12 }),
+    ).toEqual([]);
+    expect(
+      footer.copySpecPortsInRegion({ x: 0, y: 0, width: 12, height: 24 }),
+    ).toEqual([]);
+    expect(
+      footer.copySpecPortsInRegion({ x: 11, y: 11, width: 3, height: 3 }),
+    ).toEqual([
       {
         x: 1,
         y: 1,

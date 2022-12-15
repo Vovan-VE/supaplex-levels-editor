@@ -1,4 +1,4 @@
-import { createLevel } from "./level";
+import { createLevel, createNewLevel } from "./level";
 import {
   BODY_LENGTH,
   FOOTER_BYTE_LENGTH,
@@ -176,7 +176,7 @@ describe("level", () => {
     it("simple", () => {
       const a = createLevel(3, 2, testLevelData3x2);
 
-      let b = a.resize(5, 4);
+      let b = a.resize({ width: 5, height: 4 });
       expect(dumpLevel(b)).toMatchSnapshot();
 
       b = b
@@ -196,8 +196,13 @@ describe("level", () => {
         });
       expect(dumpLevel(b)).toMatchSnapshot();
 
-      const c = b.resize(3, 2);
+      const c = b.resize({ width: 3, height: 2 });
       expect(dumpLevel(c)).toEqual(dumpLevel(a));
+    });
+
+    it("noop", () => {
+      const a = createLevel(3, 2);
+      expect(a.resize({ width: 3, height: 2 })).toBe(a);
     });
   });
 
@@ -390,7 +395,7 @@ describe("level", () => {
 
   it("copyRegion", () => {
     const level = createLevel(60, 24, testLevelData);
-    const region = level.copyRegion(11, 11, 3, 3);
+    const region = level.copyRegion({ x: 11, y: 11, width: 3, height: 3 });
     expect([
       ...region.tiles.tilesRenderStream(
         0,
@@ -429,7 +434,7 @@ describe("level", () => {
 
   describe("pasteRegion", () => {
     const level = createLevel(60, 24, testLevelData);
-    const region = level.copyRegion(11, 11, 3, 3);
+    const region = level.copyRegion({ x: 11, y: 11, width: 3, height: 3 });
 
     it("other place", () => {
       // (10;11)
@@ -545,5 +550,54 @@ describe("level", () => {
       expect(level.pasteRegion(-5, 10, region)).toBe(level);
       expect(level.raw).toEqual(testLevelData);
     });
+  });
+});
+
+describe("createNewLevel", () => {
+  it("no options", () => {
+    expect(dumpLevel(createNewLevel())).toMatchSnapshot();
+  });
+
+  it("size", () => {
+    expect(
+      dumpLevel(createNewLevel({ width: 5, height: 3 })),
+    ).toMatchSnapshot();
+  });
+
+  it("border", () => {
+    expect(
+      dumpLevel(createNewLevel({ width: 5, height: 3, borderTile: TILE_ZONK })),
+    ).toMatchSnapshot();
+  });
+
+  it("fill", () => {
+    expect(
+      dumpLevel(
+        createNewLevel({ width: 5, height: 3, fillTile: TILE_INFOTRON }),
+      ),
+    ).toMatchSnapshot();
+  });
+
+  it("all", () => {
+    expect(
+      dumpLevel(
+        createNewLevel({
+          width: 5,
+          height: 3,
+          borderTile: TILE_ZONK,
+          fillTile: TILE_INFOTRON,
+        }),
+      ),
+    ).toMatchSnapshot();
+    expect(
+      dumpLevel(
+        createNewLevel({
+          width: 5,
+          height: 3,
+          borderTile: TILE_INFOTRON,
+          fillTile: TILE_INFOTRON,
+        }),
+      ),
+    ).toMatchSnapshot();
   });
 });

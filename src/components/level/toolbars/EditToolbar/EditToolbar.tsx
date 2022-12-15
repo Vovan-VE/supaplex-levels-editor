@@ -14,7 +14,7 @@ import {
 import {
   displayHotKey,
   HotKeyMask,
-  HotKeyShortcut,
+  HotKeyShortcuts,
   useHotKey,
 } from "models/ui/hotkeys";
 import { Button, ToolbarSeparator } from "ui/button";
@@ -55,12 +55,11 @@ const noopHandler = (e: UIEvent) => {
   e.preventDefault();
 };
 
-// TODO: also add multimedia keys
-const HK_REDO: HotKeyShortcut = ["Y", HotKeyMask.CTRL];
-const HK_CUT: HotKeyShortcut = ["X", HotKeyMask.CTRL];
-const HK_COPY: HotKeyShortcut = ["C", HotKeyMask.CTRL];
-const HK_PASTE: HotKeyShortcut = ["V", HotKeyMask.CTRL];
-const HK_DEL: HotKeyShortcut = ["Delete"];
+const HK_REDO: HotKeyShortcuts = [["Y", HotKeyMask.CTRL], ["Redo"]];
+const HK_CUT: HotKeyShortcuts = [["X", HotKeyMask.CTRL], ["Cut"]];
+const HK_COPY: HotKeyShortcuts = [["C", HotKeyMask.CTRL], ["Copy"]];
+const HK_PASTE: HotKeyShortcuts = [["V", HotKeyMask.CTRL], ["Paste"]];
+const HK_DEL: HotKeyShortcuts = [["Delete"], ["Clear"]];
 
 interface Props {
   withUndo?: boolean;

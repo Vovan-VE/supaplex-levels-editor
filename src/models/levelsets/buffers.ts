@@ -19,7 +19,9 @@ import {
   IBaseLevelset,
   levelSupportsDemo,
 } from "drivers";
+import { fmtLevelNumber } from "components/levelset/fmt";
 import { IBounds } from "utils/rect";
+import { $displayReadOnly, $instanceIsReadOnly } from "../instanceSemaphore";
 import { localStorageDriver } from "../_utils/persistent";
 import {
   $currentDriverFormat,
@@ -362,7 +364,9 @@ sample({
     key: $currentKey,
   },
   filter: ({ files, key }) => Boolean(key && files.has(key)),
-  fn: ({ files, key }) => files.get(key!)!.levels.length,
+  fn: ({ files, key }) =>
+    // at this moment it already has new level in the end
+    files.get(key!)!.levels.length - 1,
   target: _willSetCurrentLevelFx,
 });
 
@@ -431,6 +435,7 @@ withPersistent<string, _OpenedIndicesWakeUpMap, _OpenedIndicesSerializedList>(
   "openedLevels",
   {
     wakeUp: _$wakeUpOpenedIndices,
+    readOnly: $instanceIsReadOnly,
     serialize: (map: _OpenedIndicesWakeUpMap) =>
       [...map]
         .map<_OpenedIndicesSerialized>(([key, item]) => [
@@ -665,18 +670,21 @@ export const $currentOpenedIndices = $currentBuffer.map(
 );
 
 combine(
+  $displayReadOnly,
   $currentLevelsetFile.map(
     (f) => f && ([f.name, f.levelset.levelsCount] as const),
   ),
   $currentBuffer.map((b) => b && (b.currentIndex ?? null)),
-  (f, index) =>
-    (f
+  (ro, file, index) =>
+    (ro ? "[RO!] " : "") +
+    (file
       ? `${
           index !== null
-            ? `${String(index + 1).padStart(String(f[1]).length, "0")}: `
+            ? `${fmtLevelNumber(index, String(file[1]).length)}: `
             : ""
-        }${f[0]} - `
-      : "") + APP_TITLE,
+        }${file[0]} - `
+      : "") +
+    APP_TITLE,
 ).watch((title) => {
   try {
     window.document.title = title;

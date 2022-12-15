@@ -1,30 +1,60 @@
 import { clipRect } from "./clipRect";
-import { IBounds } from "./types";
+import { IBounds, Rect } from "./types";
 
 it("clipRect", () => {
   const b: IBounds = { width: 10, height: 10 };
 
   //     ==========
   //       ---
-  expect(clipRect([1, 2, 3, 4], b)).toEqual([1, 2, 3, 4]);
+  expect(clipRect({ x: 1, y: 2, width: 3, height: 4 }, b)).toEqual<Rect>({
+    x: 1,
+    y: 2,
+    width: 3,
+    height: 4,
+  });
 
   //     ==========
   //       --------------
-  expect(clipRect([1, 2, 13, 14], b)).toEqual([1, 2, 9, 8]);
+  expect(clipRect({ x: 1, y: 2, width: 13, height: 14 }, b)).toEqual<Rect>({
+    x: 1,
+    y: 2,
+    width: 9,
+    height: 8,
+  });
 
   //     ==========
   //                 --------------
-  expect(clipRect([11, 12, 3, 4], b)).toEqual([10, 10, 0, 0]);
+  expect(clipRect({ x: 11, y: 12, width: 3, height: 4 }, b)).toEqual<Rect>({
+    x: 10,
+    y: 10,
+    width: 0,
+    height: 0,
+  });
 
   //     ==========
   //    ---
-  expect(clipRect([-1, -2, 3, 4], b)).toEqual([0, 0, 2, 2]);
+  expect(clipRect({ x: -1, y: -2, width: 3, height: 4 }, b)).toEqual<Rect>({
+    x: 0,
+    y: 0,
+    width: 2,
+    height: 2,
+  });
 
   //     ==========
   // ---
-  expect(clipRect([-11, -12, 3, 4], b)).toEqual([0, 0, 0, 0]);
+  expect(clipRect({ x: -11, y: -12, width: 3, height: 4 }, b)).toEqual<Rect>({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
 
   //     ==========
   //   --------------
-  expect(clipRect([-1, -2, 13, 14], b)).toEqual([0, 0, 10, 10]);
+  expect(clipRect({ x: -1, y: -2, width: 13, height: 14 }, b)).toEqual<Rect>({
+    x: 0,
+    y: 0,
+    width: 10,
+    height: 10,
+  });
 });

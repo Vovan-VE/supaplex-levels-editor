@@ -1,5 +1,140 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`createNewLevel all 1`] = `
+Object {
+  "cells": Array [
+    "ooooo",
+    "o&&&o",
+    "ooooo",
+  ],
+  "demo": null,
+  "height": 3,
+  "infotronsNeed": 0,
+  "initialFreezeZonks": false,
+  "initialGravity": false,
+  "maxTitleLength": 23,
+  "specialPorts": Array [],
+  "title": "                       ",
+  "width": 5,
+}
+`;
+
+exports[`createNewLevel all 2`] = `
+Object {
+  "cells": Array [
+    "&&&&&",
+    "&&&&&",
+    "&&&&&",
+  ],
+  "demo": null,
+  "height": 3,
+  "infotronsNeed": 0,
+  "initialFreezeZonks": false,
+  "initialGravity": false,
+  "maxTitleLength": 23,
+  "specialPorts": Array [],
+  "title": "                       ",
+  "width": 5,
+}
+`;
+
+exports[`createNewLevel border 1`] = `
+Object {
+  "cells": Array [
+    "ooooo",
+    "o   o",
+    "ooooo",
+  ],
+  "demo": null,
+  "height": 3,
+  "infotronsNeed": 0,
+  "initialFreezeZonks": false,
+  "initialGravity": false,
+  "maxTitleLength": 23,
+  "specialPorts": Array [],
+  "title": "                       ",
+  "width": 5,
+}
+`;
+
+exports[`createNewLevel fill 1`] = `
+Object {
+  "cells": Array [
+    "▓▓▓▓▓",
+    "▓&&&▓",
+    "▓▓▓▓▓",
+  ],
+  "demo": null,
+  "height": 3,
+  "infotronsNeed": 0,
+  "initialFreezeZonks": false,
+  "initialGravity": false,
+  "maxTitleLength": 23,
+  "specialPorts": Array [],
+  "title": "                       ",
+  "width": 5,
+}
+`;
+
+exports[`createNewLevel no options 1`] = `
+Object {
+  "cells": Array [
+    "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
+  ],
+  "demo": null,
+  "height": 24,
+  "infotronsNeed": 0,
+  "initialFreezeZonks": false,
+  "initialGravity": false,
+  "maxTitleLength": 23,
+  "specialPorts": Array [],
+  "title": "                       ",
+  "width": 60,
+}
+`;
+
+exports[`createNewLevel size 1`] = `
+Object {
+  "cells": Array [
+    "▓▓▓▓▓",
+    "▓   ▓",
+    "▓▓▓▓▓",
+  ],
+  "demo": null,
+  "height": 3,
+  "infotronsNeed": 0,
+  "initialFreezeZonks": false,
+  "initialGravity": false,
+  "maxTitleLength": 23,
+  "specialPorts": Array [],
+  "title": "                       ",
+  "width": 5,
+}
+`;
+
 exports[`level constructor data 1`] = `
 Object {
   "cells": Array [
@@ -69,10 +204,10 @@ Object {
 exports[`level resize simple 1`] = `
 Object {
   "cells": Array [
-    " ∩&  ",
-    "o@▢  ",
-    "     ",
-    "     ",
+    " ∩&▓▓",
+    "o@▢ ▓",
+    "▓   ▓",
+    "▓▓▓▓▓",
   ],
   "demo": null,
   "height": 4,
@@ -98,9 +233,9 @@ exports[`level resize simple 2`] = `
 Object {
   "cells": Array [
     " ∩&&⊃",
-    "o@▢  ",
-    "o    ",
-    "∪    ",
+    "o@▢ ▓",
+    "o   ▓",
+    "∪▓▓▓▓",
   ],
   "demo": null,
   "height": 4,

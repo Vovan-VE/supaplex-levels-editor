@@ -1,5 +1,6 @@
 import { CSSProperties, FC, ReactNode } from "react";
 import { CellContextEventSnapshot } from "models/levels/tools/interface";
+import { IBounds, Rect } from "utils/rect";
 
 export interface ISizeLimit {
   readonly minWidth?: number;
@@ -40,9 +41,7 @@ export type ITilesStreamItem = readonly [
   tile: number,
 ];
 
-export interface ITilesRegion {
-  readonly width: number;
-  readonly height: number;
+export interface ITilesRegion extends IBounds {
   getTile(x: number, y: number): number;
   tilesRenderStream(
     x: number,
@@ -56,19 +55,30 @@ export interface ILevelRegion {
   readonly tiles: ITilesRegion;
 }
 
+export interface INewLevelOptions {
+  width?: number;
+  height?: number;
+  borderTile?: number;
+  fillTile?: number;
+}
+
+export interface IResizeLevelOptions extends INewLevelOptions {
+  x?: number;
+  y?: number;
+}
+
 export interface IBaseLevel extends ITilesRegion {
   readonly raw: Uint8Array;
   setTile(x: number, y: number, value: number): this;
   batch(update: (b: this) => this): this;
-  // TODO: probably add optional argument to set border or fill new space with the given tile(s)
-  resize?(width: number, height: number): this;
+  resize?(options: IResizeLevelOptions): this;
   readonly title: string;
   setTitle(title: string): this;
   // REFACT: move to format?
   readonly maxTitleLength: number;
 
   isPlayable(): IsPlayableResult;
-  copyRegion(x: number, y: number, w: number, h: number): ILevelRegion;
+  copyRegion(rect: Rect): ILevelRegion;
   pasteRegion(x: number, y: number, region: ILevelRegion): this;
   findPlayer(): [x: number, y: number] | null;
 }
@@ -114,15 +124,10 @@ export interface IBaseTileInteraction<L extends IBaseLevel> {
 export interface IBaseTile<L extends IBaseLevel> {
   value?: number;
   title: string;
+  toolbarOrder?: number;
   interaction?: IBaseTileInteraction<L>;
   // TODO: limits like spec ports counts and coords<=>offset, Murphy presence
   //   and like notices for infotrons % 256 in case of 'all'
-}
-
-export interface INewLevelOptions {
-  width?: number;
-  height?: number;
-  borderTile?: number;
 }
 
 export const enum SupportReportType {
@@ -157,6 +162,7 @@ export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
 
 export interface TileRenderProps {
   tile?: number;
+  className?: string;
   style?: CSSProperties;
 }
 

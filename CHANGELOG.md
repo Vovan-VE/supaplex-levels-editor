@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.7.0 (2022-12-15)
+
+- Add: Indicator to show pending data flushes into browser storage. It will
+  become visible when a flush will take more time than usual, mostly when
+  editing large file.
+- Add: Options in "New File" and "Resize" dialogs to select border and fill
+  tiles.
+- Add: Option in Settings to switch Double Chips graphics.
+- Enh: Reorder tiles in toolbar by at least some logic for better UX.
+- Fix: Multiple parallel instances of SpLE in a browser session may cause data
+  loss. Now it is prevented by introducing Read Only mode.
+- Fix: Data just read from browser storage was flushed back unnecessary on every
+  page load.
+- Fix: Writing to browser storage only edited file. Before this all opened files
+  was unnecessarily rewritten on every change in any file.
+- Fix: "Append level" did not switch to newly created level.
+
 ## 0.6.0 (2022-12-10)
 
 - Add: `*.sp` files support.

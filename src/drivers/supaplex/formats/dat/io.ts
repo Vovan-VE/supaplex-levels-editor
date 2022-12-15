@@ -33,7 +33,7 @@ export const writeLevelset = (levelset: ISupaplexLevelset): ArrayBuffer => {
 
     // warnings covered by "support report"
     if (level.width < LEVEL_WIDTH || level.height < LEVEL_HEIGHT) {
-      level = level.resize(LEVEL_WIDTH, LEVEL_HEIGHT);
+      level = level.resize({ width: LEVEL_WIDTH, height: LEVEL_HEIGHT });
     }
     level = level.setDemo(null);
 

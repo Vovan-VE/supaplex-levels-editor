@@ -1,11 +1,22 @@
-import { clipRect, inRect, RectA } from "utils/rect";
-import { DemoSeed, ITilesStreamItem } from "../types";
+import { clipRect, IBounds, inBounds, Rect } from "utils/rect";
+import {
+  DemoSeed,
+  INewLevelOptions,
+  IResizeLevelOptions,
+  ITilesStreamItem,
+} from "../types";
 import { AnyBox } from "./AnyBox";
 import { createLevelBody } from "./body";
+import { fillLevelBorder } from "./fillLevelBorder";
 import { createLevelFooter } from "./footer";
-import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "./formats/std";
+import {
+  FOOTER_BYTE_LENGTH,
+  LEVEL_HEIGHT,
+  LEVEL_WIDTH,
+  TITLE_LENGTH,
+} from "./formats/std";
 import { ILevelBody, ILevelFooter, ISupaplexSpecPortProps } from "./internal";
-import { isSpecPort, TILE_SPACE } from "./tiles-id";
+import { isSpecPort, TILE_HARDWARE, TILE_SPACE } from "./tiles-id";
 import { ISupaplexLevel, ISupaplexLevelRegion } from "./types";
 
 const sliceFooter = (bodyLength: number, data?: Uint8Array) => {
@@ -18,6 +29,21 @@ const sliceFooter = (bodyLength: number, data?: Uint8Array) => {
     }
     return data.slice(bodyLength);
   }
+};
+
+export const createNewLevel = ({
+  width,
+  height,
+  borderTile = TILE_HARDWARE,
+  fillTile = TILE_SPACE,
+}: INewLevelOptions = {}) => {
+  const box = new AnyBox(width ?? LEVEL_WIDTH, height ?? LEVEL_HEIGHT);
+  const body = createLevelBody(
+    box,
+    fillTile !== 0 ? new Uint8Array(box.length).fill(fillTile) : undefined,
+  );
+  const level = new SupaplexLevel(box, body, createLevelFooter(box.width));
+  return borderTile !== fillTile ? fillLevelBorder(level, borderTile) : level;
 };
 
 export const createLevel = (
@@ -114,45 +140,36 @@ class SupaplexLevel implements ISupaplexLevel {
     return this.#withBody(nextBody).#withFooter(nextFooter!);
   }
 
-  resize(width: number, height: number) {
-    const origSpecPorts = [...this.getSpecPorts()];
-
-    let src: this = this;
-    // reducing any dimension with spec port deletion
+  resize({
+    x = 0,
+    y = 0,
+    width = this.#box.width,
+    height = this.#box.height,
+    ...rest
+  }: IResizeLevelOptions): this {
     if (
-      (width < this.#box.width && origSpecPorts.some((p) => p.x >= width)) ||
-      (height < this.#box.height && origSpecPorts.some((p) => p.y >= height))
+      x === 0 &&
+      y === 0 &&
+      width === this.#box.width &&
+      height === this.#box.height
     ) {
-      // delete spec ports entry
-      for (let p of origSpecPorts) {
-        if (
-          (width < this.#box.width && p.x >= width) ||
-          (height < this.#box.height && p.y >= height)
-        ) {
-          src = src.setTile(p.x, p.y, TILE_SPACE);
-        }
-      }
+      return this;
     }
+    const inputRect: Rect = { x, y, width, height };
+    const readRect = clipRect(inputRect, this.#box);
 
-    const box = new AnyBox(width, height);
-    const body = createLevelBody(box).batch((body) => {
-      for (let y = Math.min(height, this.#box.height); y-- > 0; ) {
-        for (let x = Math.min(width, this.#box.width); x-- > 0; ) {
-          body = body.setTile(x, y, src.getTile(x, y));
-        }
-      }
-      return body;
-    });
+    const region = this.copyRegion(readRect);
 
-    let footer = createLevelFooter(
-      width,
-      src.#footer.getRaw(),
-    ).clearSpecPorts();
-    for (const p of src.getSpecPorts()) {
-      footer = footer.setSpecPort(p.x, p.y, p);
-    }
-
-    return new SupaplexLevel(box, body, footer) as this;
+    const footer = createLevelFooter(width, this.#footer.getRaw());
+    return createNewLevel({ width, height, ...rest }).batch((level) =>
+      level
+        .#withFooter(footer.clearSpecPorts())
+        .pasteRegion(
+          readRect.x - inputRect.x,
+          readRect.y - inputRect.y,
+          region,
+        ),
+    ) as this;
   }
 
   getTile(x: number, y: number) {
@@ -190,16 +207,16 @@ class SupaplexLevel implements ISupaplexLevel {
     return this.#body.tilesRenderStream(x, y, w, h);
   }
 
-  copyRegion(x: number, y: number, w: number, h: number) {
-    const [x0, y0, tiles] = this.#body.copyRegion(x, y, w, h);
+  copyRegion(r: Rect) {
+    const [x, y, tiles] = this.#body.copyRegion(r);
     return {
       tiles,
-      specPorts: this.#footer.copySpecPortsInRegion([
-        x0,
-        y0,
-        tiles.width,
-        tiles.height,
-      ]),
+      specPorts: this.#footer.copySpecPortsInRegion({
+        x,
+        y,
+        width: tiles.width,
+        height: tiles.height,
+      }),
     };
   }
 
@@ -212,20 +229,25 @@ class SupaplexLevel implements ISupaplexLevel {
     //  ------------------ region
     //         ----------- clip
 
-    const [x0, y0, w, h] = clipRect([x, y, tiles.width, tiles.height], this);
+    const b: IBounds = this.#box;
+    const {
+      x: x0,
+      y: y0,
+      width,
+      height,
+    } = clipRect({ x, y, width: tiles.width, height: tiles.height }, b);
     return this.batch((l) => {
-      for (let j = 0; j < h; j++) {
+      for (let j = 0; j < height; j++) {
         const cy = y0 + j;
-        for (let i = 0; i < w; i++) {
+        for (let i = 0; i < width; i++) {
           const cx = x0 + i;
           l = l.setTile(cx, cy, tiles.getTile(cx - x, cy - y));
         }
       }
-      const r: RectA = [0, 0, this.width, this.height];
       for (const p of specPorts) {
         const cx = p.x + x;
         const cy = p.y + y;
-        if (inRect(cx, cy, r)) {
+        if (inBounds(cx, cy, b)) {
           l = l.setSpecPort(cx, cy, p);
         }
       }

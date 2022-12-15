@@ -39,7 +39,7 @@ const SelectFormat: FC<Props> = ({ show, onSubmit, onCancel }) => {
           value,
           label: f.title,
         }))
-        .sort((a, b) => strCmp(a.label, b.label)),
+        .sort((a, b) => strCmp(a.label!, b.label!)),
     [formats],
   );
 

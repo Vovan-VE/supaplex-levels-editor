@@ -7,7 +7,7 @@ import {
   useCallback,
 } from "react";
 import cn from "classnames";
-import { HotKeyShortcut, useHotKey } from "models/ui/hotkeys";
+import { HotKeyShortcuts, useHotKey } from "models/ui/hotkeys";
 import { PopupPortal } from "utils/react";
 import { TextButton } from "ui/button";
 import { svgs } from "ui/icon";
@@ -40,7 +40,7 @@ export interface DialogProps {
   onClose?: () => void;
 }
 
-const HK_ESCAPE: HotKeyShortcut = ["Escape"];
+const HK_ESCAPE: HotKeyShortcuts = [["Escape"], ["Cancel"]];
 
 export const Dialog: FC<PropsWithChildren<DialogProps>> = ({
   open = false,

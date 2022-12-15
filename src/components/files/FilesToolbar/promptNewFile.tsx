@@ -7,6 +7,8 @@ import {
   useMemo,
   useState,
 } from "react";
+import { NoticeSizeLags } from "components/level/toolbars/LevelConfig";
+import { TileSelect } from "components/driver/TileSelect";
 import {
   canResize,
   canResizeHeight,
@@ -17,8 +19,8 @@ import {
   getDriverFormat,
   parseFormatFilename,
 } from "drivers";
+import { TILE_HARDWARE } from "drivers/supaplex/tiles-id";
 import { addLevelsetFileFx } from "models/levelsets";
-import { NoticeSizeLags } from "../../level/toolbars/LevelConfig/NoticeSizeLags";
 import { Button } from "ui/button";
 import {
   Dialog,
@@ -56,7 +58,7 @@ const formatOptions = new Map<DriverName, readonly FormatOption[]>(
           label: f.title,
           _default: driver.defaultFormat === value,
         }))
-        .sort((a, b) => strCmp(a.label, b.label)),
+        .sort((a, b) => strCmp(a.label!, b.label!)),
     ];
   }),
 );
@@ -82,6 +84,9 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const [title, setTitle] = useState("EMPTY");
   const [width, setWidth] = useState<number | null>(null);
   const [height, setHeight] = useState<number | null>(null);
+  // TODO: define defaults in driver
+  const [borderTile, setBorderTile] = useState(TILE_HARDWARE);
+  const [fillTile, setFillTile] = useState(0);
 
   const format = getDriverFormat(driverName, driverFormat)!;
   const { resizable, minLevelsCount, maxLevelsCount } = format;
@@ -158,7 +163,8 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     let level = format.createLevel({
       width: width ?? undefined,
       height: height ?? undefined,
-      // TODO: `borderTile` can be configured too
+      borderTile,
+      fillTile,
     });
     try {
       level = level.setTitle(title);
@@ -206,6 +212,8 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     title,
     width,
     height,
+    borderTile,
+    fillTile,
     onSubmit,
   ]);
 
@@ -347,6 +355,21 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
             )}
           </>
         )}
+
+        <Field label="Border">
+          <TileSelect
+            driverName={driverName}
+            tile={borderTile}
+            onChange={setBorderTile}
+          />
+        </Field>
+        <Field label="Fill body">
+          <TileSelect
+            driverName={driverName}
+            tile={fillTile}
+            onChange={setFillTile}
+          />
+        </Field>
 
         {/* TODO: prompt dialog: driver & its options */}
       </div>

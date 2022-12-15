@@ -1,0 +1,39 @@
+.readonly {
+  animation: 1s blink-error linear infinite;
+}
+.pending {
+  animation: 0.75s fade-in linear 1;
+}
+.success {
+  visibility: hidden;
+}
+.error {
+}
+
+@keyframes blink-error {
+  //    .--------.
+  //   /          \
+  //  '            `--------
+  //
+  //  --|-------|--|--------
+  // 0  10      n n+10      100
+
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+  }
+  10%,
+  70% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}

@@ -5,7 +5,7 @@ import {
   createStore,
   sample,
 } from "effector";
-import { inRect, o2a } from "utils/rect";
+import { inRect } from "utils/rect";
 import { currentLevelIndexWillGone } from "../../levelsets";
 import { Tool } from "./interface";
 import { $feedbackCell } from "./feedback";
@@ -68,7 +68,7 @@ export const $cursor = combine(
   $feedbackCell,
   (drawCursor, c) =>
     (c &&
-      drawCursor?.find(({ rect }) => rect.some((r) => inRect(c.x, c.y, o2a(r))))
+      drawCursor?.find(({ rect }) => rect.some((r) => inRect(c.x, c.y, r)))
         ?.cursor) ??
     null,
 );

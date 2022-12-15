@@ -60,6 +60,39 @@ $urls: (
   }
 }
 
+.chip0 {
+  &.t26 {
+    background-image: url("./1a-chip-left.svg");
+  }
+  &.t27 {
+    background-image: url("./1b-chip-right.svg");
+  }
+  &.t38 {
+    background-image: url("./26-chip-top.svg");
+  }
+  &.t39 {
+    background-image: url("./27-chip-bottom.svg");
+  }
+}
+.chip1 {
+  .t26,
+  &.t26 {
+    background-image: url("./1a-chip-left.2.svg");
+  }
+  .t27,
+  &.t27 {
+    background-image: url("./1b-chip-right.2.svg");
+  }
+  .t38,
+  &.t38 {
+    background-image: url("./26-chip-top.2.svg");
+  }
+  .t39,
+  &.t39 {
+    background-image: url("./27-chip-bottom.2.svg");
+  }
+}
+
 .u {
   background-image: url("./unknown.svg");
 }

@@ -1,15 +1,9 @@
 import { Event, Store } from "effector";
 import { CSSProperties, FC, PointerEvent } from "react";
 import { ITilesRegion } from "drivers";
-import { RectO } from "utils/rect";
+import { IBounds, Point2D, Rect } from "utils/rect";
 
-export interface CellCoords {
-  x: number;
-  y: number;
-}
-export interface CellEventProps {
-  width: number;
-  height: number;
+export interface CellEventProps extends IBounds {
   inBounds: boolean;
 }
 
@@ -20,7 +14,7 @@ type ModifiersEventProps = Pick<
 type ButtonsEventProps = Pick<PointerEvent<any>, "type" | "button" | "buttons">;
 
 interface CellBaseEventProps
-  extends CellCoords,
+  extends Point2D,
     CellEventProps,
     ModifiersEventProps {}
 
@@ -55,7 +49,7 @@ export interface GridEventsProps {
 //-------------------------------
 
 export type CellKey = `${number}:${number}`;
-export const cellKey = ({ x, y }: CellCoords): CellKey => `${x}:${y}`;
+export const cellKey = ({ x, y }: Point2D): CellKey => `${x}:${y}`;
 
 export const enum DrawLayerType {
   TILES = "t",
@@ -64,11 +58,11 @@ export const enum DrawLayerType {
   TILES_REGION = "tr",
   CUSTOM = "c",
 }
-interface BaseDrawLayer extends CellCoords {
+interface BaseDrawLayer extends Point2D {
   type: DrawLayerType;
 }
 
-export interface TileCell extends CellCoords {
+export interface TileCell extends Point2D {
   tile: number;
 }
 export type TilesPath = ReadonlyMap<CellKey, TileCell>;
@@ -76,16 +70,12 @@ export interface DrawLayerTiles extends BaseDrawLayer {
   type: DrawLayerType.TILES;
   tiles: TilesPath;
 }
-export interface DrawLayerTileFill extends BaseDrawLayer {
+export interface DrawLayerTileFill extends BaseDrawLayer, IBounds {
   type: DrawLayerType.TILE_FILL;
   tile: number;
-  width: number;
-  height: number;
 }
-export interface DrawLayerSelectRange extends BaseDrawLayer {
+export interface DrawLayerSelectRange extends BaseDrawLayer, IBounds {
   type: DrawLayerType.SELECT_RANGE;
-  width: number;
-  height: number;
   borders: ReadonlySet<"T" | "R" | "B" | "L">;
 }
 export interface DrawLayerTilesRegion extends BaseDrawLayer {
@@ -94,7 +84,7 @@ export interface DrawLayerTilesRegion extends BaseDrawLayer {
 }
 export interface DrawLayerCustom extends BaseDrawLayer {
   type: DrawLayerType.CUSTOM;
-  Component: FC<CellCoords>;
+  Component: FC<Point2D>;
 }
 
 export type DrawLayer =
@@ -111,7 +101,7 @@ export type DrawLayerProps<T extends DrawLayerType> = Omit<
 
 export type TCursor = Exclude<CSSProperties["cursor"], undefined>;
 export interface DrawCursor {
-  rect: readonly RectO[];
+  rect: readonly Rect[];
   cursor: TCursor;
 }
 
