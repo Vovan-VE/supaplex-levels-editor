@@ -2,14 +2,14 @@
 
 <img src="public/favicon.svg" alt="sd-ed" align="right" width="96" height="96">
 
-![Version](https://img.shields.io/github/package-json/v/vovan-ve/supaplex-levels-editor)
-[![sple.me](https://img.shields.io/badge/https-sple.me-blue)](https://sple.me)
-![License](https://img.shields.io/github/license/vovan-ve/supaplex-levels-editor)
+[![Version](https://img.shields.io/github/package-json/v/vovan-ve/supaplex-levels-editor)](https://github.com/Vovan-VE/supaplex-levels-editor/releases)
+[![sple.me](https://img.shields.io/badge/https-sple.me-blue)][sple.me]
+[![License](https://img.shields.io/github/license/vovan-ve/supaplex-levels-editor)](./LICENSE)
 <br>
 [![Development version](https://img.shields.io/github/package-json/v/vovan-ve/supaplex-levels-editor/devel?label=in+dev)](https://github.com/Vovan-VE/supaplex-levels-editor/blob/devel/CHANGELOG.md)
 [![Last commit in devel](https://img.shields.io/github/last-commit/vovan-ve/supaplex-levels-editor/devel)](https://github.com/Vovan-VE/supaplex-levels-editor/compare/devel)
 
-[sple.me](https://sple.me) is **Supaplex Levels Editor** in browser. Inspired by
+[sple.me][sple.me] is **Supaplex Levels Editor** in browser. Inspired by
 [Supaplex.Online][spo] and its community.
 
 My previous editor (Winplex Collection Editor) is stuck in far 2010 on Windows.
@@ -85,5 +85,6 @@ npm run test:watch
 ```
 
 [cra]: https://github.com/facebook/create-react-app
+[sple.me]: https://sple.me
 [spo]: https://www.supaplex.online/
 [spo.test]: https://www.supaplex.online/test/
