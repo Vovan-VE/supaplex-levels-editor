@@ -1,5 +1,6 @@
 import { DAT, MPX, SP } from "./formats";
 import { LevelConfigurator } from "./LevelConfigurator";
+import { applyLocalOptions, LevelLocalOptions } from "./LevelLocalOptions";
 import { ISupaplexDriver } from "./types";
 import { Tile } from "./Tile";
 import { tiles } from "./tiles";
@@ -9,6 +10,8 @@ export const SupaplexDriver: ISupaplexDriver = {
   tiles,
   TileRender: Tile,
   LevelConfigurator,
+  LevelLocalOptions,
+  applyLocalOptions,
   formats: {
     // "detect" order:
     // MPX first since it has "MPX " header

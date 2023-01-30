@@ -67,6 +67,9 @@ export interface IResizeLevelOptions extends INewLevelOptions {
   y?: number;
 }
 
+export type LocalOptions = Record<string, any>;
+export type LocalOptionsList = readonly (LocalOptions | null | undefined)[];
+
 export interface IBaseLevel extends ITilesRegion {
   readonly raw: Uint8Array;
   setTile(x: number, y: number, value: number): this;
@@ -76,6 +79,8 @@ export interface IBaseLevel extends ITilesRegion {
   setTitle(title: string): this;
   // REFACT: move to format?
   readonly maxTitleLength: number;
+  readonly localOptions: LocalOptions | undefined;
+  setLocalOptions(opt: LocalOptions | undefined): this;
 
   isPlayable(): IsPlayableResult;
   copyRegion(rect: Rect): ILevelRegion;
@@ -91,6 +96,8 @@ export interface IBaseLevelset<L extends IBaseLevel> {
   appendLevel(level: L): this;
   insertLevel(index: number, level: L): this;
   removeLevel(index: number): this;
+  readonly localOptions: LocalOptionsList | undefined;
+  setLocalOptions(opt: LocalOptionsList | undefined): this;
 }
 
 export const enum InteractionType {
@@ -179,6 +186,8 @@ export interface IBaseDriver<
   tiles: readonly IBaseTile<L>[];
   TileRender: FC<TileRenderProps>;
   LevelConfigurator?: FC<LevelConfiguratorProps<L>>;
+  LevelLocalOptions?: FC<LevelConfiguratorProps<L>>;
+  applyLocalOptions?: (level: L, url: URL) => void;
   /**
    * Available formats in "detect" order.
    * Display order now is just sorted titles.

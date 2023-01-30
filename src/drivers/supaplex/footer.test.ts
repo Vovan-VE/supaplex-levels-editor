@@ -395,4 +395,30 @@ describe("footer", () => {
     expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
     expect(footer.getRaw()).toEqual(srcMain);
   });
+
+  it("usePlasma", () => {
+    const footer = createLevelFooter(LEVEL_WIDTH);
+
+    expect(footer.usePlasma).toBe(false);
+    expect(footer.setUsePlasma(false)).toBe(footer);
+
+    const next = footer.setUsePlasma(true);
+    expect(next.usePlasma).toBe(true);
+    expect(next.setUsePlasma(true)).toBe(next);
+
+    expect(footer.usePlasma).toBe(false);
+  });
+
+  it("useZonker", () => {
+    const footer = createLevelFooter(LEVEL_WIDTH);
+
+    expect(footer.useZonker).toBe(false);
+    expect(footer.setUseZonker(false)).toBe(footer);
+
+    const next = footer.setUseZonker(true);
+    expect(next.useZonker).toBe(true);
+    expect(next.setUseZonker(true)).toBe(next);
+
+    expect(footer.useZonker).toBe(false);
+  });
 });

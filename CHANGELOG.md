@@ -2,6 +2,12 @@
 
 ## 0.8.0 (DEV)
 
+- Add: experimental options to use Plasma and/or Zonkers on SO test page.
+  - Options live in editor only, because there are no new file format for that
+    yet.
+  - While options are prompted right before sending to test page, "ask
+    confirmation" option was temporarily removed from Settings.
+
 ## 0.7.0 (2022-12-15)
 
 - Add: Indicator to show pending data flushes into browser storage. It will

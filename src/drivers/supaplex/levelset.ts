@@ -1,4 +1,6 @@
+import * as RoArray from "@cubux/readonly-array";
 import { isOffsetInRange } from "utils/number";
+import { LocalOptionsList } from "../types";
 import { createNewLevel } from "./level";
 import { ISupaplexLevel, ISupaplexLevelset } from "./types";
 
@@ -93,5 +95,34 @@ class SupaplexLevelset implements ISupaplexLevelset {
     const copy = this.copy();
     copy.#levels.splice(index, 1);
     return copy;
+  }
+
+  get localOptions(): LocalOptionsList | undefined {
+    const list = this.#levels.map((l) => l.localOptions ?? null);
+    if (list.some(Boolean)) {
+      while (list.length && !list[list.length - 1]) {
+        list.splice(list.length - 1);
+      }
+      return list;
+    }
+    return undefined;
+  }
+  setLocalOptions(opt: LocalOptionsList | undefined): this {
+    if (!opt) {
+      return this;
+    }
+
+    let next: readonly ISupaplexLevel[] = this.#levels;
+    for (let i = 0, L = Math.min(next.length, opt.length); i < L; i++) {
+      const o = opt[i];
+      if (o) {
+        next = RoArray.update(next, i, (l) => l.setLocalOptions(o));
+      }
+    }
+
+    if (next === this.#levels) {
+      return this;
+    }
+    return new SupaplexLevelset(next) as this;
   }
 }

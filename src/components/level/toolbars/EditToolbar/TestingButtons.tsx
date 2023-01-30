@@ -1,22 +1,26 @@
-import { Store } from "effector";
 import { useStore } from "effector-react";
-import { FC, PropsWithChildren, ReactNode } from "react";
+import { FC, PropsWithChildren, ReactNode, useCallback, useState } from "react";
 import { ReactComponent as MurphyRuns } from "assets/img/murphy-run-right.svg";
 import { TEST_DEMO_URL, TEST_LEVEL_TITLE, TEST_LEVEL_URL } from "configs";
-import { getDriverFormat, levelSupportsDemo } from "drivers";
+import {
+  getDriver,
+  getDriverFormat,
+  IBaseLevel,
+  LevelConfiguratorProps,
+  levelSupportsDemo,
+} from "drivers";
 import { ReactComponent as DiskYellow } from "drivers/supaplex/tiles-svg/12-yellow-disk.svg";
 import { ReactComponent as HwLampGreen } from "drivers/supaplex/tiles-svg/1d-hw-g-lamp.svg";
 import {
   $currentDriverFormat,
   $currentDriverName,
   $currentLevelUndoQueue,
+  updateCurrentLevel,
 } from "models/levelsets";
 import { $fileSupportsDemo, rememberDemoTarget } from "models/levelsets/demo";
-import { $prefConfirmedTestSO, setPrefAskTestSO } from "models/settings";
 import { TextButton } from "ui/button";
 import { ask, msgBox } from "ui/feedback";
 import { IconStack, IconStackType } from "ui/icon";
-import { Checkbox } from "ui/input";
 import { ColorType } from "ui/types";
 
 const CL_SVG_ANIMATE_HOVERABLE = "svg-animate_hover-target";
@@ -56,9 +60,10 @@ export const TestingButtons: FC = () => {
   );
 };
 
-const packLevelToSend = () => {
+const packLevelToSend = (baseUrl: string) => {
+  const driverName = $currentDriverName.getState()!;
   const { writeLevelset, createLevelset } = getDriverFormat(
-    $currentDriverName.getState()!,
+    driverName,
     $currentDriverFormat.getState()!,
   )!;
   const level = $currentLevelUndoQueue.getState()!.current;
@@ -77,62 +82,76 @@ const packLevelToSend = () => {
     return;
   }
 
-  return window.btoa(
+  const url = new URL(baseUrl);
+  url.hash = window.btoa(
     String.fromCharCode(
       ...new Uint8Array(writeLevelset(createLevelset([level]))),
     ),
   );
+  return url;
 };
 
+type ConfirmFC = FC<PropsWithChildren<LevelConfiguratorProps<IBaseLevel>>>;
+
 const sendLevelTo = ({
-  url,
+  baseUrl,
   target,
-  actionTitle,
+  // actionTitle,
   serviceTitle,
-  $confirmed,
+  // $confirmed,
   Confirm,
   onConfirmed,
 }: {
-  url: string;
+  baseUrl: string;
   target?: string;
-  actionTitle: string;
+  // actionTitle: string;
   serviceTitle: string;
-  $confirmed: Store<boolean>;
-  Confirm: FC<PropsWithChildren<{}>>;
+  // $confirmed: Store<boolean>;
+  Confirm: ConfirmFC;
   onConfirmed?: () => void;
 }) => {
-  const targetOrBlank = target ?? "_blank";
-  const rel = target ? "opener" : "noopener noreferrer";
-
-  if ($confirmed.getState()) {
-    onConfirmed?.();
-    if (!window.open(url, targetOrBlank)) {
-      msgBox(
-        <div>
-          <p>Could not open new window. Follow the link:</p>
-          <p>
-            {/* eslint-disable-next-line react/jsx-no-target-blank */}
-            <a href={url} target={targetOrBlank} rel={rel}>
-              {actionTitle} at {serviceTitle}
-            </a>
-          </p>
-        </div>,
-        { button: { text: "Close" } },
-      );
-    }
+  const url = packLevelToSend(baseUrl);
+  if (!url) {
     return;
   }
 
-  ask(<Confirm />, {
+  const targetOrBlank = target ?? "_blank";
+
+  // if ($confirmed.getState()) {
+  //   onConfirmed?.();
+  //   if (!window.open(url, targetOrBlank)) {
+  //     msgBox(
+  //       <div>
+  //         <p>Could not open new window. Follow the link:</p>
+  //         <p>
+  //           {/* eslint-disable-next-line react/jsx-no-target-blank */}
+  //           <a href={url} target={targetOrBlank} rel={rel}>
+  //             {actionTitle} at {serviceTitle}
+  //           </a>
+  //         </p>
+  //       </div>,
+  //       { button: { text: "Close" } },
+  //     );
+  //   }
+  //   return;
+  // }
+
+  // REFACT: adequate components with state
+  let level = $currentLevelUndoQueue.getState()!.current;
+
+  ask(<Confirm level={level} onChange={(l) => (level = l)} />, {
     buttons: {
       okText: `Go to ${serviceTitle} test`,
       ok: {
         uiColor: ColorType.SUCCESS,
-        href: url,
-        target: targetOrBlank,
-        rel: rel,
         onClick: (e) => {
+          updateCurrentLevel(level);
           onConfirmed?.();
+
+          const driverName = $currentDriverName.getState()!;
+          const { applyLocalOptions } = getDriver(driverName)!;
+          applyLocalOptions?.(level, url);
+
           if (window.open(url, targetOrBlank)) {
             e.preventDefault();
           }
@@ -142,11 +161,14 @@ const sendLevelTo = ({
   });
 };
 
-const ConfirmSO: FC<PropsWithChildren<{ toDoWhat: ReactNode }>> = ({
-  toDoWhat,
-  children,
-}) => {
-  const confirmed = useStore($prefConfirmedTestSO);
+const ConfirmSO: FC<
+  PropsWithChildren<
+    { toDoWhat: ReactNode } & Partial<LevelConfiguratorProps<IBaseLevel>>
+  >
+> = ({ toDoWhat, level, onChange, children }) => {
+  // const confirmed = useStore($prefConfirmedTestSO);
+
+  const { LevelLocalOptions } = getDriver(useStore($currentDriverName)!)!;
 
   return (
     <div>
@@ -159,20 +181,37 @@ const ConfirmSO: FC<PropsWithChildren<{ toDoWhat: ReactNode }>> = ({
         in current editing session.
       </p>
       {children}
-      <div>
-        <Checkbox checked={confirmed} onChange={setPrefAskTestSO}>
-          Don't show this confirmation again
-        </Checkbox>
-      </div>
+      {/*<div>*/}
+      {/*  <Checkbox checked={confirmed} onChange={setPrefAskTestSO}>*/}
+      {/*    Don't show this confirmation again*/}
+      {/*  </Checkbox>*/}
+      {/*</div>*/}
+      {level && onChange && LevelLocalOptions && (
+        <LevelLocalOptions level={level} onChange={onChange} />
+      )}
     </div>
   );
 };
 
-const ConfirmTestSO: FC = () => {
+const ConfirmTestSO: ConfirmFC = ({ level, onChange }) => {
   const demoSupport = useStore($fileSupportsDemo);
 
+  // REFACT: remove this when resolved outside
+  const [_level, _setLevel] = useState(level);
+  const handleLevelChange = useCallback(
+    (level: IBaseLevel) => {
+      _setLevel(level);
+      onChange(level);
+    },
+    [onChange],
+  );
+
   return (
-    <ConfirmSO toDoWhat="To test a level">
+    <ConfirmSO
+      toDoWhat="To test a level"
+      level={_level}
+      onChange={handleLevelChange}
+    >
       {demoSupport ? (
         <p>
           In order <strong>to save demo</strong> for this level, please{" "}
@@ -190,19 +229,14 @@ const ConfirmTestSO: FC = () => {
 };
 
 const handleTestClick = () => {
-  const packedLevel = packLevelToSend();
-  if (!packedLevel) {
-    return;
-  }
-  const url = `${TEST_LEVEL_URL}#${packedLevel}`;
   const demoSupport = $fileSupportsDemo.getState();
 
   sendLevelTo({
-    url,
+    baseUrl: TEST_LEVEL_URL,
     target: demoSupport ? "test-level" : undefined,
-    actionTitle: "Test level",
+    // actionTitle: "Test level",
     serviceTitle: TEST_LEVEL_TITLE,
-    $confirmed: $prefConfirmedTestSO,
+    // $confirmed: $prefConfirmedTestSO,
     Confirm: ConfirmTestSO,
     onConfirmed: demoSupport ? rememberDemoTarget : undefined,
   });
@@ -213,17 +247,11 @@ const ConfirmPlayDemoSO: FC = () => (
 );
 
 const handleDemoClick = () => {
-  const packedLevel = packLevelToSend();
-  if (!packedLevel) {
-    return;
-  }
-  const url = `${TEST_DEMO_URL}#${packedLevel}`;
-
   sendLevelTo({
-    url,
-    actionTitle: "Play demo",
+    baseUrl: TEST_DEMO_URL,
+    // actionTitle: "Play demo",
     serviceTitle: TEST_LEVEL_TITLE,
-    $confirmed: $prefConfirmedTestSO,
+    // $confirmed: $prefConfirmedTestSO,
     Confirm: ConfirmPlayDemoSO,
   });
 };

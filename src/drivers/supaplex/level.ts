@@ -4,6 +4,7 @@ import {
   INewLevelOptions,
   IResizeLevelOptions,
   ITilesStreamItem,
+  LocalOptions,
 } from "../types";
 import { AnyBox } from "./AnyBox";
 import { createLevelBody } from "./body";
@@ -15,9 +16,15 @@ import {
   LEVEL_WIDTH,
   TITLE_LENGTH,
 } from "./formats/std";
-import { ILevelBody, ILevelFooter, ISupaplexSpecPortProps } from "./internal";
+import {
+  ILevelBody,
+  ILevelFooter,
+  ISupaplexSpecPortProps,
+  LocalOpt,
+} from "./internal";
 import { isSpecPort, TILE_HARDWARE, TILE_SPACE } from "./tiles-id";
 import { ISupaplexLevel, ISupaplexLevelRegion } from "./types";
+import { isEmptyObject } from "../../utils/object";
 
 const sliceFooter = (bodyLength: number, data?: Uint8Array) => {
   if (data) {
@@ -327,5 +334,43 @@ class SupaplexLevel implements ISupaplexLevel {
 
   setDemo(demo: Uint8Array | null) {
     return this.#withFooter(this.#footer.setDemo(demo));
+  }
+
+  get localOptions() {
+    const o: LocalOptions = {};
+    if (this.usePlasma) {
+      o[LocalOpt.UsePlasma] = 1;
+    }
+    if (this.useZonker) {
+      o[LocalOpt.UseZonker] = 1;
+    }
+    if (isEmptyObject(o)) {
+      return undefined;
+    }
+    return o;
+  }
+  setLocalOptions(opt: LocalOptions | undefined): this {
+    if (!opt) {
+      return this;
+    }
+    return this.batch((l) =>
+      l
+        .setUsePlasma(Boolean(opt[LocalOpt.UsePlasma]))
+        .setUseZonker(Boolean(opt[LocalOpt.UseZonker])),
+    );
+  }
+
+  get usePlasma() {
+    return this.#footer.usePlasma;
+  }
+  setUsePlasma(on: boolean): this {
+    return this.#withFooter(this.#footer.setUsePlasma(on));
+  }
+
+  get useZonker() {
+    return this.#footer.useZonker;
+  }
+  setUseZonker(on: boolean): this {
+    return this.#withFooter(this.#footer.setUseZonker(on));
   }
 }
