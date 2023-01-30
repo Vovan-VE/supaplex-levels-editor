@@ -1,6 +1,8 @@
 import { createLevel, createNewLevel } from "./level";
 import { createLevelset } from "./levelset";
 import { dumpLevel, dumpLevelset } from "./helpers.dev";
+import { LocalOpt } from "./internal";
+import { LocalOptionsList } from "../types";
 
 describe("levelset", () => {
   describe("constructor", () => {
@@ -117,5 +119,25 @@ describe("levelset", () => {
     expect(() => copy.removeLevel(-1)).toThrow(
       new RangeError(`Invalid level index -1`),
     );
+  });
+
+  it("localOptions", () => {
+    const levelset = createLevelset(3);
+    const optList: LocalOptionsList = [null, { [LocalOpt.UsePlasma]: 1 }];
+
+    expect(levelset.localOptions).toBe(undefined);
+    expect(levelset.setLocalOptions(undefined)).toBe(levelset);
+    expect(levelset.setLocalOptions([])).toBe(levelset);
+    expect(levelset.setLocalOptions([undefined, {}, undefined])).toBe(levelset);
+
+    const next1 = levelset.setLevel(1, levelset.getLevel(1).setUsePlasma(true));
+    expect(next1.localOptions).toEqual(optList);
+
+    const next2 = levelset.setLocalOptions(optList);
+    expect(next2.getLevel(0)).toBe(levelset.getLevel(0));
+    expect(next2.getLevel(2)).toBe(levelset.getLevel(2));
+    const next2_level1 = next2.getLevel(1);
+    expect(next2_level1.usePlasma).toBe(true);
+    expect(next2_level1.useZonker).toBe(false);
   });
 });

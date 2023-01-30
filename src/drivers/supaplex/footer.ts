@@ -71,6 +71,9 @@ class LevelFooter implements ILevelFooter {
   readonly #src: Uint8Array;
   #demo: Uint8Array | null = null;
 
+  #usePlasma = false;
+  #useZonker = false;
+
   constructor(width: number, data?: Uint8Array) {
     this.#width = width;
 
@@ -110,7 +113,10 @@ class LevelFooter implements ILevelFooter {
   }
 
   copy() {
-    return new LevelFooter(this.width, this.getRaw()) as this;
+    const copy = new LevelFooter(this.width, this.getRaw()) as this;
+    copy.#usePlasma = this.#usePlasma;
+    copy.#useZonker = this.#useZonker;
+    return copy;
   }
 
   get width() {
@@ -365,5 +371,29 @@ class LevelFooter implements ILevelFooter {
     const copy = this.copy();
     copy.#demo = demo && new Uint8Array(demo);
     return copy;
+  }
+
+  get usePlasma() {
+    return this.#usePlasma;
+  }
+  setUsePlasma(on: boolean): this {
+    if (on === this.#usePlasma) {
+      return this;
+    }
+    const next = this.copy();
+    next.#usePlasma = on;
+    return next;
+  }
+
+  get useZonker() {
+    return this.#useZonker;
+  }
+  setUseZonker(on: boolean): this {
+    if (on === this.#useZonker) {
+      return this;
+    }
+    const next = this.copy();
+    next.#useZonker = on;
+    return next;
   }
 }

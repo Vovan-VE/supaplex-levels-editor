@@ -15,7 +15,11 @@ import {
   TILE_SP_PORT_U,
   TILE_ZONK,
 } from "./tiles-id";
-import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./internal";
+import {
+  ISupaplexSpecPort,
+  ISupaplexSpecPortProps,
+  LocalOpt,
+} from "./internal";
 import { readLevelset } from "./formats/mpx/io";
 import { dumpLevel, readExampleFile } from "./helpers.dev";
 
@@ -549,6 +553,44 @@ describe("level", () => {
     it("outside noop", () => {
       expect(level.pasteRegion(-5, 10, region)).toBe(level);
       expect(level.raw).toEqual(testLevelData);
+    });
+  });
+
+  it("localOptions", () => {
+    const level = createLevel(60, 24);
+
+    expect(level.localOptions).toEqual(undefined);
+    expect(level.setLocalOptions({})).toBe(level);
+    expect(
+      level.setLocalOptions({
+        [LocalOpt.UsePlasma]: undefined,
+        [LocalOpt.UseZonker]: 0,
+      }),
+    ).toBe(level);
+
+    const p = level.setLocalOptions({ [LocalOpt.UsePlasma]: true });
+    expect(p.usePlasma).toBe(true);
+    expect(p.localOptions).toEqual({ [LocalOpt.UsePlasma]: 1 });
+    expect(level.setUsePlasma(true).localOptions).toEqual({
+      [LocalOpt.UsePlasma]: 1,
+    });
+
+    const z = level.setLocalOptions({ [LocalOpt.UseZonker]: true });
+    expect(z.useZonker).toBe(true);
+    expect(z.localOptions).toEqual({ [LocalOpt.UseZonker]: 1 });
+    expect(level.setUseZonker(true).localOptions).toEqual({
+      [LocalOpt.UseZonker]: 1,
+    });
+
+    const pz = level.setLocalOptions({
+      [LocalOpt.UsePlasma]: true,
+      [LocalOpt.UseZonker]: 42,
+    });
+    expect(pz.usePlasma).toBe(true);
+    expect(pz.useZonker).toBe(true);
+    expect(pz.localOptions).toEqual({
+      [LocalOpt.UsePlasma]: 1,
+      [LocalOpt.UseZonker]: 1,
     });
   });
 });

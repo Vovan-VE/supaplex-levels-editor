@@ -15,6 +15,7 @@ import {
   FALLBACK_FORMAT,
   getDriverFormat,
   isExtValid,
+  LocalOptionsList,
   parseFormatFilename,
   REPLACED_DRIVERS,
   summarySupportReport,
@@ -205,6 +206,7 @@ sample({
  */
 interface _DbLevelsetFile extends Omit<LevelsetFileDataOld, "file"> {
   fileBuffer: ArrayBuffer;
+  _options?: LocalOptionsList;
 }
 /**
  * Loaded files in memory
@@ -227,33 +229,41 @@ export const $levelsets = withPersistentMap(
       driverName,
       driverFormat,
       key,
+      levelset,
     }: LevelsetFile): Promise<_DbLevelsetFile> => ({
       name,
       driverName,
       driverFormat,
       key,
       fileBuffer: await file.arrayBuffer(),
+      _options: levelset.localOptions,
 
       // DEV update time for local debug purpose
       ...(process.env.NODE_ENV === "development"
         ? { _t: new Date().toISOString() }
         : null),
     }),
-    unserialize: ({
+    unserialize: async ({
       name,
       driverName,
       driverFormat,
       key,
       fileBuffer,
-    }: _DbLevelsetFile) =>
-      fulfillFileLevels({
+      _options,
+    }: _DbLevelsetFile) => {
+      const lf = await fulfillFileLevels({
         file: new Blob([fileBuffer]),
         name,
         driverName: REPLACED_DRIVERS[driverName] || driverName,
         driverFormat:
           driverFormat ?? FALLBACK_FORMAT[driverName] ?? "_unknown_",
         key,
-      }),
+      });
+      return {
+        ...lf,
+        levelset: lf.levelset.setLocalOptions(_options),
+      };
+    },
   },
 )
   .on(updateLevelsetFile, (map, file) => RoMap.set(map, file.key, file))

@@ -55,4 +55,13 @@ export interface ILevelFooter extends IWithDemo {
   findSpecPort(x: number, y: number): ISupaplexSpecPortProps | undefined;
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps): this;
   deleteSpecPort(x: number, y: number): this;
+  readonly usePlasma: boolean;
+  readonly useZonker: boolean;
+  setUsePlasma(on: boolean): this;
+  setUseZonker(on: boolean): this;
+}
+
+export const enum LocalOpt {
+  UsePlasma = "usePlasma",
+  UseZonker = "useZonker",
 }

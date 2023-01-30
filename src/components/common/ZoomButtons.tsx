@@ -69,7 +69,7 @@ export const ZoomButtons: FC<Props> = ({ btnClassName, space }) => {
         className={btnClassName}
         onClick={decBodyScale}
         disabled={!canZoomOut}
-        title={`Zoom In (${displayHotKey(HK_ZOOM_OUT)})`}
+        title={`Zoom Out (${displayHotKey(HK_ZOOM_OUT)})`}
       />
     </>
   );

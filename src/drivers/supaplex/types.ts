@@ -8,6 +8,7 @@ import {
   ILevelRegion,
   IResizeLevelOptions,
   IWithDemo,
+  LocalOptions,
 } from "../types";
 import {
   ILevelBody,
@@ -35,6 +36,11 @@ export interface ISupaplexLevel extends IBaseLevel, IWithDemo {
   getSpecPorts(): Iterable<ISupaplexSpecPort>;
   findSpecPort(x: number, y: number): ISupaplexSpecPortProps | undefined;
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps): this;
+  setLocalOptions(opt: LocalOptions | undefined): this;
+  readonly usePlasma: boolean;
+  readonly useZonker: boolean;
+  setUsePlasma(on: boolean): this;
+  setUseZonker(on: boolean): this;
 }
 
 export interface ISupaplexTile extends IBaseTile<ISupaplexLevel> {}
