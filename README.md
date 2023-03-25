@@ -62,7 +62,7 @@ Also:
 - Compare levels.
 - End User Manual.
 - Draggable files buttons to reorder many opened files.
-- Electron based desktop application.
+- Electron/Wails based desktop application.
 - See more in [TODO](./TODO.md).
 
 ## Contribution, Development

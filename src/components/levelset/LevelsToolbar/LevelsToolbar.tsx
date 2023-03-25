@@ -11,13 +11,17 @@ import {
   deleteCurrentLevel,
   insertAtCurrentLevel,
 } from "models/levelsets";
-import { Button } from "ui/button";
+import { Button, ButtonDropdown, Toolbar } from "ui/button";
 import { ask } from "ui/feedback";
 import { svgs } from "ui/icon";
 import { ColorType } from "ui/types";
 import { fmtLevelFull, fmtLevelNumber } from "../fmt";
 
-export const LevelsToolbar: FC = () => {
+interface Props {
+  isCompact?: boolean;
+}
+
+export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
   const format = getDriverFormat(
     useStore($currentDriverName)!,
     useStore($currentDriverFormat)!,
@@ -76,50 +80,68 @@ export const LevelsToolbar: FC = () => {
     [levelFullReference],
   );
 
-  const cannotAddLevelMessage =
-    maxLevelsCount !== null && levelsCount >= maxLevelsCount
-      ? `Cannot add more level than ${maxLevelsCount}`
-      : undefined;
-  const cannotRemoveLevelMessage =
-    levelsCount <= minLevelsCount
-      ? `Cannot remove level because it's already minimum ${minLevelsCount}`
-      : undefined;
+  const cannotAddLevel =
+    maxLevelsCount !== null && levelsCount >= maxLevelsCount;
+
+  const cannotRemoveLevel = levelsCount <= minLevelsCount;
+  const cannotRemoveLevelMessage = cannotRemoveLevel
+    ? `Cannot remove level because it's already minimum ${minLevelsCount}`
+    : undefined;
+
+  const insertButton = cannotAddLevel ? undefined : (
+    <Button
+      icon={<svgs.InsertRow />}
+      disabled={!level}
+      title={
+        level
+          ? `Insert a new level at ${fmtLevelNumber(
+              level.index,
+              levelsCountDigits,
+            )} and move the current forward`
+          : ""
+      }
+      onClick={insertAtCurrentLevel}
+    />
+  );
+
+  const appendTitle = `Append new level ${fmtLevelNumber(
+    levelsCount,
+    levelsCountDigits,
+  )}`;
 
   return (
     <>
-      <Button
-        icon={<svgs.InsertRow />}
-        disabled={!level || Boolean(cannotAddLevelMessage)}
-        title={
-          level
-            ? cannotAddLevelMessage ||
-              `Insert a new level at ${fmtLevelNumber(
-                level.index,
-                levelsCountDigits,
-              )} and move the current forward`
-            : ""
-        }
-        onClick={insertAtCurrentLevel}
-      />
-      <Button
-        icon={<svgs.AppendRow />}
-        disabled={Boolean(cannotAddLevelMessage)}
-        title={
-          cannotAddLevelMessage ||
-          `Append new level ${fmtLevelNumber(levelsCount, levelsCountDigits)}`
-        }
-        onClick={appendLevel}
-      />
-      <Button
-        uiColor={ColorType.DANGER}
-        icon={<svgs.DeleteRow />}
-        disabled={!level || Boolean(cannotRemoveLevelMessage)}
-        onClick={handleDeleteClick}
-        title={
-          cannotRemoveLevelMessage ||
-          (levelFullReference ? `Delete level ${levelFullReference}` : "")
-        }
-      />
+      {cannotAddLevel ||
+        (isCompact ? (
+          <>
+            {insertButton}
+            <Button
+              icon={<svgs.AppendRow />}
+              title={appendTitle}
+              onClick={appendLevel}
+            />
+          </>
+        ) : (
+          <ButtonDropdown standalone={insertButton}>
+            <Toolbar>
+              <Button icon={<svgs.AppendRow />} onClick={appendLevel}>
+                {appendTitle}
+              </Button>
+            </Toolbar>
+          </ButtonDropdown>
+        ))}
+      {cannotRemoveLevel || (
+        <Button
+          uiColor={ColorType.DANGER}
+          icon={<svgs.DeleteRow />}
+          disabled={!level}
+          onClick={handleDeleteClick}
+          title={
+            cannotRemoveLevelMessage ||
+            (levelFullReference ? `Delete level ${levelFullReference}` : "")
+          }
+        />
+      )}
       <Button
         icon={<svgs.Cross />}
         disabled={!level}

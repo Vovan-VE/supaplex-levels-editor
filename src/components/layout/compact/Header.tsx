@@ -61,7 +61,7 @@ export const Header: FC<Props> = (props) => {
                     x{levelsetLevelsCount}
                   </Button>
                   <ToolbarSeparator />
-                  <LevelsToolbar />
+                  <LevelsToolbar isCompact />
                 </Toolbar>
                 <LevelsTabs className={cn(cl.scrollableList, cl.levelsList)} />
               </div>
