@@ -31,7 +31,7 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
     />
   );
   const saveWithOptionsTitle = filename
-    ? `Save file "${filename}" + Options`
+    ? `Save file "${filename}.zip" with Options`
     : undefined;
   const handleSaveWithOptions = useCallback(
     () => downloadCurrentFile({ withLocalOptions: true }),
