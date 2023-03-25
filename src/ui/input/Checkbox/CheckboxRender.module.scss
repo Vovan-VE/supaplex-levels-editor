@@ -2,7 +2,7 @@
 
 .root {
   @extend %button, %button-link;
-  --btn-pad-x: 0.4rem;
+  //--btn-pad-x: 0.4rem;
   cursor: pointer;
 
   > * {

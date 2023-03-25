@@ -341,8 +341,17 @@ class SupaplexLevel implements ISupaplexLevel {
     if (this.usePlasma) {
       o[LocalOpt.UsePlasma] = 1;
     }
+    if (this.usePlasmaLimit !== undefined) {
+      o[LocalOpt.UsePlasmaLimit] = this.usePlasmaLimit;
+    }
+    if (this.usePlasmaTime !== undefined) {
+      o[LocalOpt.UsePlasmaTime] = this.usePlasmaTime;
+    }
     if (this.useZonker) {
       o[LocalOpt.UseZonker] = 1;
+    }
+    if (this.useSerialPorts) {
+      o[LocalOpt.UseSerialPorts] = 1;
     }
     if (isEmptyObject(o)) {
       return undefined;
@@ -353,10 +362,14 @@ class SupaplexLevel implements ISupaplexLevel {
     if (!opt) {
       return this;
     }
+    const toInt = (v: any) => (Number.isInteger(v) ? (v as number) : undefined);
     return this.batch((l) =>
       l
         .setUsePlasma(Boolean(opt[LocalOpt.UsePlasma]))
-        .setUseZonker(Boolean(opt[LocalOpt.UseZonker])),
+        .setUsePlasmaLimit(toInt(opt[LocalOpt.UsePlasmaLimit]))
+        .setUsePlasmaTime(toInt(opt[LocalOpt.UsePlasmaTime]))
+        .setUseZonker(Boolean(opt[LocalOpt.UseZonker]))
+        .setUseSerialPorts(Boolean(opt[LocalOpt.UseSerialPorts])),
     );
   }
 
@@ -367,10 +380,31 @@ class SupaplexLevel implements ISupaplexLevel {
     return this.#withFooter(this.#footer.setUsePlasma(on));
   }
 
+  get usePlasmaLimit() {
+    return this.#footer.usePlasmaLimit;
+  }
+  setUsePlasmaLimit(n: number | undefined): this {
+    return this.#withFooter(this.#footer.setUsePlasmaLimit(n));
+  }
+
+  get usePlasmaTime() {
+    return this.#footer.usePlasmaTime;
+  }
+  setUsePlasmaTime(n: number | undefined): this {
+    return this.#withFooter(this.#footer.setUsePlasmaTime(n));
+  }
+
   get useZonker() {
     return this.#footer.useZonker;
   }
   setUseZonker(on: boolean): this {
     return this.#withFooter(this.#footer.setUseZonker(on));
+  }
+
+  get useSerialPorts() {
+    return this.#footer.useSerialPorts;
+  }
+  setUseSerialPorts(on: boolean): this {
+    return this.#withFooter(this.#footer.setUseSerialPorts(on));
   }
 }

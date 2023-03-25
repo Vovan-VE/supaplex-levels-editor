@@ -96,6 +96,7 @@ export interface IBaseLevelset<L extends IBaseLevel> {
   appendLevel(level: L): this;
   insertLevel(index: number, level: L): this;
   removeLevel(index: number): this;
+  readonly hasLocalOptions: boolean;
   readonly localOptions: LocalOptionsList | undefined;
   setLocalOptions(opt: LocalOptionsList | undefined): this;
 }

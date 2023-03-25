@@ -1,23 +1,31 @@
 import { useStore } from "effector-react";
-import { FC, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { getDriverFormat } from "drivers";
 import {
   $currentBuffer,
+  $currentBufferHasOtherOpened,
   $currentDriverFormat,
   $currentDriverName,
   $currentLevel,
   appendLevel,
   closeCurrentLevel,
+  closeOtherLevels,
   deleteCurrentLevel,
   insertAtCurrentLevel,
 } from "models/levelsets";
-import { Button } from "ui/button";
+import { Button, ButtonDropdown, Toolbar } from "ui/button";
 import { ask } from "ui/feedback";
-import { svgs } from "ui/icon";
+import { IconStack, IconStackType, svgs } from "ui/icon";
 import { ColorType } from "ui/types";
 import { fmtLevelFull, fmtLevelNumber } from "../fmt";
 
-export const LevelsToolbar: FC = () => {
+const closeOtherStack: IconStack = [[IconStackType.Index, <svgs.Cross />]];
+
+interface Props {
+  isCompact?: boolean;
+}
+
+export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
   const format = getDriverFormat(
     useStore($currentDriverName)!,
     useStore($currentDriverFormat)!,
@@ -28,6 +36,8 @@ export const LevelsToolbar: FC = () => {
 
   const levelsCount = levelset.levels.length;
   const levelsCountDigits = String(levelsCount).length;
+
+  const hasOtherOpened = useStore($currentBufferHasOtherOpened);
 
   const levelFullReference =
     level &&
@@ -76,58 +86,129 @@ export const LevelsToolbar: FC = () => {
     [levelFullReference],
   );
 
-  const cannotAddLevelMessage =
-    maxLevelsCount !== null && levelsCount >= maxLevelsCount
-      ? `Cannot add more level than ${maxLevelsCount}`
-      : undefined;
-  const cannotRemoveLevelMessage =
-    levelsCount <= minLevelsCount
-      ? `Cannot remove level because it's already minimum ${minLevelsCount}`
-      : undefined;
+  const cannotAddLevel =
+    maxLevelsCount !== null && levelsCount >= maxLevelsCount;
+
+  const cannotRemoveLevel = levelsCount <= minLevelsCount;
+  const cannotRemoveLevelMessage = cannotRemoveLevel
+    ? `Cannot remove level because it's already minimum ${minLevelsCount}`
+    : undefined;
+
+  const insertButton = cannotAddLevel ? undefined : (
+    <Button
+      icon={<svgs.InsertRow />}
+      disabled={!level}
+      title={
+        level
+          ? `Insert a new level at ${fmtLevelNumber(
+              level.index,
+              levelsCountDigits,
+            )} and move the current forward`
+          : ""
+      }
+      onClick={insertAtCurrentLevel}
+    />
+  );
+
+  const appendTitle = `Append new level ${fmtLevelNumber(
+    levelsCount,
+    levelsCountDigits,
+  )}`;
+
+  const closeButton = (
+    <Button
+      icon={<svgs.Cross />}
+      disabled={!level}
+      onClick={closeCurrentLevel}
+      title={
+        levelFullReference ? `Close level tab (${levelFullReference})` : ""
+      }
+    />
+  );
+  const closeOthersTitle = "Close other levels tabs";
+  const handleCloseOthers = useCallback(async () => {
+    if (
+      await ask(
+        <>
+          Are you sure you want to close ALL OTHER levels BUT "
+          <b>{levelFullReference}</b>"?
+        </>,
+        {
+          buttons: {
+            okText: <>Close OTHER BUT "{levelFullReference}"</>,
+            ok: {
+              autoFocus: false,
+            },
+            cancel: {
+              autoFocus: true,
+            },
+          },
+        },
+      )
+    ) {
+      closeOtherLevels();
+    }
+  }, [levelFullReference]);
 
   return (
     <>
-      <Button
-        icon={<svgs.InsertRow />}
-        disabled={!level || Boolean(cannotAddLevelMessage)}
-        title={
-          level
-            ? cannotAddLevelMessage ||
-              `Insert a new level at ${fmtLevelNumber(
-                level.index,
-                levelsCountDigits,
-              )} and move the current forward`
-            : ""
-        }
-        onClick={insertAtCurrentLevel}
-      />
-      <Button
-        icon={<svgs.AppendRow />}
-        disabled={Boolean(cannotAddLevelMessage)}
-        title={
-          cannotAddLevelMessage ||
-          `Append new level ${fmtLevelNumber(levelsCount, levelsCountDigits)}`
-        }
-        onClick={appendLevel}
-      />
-      <Button
-        uiColor={ColorType.DANGER}
-        icon={<svgs.DeleteRow />}
-        disabled={!level || Boolean(cannotRemoveLevelMessage)}
-        onClick={handleDeleteClick}
-        title={
-          cannotRemoveLevelMessage ||
-          (levelFullReference ? `Delete level ${levelFullReference}` : "")
-        }
-      />
-      <Button
-        icon={<svgs.Cross />}
-        disabled={!level}
-        onClick={closeCurrentLevel}
-        title={
-          levelFullReference ? `Close level tab (${levelFullReference})` : ""
-        }
-      />
+      {cannotAddLevel ||
+        (isCompact ? (
+          <>
+            {insertButton}
+            <Button
+              icon={<svgs.AppendRow />}
+              title={appendTitle}
+              onClick={appendLevel}
+            />
+          </>
+        ) : (
+          <ButtonDropdown standalone={insertButton}>
+            <Toolbar>
+              <Button icon={<svgs.AppendRow />} onClick={appendLevel}>
+                {appendTitle}
+              </Button>
+            </Toolbar>
+          </ButtonDropdown>
+        ))}
+      {cannotRemoveLevel || (
+        <Button
+          uiColor={ColorType.DANGER}
+          icon={<svgs.DeleteRow />}
+          disabled={!level}
+          onClick={handleDeleteClick}
+          title={
+            cannotRemoveLevelMessage ||
+            (levelFullReference ? `Delete level ${levelFullReference}` : "")
+          }
+        />
+      )}
+
+      {hasOtherOpened && !isCompact ? (
+        <ButtonDropdown standalone={closeButton}>
+          <Toolbar>
+            <Button
+              icon={<svgs.Cross />}
+              iconStack={closeOtherStack}
+              onClick={handleCloseOthers}
+            >
+              {closeOthersTitle}
+            </Button>
+          </Toolbar>
+        </ButtonDropdown>
+      ) : (
+        <>
+          {closeButton}
+          {hasOtherOpened && (
+            <Button
+              icon={<svgs.Cross />}
+              iconStack={closeOtherStack}
+              onClick={handleCloseOthers}
+              title={closeOthersTitle}
+            />
+          )}
+        </>
+      )}
     </>
   );
 };

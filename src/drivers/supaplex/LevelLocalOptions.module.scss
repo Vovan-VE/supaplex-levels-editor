@@ -1,0 +1,9 @@
+@use "styles/components/input/config" as i;
+
+.nested {
+  margin: 5px 50px 10px;
+}
+.shortInt {
+  display: inline-block;
+  width: calc(#{i.$all-extras-x} + 7ch);
+}

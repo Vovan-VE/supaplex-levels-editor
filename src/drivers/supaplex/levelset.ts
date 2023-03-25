@@ -97,6 +97,9 @@ class SupaplexLevelset implements ISupaplexLevelset {
     return copy;
   }
 
+  get hasLocalOptions(): boolean {
+    return this.#levels.some((l) => l.localOptions);
+  }
   get localOptions(): LocalOptionsList | undefined {
     const list = this.#levels.map((l) => l.localOptions ?? null);
     if (list.some(Boolean)) {

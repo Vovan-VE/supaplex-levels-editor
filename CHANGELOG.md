@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.9.0 (2023-03-25)
+
+- Add: options for SO test page:
+  - Plasma limit and Plasma time;
+  - Use Serial ports.
+- Add: Button to copy SO level options to clipboard to use in level upload
+  requests.
+- Add: "Save with options" button to download levelset as `*.zip`.
+- Add: "Remove Other files" button.
+- Add: "Close Other levels" button.
+- Enh: Reduce paddings in several UI components to compress whole UI.
+- Enh: Hide "Append level" button in dropdown as if it's rate used feature.
+- Enh: Hide "Insert/Append/Remove" buttons in SP format, since it's useless.
+- Enh: `Escape` now closes dropdown popup.
+
 ## 0.8.0 (2023-01-30)
 
 - Add: experimental options to use Plasma and/or Zonkers on SO test page.

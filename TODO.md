@@ -21,7 +21,6 @@
 
 ## Wishes from users (unsorted)
 
-- Merge insert/append level buttons to dropdown?
 - "Show border" option from Megaplex? (but it may cause confusion, so it must
   look different in both states).
 - The possibility to select a different tile for each mouse button (for example

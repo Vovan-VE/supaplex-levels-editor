@@ -38,9 +38,15 @@ export interface ISupaplexLevel extends IBaseLevel, IWithDemo {
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps): this;
   setLocalOptions(opt: LocalOptions | undefined): this;
   readonly usePlasma: boolean;
+  readonly usePlasmaLimit: number | undefined;
+  readonly usePlasmaTime: number | undefined;
   readonly useZonker: boolean;
+  readonly useSerialPorts: boolean;
   setUsePlasma(on: boolean): this;
+  setUsePlasmaLimit(n: number | undefined): this;
+  setUsePlasmaTime(n: number | undefined): this;
   setUseZonker(on: boolean): this;
+  setUseSerialPorts(on: boolean): this;
 }
 
 export interface ISupaplexTile extends IBaseTile<ISupaplexLevel> {}

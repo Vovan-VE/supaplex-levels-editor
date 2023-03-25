@@ -8,6 +8,7 @@ on:
   #  branches: [ "devel" ]
   pull_request:
     branches: [ "main", "devel" ]
+  workflow_dispatch:
 
 jobs:
   test:
@@ -29,7 +30,7 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v3.5.0
         with:
-          node-version: 16.x
+          node-version: 18.x
           cache: npm
       - name: Install dependencies
         run: npm ci --ignore-scripts

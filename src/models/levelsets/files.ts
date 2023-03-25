@@ -142,6 +142,10 @@ export const convertLevelsetTryFx = createEffect(
  */
 export const removeCurrentLevelsetFile = createEvent<any>();
 /**
+ * Close other files but current and forget everything about them
+ */
+export const removeOthersLevelsetFile = createEvent<any>();
+/**
  * Update loaded file in memory
  */
 export const updateLevelsetFile = createEvent<LevelsetFile>();
@@ -196,6 +200,12 @@ sample({
   source: _removeLevelsetFile,
   fn: () => null,
   target: _willSetCurrentKeyFx,
+});
+
+const _removeOthersLevelsetFile = sample({
+  clock: removeOthersLevelsetFile,
+  source: $currentKey,
+  filter: Boolean,
 });
 
 /**
@@ -284,9 +294,22 @@ export const $levelsets = withPersistentMap(
     (map, { key, name }) =>
       RoMap.update(map, key, (file) => ({ ...file, name })),
   )
-  .on(_removeLevelsetFile, RoMap.remove);
+  .on(_removeLevelsetFile, RoMap.remove)
+  .on(_removeOthersLevelsetFile, (map, key) => {
+    if (map.size > 1) {
+      const v = map.get(key);
+      if (v) {
+        return new Map([[key, v]]);
+      }
+    }
+  });
 
 export const $hasFiles = $levelsets.map((m) => m.size > 0);
+export const $hasOtherFiles = combine(
+  $levelsets,
+  $currentKey,
+  (m, current) => m.size > 1 && Boolean(current && m.has(current)),
+);
 
 // reset current file key when is refers to non-existing file
 sample({
@@ -314,4 +337,7 @@ export const $currentDriverName = $currentLevelsetFile.map((f) =>
 );
 export const $currentDriverFormat = $currentLevelsetFile.map((f) =>
   f ? f.driverFormat : null,
+);
+export const $currentFileHasLocalOptions = $currentLevelsetFile.map((f) =>
+  Boolean(f && f.levelset.hasLocalOptions),
 );

@@ -125,12 +125,14 @@ describe("levelset", () => {
     const levelset = createLevelset(3);
     const optList: LocalOptionsList = [null, { [LocalOpt.UsePlasma]: 1 }];
 
+    expect(levelset.hasLocalOptions).toBe(false);
     expect(levelset.localOptions).toBe(undefined);
     expect(levelset.setLocalOptions(undefined)).toBe(levelset);
     expect(levelset.setLocalOptions([])).toBe(levelset);
     expect(levelset.setLocalOptions([undefined, {}, undefined])).toBe(levelset);
 
     const next1 = levelset.setLevel(1, levelset.getLevel(1).setUsePlasma(true));
+    expect(next1.hasLocalOptions).toBe(true);
     expect(next1.localOptions).toEqual(optList);
 
     const next2 = levelset.setLocalOptions(optList);

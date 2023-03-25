@@ -9,6 +9,7 @@ import {
   Store,
 } from "effector";
 import { saveAs } from "file-saver";
+import JSZip from "jszip";
 import { flushDelayed, withPersistent } from "@cubux/effector-persistent";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
@@ -20,6 +21,7 @@ import {
   levelSupportsDemo,
 } from "drivers";
 import { fmtLevelNumber } from "components/levelset/fmt";
+import { isNotNull } from "utils/fn";
 import { IBounds } from "utils/rect";
 import { $displayReadOnly, $instanceIsReadOnly } from "../instanceSemaphore";
 import { localStorageDriver } from "../_utils/persistent";
@@ -75,6 +77,11 @@ export const openLevel = createEvent<number>();
 export const closeCurrentLevel = createEvent<any>();
 const _closeLevel = createEvent<_LevelRefStrict>();
 /**
+ * Switch all other levels but the given index in current levelset to closed state
+ */
+export const closeOtherLevels = createEvent<any>();
+const _closeOtherLevels = createEvent<_LevelRefStrict>();
+/**
  * Set current level with the given index (open it if not yet)
  */
 export const setCurrentLevel = createEvent<number>();
@@ -127,10 +134,15 @@ export const flushBuffer = createEvent<LevelsetFileKey>();
  * Flush changes for all levelset to blob
  */
 export const flushBuffers = createEvent<any>();
+export interface DownloadFileOptions {
+  withLocalOptions?: boolean;
+}
 /**
  * Download current levelset file
  */
-export const downloadCurrentFile = createEvent<any>();
+export const downloadCurrentFile = createEvent<
+  DownloadFileOptions | undefined
+>();
 
 const _withCurrent =
   <S>(current: Store<S | null>) =>
@@ -214,6 +226,15 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     }
     return next;
   })
+  // switch other but current to "is closed" state
+  .on(_closeOtherLevels, (map, [key, index]) =>
+    RoMap.update(map, key, (buf) => ({
+      ...buf,
+      levels: buf.levels.map((b, i) =>
+        i !== index && b.isOpened ? { ...b, isOpened: false } : b,
+      ),
+    })),
+  )
   // switch current level in the given levelset
   .on(_setCurrentLevel, (map, [key, index]) =>
     RoMap.update(map, key, (buf) =>
@@ -345,6 +366,31 @@ sample({
 });
 
 sample({
+  clock: closeOtherLevels,
+  source: {
+    files: _$buffersMap,
+    key: $currentKey,
+  },
+  filter: ({ files, key }) => {
+    if (key) {
+      const buf = files.get(key);
+      if (buf?.currentIndex !== undefined) {
+        return (
+          buf.levels.length > 1 &&
+          buf.levels.some((l, i) => l.isOpened && i !== buf.currentIndex)
+        );
+      }
+    }
+    return false;
+  },
+  fn: ({ files, key }): _LevelRefStrict => [
+    key!,
+    files.get(key!)!.currentIndex!,
+  ],
+  target: _closeOtherLevels,
+});
+
+sample({
   clock: insertAtCurrentLevel,
   source: {
     files: _$buffersMap,
@@ -470,19 +516,40 @@ _$wakeUpOpenedIndices.on(
   (map, keys) => RoMap.filter(map, (_, k) => !keys.has(k)),
 );
 
+type _SaveInnerParams = { key: LevelsetFileKey; options?: DownloadFileOptions };
 sample({
   clock: downloadCurrentFile,
   source: $currentKey,
   filter: Boolean,
-  target: flushBuffer,
-}).watch((key) => {
+  fn: (key, options) => ({ key, options }),
+  target: flushBuffer.prepend<_SaveInnerParams>(({ key }) => key),
+}).watch(async ({ key, options: { withLocalOptions = false } = {} }) => {
   // https://effector.dev/docs/advanced-guide/computation-priority
   // Since `watch` classified as "side effect" (and actually it is so here),
   // this `.watch()` handler will be called after all store updates with updated
   // file after flush ends.
   const file = $levelsets.getState().get(key);
   if (file) {
-    saveAs(file.file, file.name);
+    const localOptions = file.levelset.localOptions;
+    if (withLocalOptions && localOptions) {
+      const zip = new JSZip();
+      zip.file(file.name, file.file.arrayBuffer());
+      zip.file(
+        `${file.name}.options.json`,
+        JSON.stringify(
+          Object.fromEntries(
+            localOptions
+              .map((o, i) => (o ? ([i + 1, o] as const) : undefined))
+              .filter(isNotNull),
+          ),
+          null,
+          2,
+        ) + "\n",
+      );
+      saveAs(await zip.generateAsync({ type: "blob" }), `${file.name}.zip`);
+    } else {
+      saveAs(file.file, file.name);
+    }
   }
 });
 
@@ -609,6 +676,13 @@ export const $currentBuffer = combine(
 export const $currentBufferSelected = $currentBuffer.map(Boolean);
 export const $currentBufferLevelsCount = $currentBuffer.map(
   (b) => b && b.levels.length,
+);
+export const $currentBufferHasOtherOpened = $currentBuffer.map((b) =>
+  Boolean(
+    b &&
+      b.currentIndex !== undefined &&
+      b.levels.some((l, i) => l.isOpened && i !== b.currentIndex),
+  ),
 );
 
 /**
