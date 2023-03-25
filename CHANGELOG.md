@@ -7,6 +7,7 @@
   - Use Serial ports.
 - Add: Button to copy SO level options to clipboard to use in level upload
   requests.
+- Add: "Save with options" button to download levelset as `*.zip`.
 - Add: "Remove Other files" button.
 - Add: "Close Other levels" button.
 - Enh: Reduce paddings in several UI components to compress whole UI.

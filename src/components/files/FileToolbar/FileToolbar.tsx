@@ -1,6 +1,10 @@
 import { useStore } from "effector-react";
-import { FC } from "react";
-import { $hasOtherFiles, downloadCurrentFile } from "models/levelsets";
+import { FC, useCallback } from "react";
+import {
+  $currentFileHasLocalOptions,
+  $hasOtherFiles,
+  downloadCurrentFile,
+} from "models/levelsets";
 import { Button, ButtonDropdown, Toolbar } from "ui/button";
 import { ColorType } from "ui/types";
 import { IconStack, IconStackType, svgs } from "ui/icon";
@@ -13,8 +17,26 @@ interface Props {
 }
 
 export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
+  const hasLocalOptions = useStore($currentFileHasLocalOptions);
   const hasOtherFiles = useStore($hasOtherFiles);
   const { filename, handlers } = useFileButtonsProps();
+
+  const saveButton = (
+    <Button
+      uiColor={ColorType.SUCCESS}
+      icon={<svgs.Save />}
+      disabled={!filename}
+      title={filename ? `Save file "${filename}" from memory` : undefined}
+      onClick={useCallback(() => downloadCurrentFile(), [])}
+    />
+  );
+  const saveWithOptionsTitle = filename
+    ? `Save file "${filename}" + Options`
+    : undefined;
+  const handleSaveWithOptions = useCallback(
+    () => downloadCurrentFile({ withLocalOptions: true }),
+    [],
+  );
 
   const removeButton = (
     <Button
@@ -25,17 +47,40 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
       onClick={handlers?.remove}
     />
   );
-
   const removeOthersTitle = `Remove others but "${filename}"`;
+
   return (
     <>
-      <Button
-        uiColor={ColorType.SUCCESS}
-        icon={<svgs.Save />}
-        disabled={!filename}
-        title={filename ? `Save file "${filename}" from memory` : undefined}
-        onClick={downloadCurrentFile}
-      />
+      {hasLocalOptions && !isCompact && filename ? (
+        <ButtonDropdown
+          standalone={saveButton}
+          buttonProps={{ uiColor: ColorType.SUCCESS }}
+        >
+          <Toolbar>
+            <Button
+              uiColor={ColorType.SUCCESS}
+              icon={<svgs.Save />}
+              onClick={handleSaveWithOptions}
+            >
+              {saveWithOptionsTitle}
+            </Button>
+          </Toolbar>
+        </ButtonDropdown>
+      ) : (
+        <>
+          {saveButton}
+          {hasLocalOptions && (
+            <Button
+              uiColor={ColorType.SUCCESS}
+              icon={<svgs.Save />}
+              disabled={!filename}
+              title={saveWithOptionsTitle}
+              onClick={handleSaveWithOptions}
+            />
+          )}
+        </>
+      )}
+
       <Button
         uiColor={ColorType.SUCCESS}
         icon={<svgs.FileConvert />}

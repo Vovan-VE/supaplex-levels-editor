@@ -338,3 +338,6 @@ export const $currentDriverName = $currentLevelsetFile.map((f) =>
 export const $currentDriverFormat = $currentLevelsetFile.map((f) =>
   f ? f.driverFormat : null,
 );
+export const $currentFileHasLocalOptions = $currentLevelsetFile.map((f) =>
+  Boolean(f && f.levelset.hasLocalOptions),
+);
