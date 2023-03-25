@@ -54,6 +54,7 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
             onChange={handlePlasmaLimitChange}
             disabled={!usePlasma}
             className={cl.shortInt}
+            placeholder="200"
           />{" "}
           tiles
         </div>
@@ -64,6 +65,7 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
             onChange={handlePlasmaTimeChange}
             disabled={!usePlasma}
             className={cl.shortInt}
+            placeholder="2400"
           />{" "}
           frames
         </div>
