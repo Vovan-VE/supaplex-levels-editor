@@ -47,7 +47,7 @@ export const Header: FC<Props> = (props) => {
             <Toolbar>
               <FilesToolbar />
               <ToolbarSeparator />
-              <FileToolbar />
+              <FileToolbar isCompact />
             </Toolbar>
             <EditorTabs className={cl.scrollableList} />
           </div>

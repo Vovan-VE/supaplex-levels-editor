@@ -5,6 +5,7 @@ import {
   $currentFileName,
   convertLevelsetTryFx,
   removeCurrentLevelsetFile,
+  removeOthersLevelsetFile,
   renameCurrentLevelset,
 } from "models/levelsets";
 import { ask, msgBox, promptString } from "ui/feedback";
@@ -86,6 +87,36 @@ const handleRemove = async (filename: string) => {
     removeCurrentLevelsetFile();
   }
 };
+const handleRemoveOthers = async (filename: string) => {
+  if (
+    await ask(
+      <>
+        {" "}
+        Are you sure you want to remove ALL OTHER FILES BUT "<b>{filename}</b>"
+        from memory?
+        <br />
+        You will loss all changes in that files. Consider download them first to
+        backup.
+        <br />
+        <b>This action can not be undone.</b>
+      </>,
+      {
+        buttons: {
+          okText: <>Forgot OTHER BUT "{filename}"</>,
+          ok: {
+            uiColor: ColorType.DANGER,
+            autoFocus: false,
+          },
+          cancel: {
+            autoFocus: true,
+          },
+        },
+      },
+    )
+  ) {
+    removeOthersLevelsetFile();
+  }
+};
 
 export const useFileButtonsProps = () => {
   const filename = useStore($currentFileName);
@@ -99,6 +130,7 @@ export const useFileButtonsProps = () => {
               rename: () => handleRename(filename),
               convert: handleConvert,
               remove: () => handleRemove(filename),
+              removeOthers: () => handleRemoveOthers(filename),
             }
           : undefined,
       [filename],
