@@ -72,7 +72,10 @@ class LevelFooter implements ILevelFooter {
   #demo: Uint8Array | null = null;
 
   #usePlasma = false;
+  #usePlasmaLimit: number | undefined;
+  #usePlasmaTime: number | undefined;
   #useZonker = false;
+  #useSerialPorts = false;
 
   constructor(width: number, data?: Uint8Array) {
     this.#width = width;
@@ -115,7 +118,10 @@ class LevelFooter implements ILevelFooter {
   copy() {
     const copy = new LevelFooter(this.width, this.getRaw()) as this;
     copy.#usePlasma = this.#usePlasma;
+    copy.#usePlasmaLimit = this.#usePlasmaLimit;
+    copy.#usePlasmaTime = this.#usePlasmaTime;
     copy.#useZonker = this.#useZonker;
+    copy.#useSerialPorts = this.#useSerialPorts;
     return copy;
   }
 
@@ -385,6 +391,30 @@ class LevelFooter implements ILevelFooter {
     return next;
   }
 
+  get usePlasmaLimit() {
+    return this.#usePlasmaLimit;
+  }
+  setUsePlasmaLimit(n: number | undefined): this {
+    if (n === this.#usePlasmaLimit) {
+      return this;
+    }
+    const next = this.copy();
+    next.#usePlasmaLimit = n;
+    return next;
+  }
+
+  get usePlasmaTime() {
+    return this.#usePlasmaTime;
+  }
+  setUsePlasmaTime(n: number | undefined): this {
+    if (n === this.#usePlasmaTime) {
+      return this;
+    }
+    const next = this.copy();
+    next.#usePlasmaTime = n;
+    return next;
+  }
+
   get useZonker() {
     return this.#useZonker;
   }
@@ -394,6 +424,18 @@ class LevelFooter implements ILevelFooter {
     }
     const next = this.copy();
     next.#useZonker = on;
+    return next;
+  }
+
+  get useSerialPorts() {
+    return this.#useSerialPorts;
+  }
+  setUseSerialPorts(on: boolean): this {
+    if (on === this.#useSerialPorts) {
+      return this;
+    }
+    const next = this.copy();
+    next.#useSerialPorts = on;
     return next;
   }
 }

@@ -2,7 +2,9 @@
 
 ## 0.9.0 (DEV)
 
-- ...
+- Add: options for SO test page:
+  - Plasma limit and Plasma time;
+  - Use Serial ports.
 
 ## 0.8.0 (2023-01-30)
 

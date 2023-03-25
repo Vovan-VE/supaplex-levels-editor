@@ -564,7 +564,10 @@ describe("level", () => {
     expect(
       level.setLocalOptions({
         [LocalOpt.UsePlasma]: undefined,
+        [LocalOpt.UsePlasmaLimit]: undefined,
+        [LocalOpt.UsePlasmaTime]: undefined,
         [LocalOpt.UseZonker]: 0,
+        [LocalOpt.UseSerialPorts]: "",
       }),
     ).toBe(level);
 
@@ -575,6 +578,20 @@ describe("level", () => {
       [LocalOpt.UsePlasma]: 1,
     });
 
+    const pl = level.setLocalOptions({ [LocalOpt.UsePlasmaLimit]: 42 });
+    expect(pl.usePlasmaLimit).toBe(42);
+    expect(pl.localOptions).toEqual({ [LocalOpt.UsePlasmaLimit]: 42 });
+    expect(level.setUsePlasmaLimit(42).localOptions).toEqual({
+      [LocalOpt.UsePlasmaLimit]: 42,
+    });
+
+    const pt = level.setLocalOptions({ [LocalOpt.UsePlasmaTime]: 37 });
+    expect(pt.usePlasmaTime).toBe(37);
+    expect(pt.localOptions).toEqual({ [LocalOpt.UsePlasmaTime]: 37 });
+    expect(level.setUsePlasmaTime(37).localOptions).toEqual({
+      [LocalOpt.UsePlasmaTime]: 37,
+    });
+
     const z = level.setLocalOptions({ [LocalOpt.UseZonker]: true });
     expect(z.useZonker).toBe(true);
     expect(z.localOptions).toEqual({ [LocalOpt.UseZonker]: 1 });
@@ -582,15 +599,31 @@ describe("level", () => {
       [LocalOpt.UseZonker]: 1,
     });
 
-    const pz = level.setLocalOptions({
-      [LocalOpt.UsePlasma]: true,
-      [LocalOpt.UseZonker]: 42,
+    const s = level.setLocalOptions({ [LocalOpt.UseSerialPorts]: true });
+    expect(s.useSerialPorts).toBe(true);
+    expect(s.localOptions).toEqual({ [LocalOpt.UseSerialPorts]: 1 });
+    expect(level.setUseSerialPorts(true).localOptions).toEqual({
+      [LocalOpt.UseSerialPorts]: 1,
     });
-    expect(pz.usePlasma).toBe(true);
-    expect(pz.useZonker).toBe(true);
-    expect(pz.localOptions).toEqual({
+
+    const all = level.setLocalOptions({
+      [LocalOpt.UsePlasma]: true,
+      [LocalOpt.UsePlasmaLimit]: 42,
+      [LocalOpt.UsePlasmaTime]: 37,
+      [LocalOpt.UseZonker]: 91,
+      [LocalOpt.UseSerialPorts]: "lol",
+    });
+    expect(all.usePlasma).toBe(true);
+    expect(all.usePlasmaLimit).toBe(42);
+    expect(all.usePlasmaTime).toBe(37);
+    expect(all.useZonker).toBe(true);
+    expect(all.useSerialPorts).toBe(true);
+    expect(all.localOptions).toEqual({
       [LocalOpt.UsePlasma]: 1,
+      [LocalOpt.UsePlasmaLimit]: 42,
+      [LocalOpt.UsePlasmaTime]: 37,
       [LocalOpt.UseZonker]: 1,
+      [LocalOpt.UseSerialPorts]: 1,
     });
   });
 });

@@ -409,6 +409,32 @@ describe("footer", () => {
     expect(footer.usePlasma).toBe(false);
   });
 
+  it("usePlasmaLimit", () => {
+    const footer = createLevelFooter(LEVEL_WIDTH);
+
+    expect(footer.usePlasmaLimit).toBe(undefined);
+    expect(footer.setUsePlasmaLimit(undefined)).toBe(footer);
+
+    const next = footer.setUsePlasmaLimit(42);
+    expect(next.usePlasmaLimit).toBe(42);
+    expect(next.setUsePlasmaLimit(42)).toBe(next);
+
+    expect(footer.usePlasmaLimit).toBe(undefined);
+  });
+
+  it("usePlasmaTime", () => {
+    const footer = createLevelFooter(LEVEL_WIDTH);
+
+    expect(footer.usePlasmaTime).toBe(undefined);
+    expect(footer.setUsePlasmaTime(undefined)).toBe(footer);
+
+    const next = footer.setUsePlasmaTime(42);
+    expect(next.usePlasmaTime).toBe(42);
+    expect(next.setUsePlasmaTime(42)).toBe(next);
+
+    expect(footer.usePlasmaTime).toBe(undefined);
+  });
+
   it("useZonker", () => {
     const footer = createLevelFooter(LEVEL_WIDTH);
 
@@ -420,5 +446,18 @@ describe("footer", () => {
     expect(next.setUseZonker(true)).toBe(next);
 
     expect(footer.useZonker).toBe(false);
+  });
+
+  it("useSerialPorts", () => {
+    const footer = createLevelFooter(LEVEL_WIDTH);
+
+    expect(footer.useSerialPorts).toBe(false);
+    expect(footer.setUseSerialPorts(false)).toBe(footer);
+
+    const next = footer.setUseSerialPorts(true);
+    expect(next.useSerialPorts).toBe(true);
+    expect(next.setUseSerialPorts(true)).toBe(next);
+
+    expect(footer.useSerialPorts).toBe(false);
   });
 });

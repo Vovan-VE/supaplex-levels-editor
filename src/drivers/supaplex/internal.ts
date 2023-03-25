@@ -56,12 +56,21 @@ export interface ILevelFooter extends IWithDemo {
   setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps): this;
   deleteSpecPort(x: number, y: number): this;
   readonly usePlasma: boolean;
+  readonly usePlasmaLimit: number | undefined;
+  readonly usePlasmaTime: number | undefined;
   readonly useZonker: boolean;
+  readonly useSerialPorts: boolean;
   setUsePlasma(on: boolean): this;
+  setUsePlasmaLimit(n: number | undefined): this;
+  setUsePlasmaTime(n: number | undefined): this;
   setUseZonker(on: boolean): this;
+  setUseSerialPorts(on: boolean): this;
 }
 
 export const enum LocalOpt {
   UsePlasma = "usePlasma",
+  UsePlasmaLimit = "usePlasmaLimit",
+  UsePlasmaTime = "usePlasmaTime",
   UseZonker = "useZonker",
+  UseSerialPorts = "useSerialPorts",
 }
