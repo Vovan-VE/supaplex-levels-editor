@@ -1,5 +1,13 @@
 import { useStore } from "effector-react";
-import { FC, PropsWithChildren, ReactNode, useCallback, useState } from "react";
+import {
+  FC,
+  PropsWithChildren,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { ReactComponent as MurphyRuns } from "assets/img/murphy-run-right.svg";
 import { TEST_DEMO_URL, TEST_LEVEL_TITLE, TEST_LEVEL_URL } from "configs";
 import {
@@ -18,10 +26,11 @@ import {
   updateCurrentLevel,
 } from "models/levelsets";
 import { $fileSupportsDemo, rememberDemoTarget } from "models/levelsets/demo";
-import { TextButton } from "ui/button";
+import { Button, TextButton } from "ui/button";
 import { ask, msgBox } from "ui/feedback";
-import { IconStack, IconStackType } from "ui/icon";
+import { IconStack, IconStackType, svgs } from "ui/icon";
 import { ColorType } from "ui/types";
+import cl from "./TestingButtons.module.scss";
 
 const CL_SVG_ANIMATE_HOVERABLE = "svg-animate_hover-target";
 const TEST_WITH_DEMO_STACK: IconStack = [[IconStackType.Index, <DiskYellow />]];
@@ -168,10 +177,52 @@ const ConfirmSO: FC<
 > = ({ toDoWhat, level, onChange, children }) => {
   // const confirmed = useStore($prefConfirmedTestSO);
 
-  const { LevelLocalOptions } = getDriver(useStore($currentDriverName)!)!;
+  const { LevelLocalOptions, applyLocalOptions } = getDriver(
+    useStore($currentDriverName)!,
+  )!;
+
+  const [tempCopyFeedback, setTempCopyFeedback] = useState(false);
+
+  const optionsAsCode = useMemo(() => {
+    if (level && applyLocalOptions) {
+      const url = new URL(window.location.origin);
+      applyLocalOptions(level, url);
+      const params = Array.from(url.searchParams.entries());
+      if (params.length) {
+        return (
+          "```\n" +
+          params.map(([k, v]) => `${k}${v ? `=${v}` : ""}`).join("\n") +
+          "\n```"
+        );
+      }
+    }
+    return "";
+  }, [level, applyLocalOptions]);
+  useEffect(() => setTempCopyFeedback(false), [optionsAsCode]);
+
+  const handleCopy = useCallback(async () => {
+    if (optionsAsCode) {
+      try {
+        await window.navigator.clipboard.writeText(optionsAsCode);
+        // TODO: toast: "Copied"
+        setTempCopyFeedback(true);
+        setTimeout(() => setTempCopyFeedback(false), 750);
+      } catch (e) {
+        await msgBox(
+          <>
+            <p>Could not copy. Here is the code:</p>
+            <pre>
+              <code>{optionsAsCode}</code>
+            </pre>
+          </>,
+          { size: "small" },
+        );
+      }
+    }
+  }, [optionsAsCode]);
 
   return (
-    <div>
+    <div className={cl.confirmSO}>
       <p>
         {toDoWhat}, it <strong>will be sent to</strong>{" "}
         <a href={TEST_LEVEL_URL} target="_blank" rel="noopener noreferrer">
@@ -187,7 +238,18 @@ const ConfirmSO: FC<
       {/*  </Checkbox>*/}
       {/*</div>*/}
       {level && onChange && LevelLocalOptions && (
-        <LevelLocalOptions level={level} onChange={onChange} />
+        <div className={cl.options}>
+          <div>
+            <LevelLocalOptions level={level} onChange={onChange} />
+          </div>
+          <Button
+            uiColor={tempCopyFeedback ? ColorType.SUCCESS : undefined}
+            icon={<svgs.Copy />}
+            onClick={handleCopy}
+            title={`Copy code to clipboard to use in level upload request:\n\n${optionsAsCode}`}
+            disabled={!optionsAsCode}
+          />
+        </div>
       )}
     </div>
   );

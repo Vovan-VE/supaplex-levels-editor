@@ -1,0 +1,8 @@
+.confirmSO {
+  .options {
+    display: grid;
+    grid-gap: 0.5rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: flex-end;
+  }
+}
