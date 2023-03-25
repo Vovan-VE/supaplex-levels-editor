@@ -5,6 +5,7 @@
 - Add: options for SO test page:
   - Plasma limit and Plasma time;
   - Use Serial ports.
+- Enh: Reduce paddings in several UI components to compress whole UI.
 
 ## 0.8.0 (2023-01-30)
 

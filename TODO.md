@@ -36,4 +36,3 @@
 - Some additional (temp?) tile selection ways, like "take this specially clicked
   in body tile". Some graphical editors have something similar.
 - Close all tabs but current.
-- 360 min width
