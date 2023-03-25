@@ -91,7 +91,6 @@ const handleRemoveOthers = async (filename: string) => {
   if (
     await ask(
       <>
-        {" "}
         Are you sure you want to remove ALL OTHER FILES BUT "<b>{filename}</b>"
         from memory?
         <br />

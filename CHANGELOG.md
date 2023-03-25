@@ -6,6 +6,7 @@
   - Plasma limit and Plasma time;
   - Use Serial ports.
 - Add: "Remove Other files" button.
+- Add: "Close Other levels" button.
 - Enh: Reduce paddings in several UI components to compress whole UI.
 - Enh: Hide "Append level" button in dropdown as if it's rate used feature.
 - Enh: Hide "Insert/Append/Remove" buttons in SP format, since it's useless.

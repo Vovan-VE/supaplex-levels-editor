@@ -34,4 +34,3 @@
   - UI toolbar, too many buttons, too few space.
 - Some additional (temp?) tile selection ways, like "take this specially clicked
   in body tile". Some graphical editors have something similar.
-- Close all tabs but current.

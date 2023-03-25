@@ -75,6 +75,11 @@ export const openLevel = createEvent<number>();
 export const closeCurrentLevel = createEvent<any>();
 const _closeLevel = createEvent<_LevelRefStrict>();
 /**
+ * Switch all other levels but the given index in current levelset to closed state
+ */
+export const closeOtherLevels = createEvent<any>();
+const _closeOtherLevels = createEvent<_LevelRefStrict>();
+/**
  * Set current level with the given index (open it if not yet)
  */
 export const setCurrentLevel = createEvent<number>();
@@ -214,6 +219,15 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     }
     return next;
   })
+  // switch other but current to "is closed" state
+  .on(_closeOtherLevels, (map, [key, index]) =>
+    RoMap.update(map, key, (buf) => ({
+      ...buf,
+      levels: buf.levels.map((b, i) =>
+        i !== index && b.isOpened ? { ...b, isOpened: false } : b,
+      ),
+    })),
+  )
   // switch current level in the given levelset
   .on(_setCurrentLevel, (map, [key, index]) =>
     RoMap.update(map, key, (buf) =>
@@ -342,6 +356,31 @@ sample({
     files.get(key!)!.currentIndex!,
   ],
   target: _willCloseLevelFx,
+});
+
+sample({
+  clock: closeOtherLevels,
+  source: {
+    files: _$buffersMap,
+    key: $currentKey,
+  },
+  filter: ({ files, key }) => {
+    if (key) {
+      const buf = files.get(key);
+      if (buf?.currentIndex !== undefined) {
+        return (
+          buf.levels.length > 1 &&
+          buf.levels.some((l, i) => l.isOpened && i !== buf.currentIndex)
+        );
+      }
+    }
+    return false;
+  },
+  fn: ({ files, key }): _LevelRefStrict => [
+    key!,
+    files.get(key!)!.currentIndex!,
+  ],
+  target: _closeOtherLevels,
 });
 
 sample({
@@ -609,6 +648,13 @@ export const $currentBuffer = combine(
 export const $currentBufferSelected = $currentBuffer.map(Boolean);
 export const $currentBufferLevelsCount = $currentBuffer.map(
   (b) => b && b.levels.length,
+);
+export const $currentBufferHasOtherOpened = $currentBuffer.map((b) =>
+  Boolean(
+    b &&
+      b.currentIndex !== undefined &&
+      b.levels.some((l, i) => l.isOpened && i !== b.currentIndex),
+  ),
 );
 
 /**
