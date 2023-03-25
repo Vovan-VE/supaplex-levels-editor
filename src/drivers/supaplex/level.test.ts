@@ -323,8 +323,8 @@ describe("level", () => {
       expect(result.title).toBe("Foo bar                ");
     });
 
-    it("10k * 10k", () => {
-      const origin = createLevel(10_000, 10_000);
+    it("100k * 10k", () => {
+      const origin = createLevel(100_000, 10_000);
 
       // how many copies will we make in 1.5 sec?
       let start = Date.now();
