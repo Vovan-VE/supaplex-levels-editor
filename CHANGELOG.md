@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.9.0 (DEV)
+## 0.9.0 (2023-03-25)
 
 - Add: options for SO test page:
   - Plasma limit and Plasma time;
