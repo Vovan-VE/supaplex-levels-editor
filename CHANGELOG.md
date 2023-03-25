@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.8.0 (DEV)
+## 0.9.0 (DEV)
+
+- ...
+
+## 0.8.0 (2023-01-30)
 
 - Add: experimental options to use Plasma and/or Zonkers on SO test page.
   - Options live in editor only, because there are no new file format for that
