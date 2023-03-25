@@ -13,6 +13,7 @@
 - Enh: Reduce paddings in several UI components to compress whole UI.
 - Enh: Hide "Append level" button in dropdown as if it's rate used feature.
 - Enh: Hide "Insert/Append/Remove" buttons in SP format, since it's useless.
+- Enh: `Escape` now closes dropdown popup.
 
 ## 0.8.0 (2023-01-30)
 

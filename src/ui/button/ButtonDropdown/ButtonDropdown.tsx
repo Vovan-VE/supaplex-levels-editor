@@ -9,6 +9,7 @@ import {
 } from "react";
 import cn from "classnames";
 import { useRefHandlers } from "utils/react";
+import { HotKeyShortcuts, useHotKey } from "models/ui/hotkeys";
 import { AdaptiveRange, useMediaQuery } from "../../adaptive";
 import {
   ClickOutside,
@@ -33,6 +34,8 @@ interface Props extends PopperBaseProps, PopperVisibilityEvents {
   closeOnClickOutside?: boolean;
   children?: ReactNode;
 }
+
+const HK_ESCAPE: HotKeyShortcuts = [["Escape"], ["Cancel"]];
 
 export const ButtonDropdown: FC<Props> = ({
   trigger,
@@ -123,6 +126,17 @@ export const ButtonDropdown: FC<Props> = ({
     }
   }, []);
 
+  const watchClickOutside = closeOnClickOutside && visible;
+  useHotKey({
+    shortcut: HK_ESCAPE,
+    handler: useCallback((e: UIEvent) => {
+      e.preventDefault();
+      setVisible(false);
+    }, []),
+    prepend: true,
+    disabled: !watchClickOutside,
+  });
+
   return (
     <div className={cl.container}>
       <Popper
@@ -132,10 +146,7 @@ export const ButtonDropdown: FC<Props> = ({
         {...options}
         popperClassName={cn(cl.popup, options.popperClassName)}
       >
-        <ClickOutside
-          watch={closeOnClickOutside && visible}
-          onClickOutside={handleHide}
-        >
+        <ClickOutside watch={watchClickOutside} onClickOutside={handleHide}>
           {({ getClickProps }) => (
             <div {...getClickProps()} onClick={handleClickInside}>
               {/*<div ref={foo}>*/}
