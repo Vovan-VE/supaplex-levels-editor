@@ -5,7 +5,7 @@ import { getDriver, getTilesForToolbar } from "drivers";
 import { $tileIndex, setTile } from "models/levels";
 import { $currentDriverName } from "models/levelsets";
 import { Button, Toolbar } from "ui/button";
-import { ContainerProps } from "ui/types";
+import { ColorType, ContainerProps } from "ui/types";
 import cl from "./TilesToolbar.module.scss";
 
 interface Props extends ContainerProps {}
@@ -32,8 +32,9 @@ export const TilesToolbar: FC<Props> = ({ className, ...rest }) => {
           <Button
             title={title}
             icon={<TileRender tile={value} />}
-            className={cl.btn}
-            asLink={i !== tileIndex}
+            className={cn(cl.btn, i === tileIndex && cl._current)}
+            asLink
+            uiColor={ColorType.WARN}
             onClick={handleTile[i]}
           />
         </Fragment>
