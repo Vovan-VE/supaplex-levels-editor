@@ -1,1 +1,1 @@
-export * from "./EditorTools";
+export * from "./EditorToolsSimple";

@@ -1,0 +1,26 @@
+//   +---------------------
+//   |
+//   |  +----+ +----+
+//   |  |    | |    |
+//   |  |    | |    |
+//   |  +----+ +----+
+//   |
+//   +----------------------
+//         -->-<-- space
+// -->--<--
+// padding
+$padding: 0.2rem;
+$space: 0.2rem;
+
+// half space to use as margin
+$space-half: calc($space / 2);
+
+// rest of wanted padding reduced by button margin
+$padding-rest: $padding - $space-half;
+
+@function fit-buttons-width($width, $buttons-count) {
+  @return calc(($width - $padding-rest * 2) / $buttons-count - $space);
+}
+@function fit-buttons-width-no-margin($width, $buttons-count) {
+  @return calc(($width - $padding-rest * 2) / $buttons-count);
+}

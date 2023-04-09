@@ -1,5 +1,6 @@
 .root {
   position: relative;
+  --btn-icon-size: 1.5em;
 
   .icon,
   .text {
@@ -12,7 +13,7 @@
   }
   .icon {
     flex: 0 0 auto;
-    font-size: 1.5em;
+    font-size: var(--btn-icon-size);
   }
   &._withIcon {
     .text {

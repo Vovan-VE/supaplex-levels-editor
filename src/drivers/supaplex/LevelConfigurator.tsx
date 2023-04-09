@@ -43,14 +43,6 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
 
   return (
     <>
-      <Checkbox checked={level.initialGravity} onChange={handlers.gravity}>
-        Gravity
-      </Checkbox>
-
-      <Checkbox checked={level.initialFreezeZonks} onChange={handlers.fz}>
-        Freeze Zonks
-      </Checkbox>
-
       <label className={cl.field}>
         <InlineTile tile={TILE_INFOTRON} />
         <IntegerInput
@@ -69,6 +61,15 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
           {countElec}
         </span>
       </label>
+      <wbr />
+      <span>
+        <Checkbox checked={level.initialGravity} onChange={handlers.gravity}>
+          Gravity
+        </Checkbox>
+        <Checkbox checked={level.initialFreezeZonks} onChange={handlers.fz}>
+          Freeze Zonks
+        </Checkbox>
+      </span>
     </>
   );
 };

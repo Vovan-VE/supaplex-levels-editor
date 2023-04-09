@@ -2,7 +2,7 @@
 
 ## 0.10.0 (DEV)
 
-- ...
+- Enh: Toolbars layout now is more adaptive to be more compact together.
 
 ## 0.9.0 (2023-03-25)
 

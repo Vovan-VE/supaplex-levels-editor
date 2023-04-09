@@ -1,19 +1,19 @@
 @use "styles/components";
+@use "styles/components/toolbar/config";
 @use "styles/themes";
 
-$pad: 0.2rem;
-$space: 0.2rem;
-$space-half: calc($space / 2);
-$pad-out: $pad - $space-half;
-
 .root {
-  padding: $pad-out;
+  padding: #{config.$padding-rest};
   white-space: nowrap;
 
   > * {
     display: inline-block;
     vertical-align: middle;
-    margin: $space-half;
+    margin: #{config.$space-half};
+  }
+  > wbr {
+    display: none;
+    margin: 0;
   }
 }
 ._withBG {
@@ -24,6 +24,6 @@ $pad-out: $pad - $space-half;
   display: inline-block;
   height: 1.8em;
   border-left: themes.$color-mute solid 0.15rem;
-  margin-left: $pad-out;
-  margin-right: $pad-out;
+  margin-left: #{config.$padding-rest};
+  margin-right: #{config.$padding-rest};
 }
