@@ -3,6 +3,8 @@
 ## 0.10.0 (DEV)
 
 - Enh: Toolbars layout now is more adaptive to be more compact together.
+- Add: Display primitive notice when "Infotrons needed" = 0 (all), and level has
+  more than 256 infotrons.
 
 ## 0.9.0 (2023-03-25)
 

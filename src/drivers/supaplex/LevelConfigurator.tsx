@@ -53,8 +53,25 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
           className={cl.inf}
         />
         <span>
-          {level.infotronsNeed === 0 && countInf > 0 ? "= all" : "of"}{" "}
-          {countInf}
+          {level.infotronsNeed === 0 && countInf > 0 ? (
+            countInf < 256 ? (
+              `= all ${countInf}`
+            ) : (
+              <span
+                title={
+                  `Actual number of Infotrons is ${countInf},\n` +
+                  `but SP counts it in a single byte,\n` +
+                  `so the result is a module of 256:\n` +
+                  `${countInf} & 0xFF = ${countInf} % 256 = ${countInf % 256}`
+                }
+                className={cl.infModNotice}
+              >
+                = {countInf % 256}
+              </span>
+            )
+          ) : (
+            `of ${countInf}`
+          )}
           {", "}
           <InlineTile tile={TILE_ELECTRON} />
           {" x "}
