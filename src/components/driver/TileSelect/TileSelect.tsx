@@ -19,13 +19,16 @@ const OPTIONS = new Map(
     const { tiles, TileRender } = getDriver(name);
     return [
       name,
-      getTilesForToolbar(tiles).map<SelectOption<number>>(
-        ([, { value = -1, title }]) => ({
+      getTilesForToolbar(tiles)
+        .filter(
+          ([, { value, metaTile }]) =>
+            !metaTile || metaTile.primaryValue === value,
+        )
+        .map<SelectOption<number>>(([, { value, title }]) => ({
           value,
           labelSelected: title,
           icon: <TileRender tile={value} />,
-        }),
-      ),
+        })),
     ];
   }),
 );

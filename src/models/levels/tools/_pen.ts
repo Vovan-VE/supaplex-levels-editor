@@ -77,7 +77,7 @@ const {
     level: level.batch((level) =>
       RoMap.reduce(
         drawState,
-        (level, { x, y, tile }) => level.setTile(x, y, tile),
+        (level, { x, y, tile }) => level.setTile(x, y, tile, true),
         level,
       ),
     ),

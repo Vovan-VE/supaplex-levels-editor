@@ -5,6 +5,7 @@ import {
   ILevelFooter,
   ISupaplexSpecPort,
   ISupaplexSpecPortProps,
+  SPEC_PORT_MAX_COUNT,
 } from "./internal";
 
 const GRAVITY_OFFSET = 4;
@@ -14,7 +15,6 @@ const INFOTRONS_NEED_OFFSET = FREEZE_ZONKS_OFFSET + 1;
 const SPEC_PORT_COUNT_OFFSET = INFOTRONS_NEED_OFFSET + 1;
 const SPEC_PORT_DB_OFFSET = SPEC_PORT_COUNT_OFFSET + 1;
 const SPEC_PORT_ITEM_LENGTH = 6;
-const SPEC_PORT_MAX_COUNT = 10;
 const DEMO_SPEED_A_OFFSET = 92;
 const DEMO_SPEED_B_OFFSET = 93;
 const DEMO_RNG_SEED_LO_OFFSET = 94;

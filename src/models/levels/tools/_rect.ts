@@ -153,7 +153,7 @@ const {
     do: "commit",
     level: level.batch((level) =>
       drawRect(level, level, drawState!, (level, x, y, tile) =>
-        level.setTile(x, y, tile),
+        level.setTile(x, y, tile, true),
       ),
     ),
   }),

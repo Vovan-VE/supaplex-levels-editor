@@ -1,7 +1,11 @@
 import { CellContextEventSnapshot } from "models/levels/tools/interface";
-import { IBaseTileInteraction, InteractionType } from "../types";
+import { IBaseMetaTile, IBaseTileInteraction, InteractionType } from "../types";
 import { SpecPortDialog } from "./SpecPortDialog";
 import * as tid from "./tiles-id";
+import { ReactComponent as SvgMetaPortD } from "./tiles-svg/meta-port-d.svg";
+import { ReactComponent as SvgMetaPortL } from "./tiles-svg/meta-port-l.svg";
+import { ReactComponent as SvgMetaPortR } from "./tiles-svg/meta-port-r.svg";
+import { ReactComponent as SvgMetaPortU } from "./tiles-svg/meta-port-u.svg";
 import { ISupaplexLevel, ISupaplexTile } from "./types";
 
 const specPInt: IBaseTileInteraction<ISupaplexLevel> = {
@@ -22,9 +26,34 @@ const enum TBOrder {
   Enemy,
   Chip,
   Port,
-  SpPort,
+  // SpPort,
   FancyHw,
 }
+
+const metaPortTitle = (direction: string) =>
+  `Regular/Special Port ${direction}\nRight Click on it in level body to see properties`;
+const [metaPortR, metaPortD, metaPortL, metaPortU]: IBaseMetaTile[] = [
+  {
+    primaryValue: tid.TILE_PORT_R,
+    icon: <SvgMetaPortR />,
+    title: metaPortTitle("Right"),
+  },
+  {
+    primaryValue: tid.TILE_PORT_D,
+    icon: <SvgMetaPortD />,
+    title: metaPortTitle("Down"),
+  },
+  {
+    primaryValue: tid.TILE_PORT_L,
+    icon: <SvgMetaPortL />,
+    title: metaPortTitle("Left"),
+  },
+  {
+    primaryValue: tid.TILE_PORT_U,
+    icon: <SvgMetaPortU />,
+    title: metaPortTitle("Up"),
+  },
+];
 
 export const tiles: readonly ISupaplexTile[] = [
   { value: tid.TILE_SPACE, title: "Space", toolbarOrder: TBOrder.Core },
@@ -36,33 +65,61 @@ export const tiles: readonly ISupaplexTile[] = [
   { value: tid.TILE_HARDWARE, title: "Hardware", toolbarOrder: TBOrder.Core },
   { value: tid.TILE_EXIT, title: "Exit", toolbarOrder: TBOrder.Core },
   { value: tid.TILE_DISK_O, title: "Orange Disk", toolbarOrder: TBOrder.Disk },
-  { value: tid.TILE_PORT_R, title: "Port Right", toolbarOrder: TBOrder.Port },
-  { value: tid.TILE_PORT_D, title: "Port Down", toolbarOrder: TBOrder.Port },
-  { value: tid.TILE_PORT_L, title: "Port Left", toolbarOrder: TBOrder.Port },
-  { value: tid.TILE_PORT_U, title: "Port Up", toolbarOrder: TBOrder.Port },
+  {
+    value: tid.TILE_PORT_R,
+    title: "Port Right",
+    metaTile: metaPortR,
+    interaction: specPInt,
+    toolbarOrder: TBOrder.Port,
+  },
+  {
+    value: tid.TILE_PORT_D,
+    title: "Port Down",
+    metaTile: metaPortD,
+    interaction: specPInt,
+    toolbarOrder: TBOrder.Port,
+  },
+  {
+    value: tid.TILE_PORT_L,
+    title: "Port Left",
+    metaTile: metaPortL,
+    interaction: specPInt,
+    toolbarOrder: TBOrder.Port,
+  },
+  {
+    value: tid.TILE_PORT_U,
+    title: "Port Up",
+    metaTile: metaPortU,
+    interaction: specPInt,
+    toolbarOrder: TBOrder.Port,
+  },
   {
     value: tid.TILE_SP_PORT_R,
     title: "Special Port Right",
+    metaTile: metaPortR,
     interaction: specPInt,
-    toolbarOrder: TBOrder.SpPort,
+    // toolbarOrder: TBOrder.SpPort,
   },
   {
     value: tid.TILE_SP_PORT_D,
     title: "Special Port Down",
+    metaTile: metaPortD,
     interaction: specPInt,
-    toolbarOrder: TBOrder.SpPort,
+    // toolbarOrder: TBOrder.SpPort,
   },
   {
     value: tid.TILE_SP_PORT_L,
     title: "Special Port Left",
+    metaTile: metaPortL,
     interaction: specPInt,
-    toolbarOrder: TBOrder.SpPort,
+    // toolbarOrder: TBOrder.SpPort,
   },
   {
     value: tid.TILE_SP_PORT_U,
     title: "Special Port Up",
+    metaTile: metaPortU,
     interaction: specPInt,
-    toolbarOrder: TBOrder.SpPort,
+    // toolbarOrder: TBOrder.SpPort,
   },
   {
     value: tid.TILE_SNIK_SNAK,

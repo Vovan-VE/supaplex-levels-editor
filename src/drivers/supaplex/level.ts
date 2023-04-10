@@ -22,7 +22,13 @@ import {
   ISupaplexSpecPortProps,
   LocalOpt,
 } from "./internal";
-import { isSpecPort, TILE_HARDWARE, TILE_SPACE } from "./tiles-id";
+import {
+  isSpecPort,
+  isVariants,
+  setPortIsSpecial,
+  TILE_HARDWARE,
+  TILE_SPACE,
+} from "./tiles-id";
 import { ISupaplexLevel, ISupaplexLevelRegion } from "./types";
 import { isEmptyObject } from "../../utils/object";
 
@@ -183,8 +189,16 @@ class SupaplexLevel implements ISupaplexLevel {
     return this.#body.getTile(x, y);
   }
 
-  setTile(x: number, y: number, value: number) {
+  setTile(x: number, y: number, value: number, keepSameVariant?: boolean) {
     const prev = this.#body.getTile(x, y);
+    if (keepSameVariant) {
+      if (isVariants(prev, value)) {
+        return this;
+      }
+      if (isSpecPort(prev) && !isSpecPort(value)) {
+        value = setPortIsSpecial(value, true);
+      }
+    }
     if (prev === value) {
       return this;
     }
@@ -205,13 +219,33 @@ class SupaplexLevel implements ISupaplexLevel {
     return this.#body.isPlayable();
   }
 
-  tilesRenderStream(
+  *tilesRenderStream(
     x: number,
     y: number,
     w: number,
     h: number,
   ): Iterable<ITilesStreamItem> {
-    return this.#body.tilesRenderStream(x, y, w, h);
+    for (const chunk of this.#body.tilesRenderStream(x, y, w, h)) {
+      const [tx, ty, width, tile] = chunk;
+      if (isSpecPort(tile)) {
+        // just split chunk in separate tiles - easier and harmless since there
+        // are no big chunks of spec ports
+        const altChunks = Array.from({ length: width }).map<ITilesStreamItem>(
+          (_, i) => [
+            tx + i,
+            ty,
+            1,
+            tile,
+            this.#footer.findSpecPort(tx + i, ty) ? undefined : 1,
+          ],
+        );
+        if (altChunks.some(([, , , , variant]) => variant)) {
+          yield* altChunks;
+          continue;
+        }
+      }
+      yield chunk;
+    }
   }
 
   copyRegion(r: Rect) {

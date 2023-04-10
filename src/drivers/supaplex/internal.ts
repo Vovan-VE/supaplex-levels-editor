@@ -67,6 +67,8 @@ export interface ILevelFooter extends IWithDemo {
   setUseSerialPorts(on: boolean): this;
 }
 
+export const SPEC_PORT_MAX_COUNT = 10;
+
 export const enum LocalOpt {
   UsePlasma = "usePlasma",
   UsePlasmaLimit = "usePlasmaLimit",

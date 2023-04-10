@@ -1,4 +1,4 @@
-import { CSSProperties, FC, ReactNode } from "react";
+import { CSSProperties, FC, ReactElement, ReactNode } from "react";
 import { CellContextEventSnapshot } from "models/levels/tools/interface";
 import { IBounds, Rect } from "utils/rect";
 
@@ -39,6 +39,7 @@ export type ITilesStreamItem = readonly [
   y: number,
   width: number,
   tile: number,
+  variant?: number,
 ];
 
 export interface ITilesRegion extends IBounds {
@@ -72,7 +73,7 @@ export type LocalOptionsList = readonly (LocalOptions | null | undefined)[];
 
 export interface IBaseLevel extends ITilesRegion {
   readonly raw: Uint8Array;
-  setTile(x: number, y: number, value: number): this;
+  setTile(x: number, y: number, value: number, keepSameVariant?: boolean): this;
   batch(update: (b: this) => this): this;
   resize?(options: IResizeLevelOptions): this;
   readonly title: string;
@@ -129,9 +130,15 @@ export interface IBaseTileInteraction<L extends IBaseLevel> {
   ) => Interaction<T> | undefined;
 }
 
-export interface IBaseTile<L extends IBaseLevel> {
-  value?: number;
+export interface IBaseMetaTile {
   title: string;
+  icon: ReactElement;
+  primaryValue: number;
+}
+export interface IBaseTile<L extends IBaseLevel> {
+  value: number;
+  title: string;
+  metaTile?: IBaseMetaTile;
   toolbarOrder?: number;
   interaction?: IBaseTileInteraction<L>;
   // TODO: limits like spec ports counts and coords<=>offset, Murphy presence
@@ -169,7 +176,8 @@ export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
 }
 
 export interface TileRenderProps {
-  tile?: number;
+  tile: number;
+  variant?: number;
   className?: string;
   style?: CSSProperties;
 }

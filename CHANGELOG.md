@@ -2,9 +2,18 @@
 
 ## 0.10.0 (DEV)
 
-- Enh: Toolbars layout now is more adaptive to be more compact together.
 - Add: Display primitive notice when "Infotrons needed" = 0 (all), and level has
   more than 256 infotrons.
+- Enh: Toolbars layout now is more adaptive to be more compact together.
+- Enh: Special Ports buttons in tiles toolbar was merged with corresponding
+  Regular Ports. So now there are 4 fewer buttons.
+  - To switch Regular/Special port, Right-Click on the port in level body.
+  - Special port properties are tended to keep when changing special port by
+    another one with different direction, as when previously you directly
+    replace one Special Port with another.
+  - When Special Port has no properties in level (and so will behave as Regular
+    Port while technically it's Special Port), it will look half-colored in
+    level body as in Tile Toolbar.
 
 ## 0.9.0 (2023-03-25)
 

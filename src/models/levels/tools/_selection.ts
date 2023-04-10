@@ -56,7 +56,7 @@ const fillRegionInLevel = (level: IBaseLevel, r: Rect, tile: number) =>
     let { x, y, width, height } = clipRect(r, level);
     for (let j = 0; j < height; j++) {
       for (let i = 0; i < width; i++) {
-        level = level.setTile(x + i, y + j, tile);
+        level = level.setTile(x + i, y + j, tile, true);
       }
     }
     return level;

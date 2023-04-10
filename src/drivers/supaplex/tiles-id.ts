@@ -116,3 +116,22 @@ export const isSpecPort = (tile: number) =>
   tile === TILE_SP_PORT_D ||
   tile === TILE_SP_PORT_L ||
   tile === TILE_SP_PORT_U;
+
+const portSpMap = new Map([
+  [TILE_PORT_R, TILE_SP_PORT_R],
+  [TILE_PORT_D, TILE_SP_PORT_D],
+  [TILE_PORT_L, TILE_SP_PORT_L],
+  [TILE_PORT_U, TILE_SP_PORT_U],
+
+  [TILE_SP_PORT_R, TILE_PORT_R],
+  [TILE_SP_PORT_D, TILE_PORT_D],
+  [TILE_SP_PORT_L, TILE_PORT_L],
+  [TILE_SP_PORT_U, TILE_PORT_U],
+]);
+export const togglePortIsSpecial = (tile: number) =>
+  portSpMap.get(tile) ?? tile;
+export const setPortIsSpecial = (tile: number, setIsSpecial: boolean) =>
+  isSpecPort(tile) === setIsSpecial ? tile : togglePortIsSpecial(tile);
+
+export const isVariants = (a: number, b: number) =>
+  a === b || portSpMap.get(a) === b;

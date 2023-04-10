@@ -43,7 +43,7 @@ sample({
           const point = stack[stack.length - 1];
           let { x, y, to } = point;
           --_limit;
-          next = next.setTile(x, y, tile);
+          next = next.setTile(x, y, tile, true);
 
           if (to === TO.UP && y > 0 && next.getTile(x, y - 1) === prevTile) {
             point.to = TO.RIGHT;
