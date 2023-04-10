@@ -40,7 +40,7 @@
   @include mixins.media-breakpoint-up(lg) {
     .tiles {
       button {
-        $w-fit: tb.fit-buttons-width-no-margin(100vw, 41);
+        $w-fit: tb.fit-buttons-width-no-margin(100vw, 37);
         $f-fit: calc(#{$w-fit} - 2 * var(--btn-pad-x));
         $f-limited: min(1.5rem, #{$f-fit});
         $w-limited: calc(#{$f-limited} + 2 * var(--btn-pad-x));
@@ -60,13 +60,13 @@
 
   @include mixins.media-breakpoint-up(xl) {
     grid-gap: 0 0.25rem;
-    grid-template-columns: 24.2rem min-content 1fr min-content;
+    grid-template-columns: 22.4rem min-content 1fr min-content;
     grid-template-areas:
       "tiles config driver driver"
       "tiles tools  tools  edit";
   }
 
   @include mixins.media-breakpoint-up(xxl) {
-    grid-template-columns: 36rem min-content 1fr min-content;
+    grid-template-columns: 32.6rem min-content 1fr min-content;
   }
 }
