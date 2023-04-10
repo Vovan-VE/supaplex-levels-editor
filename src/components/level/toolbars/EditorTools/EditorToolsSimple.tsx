@@ -8,7 +8,6 @@ import {
   TOOLS,
 } from "models/levels/tools";
 import { Button, Toolbar } from "ui/button";
-import { svgs } from "ui/icon";
 import { ColorType, ContainerProps } from "ui/types";
 
 const handleClicks = TOOLS.map(({ variants }, ti) =>
@@ -38,9 +37,9 @@ export const EditorToolsSimple: FC<ContainerProps> = (props) => {
           />
         )),
       )}
-      {Array.from({ length: 7 }).map((_, i) => (
-        <Button key={i} icon={<svgs.Menu />} disabled />
-      ))}
+      {/*{Array.from({ length: 7 }).map((_, i) => (*/}
+      {/*  <Button key={i} icon={<svgs.Menu />} disabled />*/}
+      {/*))}*/}
     </Toolbar>
   );
 };
