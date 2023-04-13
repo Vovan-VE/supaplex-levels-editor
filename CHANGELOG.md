@@ -4,6 +4,8 @@
 
 - Add: Display primitive notice when "Infotrons needed" = 0 (all), and level has
   more than 256 infotrons.
+- Add: Pen tool with shapes 1x2 and 2x1 with Double Chips support. This will be
+  enhanced in further versions.
 - Enh: Toolbars layout now is more adaptive to be more compact together.
 - Enh: Special Ports buttons in tiles toolbar was merged with corresponding
   Regular Ports. So now there are 4 fewer buttons.

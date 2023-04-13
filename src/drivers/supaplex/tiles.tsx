@@ -1,4 +1,7 @@
-import { CellContextEventSnapshot } from "models/levels/tools/interface";
+import {
+  CellContextEventSnapshot,
+  PenShape,
+} from "models/levels/tools/interface";
 import { IBaseMetaTile, IBaseTileInteraction, InteractionType } from "../types";
 import { SpecPortDialog } from "./SpecPortDialog";
 import * as tid from "./tiles-id";
@@ -146,7 +149,12 @@ export const tiles: readonly ISupaplexTile[] = [
   { value: tid.TILE_PORT_X, title: "Port Cross", toolbarOrder: TBOrder.Port },
   { value: tid.TILE_ELECTRON, title: "Electron", toolbarOrder: TBOrder.Enemy },
   { value: tid.TILE_BUG, title: "Bug", toolbarOrder: TBOrder.Trigger },
-  { value: tid.TILE_CHIP_L, title: "Chip Left", toolbarOrder: TBOrder.Chip },
+  {
+    value: tid.TILE_CHIP_L,
+    title: "Chip Left",
+    toolbarOrder: TBOrder.Chip,
+    drawStruct: { [PenShape._2x1]: { setTiles: [undefined, tid.TILE_CHIP_R] } },
+  },
   { value: tid.TILE_CHIP_R, title: "Chip Right", toolbarOrder: TBOrder.Chip },
   {
     value: tid.TILE_HW_CIRCULAR,
@@ -198,7 +206,12 @@ export const tiles: readonly ISupaplexTile[] = [
     title: "Hardware Resistors horizontal",
     toolbarOrder: TBOrder.FancyHw,
   },
-  { value: tid.TILE_CHIP_T, title: "Chip Top", toolbarOrder: TBOrder.Chip },
+  {
+    value: tid.TILE_CHIP_T,
+    title: "Chip Top",
+    toolbarOrder: TBOrder.Chip,
+    drawStruct: { [PenShape._1x2]: { setTiles: [undefined, tid.TILE_CHIP_B] } },
+  },
   { value: tid.TILE_CHIP_B, title: "Chip Bottom", toolbarOrder: TBOrder.Chip },
   { value: tid.TILE_INVIS_WALL, title: "Invisible Wall" },
 ];

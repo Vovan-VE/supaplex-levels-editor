@@ -1,5 +1,8 @@
 import { CSSProperties, FC, ReactElement, ReactNode } from "react";
-import { CellContextEventSnapshot } from "models/levels/tools/interface";
+import {
+  CellContextEventSnapshot,
+  PenShapeStructures,
+} from "models/levels/tools/interface";
 import { IBounds, Rect } from "utils/rect";
 
 export interface ISizeLimit {
@@ -141,6 +144,7 @@ export interface IBaseTile<L extends IBaseLevel> {
   metaTile?: IBaseMetaTile;
   toolbarOrder?: number;
   interaction?: IBaseTileInteraction<L>;
+  drawStruct?: PenShapeStructures;
   // TODO: limits like spec ports counts and coords<=>offset, Murphy presence
   //   and like notices for infotrons % 256 in case of 'all'
 }

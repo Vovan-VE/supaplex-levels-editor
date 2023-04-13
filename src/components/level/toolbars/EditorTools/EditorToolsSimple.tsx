@@ -37,7 +37,7 @@ export const EditorToolsSimple: FC<ContainerProps> = (props) => {
           />
         )),
       )}
-      {/*{Array.from({ length: 7 }).map((_, i) => (*/}
+      {/*{Array.from({ length: 3 }).map((_, i) => (*/}
       {/*  <Button key={i} icon={<svgs.Menu />} disabled />*/}
       {/*))}*/}
     </Toolbar>

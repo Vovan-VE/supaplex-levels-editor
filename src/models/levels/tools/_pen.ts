@@ -2,28 +2,16 @@ import { combine } from "effector";
 import * as RoMap from "@cubux/readonly-map";
 import { svgs } from "ui/icon";
 import { inBounds } from "utils/rect";
-import { cellKey, DrawLayerType, TilesPath, Tool, ToolUI } from "./interface";
+import {
+  cellKey,
+  DrawLayerType,
+  PEN_SHAPES,
+  PenShape,
+  TilesPath,
+  Tool,
+  ToolUI,
+} from "./interface";
 import { createDragTool } from "./_drag-tool";
-
-const enum PenShape {
-  DOT,
-  _3x3,
-  // TODO: 2x1 & 1x2 with driver specific hacks (sp double chips)
-}
-const SHAPES: Record<PenShape, readonly [x: number, y: number][]> = {
-  [PenShape.DOT]: [[0, 0]],
-  [PenShape._3x3]: [
-    [-1, -1],
-    [0, -1],
-    [1, -1],
-    [-1, 0],
-    [0, 0],
-    [1, 0],
-    [-1, 1],
-    [0, 1],
-    [1, 1],
-  ],
-};
 
 interface DrawProps {
   shape: PenShape;
@@ -51,6 +39,22 @@ const {
       },
     },
     {
+      internalName: "x1x2",
+      title: "Pencil 1x2",
+      Icon: svgs.Grid1x2,
+      drawProps: {
+        shape: PenShape._1x2,
+      },
+    },
+    {
+      internalName: "x2x1",
+      title: "Pencil 2x1",
+      Icon: svgs.Grid2x1,
+      drawProps: {
+        shape: PenShape._2x1,
+      },
+    },
+    {
       internalName: "x3",
       title: "Pencil 3x3",
       Icon: svgs.Grid3x3,
@@ -60,14 +64,23 @@ const {
     },
   ],
   idleState: new Map(),
-  drawReducer: (path, { event, tile, drawProps: { shape } }) =>
-    SHAPES[shape].reduce((path, [dx, dy]) => {
+  drawReducer: (
+    path,
+    {
+      event,
+      tile,
+      drawProps: { shape },
+      drvStructs: { [shape]: { setTiles = undefined } = {} } = {},
+    },
+  ) =>
+    PEN_SHAPES[shape].reduce((path, [dx, dy], i) => {
       const x = event.x + dx;
       const y = event.y + dy;
       if (inBounds(x, y, event)) {
         const key = cellKey({ x, y });
-        if (path.get(key)?.tile !== tile) {
-          return RoMap.set(path, key, { x, y, tile });
+        const newTile = setTiles?.[i] ?? tile;
+        if (path.get(key)?.tile !== newTile) {
+          return RoMap.set(path, key, { x, y, tile: newTile });
         }
       }
       return path;

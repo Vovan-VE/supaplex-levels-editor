@@ -13,6 +13,8 @@ export { ReactComponent as FileBin } from "./FileBin.svg";
 export { ReactComponent as FileBlank } from "./FileBlank.svg";
 export { ReactComponent as FileConvert } from "./FileConvert.svg";
 export { ReactComponent as FloodFill } from "./FloodFill.svg";
+export { ReactComponent as Grid1x2 } from "./Grid1x2.svg";
+export { ReactComponent as Grid2x1 } from "./Grid2x1.svg";
 export { ReactComponent as Grid3x3 } from "./Grid3x3.svg";
 export { ReactComponent as Info } from "./Info.svg";
 export { ReactComponent as InsertRow } from "./InsertRow.svg";
