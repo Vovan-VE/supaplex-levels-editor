@@ -4,13 +4,10 @@ import { svgs } from "ui/icon";
 import { IBounds, Point2D } from "utils/rect";
 import { SelectionEditor, SelectionEditorFn } from "./_types";
 
-type FlipLengthFn = (r: IBounds) => readonly [vary: number, constant: number];
-type FlipPointFn = (vary: number, constant: number) => Point2D;
-
 const buildFlip =
   (
-    len: FlipLengthFn,
-    point: FlipPointFn,
+    len: (r: IBounds) => readonly [vary: number, constant: number],
+    point: (vary: number, constant: number) => Point2D,
     direction: FlipDirection,
   ): SelectionEditorFn =>
   (r) => {
