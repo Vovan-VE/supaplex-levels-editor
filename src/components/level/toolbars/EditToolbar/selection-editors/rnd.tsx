@@ -6,7 +6,6 @@ const RndEditor: FC<SelectionEditorProps> = ({ onSubmit }) => <div>...</div>;
 
 export const rnd: SelectionEditor = {
   title: "Random",
-  // TODO: icon
-  icon: <svgs.Pencil />,
+  icon: <svgs.Random />,
   Component: RndEditor,
 };

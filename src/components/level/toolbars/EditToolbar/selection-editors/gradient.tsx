@@ -8,7 +8,6 @@ const GradientEditor: FC<SelectionEditorProps> = ({ onSubmit }) => (
 
 export const gradient: SelectionEditor = {
   title: "Gradient",
-  // TODO: icon
-  icon: <svgs.Pencil />,
+  icon: <svgs.Gradient />,
   Component: GradientEditor,
 };

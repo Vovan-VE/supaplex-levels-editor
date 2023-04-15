@@ -1,4 +1,4 @@
-import { FC, useCallback } from "react";
+import { FC, ReactNode, useCallback } from "react";
 import {
   DISPLAY_ORDER,
   DriverName,
@@ -12,6 +12,8 @@ interface Props {
   driverName: DriverName;
   tile: number;
   onChange: (tile: number) => void;
+  canClear?: boolean;
+  placeholder?: ReactNode;
 }
 
 const OPTIONS = new Map(
@@ -33,7 +35,13 @@ const OPTIONS = new Map(
   }),
 );
 
-export const TileSelect: FC<Props> = ({ driverName, tile, onChange }) => {
+export const TileSelect: FC<Props> = ({
+  driverName,
+  tile,
+  onChange,
+  canClear = false,
+  ...rest
+}) => {
   const options = OPTIONS.get(driverName);
   const handleChange = useCallback(
     (o: SelectOption<number> | null) => {
@@ -44,6 +52,7 @@ export const TileSelect: FC<Props> = ({ driverName, tile, onChange }) => {
 
   return (
     <Select
+      {...rest}
       options={options!}
       value={options?.find((o) => o.value === tile) ?? null}
       onChange={handleChange}
@@ -52,6 +61,7 @@ export const TileSelect: FC<Props> = ({ driverName, tile, onChange }) => {
         menuList: () => cl.menuList,
         option: () => cl.option,
       }}
+      isClearable={canClear}
     />
   );
 };

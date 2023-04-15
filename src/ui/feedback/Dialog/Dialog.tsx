@@ -13,7 +13,7 @@ import { TextButton } from "ui/button";
 import { svgs } from "ui/icon";
 import cl from "./Dialog.module.scss";
 
-type DialogSize = "small" | "large" | "full";
+export type DialogSize = "small" | "large" | "full";
 const CL_SIZE: Record<DialogSize, string | undefined> = {
   small: cl._small,
   large: cl._large,

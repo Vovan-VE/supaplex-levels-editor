@@ -38,10 +38,21 @@ interface EditorsGroup {
 }
 const EDITORS: readonly EditorsGroup[] = [
   {
-    editors: { chess, gradient, maze, replace, rnd },
+    editors: {
+      // Have no idea which sort order should be here, and so decided to use
+      // alphabetical order, while it's not so much items.
+      chess,
+      gradient,
+      maze,
+      replace,
+      rnd,
+    },
   },
   {
-    editors: { flipH, flipV },
+    editors: {
+      flipH,
+      flipV,
+    },
     // rotate?
   },
 ];
@@ -68,7 +79,7 @@ const $run = $selectionSize.map((size) =>
   size
     ? RoMap.map(
         editorsMap,
-        ({ title, instant, Component }, name) =>
+        ({ title, instant, Component, dialogSize }, name) =>
           async () => {
             const region = await getSelectionContentFx();
             if (region) {
@@ -84,8 +95,17 @@ const $run = $selectionSize.map((size) =>
                       (v) => v || onCancel(),
                     );
                     return (
-                      <Dialog open={show} onClose={onCancel} title={title}>
-                        <Component region={region} onSubmit={onSubmit} />
+                      <Dialog
+                        open={show}
+                        onClose={onCancel}
+                        title={title}
+                        size={dialogSize ?? "small"}
+                      >
+                        <Component
+                          region={region}
+                          onSubmit={onSubmit}
+                          onCancel={onCancel}
+                        />
                       </Dialog>
                     );
                   });

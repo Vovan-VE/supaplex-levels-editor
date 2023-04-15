@@ -8,7 +8,6 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({ onSubmit }) => (
 
 export const replace: SelectionEditor = {
   title: "Replace",
-  // TODO: icon
-  icon: <svgs.Pencil />,
+  icon: <svgs.Replace />,
   Component: ReplaceEditor,
 };
