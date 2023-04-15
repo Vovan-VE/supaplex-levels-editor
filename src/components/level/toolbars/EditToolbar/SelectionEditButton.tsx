@@ -6,6 +6,7 @@ import {
   $hasSelection,
   $openedSelectionEdit,
   $selectionSize,
+  cancelSelectionEdit,
   getSelectionContentFx,
   openSelectionEdit,
   submitSelectionEdit,
@@ -86,7 +87,6 @@ const $run = $selectionSize.map((size) =>
               let result: ILevelRegion | null | undefined = undefined;
               if (Component) {
                 openSelectionEdit(name);
-
                 let unwatch: () => void;
                 try {
                   result = await renderPrompt<ILevelRegion>((props) => {
@@ -111,6 +111,7 @@ const $run = $selectionSize.map((size) =>
                   });
                 } finally {
                   unwatch!?.();
+                  cancelSelectionEdit();
                 }
               } else if (instant) {
                 result = instant(region);

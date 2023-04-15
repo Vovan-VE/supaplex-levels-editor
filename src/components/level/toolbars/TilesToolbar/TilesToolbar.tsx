@@ -3,7 +3,7 @@ import cn from "classnames";
 import { useStore } from "effector-react";
 import { getTilesForToolbar } from "drivers";
 import { $drvTileRender, $drvTiles, $tileIndex, setTile } from "models/levels";
-import { Button, Toolbar } from "ui/button";
+import { TextButton, Toolbar } from "ui/button";
 import { ColorType, ContainerProps } from "ui/types";
 import cl from "./TilesToolbar.module.scss";
 
@@ -35,11 +35,10 @@ export const TilesToolbar: FC<Props> = ({ className, ...rest }) => {
       {tilesSorted.map(([i, { title, value, metaTile }]) => (
         <Fragment key={value}>
           {i > 0 && <wbr />}
-          <Button
+          <TextButton
             title={metaTile?.title ?? title}
             icon={metaTile?.icon ?? <TileRender tile={value} />}
             className={cn(cl.btn, i === tileIndex && cl._current)}
-            asLink
             uiColor={ColorType.WARN}
             onClick={handleTile[i]}
           />

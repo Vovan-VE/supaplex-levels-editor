@@ -11,6 +11,7 @@
   - Chess;
   - Gradient;
   - Replace;
+  - Random;
   - Flip.
 - Enh: Toolbars layout now is more adaptive to be more compact together.
 - Enh: Special Ports buttons in tiles toolbar was merged with corresponding

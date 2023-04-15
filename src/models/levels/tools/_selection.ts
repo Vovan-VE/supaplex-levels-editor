@@ -419,6 +419,7 @@ export const $openedSelectionEdit = createStore<string | null>(null)
     (_, p) => p,
   );
 
+// REFACT: flush old content (if any) to level? then put new content to level?
 $drawState.on(submitSelectionEdit, (s, r) => {
   if (s?.op === Op.STABLE) {
     return { ...s, content: r };
