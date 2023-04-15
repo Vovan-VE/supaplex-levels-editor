@@ -1,7 +1,7 @@
 import { useStore } from "effector-react";
 import { FC, useCallback, useMemo, useState } from "react";
-import { getDriver } from "drivers";
 import { TileSelect } from "components/driver/TileSelect";
+import { getDriver } from "drivers";
 import { $currentDriverName } from "models/levelsets";
 import { Button } from "ui/button";
 import { svgs } from "ui/icon";

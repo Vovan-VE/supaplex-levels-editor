@@ -9,6 +9,7 @@
 - Add: Selection edit tools. Select a region of level body, and the new dropdown
   button will allow to apply to the selection the following tools:
   - Chess;
+  - Replace
   - Flip.
 - Enh: Toolbars layout now is more adaptive to be more compact together.
 - Enh: Special Ports buttons in tiles toolbar was merged with corresponding

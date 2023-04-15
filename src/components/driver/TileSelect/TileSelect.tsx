@@ -12,6 +12,7 @@ interface Props {
   driverName: DriverName;
   tile: number;
   onChange: (tile: number) => void;
+  // TODO: showVariants?: bool;
   canClear?: boolean;
   placeholder?: ReactNode;
 }

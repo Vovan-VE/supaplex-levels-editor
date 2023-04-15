@@ -14,7 +14,6 @@
   - When there is a Selection: Single button to edit selection:
     - Random
     - Maze
-    - Replace
     - Gradient
 - Enhance Read Only mode more?
 - Visualized level resizing with crop.
