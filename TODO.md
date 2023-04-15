@@ -29,8 +29,5 @@
   position where the click is made).
 - Level region clipboard persistent (t.i. store selection region in every opened
   level buffer).
-- Clone selection reflected vertically and horizontally in order to facilitate
-  the symmetries.
-  - UI toolbar, too many buttons, too few space.
 - Some additional (temp?) tile selection ways, like "take this specially clicked
   in body tile". Some graphical editors have something similar.

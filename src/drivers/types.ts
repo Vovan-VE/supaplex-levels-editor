@@ -3,7 +3,7 @@ import {
   CellContextEventSnapshot,
   PenShapeStructures,
 } from "models/levels/tools/interface";
-import { IBounds, Rect } from "utils/rect";
+import { IBounds, Point2D, Rect } from "utils/rect";
 
 export interface ISizeLimit {
   readonly minWidth?: number;
@@ -71,12 +71,18 @@ export interface IResizeLevelOptions extends INewLevelOptions {
   y?: number;
 }
 
+export const enum FlipDirection {
+  H = "H",
+  V = "V",
+}
+
 export type LocalOptions = Record<string, any>;
 export type LocalOptionsList = readonly (LocalOptions | null | undefined)[];
 
 export interface IBaseLevel extends ITilesRegion {
   readonly raw: Uint8Array;
   setTile(x: number, y: number, value: number, keepSameVariant?: boolean): this;
+  swapTiles(a: Point2D, b: Point2D, flip?: FlipDirection): this;
   batch(update: (b: this) => this): this;
   resize?(options: IResizeLevelOptions): this;
   readonly title: string;
@@ -207,6 +213,7 @@ export interface IBaseDriver<
    */
   formats: Record<string, IBaseFormat<L, S>>;
   defaultFormat?: string;
+  tempLevelFromRegion: (region: ILevelRegion) => L;
   // TODO: optional separate display order
   // TODO: create levelset config
 }

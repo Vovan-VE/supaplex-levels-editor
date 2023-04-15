@@ -299,17 +299,28 @@ export const SELECTION: Tool = {
   ),
 };
 
-// $isDragging.watch((v) => console.log("isDragging", v));
-// $drawState.watch((v) => console.log("state", v));
-// SELECTION.$ui.watch((d) => console.log("ui", d.drawLayers, d.drawCursor));
-
 const _setState = createEvent<DrawState>();
 forward({ from: _setState, to: $drawState });
 $isDragging.reset(_setState);
 
 export const $hasSelection = $drawState.map((d) => d?.op === Op.STABLE);
+export const $selectionSize = $drawState.map<IBounds | null>((d, prev) => {
+  if (d?.op !== Op.STABLE) {
+    return null;
+  }
+  if (prev?.width === d.width && prev.height === d.height) {
+    return prev;
+  }
+  return { width: d.width, height: d.height };
+});
+const $selectionSizeHash = $selectionSize.map(
+  (s) => s && (`${s.width}x${s.height}` as const),
+);
 
 export const deleteSelectionFx = createEffect(async () => {
+  if ($openedSelectionEdit.getState()) {
+    return;
+  }
   const drawState = $drawState.getState();
   const q = $currentLevelUndoQueue.getState();
   if (q && drawState?.op === Op.STABLE && !drawState.content) {
@@ -339,12 +350,18 @@ export const $clipboardRegionSizeStr = $clipboardRegion.map((r) =>
 );
 
 export const cutSelectionFx = createEffect(() => {
+  if ($openedSelectionEdit.getState()) {
+    return;
+  }
   copySelection();
   return deleteSelectionFx();
 });
 
 // only run after activating selection tool
 export const pasteSelectionFx = createEffect(async (visibleRect?: Rect) => {
+  if ($openedSelectionEdit.getState()) {
+    return;
+  }
   externalRollback();
   const region = $clipboardRegion.getState();
   if (region) {
@@ -373,5 +390,37 @@ export const pasteSelectionFx = createEffect(async (visibleRect?: Rect) => {
       height: region.tiles.height,
       content: region,
     });
+  }
+});
+
+export const getSelectionContentFx = createEffect(() => {
+  const d = $drawState.getState();
+  if (d?.op === Op.STABLE) {
+    if (d.content) {
+      return d.content;
+    }
+    const q = $currentLevelUndoQueue.getState();
+    if (q) {
+      return q.current.copyRegion(d);
+    }
+  }
+  return null;
+});
+export const openSelectionEdit = createEvent<string>();
+export const cancelSelectionEdit = createEvent<any>();
+export const submitSelectionEdit = createEvent<ILevelRegion>();
+export const $openedSelectionEdit = createStore<string | null>(null)
+  .reset(cancelSelectionEdit, $selectionSizeHash.updates)
+  .on(
+    sample({
+      source: openSelectionEdit,
+      filter: $hasSelection,
+    }),
+    (_, p) => p,
+  );
+
+$drawState.on(submitSelectionEdit, (s, r) => {
+  if (s?.op === Op.STABLE) {
+    return { ...s, content: r };
   }
 });

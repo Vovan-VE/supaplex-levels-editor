@@ -1,6 +1,7 @@
-import { clipRect, IBounds, inBounds, Rect } from "utils/rect";
+import { clipRect, IBounds, inBounds, Point2D, Rect } from "utils/rect";
 import {
   DemoSeed,
+  FlipDirection,
   INewLevelOptions,
   IResizeLevelOptions,
   ITilesStreamItem,
@@ -26,6 +27,7 @@ import {
   isSpecPort,
   isVariants,
   setPortIsSpecial,
+  symmetry,
   TILE_HARDWARE,
   TILE_SPACE,
 } from "./tiles-id";
@@ -211,6 +213,25 @@ class SupaplexLevel implements ISupaplexLevel {
       if (isSpecPort(value)) {
         next = next.setSpecPort(x, y);
       }
+    }
+    return next;
+  }
+
+  swapTiles(a: Point2D, b: Point2D, flip?: FlipDirection) {
+    let prevA = this.#body.getTile(a.x, a.y);
+    let prevB = this.#body.getTile(b.x, b.y);
+    if (flip) {
+      const s = symmetry[flip];
+      [prevA, prevB] = [s.get(prevA) ?? prevA, s.get(prevB) ?? prevB];
+    }
+    const spA = this.#footer.findSpecPort(a.x, a.y);
+    const spB = this.#footer.findSpecPort(b.x, b.y);
+    let next = this.setTile(a.x, a.y, prevB).setTile(b.x, b.y, prevA);
+    if (spB) {
+      next = next.setSpecPort(a.x, a.y, spB);
+    }
+    if (spA) {
+      next = next.setSpecPort(b.x, b.y, spA);
     }
     return next;
   }
