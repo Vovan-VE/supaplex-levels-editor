@@ -74,11 +74,13 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
           />
         </Field>
       </div>
-      <div>
-        <Checkbox checked={keepVariants} onChange={setKeepVariants}>
-          Keep tile variants
-        </Checkbox>
-      </div>
+      {(tileVariants.has(searchTile) || tileVariants.has(replaceTile)) && (
+        <div>
+          <Checkbox checked={keepVariants} onChange={setKeepVariants}>
+            Keep tile variants
+          </Checkbox>
+        </div>
+      )}
 
       <div className={clC.buttons}>
         <Button
