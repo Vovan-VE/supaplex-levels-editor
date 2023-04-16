@@ -15,24 +15,19 @@
 
 .gridSmall {
   display: grid;
-  grid-gap: 0.5rem 1rem;
-  --cols: 2;
+  grid-gap: 0.5rem 2rem;
+  --cols: 1;
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
   align-items: center;
-  @media (min-width: 420px) {
-    --cols: 3;
-  }
   @media (min-width: 530px) {
-    --cols: 4;
+    --cols: 2;
   }
 
   > * {
     display: grid;
     grid-gap: 0.25rem;
-    grid-template-columns: min-content minmax(0, 1fr);
-    grid-template-areas:
-      "icon input"
-      "...  help";
+    grid-template-columns: min-content minmax(0, 1fr) 6ch;
+    grid-template-areas: "icon input help";
     align-items: center;
 
     > .icon {
@@ -43,6 +38,7 @@
     }
     > .help {
       grid-area: help;
+      text-align: right;
     }
   }
 }

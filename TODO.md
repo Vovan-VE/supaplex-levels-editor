@@ -13,7 +13,6 @@
 - Enhance Read Only mode more?
 - Visualized level resizing with crop.
   - Separate "crop" & "extend" scenarios with Tabs, for example.
-- Sliders instead of some integer inputs and selects.
 
 ## Wishes from users (unsorted)
 

@@ -5,7 +5,7 @@ import { getDriver } from "drivers";
 import { $currentDriverName } from "models/levelsets";
 import { Button } from "ui/button";
 import { svgs } from "ui/icon";
-import { Field, IntegerInput } from "ui/input";
+import { Field, Range } from "ui/input";
 import { ColorType } from "ui/types";
 import * as MZ from "utils/maze";
 import { SelectionEditor, SelectionEditorProps } from "./_types";
@@ -47,12 +47,9 @@ const MazeEditor: FC<SelectionEditorProps> = ({
 
   const [wallTile, setWallTile] = useState<number>(-1);
   const [wayTile, setWayTile] = useState<number>(-1);
-  const [branchLength, setBranchLength] = useState<number | null>(20);
+  const [branchLength, setBranchLength] = useState<number>(20);
 
   const handleSubmit = useCallback(() => {
-    if (branchLength === null) {
-      return;
-    }
     const { width, height } = tempLevel;
     const maze = MZ.generate(mazeWidth, mazeHeight, branchLength);
     onSubmit(
@@ -129,20 +126,23 @@ const MazeEditor: FC<SelectionEditorProps> = ({
       </div>
       <Field
         label="Branch length"
+        labelElement="div"
         help={
           <>
             It's technical option which could be called "Difficulty".
             <br />
-            The range is from <strong>1</strong> to{" "}
-            <strong>{mazeWidth * mazeHeight}</strong> (
-            <strong>{mazeWidth}</strong>x<strong>{mazeHeight}</strong>). The
-            higher value, the longer "ways" could be generated. However, in
-            practice it's most likely impossible to fill whole area by the only
-            way without forks, because it's random.
+            The higher value, the longer "ways" could be generated in theory.
+            However, in practice all large values behaves the same after some
+            threshold, because every branch generated just randomly.
           </>
         }
       >
-        <IntegerInput value={branchLength} onChange={setBranchLength} />
+        <Range
+          min={1}
+          max={50}
+          value={branchLength}
+          onChange={setBranchLength}
+        />
       </Field>
 
       <p>

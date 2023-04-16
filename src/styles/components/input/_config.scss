@@ -8,3 +8,6 @@ $focus-width: 0.25rem;
 $border-width: 1px;
 
 $all-extras-x: calc($padding-x * 2 + $border-width * 2);
+$actual-height: calc(
+  $font-size * $line-height + 2 * ($padding-y + $border-width)
+);

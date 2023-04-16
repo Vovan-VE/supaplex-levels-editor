@@ -2,7 +2,7 @@
 
 ## 0.11.0 (DEV)
 
-- ...
+- Enh: Replace number inputs and selects in Maze and Random tools with sliders.
 
 ## 0.10.0 (2023-04-16)
 
@@ -17,7 +17,7 @@
   - Random;
   - Flip.
 - Add: Display primitive notice when "Infotrons needed" = 0 (all), and level has
-  more than 256 infotrons.
+  more than 255 infotrons.
 - Enh: Special Ports buttons in tiles toolbar was merged with corresponding
   Regular Ports. So now there are 4 fewer buttons.
   - To switch Regular/Special port, Right-Click on the port in level body.

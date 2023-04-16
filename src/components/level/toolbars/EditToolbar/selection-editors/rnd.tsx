@@ -6,16 +6,12 @@ import { getDriver, getTilesForToolbar } from "drivers";
 import { $currentDriverName } from "models/levelsets";
 import { Button, TextButton } from "ui/button";
 import { svgs } from "ui/icon";
-import { Field, Select, SelectOption } from "ui/input";
+import { Field, Range } from "ui/input";
 import { ColorType } from "ui/types";
 import { EMPTY_MAP } from "utils/data";
 import { SelectionEditor, SelectionEditorProps } from "./_types";
 import clC from "./common.module.scss";
 import cl from "./rnd.module.scss";
-
-const countOptions = Array.from({ length: 31 }).map<SelectOption<number>>(
-  (_, i) => ({ value: i, label: String(i) }),
-);
 
 const getRandomTile = (
   prob: ReadonlyMap<number, number>,
@@ -126,14 +122,11 @@ const RndEditor: FC<SelectionEditorProps> = ({
                   ) : (
                     <i>keep</i>
                   )}
-                  <Select
-                    options={countOptions}
-                    value={countOptions.find((o) => o.value === count) ?? null}
-                    onChange={(o) => {
-                      if (o) {
-                        setProb((map) => RoMap.set(map, tile, o.value));
-                      }
-                    }}
+                  <Range
+                    min={1}
+                    max={30}
+                    value={count}
+                    onChange={(v) => setProb((map) => RoMap.set(map, tile, v))}
                     className={cl.input}
                   />
                   <div className={cl.help}>
