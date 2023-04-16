@@ -23,6 +23,7 @@ export { ReactComponent as Grid2x1 } from "./Grid2x1.svg";
 export { ReactComponent as Grid3x3 } from "./Grid3x3.svg";
 export { ReactComponent as Info } from "./Info.svg";
 export { ReactComponent as InsertRow } from "./InsertRow.svg";
+export { ReactComponent as Line } from "./Line.svg";
 export { ReactComponent as ListOrdered } from "./ListOrdered.svg";
 export { ReactComponent as Maze } from "./Maze.svg";
 export { ReactComponent as Menu } from "./Menu.svg";

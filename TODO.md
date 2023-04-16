@@ -9,7 +9,6 @@
 - Import/export single level.
 - Tools:
   - Circle
-  - Line
 - Enhance Read Only mode more?
 - Visualized level resizing with crop.
   - Separate "crop" & "extend" scenarios with Tabs, for example.
