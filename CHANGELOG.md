@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.10.0 (DEV)
+## 0.10.0 (2023-04-16)
 
 - Add: Pen tool with shapes 1x2 and 2x1 with Double Chips support. This will be
   enhanced in further versions.
