@@ -10,6 +10,7 @@
   button will allow to apply to the selection the following tools:
   - Chess;
   - Gradient;
+  - Maze;
   - Replace;
   - Random;
   - Flip.

@@ -8,21 +8,29 @@ interface Props extends ContainerProps {
   labelFor?: string;
   labelElement?: keyof ReactHTML;
   labelClassName?: string;
+  /**
+   * Notice: It has different behaviour when it's absent vs it's set to
+   * `undefined`, compared to common JS practice.
+   */
   error?: ReactNode;
   help?: ReactNode;
 }
+const P_ERROR: keyof Props = "error";
 
-export const Field: FC<PropsWithChildren<Props>> = ({
-  label,
-  labelFor,
-  labelElement: LabelElement = "label",
-  labelClassName,
-  error,
-  help,
-  className,
-  children,
-  ...rest
-}) => {
+export const Field: FC<PropsWithChildren<Props>> = (props) => {
+  const {
+    label,
+    labelFor,
+    labelElement: LabelElement = "label",
+    labelClassName,
+    error,
+    help,
+    className,
+    children,
+    ...rest
+  } = props;
+  const withError = props.hasOwnProperty(P_ERROR);
+
   const control = <div className={cl.control}>{children}</div>;
   const labelClass = cn(cl.label, labelClassName);
 
@@ -33,6 +41,7 @@ export const Field: FC<PropsWithChildren<Props>> = ({
         cl.root,
         className,
         Boolean(error) ? [cl._isError, "input-invalid"] : "input-valid",
+        withError || cl._noError,
       )}
     >
       {label ? (
@@ -59,7 +68,7 @@ export const Field: FC<PropsWithChildren<Props>> = ({
       )}
 
       {help && <div className={cl.help}>{help}</div>}
-      <div className={cl.error}>{error}</div>
+      {withError && <div className={cl.error}>{error}</div>}
     </div>
   );
 };

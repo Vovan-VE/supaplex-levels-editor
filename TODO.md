@@ -11,8 +11,6 @@
 - Tools:
   - Circle
   - Line
-  - When there is a Selection: Single button to edit selection:
-    - Maze
 - Enhance Read Only mode more?
 - Visualized level resizing with crop.
   - Separate "crop" & "extend" scenarios with Tabs, for example.
