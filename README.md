@@ -12,9 +12,9 @@
 [sple.me][sple.me] is **Supaplex Levels Editor** in browser. Inspired by
 [Supaplex.Online][spo] and its community.
 
-My previous editor (Winplex Collection Editor) is stuck in far 2010 on Windows.
-Its source code was lost somewhere in 2016 or about that with HDD failure. And
-so, here it is: yet another Supaplex levels editor!
+My previous editor (Winplex Collection Editor — WpColEd) is stuck in far 2010 on
+Windows. Its source code was lost somewhere in 2016 or about that with HDD
+failure. And so, here it is: yet another Supaplex levels editor!
 
 > **SpLE** is under development still. Feel free to report bugs, suggest
 > enhancements and correct grammar mistakes.
@@ -58,7 +58,7 @@ Also:
 
 ## Planned features (unsorted)
 
-- More editing tools at least those from Winplex Collection Editor.
+- More features from Winplex Collection Editor.
 - Compare levels.
 - End User Manual.
 - Draggable files buttons to reorder many opened files.
