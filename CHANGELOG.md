@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.10.0 (2023-04-16)
+
+- Add: Pen tool with shapes 1x2 and 2x1 with Double Chips support. This will be
+  enhanced in further versions.
+- Add: Selection edit tools. Select a region of level body, and the new dropdown
+  button will allow to apply to the selection the following tools:
+  - Chess;
+  - Gradient;
+  - Maze;
+  - Replace;
+  - Random;
+  - Flip.
+- Add: Display primitive notice when "Infotrons needed" = 0 (all), and level has
+  more than 256 infotrons.
+- Enh: Special Ports buttons in tiles toolbar was merged with corresponding
+  Regular Ports. So now there are 4 fewer buttons.
+  - To switch Regular/Special port, Right-Click on the port in level body.
+  - Special port properties are tended to keep when changing special port by
+    another one with different direction, as when previously you directly
+    replace one Special Port with another.
+  - When Special Port has no properties in level (and so will behave as Regular
+    Port while technically it's Special Port), it will look half-colored in
+    level body as in Tile Toolbar.
+- Enh: Toolbars layout now is more adaptive to be more compact together.
+
 ## 0.9.0 (2023-03-25)
 
 - Add: options for SO test page:

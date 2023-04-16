@@ -20,6 +20,7 @@ import {
 import { Button, ToolbarSeparator } from "ui/button";
 import { svgs } from "ui/icon";
 import { FindPlayerButton } from "./FindPlayerButton";
+import { SelectionEditButton } from "./SelectionEditButton";
 import { TestingButtons } from "./TestingButtons";
 import { UndoButton } from "./UndoButton";
 
@@ -130,6 +131,8 @@ export const EditToolbar: FC<Props> = ({ withUndo = true }) => {
         onClick={handleDelete}
         title={`Delete selection (${displayHotKey(HK_DEL)})`}
       />
+      <ToolbarSeparator />
+      <SelectionEditButton />
       {/*<Button disabled>PNG</Button>*/}
       <ToolbarSeparator />
       {/*<Button disabled>Copy level to clipboard</Button>*/}

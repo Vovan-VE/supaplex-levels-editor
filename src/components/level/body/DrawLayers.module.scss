@@ -81,6 +81,12 @@
     box-shadow: inset 0 0 0 1px #fff;
   }
 
+  &:global(.tool-pen-x1x2) .cell {
+    grid-row-end: span 2;
+  }
+  &:global(.tool-pen-x2x1) .cell {
+    grid-column-end: span 2;
+  }
   &:global(.tool-pen-x3) .cell {
     grid-column-start: max(1, var(--x));
     grid-row-start: max(1, var(--y));

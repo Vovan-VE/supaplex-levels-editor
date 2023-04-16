@@ -16,3 +16,7 @@
   width: calc(4ch + #{i.$all-extras-x});
   text-align: right;
 }
+
+.infModNotice {
+  border-bottom: currentColor dotted 1px;
+}

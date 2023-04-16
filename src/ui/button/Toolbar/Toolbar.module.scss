@@ -1,29 +1,51 @@
 @use "styles/components";
+@use "styles/components/toolbar/config";
 @use "styles/themes";
 
-$pad: 0.2rem;
-$space: 0.2rem;
-$space-half: calc($space / 2);
-$pad-out: $pad - $space-half;
-
 .root {
-  padding: $pad-out;
+  padding: #{config.$padding-rest};
   white-space: nowrap;
 
   > * {
     display: inline-block;
     vertical-align: middle;
-    margin: $space-half;
+    margin: #{config.$space-half};
   }
-}
-._withBG {
-  @extend %panel-colors;
+  > wbr {
+    display: none;
+    margin: 0;
+  }
+
+  &._withBG {
+    @extend %panel-colors;
+  }
+
+  &._menu {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    > a,
+    > button {
+      text-align: left;
+    }
+
+    > .separator {
+      height: auto;
+      border-left-width: 0;
+      border-top-width: 0.15rem;
+      margin: #{config.$padding-rest} #{config.$space-half};
+    }
+  }
 }
 
 .separator {
   display: inline-block;
   height: 1.8em;
-  border-left: themes.$color-mute solid 0.15rem;
-  margin-left: $pad-out;
-  margin-right: $pad-out;
+  border: themes.$color-mute solid 0;
+  border-left-width: 0.15rem;
+  margin-left: #{config.$padding-rest};
+  margin-right: #{config.$padding-rest};
 }

@@ -1,6 +1,7 @@
-import { clipRect, IBounds, inBounds, Rect } from "utils/rect";
+import { clipRect, IBounds, inBounds, Point2D, Rect } from "utils/rect";
 import {
   DemoSeed,
+  FlipDirection,
   INewLevelOptions,
   IResizeLevelOptions,
   ITilesStreamItem,
@@ -22,7 +23,14 @@ import {
   ISupaplexSpecPortProps,
   LocalOpt,
 } from "./internal";
-import { isSpecPort, TILE_HARDWARE, TILE_SPACE } from "./tiles-id";
+import {
+  isSpecPort,
+  isVariants,
+  setPortIsSpecial,
+  symmetry,
+  TILE_HARDWARE,
+  TILE_SPACE,
+} from "./tiles-id";
 import { ISupaplexLevel, ISupaplexLevelRegion } from "./types";
 import { isEmptyObject } from "../../utils/object";
 
@@ -183,8 +191,16 @@ class SupaplexLevel implements ISupaplexLevel {
     return this.#body.getTile(x, y);
   }
 
-  setTile(x: number, y: number, value: number) {
+  setTile(x: number, y: number, value: number, keepSameVariant?: boolean) {
     const prev = this.#body.getTile(x, y);
+    if (keepSameVariant) {
+      if (isVariants(prev, value)) {
+        return this;
+      }
+      if (isSpecPort(prev) && !isSpecPort(value)) {
+        value = setPortIsSpecial(value, true);
+      }
+    }
     if (prev === value) {
       return this;
     }
@@ -201,17 +217,56 @@ class SupaplexLevel implements ISupaplexLevel {
     return next;
   }
 
+  swapTiles(a: Point2D, b: Point2D, flip?: FlipDirection) {
+    let prevA = this.#body.getTile(a.x, a.y);
+    let prevB = this.#body.getTile(b.x, b.y);
+    if (flip) {
+      const s = symmetry[flip];
+      [prevA, prevB] = [s.get(prevA) ?? prevA, s.get(prevB) ?? prevB];
+    }
+    const spA = this.#footer.findSpecPort(a.x, a.y);
+    const spB = this.#footer.findSpecPort(b.x, b.y);
+    let next = this.setTile(a.x, a.y, prevB).setTile(b.x, b.y, prevA);
+    if (spB) {
+      next = next.setSpecPort(a.x, a.y, spB);
+    }
+    if (spA) {
+      next = next.setSpecPort(b.x, b.y, spA);
+    }
+    return next;
+  }
+
   isPlayable() {
     return this.#body.isPlayable();
   }
 
-  tilesRenderStream(
+  *tilesRenderStream(
     x: number,
     y: number,
     w: number,
     h: number,
   ): Iterable<ITilesStreamItem> {
-    return this.#body.tilesRenderStream(x, y, w, h);
+    for (const chunk of this.#body.tilesRenderStream(x, y, w, h)) {
+      const [tx, ty, width, tile] = chunk;
+      if (isSpecPort(tile)) {
+        // just split chunk in separate tiles - easier and harmless since there
+        // are no big chunks of spec ports
+        const altChunks = Array.from({ length: width }).map<ITilesStreamItem>(
+          (_, i) => [
+            tx + i,
+            ty,
+            1,
+            tile,
+            this.#footer.findSpecPort(tx + i, ty) ? undefined : 1,
+          ],
+        );
+        if (altChunks.some(([, , , , variant]) => variant)) {
+          yield* altChunks;
+          continue;
+        }
+      }
+      yield chunk;
+    }
   }
 
   copyRegion(r: Rect) {

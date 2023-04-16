@@ -1,12 +1,13 @@
 @use "./reset";
+@use "./config" as c;
 
-body {
-  --scrollbar-thin: 6px;
-  --scrollbar-norm: 12px;
+:root {
+  --scrollbar-thin: #{c.$scrollbar-thin};
+  --scrollbar-norm: #{c.$scrollbar-norm};
 
   @media (hover: none) {
-    --scrollbar-thin: 2px;
-    --scrollbar-norm: 4px;
+    --scrollbar-thin: #{c.$scrollbar-touch-thin};
+    --scrollbar-norm: #{c.$scrollbar-touch-norm};
   }
 
   --z-index-interactive: 1;

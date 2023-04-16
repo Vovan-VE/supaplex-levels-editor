@@ -1,4 +1,5 @@
 @use "sass:list";
+@use "sass:map";
 @use "styles/colors/sp";
 
 $urls: (
@@ -44,6 +45,20 @@ $urls: (
   url("./27-chip-bottom.svg"),
   url("./28-invis-wall.svg")
 );
+$variants: (
+  13: (
+    1: url("./meta-port-r.svg"),
+  ),
+  14: (
+    1: url("./meta-port-d.svg"),
+  ),
+  15: (
+    1: url("./meta-port-l.svg"),
+  ),
+  16: (
+    1: url("./meta-port-u.svg"),
+  ),
+);
 
 .t {
   display: inline-block;
@@ -55,8 +70,17 @@ $urls: (
 }
 
 @for $i from 1 through list.length($urls) {
-  .t#{$i - 1} {
+  $tile: $i - 1;
+  .t#{$tile} {
     background-image: list.nth($urls, $i);
+
+    @if map.has-key($variants, $tile) {
+      @each $var, $url in map.get($variants, $tile) {
+        &.v#{$var} {
+          background-image: $url;
+        }
+      }
+    }
   }
 }
 

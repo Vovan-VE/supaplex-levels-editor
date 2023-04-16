@@ -1,6 +1,9 @@
-import { CSSProperties, FC, ReactNode } from "react";
-import { CellContextEventSnapshot } from "models/levels/tools/interface";
-import { IBounds, Rect } from "utils/rect";
+import { CSSProperties, FC, ReactElement, ReactNode } from "react";
+import {
+  CellContextEventSnapshot,
+  PenShapeStructures,
+} from "models/levels/tools/interface";
+import { IBounds, Point2D, Rect } from "utils/rect";
 
 export interface ISizeLimit {
   readonly minWidth?: number;
@@ -39,6 +42,7 @@ export type ITilesStreamItem = readonly [
   y: number,
   width: number,
   tile: number,
+  variant?: number,
 ];
 
 export interface ITilesRegion extends IBounds {
@@ -67,12 +71,18 @@ export interface IResizeLevelOptions extends INewLevelOptions {
   y?: number;
 }
 
+export const enum FlipDirection {
+  H = "H",
+  V = "V",
+}
+
 export type LocalOptions = Record<string, any>;
 export type LocalOptionsList = readonly (LocalOptions | null | undefined)[];
 
 export interface IBaseLevel extends ITilesRegion {
   readonly raw: Uint8Array;
-  setTile(x: number, y: number, value: number): this;
+  setTile(x: number, y: number, value: number, keepSameVariant?: boolean): this;
+  swapTiles(a: Point2D, b: Point2D, flip?: FlipDirection): this;
   batch(update: (b: this) => this): this;
   resize?(options: IResizeLevelOptions): this;
   readonly title: string;
@@ -129,11 +139,18 @@ export interface IBaseTileInteraction<L extends IBaseLevel> {
   ) => Interaction<T> | undefined;
 }
 
-export interface IBaseTile<L extends IBaseLevel> {
-  value?: number;
+export interface IBaseMetaTile {
   title: string;
+  icon: ReactElement;
+  primaryValue: number;
+}
+export interface IBaseTile<L extends IBaseLevel> {
+  value: number;
+  title: string;
+  metaTile?: IBaseMetaTile;
   toolbarOrder?: number;
   interaction?: IBaseTileInteraction<L>;
+  drawStruct?: PenShapeStructures;
   // TODO: limits like spec ports counts and coords<=>offset, Murphy presence
   //   and like notices for infotrons % 256 in case of 'all'
 }
@@ -169,7 +186,8 @@ export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
 }
 
 export interface TileRenderProps {
-  tile?: number;
+  tile: number;
+  variant?: number;
   className?: string;
   style?: CSSProperties;
 }
@@ -195,6 +213,7 @@ export interface IBaseDriver<
    */
   formats: Record<string, IBaseFormat<L, S>>;
   defaultFormat?: string;
+  tempLevelFromRegion: (region: ILevelRegion) => L;
   // TODO: optional separate display order
   // TODO: create levelset config
 }

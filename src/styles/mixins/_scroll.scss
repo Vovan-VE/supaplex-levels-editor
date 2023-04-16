@@ -1,10 +1,19 @@
 @use "../themes";
+@use "../core/config" as c;
 
-@function _w($thin: null) {
-  @if $thin {
-    @return var(--scrollbar-thin);
+//@function _w($thin: null) {
+//  @if $thin {
+//    @return var(--scrollbar-thin);
+//  }
+//  @return var(--scrollbar-norm);
+//}
+@mixin _size($size, $size-touch) {
+  width: $size;
+  height: $size;
+  @media (hover: none) {
+    width: $size-touch;
+    height: $size-touch;
   }
-  @return var(--scrollbar-norm);
 }
 
 @mixin scrollbar-custom(
@@ -20,11 +29,17 @@
     scrollbar-width: auto;
   }
 
-  $width: _w($thin);
+  //$width: _w($thin);
 
   &::-webkit-scrollbar {
-    width: $width;
-    height: $width;
+    // BUG: debugger says `var(--scrollbar-thin)` is undefined when it IS defined
+    //width: $width;
+    //height: $width;
+    @if $thin {
+      @include _size(c.$scrollbar-thin, c.$scrollbar-touch-thin);
+    } @else {
+      @include _size(c.$scrollbar-norm, c.$scrollbar-touch-norm);
+    }
     @if $show-track {
       background-color: $color-track;
     } @else {

@@ -5,4 +5,5 @@ export interface CheckboxCoreProps extends PropsWithChildren<ContainerProps> {
   checked?: boolean;
   onChange?: (checked: boolean) => void;
   name?: string;
+  disabled?: boolean;
 }

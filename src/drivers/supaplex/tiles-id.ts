@@ -1,3 +1,5 @@
+import { FlipDirection } from "../types";
+
 /**
  * Chars map
  *
@@ -116,3 +118,37 @@ export const isSpecPort = (tile: number) =>
   tile === TILE_SP_PORT_D ||
   tile === TILE_SP_PORT_L ||
   tile === TILE_SP_PORT_U;
+
+const portSpMap = new Map([
+  [TILE_PORT_R, TILE_SP_PORT_R],
+  [TILE_PORT_D, TILE_SP_PORT_D],
+  [TILE_PORT_L, TILE_SP_PORT_L],
+  [TILE_PORT_U, TILE_SP_PORT_U],
+
+  [TILE_SP_PORT_R, TILE_PORT_R],
+  [TILE_SP_PORT_D, TILE_PORT_D],
+  [TILE_SP_PORT_L, TILE_PORT_L],
+  [TILE_SP_PORT_U, TILE_PORT_U],
+]);
+export const togglePortIsSpecial = (tile: number) =>
+  portSpMap.get(tile) ?? tile;
+export const setPortIsSpecial = (tile: number, setIsSpecial: boolean) =>
+  isSpecPort(tile) === setIsSpecial ? tile : togglePortIsSpecial(tile);
+
+export const isVariants = (a: number, b: number) =>
+  a === b || portSpMap.get(a) === b;
+
+const symMap = (pairs: [number, number][]) =>
+  new Map([...pairs, ...pairs.map(([a, b]) => [b, a] as const)]);
+export const symmetry: Record<FlipDirection, ReadonlyMap<number, number>> = {
+  [FlipDirection.H]: symMap([
+    [TILE_CHIP_L, TILE_CHIP_R],
+    [TILE_PORT_L, TILE_PORT_R],
+    [TILE_SP_PORT_L, TILE_SP_PORT_R],
+  ]),
+  [FlipDirection.V]: symMap([
+    [TILE_CHIP_T, TILE_CHIP_B],
+    [TILE_PORT_U, TILE_PORT_D],
+    [TILE_SP_PORT_U, TILE_SP_PORT_D],
+  ]),
+};

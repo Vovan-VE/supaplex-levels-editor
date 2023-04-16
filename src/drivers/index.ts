@@ -54,7 +54,7 @@ export const detectDriverFormat = (
 
 interface GetDriverFn {
   <T extends DriverName>(name: T): TDrivers[T];
-  (name: string): typeof DriversHash[string];
+  (name: string): (typeof DriversHash)[string];
 }
 export const getDriver: GetDriverFn = (name: string) => DriversHash[name];
 
@@ -65,7 +65,7 @@ interface GetDriverFormatFn {
     formatName: string,
   ): TDrivers[T]["formats"][string];
   (driverName: string, formatName: string): GetProp<
-    GetProp<typeof DriversHash[string], "formats">,
+    GetProp<(typeof DriversHash)[string], "formats">,
     string
   >;
 }
@@ -164,3 +164,15 @@ export const getTilesForToolbar = <T extends IBaseTile<any>>(
         [bI, { toolbarOrder: bO = Number.MAX_SAFE_INTEGER }],
       ) => aO - bO || aI - bI,
     );
+
+export const getTilesVariantsMap = (
+  tiles: readonly IBaseTile<any>[],
+): ReadonlyMap<number, number> => {
+  const map = new Map<number, number>();
+  for (const { value, metaTile } of tiles) {
+    if (metaTile) {
+      map.set(value, metaTile.primaryValue);
+    }
+  }
+  return map;
+};

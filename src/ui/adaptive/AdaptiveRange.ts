@@ -1,6 +1,6 @@
 import { LAYOUT_BREAKPOINT } from "styles/constants";
 
-const edgesList = ["xs", "sm", "md", "lg", "xl"] as const;
+const edgesList = ["xs", "sm", "md", "lg", "xl", "xxl"] as const;
 type AdaptiveRangeEdges = typeof edgesList;
 type AdaptiveRangeEdge = AdaptiveRangeEdges[number];
 
@@ -32,6 +32,7 @@ const edgeStart: Record<AdaptiveRangeEdge, number | undefined> = {
   md: LAYOUT_BREAKPOINT.MD,
   lg: LAYOUT_BREAKPOINT.LG,
   xl: LAYOUT_BREAKPOINT.XL,
+  xxl: LAYOUT_BREAKPOINT.XXL,
 };
 const edgeEnd = edgesList.reduce<Partial<Record<AdaptiveRangeEdge, number>>>(
   (map, edge, index) => {
@@ -67,29 +68,37 @@ const AdaptiveRangeMediaQuery: Readonly<Record<AdaptiveQueryRange, string>> = {
   md: buildEdges("md"),
   lg: buildEdges("lg"),
   xl: buildEdges("xl"),
+  xxl: buildEdges("xxl"),
 
   "=xs": buildEdges("xs", "xs"),
   "=sm": buildEdges("sm", "sm"),
   "=md": buildEdges("md", "md"),
   "=lg": buildEdges("lg", "lg"),
   "=xl": buildEdges("xl", "xl"),
+  "=xxl": buildEdges("xxl", "xxl"),
 
   "<=xs": buildEdges(null, "xs"),
   "<=sm": buildEdges(null, "sm"),
   "<=md": buildEdges(null, "md"),
   "<=lg": buildEdges(null, "lg"),
   "<=xl": buildEdges(null, "xl"),
+  "<=xxl": buildEdges(null, "xxl"),
 
   "xs..sm": buildEdges("xs", "sm"),
   "xs..md": buildEdges("xs", "md"),
   "xs..lg": buildEdges("xs", "lg"),
   "xs..xl": buildEdges("xs", "xl"),
+  "xs..xxl": buildEdges("xs", "xxl"),
   "sm..md": buildEdges("sm", "md"),
   "sm..lg": buildEdges("sm", "lg"),
   "sm..xl": buildEdges("sm", "xl"),
+  "sm..xxl": buildEdges("sm", "xxl"),
   "md..lg": buildEdges("md", "lg"),
   "md..xl": buildEdges("md", "xl"),
+  "md..xxl": buildEdges("md", "xxl"),
   "lg..xl": buildEdges("lg", "xl"),
+  "lg..xxl": buildEdges("lg", "xxl"),
+  "xl..xxl": buildEdges("xl", "xxl"),
 };
 
 export const adaptiveRangeToString = (range: AdaptiveQuery) => {

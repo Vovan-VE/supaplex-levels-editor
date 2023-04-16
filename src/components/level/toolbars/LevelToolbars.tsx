@@ -3,8 +3,8 @@ import cn from "classnames";
 import { Toolbar } from "ui/button";
 import { ContainerProps } from "ui/types";
 import { EditToolbar } from "./EditToolbar";
-import { EditorTools } from "./EditorTools";
-import { LevelConfig } from "./LevelConfig";
+import { EditorToolsSimple } from "./EditorTools";
+import { LevelConfig, LevelDriverConfig } from "./LevelConfig";
 import { TilesToolbar } from "./TilesToolbar";
 import cl from "./LevelToolbars.module.scss";
 
@@ -18,7 +18,10 @@ export const LevelToolbars: FC<Props> = ({ className, ...rest }) => (
     <Toolbar className={cl.config}>
       <LevelConfig />
     </Toolbar>
-    <EditorTools className={cl.tools} />
+    <Toolbar className={cl.driver}>
+      <LevelDriverConfig />
+    </Toolbar>
+    <EditorToolsSimple className={cl.tools} />
     <TilesToolbar className={cl.tiles} />
   </div>
 );

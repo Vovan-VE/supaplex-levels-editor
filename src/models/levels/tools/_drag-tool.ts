@@ -13,8 +13,13 @@ import {
   $currentLevelUndoQueue,
   updateCurrentLevel,
 } from "../../levelsets";
-import { $tileIndex } from "../current";
-import { CellEventSnapshot, GridEventsProps, ToolVariantUI } from "./interface";
+import { $drvTiles, $tileIndex } from "../current";
+import {
+  CellEventSnapshot,
+  GridEventsProps,
+  PenShapeStructures,
+  ToolVariantUI,
+} from "./interface";
 
 interface Variant<P> extends ToolVariantUI {
   drawProps: P;
@@ -23,6 +28,7 @@ interface IDrawStart<P> {
   // extends DrawEndParams<T>
   event: CellEventSnapshot;
   tile: number;
+  drvStructs: PenShapeStructures | undefined;
   drawProps: P;
 }
 interface IDrawData<P> extends IDrawStart<P> {}
@@ -138,12 +144,14 @@ export const createDragTool = <DrawProps, DrawState>({
       isDragging: $isDragging,
       isLevelSelected: $currentLevelIsSelected,
       tile: $tileIndex,
+      tiles: $drvTiles,
       variant: $variant,
     },
     filter: ({ isDragging, isLevelSelected }) => !isDragging && isLevelSelected,
-    fn: ({ tile, variant }, event): IStart => ({
+    fn: ({ tile, tiles, variant }, event): IStart => ({
       event,
       tile,
+      drvStructs: tiles!.find((o) => o.value === tile)?.drawStruct,
       drawProps: VARIANTS[variant].drawProps,
     }),
     target: doStart,
@@ -159,12 +167,14 @@ export const createDragTool = <DrawProps, DrawState>({
       isDragging: $isDragging,
       isLevelSelected: $currentLevelIsSelected,
       tile: $tileIndex,
+      tiles: $drvTiles,
       variant: $variant,
     },
     filter: ({ isDragging, isLevelSelected }) => isDragging && isLevelSelected,
-    fn: ({ tile, variant }, event): IContinue => ({
+    fn: ({ tile, tiles, variant }, event): IContinue => ({
       event,
       tile,
+      drvStructs: tiles!.find((o) => o.value === tile)?.drawStruct,
       drawProps: VARIANTS[variant].drawProps,
     }),
     target: doDraw,

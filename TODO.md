@@ -7,17 +7,13 @@
   - Some errors which now goes to `console.error()`.
   - Internal editing exception from store manipulations.
 - Import/export single level.
-  - Yet more UI buttons again.
 - Tools:
-  - Double chip
-  - Random
-  - Maze
-  - Replace
-  - Chess
-  - Gradient
+  - Circle
+  - Line
 - Enhance Read Only mode more?
 - Visualized level resizing with crop.
   - Separate "crop" & "extend" scenarios with Tabs, for example.
+- Sliders instead of some integer inputs and selects.
 
 ## Wishes from users (unsorted)
 
@@ -29,8 +25,8 @@
   position where the click is made).
 - Level region clipboard persistent (t.i. store selection region in every opened
   level buffer).
-- Clone selection reflected vertically and horizontally in order to facilitate
-  the symmetries.
-  - UI toolbar, too many buttons, too few space.
+  - Control Selection state with undo history. It should let selection editors
+    to work more intuitive.
 - Some additional (temp?) tile selection ways, like "take this specially clicked
   in body tile". Some graphical editors have something similar.
+- Clickable "electron" icon to include/exclude n\*9 infotrons needed.

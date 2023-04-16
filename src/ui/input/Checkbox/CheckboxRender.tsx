@@ -13,6 +13,7 @@ export const CheckboxRender: FC<Props> = ({
   checked = false,
   onChange,
   name,
+  disabled,
   children,
   className,
   ...rest
@@ -25,7 +26,10 @@ export const CheckboxRender: FC<Props> = ({
   );
 
   return (
-    <label {...rest} className={cn(cl.root, className)}>
+    <label
+      {...rest}
+      className={cn(cl.root, disabled && "_disabled", className)}
+    >
       <span className={cl.wrap}>
         <IconContainer className={cl.icon}>
           {checked ? (
@@ -43,6 +47,7 @@ export const CheckboxRender: FC<Props> = ({
           checked={checked}
           onChange={handleChange}
           name={name}
+          disabled={disabled}
         />
       </span>
       <span>{children}</span>

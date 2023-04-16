@@ -1,4 +1,4 @@
-import { FC, useCallback } from "react";
+import { FC, ReactNode, useCallback } from "react";
 import {
   DISPLAY_ORDER,
   DriverName,
@@ -12,6 +12,9 @@ interface Props {
   driverName: DriverName;
   tile: number;
   onChange: (tile: number) => void;
+  // TODO: showVariants?: bool;
+  canClear?: boolean;
+  placeholder?: ReactNode;
 }
 
 const OPTIONS = new Map(
@@ -19,18 +22,27 @@ const OPTIONS = new Map(
     const { tiles, TileRender } = getDriver(name);
     return [
       name,
-      getTilesForToolbar(tiles).map<SelectOption<number>>(
-        ([, { value = -1, title }]) => ({
+      getTilesForToolbar(tiles)
+        .filter(
+          ([, { value, metaTile }]) =>
+            !metaTile || metaTile.primaryValue === value,
+        )
+        .map<SelectOption<number>>(([, { value, title }]) => ({
           value,
           labelSelected: title,
           icon: <TileRender tile={value} />,
-        }),
-      ),
+        })),
     ];
   }),
 );
 
-export const TileSelect: FC<Props> = ({ driverName, tile, onChange }) => {
+export const TileSelect: FC<Props> = ({
+  driverName,
+  tile,
+  onChange,
+  canClear = false,
+  ...rest
+}) => {
   const options = OPTIONS.get(driverName);
   const handleChange = useCallback(
     (o: SelectOption<number> | null) => {
@@ -41,6 +53,7 @@ export const TileSelect: FC<Props> = ({ driverName, tile, onChange }) => {
 
   return (
     <Select
+      {...rest}
       options={options!}
       value={options?.find((o) => o.value === tile) ?? null}
       onChange={handleChange}
@@ -49,6 +62,7 @@ export const TileSelect: FC<Props> = ({ driverName, tile, onChange }) => {
         menuList: () => cl.menuList,
         option: () => cl.option,
       }}
+      isClearable={canClear}
     />
   );
 };

@@ -1,21 +1,30 @@
 @use "styles/colors/sp";
+@use "styles/themes";
 
 .root {
   white-space: normal;
-}
 
-.btn {
-  --btn-pad-x: 0.15rem;
-  --btn-pad-y: 0.15rem;
-  margin: 0;
+  .btn {
+    --btn-pad-x: 0.1rem;
+    --btn-pad-y: 0.1rem;
+    margin: 0;
+    position: static;
+    font-size: 1rem;
 
-  i {
-    display: inline-block;
-    width: 1.75rem;
-    height: 1.75rem;
-    background-color: sp.$color-black;
-    background-position: center;
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
+    i {
+      display: inline-block;
+      font-size: 100%;
+      width: var(--btn-icon-size);
+      height: var(--btn-icon-size);
+      background-color: sp.$color-black;
+      background-position: center;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
+
+    &._current {
+      background-color: themes.$color-warn;
+      border-color: themes.$color-warn;
+    }
   }
 }

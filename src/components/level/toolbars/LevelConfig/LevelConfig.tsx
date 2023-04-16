@@ -1,13 +1,13 @@
 import { FC, useCallback } from "react";
 import { useStore } from "effector-react";
-import { canResize, getDriver, getDriverFormat } from "drivers";
+import { canResize, getDriverFormat } from "drivers";
 import {
   $currentDriverFormat,
   $currentDriverName,
   $currentLevelUndoQueue,
   updateCurrentLevel,
 } from "models/levelsets";
-import { Button, ToolbarSeparator } from "ui/button";
+import { Button } from "ui/button";
 import { useInputDebounce, ValueInput } from "ui/input";
 import { promptResizeLevel } from "./promptResizeLevel";
 import cl from "./LevelConfig.module.scss";
@@ -20,7 +20,6 @@ interface Props {
 
 export const LevelConfig: FC<Props> = ({ onDidResize }) => {
   const driverName = useStore($currentDriverName)!;
-  const { LevelConfigurator } = getDriver(driverName)!;
   const { resizable } = getDriverFormat(
     driverName,
     useStore($currentDriverFormat)!,
@@ -64,13 +63,6 @@ export const LevelConfig: FC<Props> = ({ onDidResize }) => {
         maxLength={rawLevel.maxTitleLength}
         className={cl.title}
       />
-
-      {LevelConfigurator && (
-        <>
-          <ToolbarSeparator />
-          <LevelConfigurator level={rawLevel} onChange={updateCurrentLevel} />
-        </>
-      )}
     </>
   );
 };

@@ -107,6 +107,43 @@ export interface DrawCursor {
 
 //-------------------------------
 
+export const enum PenShape {
+  DOT,
+  _1x2,
+  _2x1,
+  _3x3,
+  // TODO: 2x1 & 1x2 with driver specific hacks (sp double chips)
+}
+export type PenShapePoint = readonly (readonly [x: number, y: number])[];
+export const PEN_SHAPES: Record<PenShape, PenShapePoint> = {
+  [PenShape.DOT]: [[0, 0]],
+  [PenShape._1x2]: [
+    [0, 0],
+    [0, 1],
+  ],
+  [PenShape._2x1]: [
+    [0, 0],
+    [1, 0],
+  ],
+  [PenShape._3x3]: [
+    [-1, -1],
+    [0, -1],
+    [1, -1],
+    [-1, 0],
+    [0, 0],
+    [1, 0],
+    [-1, 1],
+    [0, 1],
+    [1, 1],
+  ],
+  // Double chips: a "structured/connected"
+};
+
+export interface DrawStructure {
+  setTiles?: readonly (number | undefined)[];
+}
+export type PenShapeStructures = Partial<Record<PenShape, DrawStructure>>;
+
 export interface ToolUI {
   rollback?: Event<any>;
   // TODO: add optional "Undo" ability to apply `rollback` in "working" state

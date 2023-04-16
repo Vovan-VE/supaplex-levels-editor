@@ -89,7 +89,7 @@ export const Header: FC<Props> = (props) => {
         <FlushIndicator />
         <ZoomButtons />
         <ButtonDropdown triggerIcon={<svgs.Menu />} noArrow>
-          <Toolbar className={cl.popupToolbar}>
+          <Toolbar isMenu className={cl.popupToolbar}>
             <TextButton
               uiColor={MUTE}
               icon={<svgs.Wrench />}

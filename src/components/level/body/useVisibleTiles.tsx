@@ -23,11 +23,17 @@ const clipTilesRect = (
   const level = q.current;
 
   const nodes: ReactElement[] = [];
-  for (const [x, y, n, tile] of level.tilesRenderStream(x0, y0, w, h)) {
+  for (const [x, y, n, tile, variant] of level.tilesRenderStream(
+    x0,
+    y0,
+    w,
+    h,
+  )) {
     nodes.push(
       <TileRender
         key={`${x}:${y}`}
         tile={tile}
+        variant={variant}
         style={{ "--x": x, "--y": y, "--w": n } as {}}
       />,
     );

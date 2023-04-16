@@ -9,6 +9,9 @@
       color: themes.$color-danger;
     }
   }
+  &._noError {
+    margin-bottom: 0.75rem;
+  }
 }
 
 label.labelElement {
