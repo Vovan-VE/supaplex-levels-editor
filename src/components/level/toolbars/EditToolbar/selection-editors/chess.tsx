@@ -1,5 +1,6 @@
+import { createEvent, restore } from "effector";
 import { useStore } from "effector-react";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { TileSelect } from "components/driver/TileSelect";
 import { getDriver } from "drivers";
 import { $currentDriverName } from "models/levelsets";
@@ -9,6 +10,11 @@ import { Field } from "ui/input";
 import { ColorType } from "ui/types";
 import { SelectionEditor, SelectionEditorProps } from "./_types";
 import clC from "./common.module.scss";
+
+const setFirstTile = createEvent<number>();
+const setSecondTile = createEvent<number>();
+const $firstTile = restore(setFirstTile, -1);
+const $secondTile = restore(setSecondTile, -1);
 
 const KEEP = <i>keep old</i>;
 
@@ -24,8 +30,8 @@ const ChessEditor: FC<SelectionEditorProps> = ({
     [region, tempLevelFromRegion],
   );
 
-  const [firstTile, setFirstTile] = useState<number>(-1);
-  const [secondTile, setSecondTile] = useState<number>(-1);
+  const firstTile = useStore($firstTile);
+  const secondTile = useStore($secondTile);
 
   const handleSubmit = useCallback(() => {
     const { width, height } = tempLevel;

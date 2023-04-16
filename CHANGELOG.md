@@ -3,6 +3,7 @@
 ## 0.11.0 (DEV)
 
 - Enh: Replace number inputs and selects in Maze and Random tools with sliders.
+- Enh: Selection Editors now remember theirs values.
 
 ## 0.10.0 (2023-04-16)
 

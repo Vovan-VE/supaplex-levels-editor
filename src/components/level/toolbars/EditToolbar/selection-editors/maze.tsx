@@ -1,5 +1,6 @@
+import { createEvent, restore } from "effector";
 import { useStore } from "effector-react";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { TileSelect } from "components/driver/TileSelect";
 import { getDriver } from "drivers";
 import { $currentDriverName } from "models/levelsets";
@@ -30,6 +31,13 @@ const KEEP = <i>keep old</i>;
 //     #     #
 //     #######
 
+const setWallTile = createEvent<number>();
+const setWayTile = createEvent<number>();
+const setBranchLength = createEvent<number>();
+const $wallTile = restore(setWallTile, -1);
+const $wayTile = restore(setWayTile, -1);
+const $branchLength = restore(setBranchLength, 20);
+
 const MazeEditor: FC<SelectionEditorProps> = ({
   region,
   onSubmit,
@@ -45,9 +53,9 @@ const MazeEditor: FC<SelectionEditorProps> = ({
   const mazeWidth = Math.floor((tempLevel.width + 1) / 2);
   const mazeHeight = Math.floor((tempLevel.height + 1) / 2);
 
-  const [wallTile, setWallTile] = useState<number>(-1);
-  const [wayTile, setWayTile] = useState<number>(-1);
-  const [branchLength, setBranchLength] = useState<number>(20);
+  const wallTile = useStore($wallTile);
+  const wayTile = useStore($wayTile);
+  const branchLength = useStore($branchLength);
 
   const handleSubmit = useCallback(() => {
     const { width, height } = tempLevel;

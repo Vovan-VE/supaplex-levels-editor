@@ -1,6 +1,7 @@
 import cn from "classnames";
+import { createEvent, createStore } from "effector";
 import { useStore } from "effector-react";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo } from "react";
 import * as RoMap from "@cubux/readonly-map";
 import { getDriver, getTilesForToolbar } from "drivers";
 import { $currentDriverName } from "models/levelsets";
@@ -27,6 +28,18 @@ const getRandomTile = (
   throw new Error("unreachable");
 };
 
+const toggleTile = createEvent<number>();
+const toggleTileKeep = toggleTile.prepend<any>(() => -1);
+const setCount = createEvent<[tile: number, count: number]>();
+const $probabilities = createStore<ReadonlyMap<number, number>>(EMPTY_MAP)
+  .on(toggleTile, (map, tile) =>
+    map.has(tile) ? RoMap.remove(map, tile) : RoMap.set(map, tile, 1),
+  )
+  .on(setCount, (map, [tile, count]) => RoMap.set(map, tile, count));
+const $total = $probabilities.map((prob) =>
+  RoMap.reduce(prob, (n, c) => n + c, 0),
+);
+
 const RndEditor: FC<SelectionEditorProps> = ({
   region,
   onSubmit,
@@ -39,8 +52,8 @@ const RndEditor: FC<SelectionEditorProps> = ({
     [region, tempLevelFromRegion],
   );
 
-  const [prob, setProb] = useState<ReadonlyMap<number, number>>(EMPTY_MAP);
-  const total = useMemo(() => RoMap.reduce(prob, (n, c) => n + c, 0), [prob]);
+  const prob = useStore($probabilities);
+  const total = useStore($total);
 
   const tilesSorted = useMemo(
     () =>
@@ -49,18 +62,7 @@ const RndEditor: FC<SelectionEditorProps> = ({
           ([, { value, metaTile }]) =>
             !metaTile || metaTile.primaryValue === value,
         )
-        .map(
-          ([, t]) =>
-            [
-              t,
-              () =>
-                setProb((map) =>
-                  map.has(t.value)
-                    ? RoMap.remove(map, t.value)
-                    : RoMap.set(map, t.value, 1),
-                ),
-            ] as const,
-        ),
+        .map(([, t]) => [t, () => toggleTile(t.value)] as const),
     [tiles],
   );
 
@@ -89,13 +91,7 @@ const RndEditor: FC<SelectionEditorProps> = ({
         <Button
           uiColor={prob.has(-1) ? ColorType.WARN : ColorType.MUTE}
           asLink={!prob.has(-1)}
-          onClick={useCallback(
-            () =>
-              setProb((map) =>
-                map.has(-1) ? RoMap.remove(map, -1) : RoMap.set(map, -1, 1),
-              ),
-            [],
-          )}
+          onClick={toggleTileKeep}
         >
           <i>keep old</i>
         </Button>
@@ -126,7 +122,7 @@ const RndEditor: FC<SelectionEditorProps> = ({
                     min={1}
                     max={30}
                     value={count}
-                    onChange={(v) => setProb((map) => RoMap.set(map, tile, v))}
+                    onChange={(v) => setCount([tile, v])}
                     className={cl.input}
                   />
                   <div className={cl.help}>

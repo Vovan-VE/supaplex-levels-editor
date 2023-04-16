@@ -1,5 +1,6 @@
+import { createEvent, restore } from "effector";
 import { useStore } from "effector-react";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { TileSelect } from "components/driver/TileSelect";
 import { FlipDirection, getDriver } from "drivers";
 import { $currentDriverName } from "models/levelsets";
@@ -33,6 +34,13 @@ const getChoice = (
       (x) => (Math.random() > (x + 0.5) / width ? 0 : 1)
     : (_, y) => (Math.random() > (y + 0.5) / height ? 0 : 1);
 
+const setFromTile = createEvent<number>();
+const setToTile = createEvent<number>();
+const setDirection = createEvent<FlipDirection>();
+const $fromTile = restore(setFromTile, -1);
+const $toTile = restore(setToTile, -1);
+const $direction = restore(setDirection, FlipDirection.H);
+
 const GradientEditor: FC<SelectionEditorProps> = ({
   region,
   onSubmit,
@@ -45,9 +53,9 @@ const GradientEditor: FC<SelectionEditorProps> = ({
     [region, tempLevelFromRegion],
   );
 
-  const [fromTile, setFromTile] = useState<number>(-1);
-  const [toTile, setToTile] = useState<number>(-1);
-  const [direction, setDirection] = useState(FlipDirection.H);
+  const fromTile = useStore($fromTile);
+  const toTile = useStore($toTile);
+  const direction = useStore($direction);
 
   const handleSubmit = useCallback(() => {
     const { width, height } = tempLevel;
