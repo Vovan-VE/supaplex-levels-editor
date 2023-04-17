@@ -4,6 +4,7 @@ import { FC, useCallback, useMemo } from "react";
 import { TileSelect } from "components/driver/TileSelect";
 import { getDriver } from "drivers";
 import { $currentDriverName } from "models/levelsets";
+import { HotKeyMask } from "models/ui/hotkeys";
 import { Button } from "ui/button";
 import { svgs } from "ui/icon";
 import { Field, Range } from "ui/input";
@@ -184,4 +185,5 @@ export const maze: SelectionEditor = {
   cannotWorkWhy: (s) =>
     s.width < 3 || s.height < 3 ? <>at least 3x3</> : null,
   Component: MazeEditor,
+  hotkeys: ["M", HotKeyMask.SHIFT],
 };

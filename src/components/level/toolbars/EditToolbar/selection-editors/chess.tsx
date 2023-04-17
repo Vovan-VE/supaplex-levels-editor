@@ -4,6 +4,7 @@ import { FC, useCallback, useMemo } from "react";
 import { TileSelect } from "components/driver/TileSelect";
 import { getDriver } from "drivers";
 import { $currentDriverName } from "models/levelsets";
+import { HotKeyMask } from "models/ui/hotkeys";
 import { Button } from "ui/button";
 import { svgs } from "ui/icon";
 import { Field } from "ui/input";
@@ -95,4 +96,5 @@ export const chess: SelectionEditor = {
   cannotWorkWhy: (s) =>
     s.width < 2 && s.height < 2 ? <>at least 2 tiles</> : null,
   Component: ChessEditor,
+  hotkeys: ["C", HotKeyMask.SHIFT],
 };

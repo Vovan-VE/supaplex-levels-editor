@@ -1,5 +1,6 @@
 import { FC, ReactElement } from "react";
 import { ILevelRegion } from "drivers";
+import { HotKeyShortcuts } from "models/ui/hotkeys";
 import { DialogSize } from "ui/feedback";
 import { IBounds } from "utils/rect";
 
@@ -16,6 +17,6 @@ export interface SelectionEditor {
   cannotWorkWhy?: (selectionSize: IBounds) => ReactElement | null;
   Component?: FC<SelectionEditorProps>;
   instant?: SelectionEditorFn;
-  // TODO: hotkeys?: ;
+  hotkeys?: HotKeyShortcuts;
   dialogSize?: DialogSize;
 }

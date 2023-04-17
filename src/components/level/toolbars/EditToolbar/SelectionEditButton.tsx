@@ -1,3 +1,4 @@
+import { combine } from "effector";
 import { useStore } from "effector-react";
 import { FC, Fragment, ReactElement } from "react";
 import * as RoMap from "@cubux/readonly-map";
@@ -11,6 +12,7 @@ import {
   openSelectionEdit,
   submitSelectionEdit,
 } from "models/levels/tools/_selection";
+import { displayHotKey, HotKey, HotKeyShortcuts } from "models/ui/hotkeys";
 import {
   ButtonDropdown,
   TextButton,
@@ -32,6 +34,7 @@ import {
   rnd,
   SelectionEditor,
 } from "./selection-editors";
+import cl from "./SelectionEditButton.module.scss";
 
 interface EditorsGroup {
   // title?: string;
@@ -126,14 +129,42 @@ const $run = $selectionSize.map((size) =>
     : EMPTY_MAP,
 );
 
+interface HKItem {
+  name: string;
+  hotkeys: HotKeyShortcuts;
+  handler: () => any;
+}
+const $hotkeys = combine(
+  $hasSelection,
+  $cannotWork,
+  $run,
+  (hasSelection, cannotWork, run) => {
+    const items: HKItem[] = [];
+    if (hasSelection) {
+      for (const { editors } of EDITORS) {
+        for (const [name, { hotkeys }] of Object.entries(editors)) {
+          if (hotkeys && !cannotWork.has(name) && run.has(name)) {
+            items.push({ name, hotkeys, handler: run.get(name)! });
+          }
+        }
+      }
+    }
+    return items;
+  },
+);
+
 export const SelectionEditButton: FC = () => {
   const hasSelection = useStore($hasSelection);
 
   const cannotWork = useStore($cannotWork);
   const run = useStore($run);
+  const hotkeys = useStore($hotkeys);
 
   return (
     <>
+      {hotkeys.map(({ name, hotkeys, handler }) => (
+        <HotKey key={name} shortcut={hotkeys} handler={handler} />
+      ))}
       <ButtonDropdown
         triggerIcon={<svgs.EditSelection />}
         buttonProps={{ disabled: !hasSelection }}
@@ -142,20 +173,28 @@ export const SelectionEditButton: FC = () => {
           {EDITORS.map(({ editors }, i) => (
             <Fragment key={i}>
               {i > 0 && <ToolbarSeparator />}
-              {Object.entries(editors).map(([name, { title, icon }]) => (
-                <TextButton
-                  key={name}
-                  uiColor={ColorType.DEFAULT}
-                  icon={icon}
-                  disabled={!hasSelection || cannotWork.has(name)}
-                  onClick={run.get(name)}
-                >
-                  {title}{" "}
-                  <Reason
-                    reason={(hasSelection && cannotWork.get(name)) || null}
-                  />
-                </TextButton>
-              ))}
+              {Object.entries(editors).map(
+                ([name, { title, icon, hotkeys }]) => (
+                  <TextButton
+                    key={name}
+                    uiColor={ColorType.DEFAULT}
+                    icon={icon}
+                    disabled={!hasSelection || cannotWork.has(name)}
+                    onClick={run.get(name)}
+                    className={cl.btnItem}
+                  >
+                    <span className={cl.text}>
+                      {title}{" "}
+                      <Reason
+                        reason={(hasSelection && cannotWork.get(name)) || null}
+                      />
+                    </span>
+                    {hotkeys && (
+                      <kbd className={cl.hotkey}>{displayHotKey(hotkeys)}</kbd>
+                    )}
+                  </TextButton>
+                ),
+              )}
             </Fragment>
           ))}
         </Toolbar>
@@ -165,4 +204,4 @@ export const SelectionEditButton: FC = () => {
 };
 
 const Reason: FC<{ reason: ReactElement | null }> = ({ reason }) =>
-  reason && <span>({reason})</span>;
+  reason && <span className={cl.reason}>({reason})</span>;
