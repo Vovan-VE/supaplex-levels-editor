@@ -6,9 +6,22 @@
   - Level title invalid chars.
   - Some errors which now goes to `console.error()`.
   - Internal editing exception from store manipulations.
-- Import/export single level.
+- WpColEd porting:
+  - Import/export single level:
+    - as standalone file;
+    - with real clipboard (binary file with level or special json);
+    - with internal buffer in browser storage.
+  - Export/copy level body/selection as image.
+  - Delete all the rest levels to the end of file.
+  - Tiles stats.
+- Compare levels.
+- End User Manual.
+  - Find or create jekyll template.
+- Draggable files buttons to reorder many opened files.
+- Electron/Wails based desktop application.
 - Tools:
   - Circle
+- Presets in Selection Editors
 - Enhance Read Only mode more?
 - Visualized level resizing with crop.
   - Separate "crop" & "extend" scenarios with Tabs, for example.
