@@ -4,7 +4,12 @@ import { FC, Fragment } from "react";
 import { ReactComponent as GitHubLogo } from "assets/img/github.svg";
 import { showInfoDialog, ZoomButtons } from "components/common";
 import { EditorTabs, FilesToolbar, FileToolbar } from "components/files";
-import { EditToolbar, UndoButton } from "components/level/toolbars/EditToolbar";
+import {
+  EditToolbar,
+  SelectionEditHotKeys,
+  SelectionEditMenu,
+  UndoButton,
+} from "components/level/toolbars/EditToolbar";
 import { promptLevelConfig } from "components/level/toolbars/LevelConfig";
 import { FlushIndicator, LevelsTabs, LevelsToolbar } from "components/levelset";
 import { APP_VERSION, REPO_URL } from "configs";
@@ -70,9 +75,10 @@ export const Header: FC<Props> = (props) => {
               <Fragment key={levelIndex}>
                 <ToolButton />
                 <TilesButton />
+                <SelectionEditHotKeys />
                 <ButtonDropdown standalone={<UndoButton />}>
                   <Toolbar>
-                    <EditToolbar withUndo={false} />
+                    <EditToolbar isCompact />
                     <ToolbarSeparator />
                     <Button
                       icon={<svgs.Wrench />}
@@ -80,6 +86,7 @@ export const Header: FC<Props> = (props) => {
                       onClick={promptLevelConfig}
                     />
                   </Toolbar>
+                  <SelectionEditMenu />
                 </ButtonDropdown>
               </Fragment>
             )}

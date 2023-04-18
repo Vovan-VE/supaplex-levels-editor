@@ -63,10 +63,10 @@ const HK_PASTE: HotKeyShortcuts = [["V", HotKeyMask.CTRL], ["Paste"]];
 const HK_DEL: HotKeyShortcuts = [["Delete"], ["Clear"]];
 
 interface Props {
-  withUndo?: boolean;
+  isCompact?: boolean;
 }
 
-export const EditToolbar: FC<Props> = ({ withUndo = true }) => {
+export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
   const undoQueue = useStore($currentLevelUndoQueue)!;
   const noSelection = !useStore($hasSelection);
   const clipboardSize = useStore($clipboardRegionSizeStr);
@@ -95,7 +95,7 @@ export const EditToolbar: FC<Props> = ({ withUndo = true }) => {
 
   return (
     <>
-      {withUndo && <UndoButton />}
+      {isCompact || <UndoButton />}
       <Button
         icon={<svgs.Redo />}
         disabled={!undoQueue.canRedo}
@@ -131,8 +131,12 @@ export const EditToolbar: FC<Props> = ({ withUndo = true }) => {
         onClick={handleDelete}
         title={`Delete selection (${displayHotKey(HK_DEL)})`}
       />
-      <ToolbarSeparator />
-      <SelectionEditButton />
+      {isCompact || (
+        <>
+          <ToolbarSeparator />
+          <SelectionEditButton />
+        </>
+      )}
       {/*<Button disabled>PNG</Button>*/}
       <ToolbarSeparator />
       {/*<Button disabled>Copy level to clipboard</Button>*/}

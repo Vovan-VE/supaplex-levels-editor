@@ -7,6 +7,7 @@
 - Add: Button to delete all the rest levels to the end of file.
 - Enh: Replace number inputs and selects in Maze and Random tools with sliders.
 - Enh: Selection Editors now remember theirs values.
+- Fix: Selection Editors was inaccessible in compact layout (small screen).
 
 ## 0.10.0 (2023-04-16)
 
