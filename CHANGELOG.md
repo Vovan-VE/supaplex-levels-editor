@@ -4,6 +4,7 @@
 
 - Add: "Straight line" drawing tool.
 - Add: Keyboard shortcuts to Selection Editors from previous release.
+- Add: Button to delete all the rest levels to the end of file.
 - Enh: Replace number inputs and selects in Maze and Random tools with sliders.
 - Enh: Selection Editors now remember theirs values.
 

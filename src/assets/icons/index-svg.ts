@@ -7,6 +7,7 @@ export { ReactComponent as Chess } from "./Chess.svg";
 export { ReactComponent as Copy } from "./Copy.svg";
 export { ReactComponent as Cross } from "./Cross.svg";
 export { ReactComponent as Cut } from "./Cut.svg";
+export { ReactComponent as DeleteRest } from "./DeleteRest.svg";
 export { ReactComponent as DeleteRow } from "./DeleteRow.svg";
 export { ReactComponent as DeleteSelection } from "./DeleteSelection.svg";
 export { ReactComponent as DirOpen } from "./DirOpen.svg";
