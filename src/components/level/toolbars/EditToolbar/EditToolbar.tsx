@@ -21,6 +21,7 @@ import { Button, ToolbarSeparator } from "ui/button";
 import { svgs } from "ui/icon";
 import { FindPlayerButton } from "./FindPlayerButton";
 import { SelectionEditButton } from "./SelectionEditButton";
+import { StatsButton } from "./StatsButton";
 import { TestingButtons } from "./TestingButtons";
 import { UndoButton } from "./UndoButton";
 
@@ -145,6 +146,7 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
       <TestingButtons />
       <ToolbarSeparator />
       <FindPlayerButton />
+      <StatsButton />
     </>
   );
 };

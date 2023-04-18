@@ -12,7 +12,6 @@
     - with real clipboard (binary file with level or special json);
     - with internal buffer in browser storage.
   - Export/copy level body/selection as image.
-  - Tiles stats.
 - Compare levels.
 - End User Manual.
   - Find or create jekyll template.
