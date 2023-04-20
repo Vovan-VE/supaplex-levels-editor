@@ -1,6 +1,6 @@
 import { combine, createEvent, createStore, sample } from "effector";
 import { createGate } from "effector-react";
-import { useEffect } from "react";
+import { FC, useEffect } from "react";
 import * as RoMap from "@cubux/readonly-map";
 
 export const enum HotKeyMask {
@@ -67,7 +67,7 @@ export interface HotkeyHook extends HotkeyRegister {
   disabled?: boolean;
 }
 
-export const HotkeysGate = createGate();
+export const HotkeysManagerGate = createGate();
 const addHotkey = createEvent<HotkeyRegister>();
 const removeHotkey = createEvent<HotkeyRef>();
 export const useHotKey = ({
@@ -85,6 +85,11 @@ export const useHotKey = ({
       removeHotkey({ shortcut, handler });
     };
   }, [shortcut, handler, prepend, disabled]);
+
+export const HotKey: FC<HotkeyHook> = (props) => {
+  useHotKey(props);
+  return null;
+};
 
 const $consumers = createStore<ReadonlyMap<string, readonly Consumer[]>>(
   new Map(),
@@ -120,7 +125,7 @@ sample({
         !(e.target instanceof HTMLElement && skipElement(e.target)),
     }),
     source: $consumers,
-    filter: HotkeysGate.status,
+    filter: HotkeysManagerGate.status,
     fn: (map, e) => {
       const handlers = map.get(eventToShortcutString(e));
       return handlers?.length ? ([e, handlers] as const) : null;
@@ -142,7 +147,7 @@ sample({
 });
 
 combine(
-  HotkeysGate.status,
+  HotkeysManagerGate.status,
   $consumers.map((map) => map.size > 0),
   (...bs) => bs.every(Boolean),
 ).watch((needToListen) => {

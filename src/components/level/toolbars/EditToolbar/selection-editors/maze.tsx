@@ -1,11 +1,13 @@
+import { createEvent, restore } from "effector";
 import { useStore } from "effector-react";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { TileSelect } from "components/driver/TileSelect";
 import { getDriver } from "drivers";
 import { $currentDriverName } from "models/levelsets";
+import { HotKeyMask } from "models/ui/hotkeys";
 import { Button } from "ui/button";
 import { svgs } from "ui/icon";
-import { Field, IntegerInput } from "ui/input";
+import { Field, Range } from "ui/input";
 import { ColorType } from "ui/types";
 import * as MZ from "utils/maze";
 import { SelectionEditor, SelectionEditorProps } from "./_types";
@@ -30,6 +32,13 @@ const KEEP = <i>keep old</i>;
 //     #     #
 //     #######
 
+const setWallTile = createEvent<number>();
+const setWayTile = createEvent<number>();
+const setBranchLength = createEvent<number>();
+const $wallTile = restore(setWallTile, -1);
+const $wayTile = restore(setWayTile, -1);
+const $branchLength = restore(setBranchLength, 20);
+
 const MazeEditor: FC<SelectionEditorProps> = ({
   region,
   onSubmit,
@@ -45,14 +54,11 @@ const MazeEditor: FC<SelectionEditorProps> = ({
   const mazeWidth = Math.floor((tempLevel.width + 1) / 2);
   const mazeHeight = Math.floor((tempLevel.height + 1) / 2);
 
-  const [wallTile, setWallTile] = useState<number>(-1);
-  const [wayTile, setWayTile] = useState<number>(-1);
-  const [branchLength, setBranchLength] = useState<number | null>(20);
+  const wallTile = useStore($wallTile);
+  const wayTile = useStore($wayTile);
+  const branchLength = useStore($branchLength);
 
   const handleSubmit = useCallback(() => {
-    if (branchLength === null) {
-      return;
-    }
     const { width, height } = tempLevel;
     const maze = MZ.generate(mazeWidth, mazeHeight, branchLength);
     onSubmit(
@@ -129,20 +135,23 @@ const MazeEditor: FC<SelectionEditorProps> = ({
       </div>
       <Field
         label="Branch length"
+        labelElement="div"
         help={
           <>
             It's technical option which could be called "Difficulty".
             <br />
-            The range is from <strong>1</strong> to{" "}
-            <strong>{mazeWidth * mazeHeight}</strong> (
-            <strong>{mazeWidth}</strong>x<strong>{mazeHeight}</strong>). The
-            higher value, the longer "ways" could be generated. However, in
-            practice it's most likely impossible to fill whole area by the only
-            way without forks, because it's random.
+            The higher value, the longer "ways" could be generated in theory.
+            However, in practice all large values behaves the same after some
+            threshold, because every branch generated just randomly.
           </>
         }
       >
-        <IntegerInput value={branchLength} onChange={setBranchLength} />
+        <Range
+          min={1}
+          max={50}
+          value={branchLength}
+          onChange={setBranchLength}
+        />
       </Field>
 
       <p>
@@ -176,4 +185,5 @@ export const maze: SelectionEditor = {
   cannotWorkWhy: (s) =>
     s.width < 3 || s.height < 3 ? <>at least 3x3</> : null,
   Component: MazeEditor,
+  hotkeys: ["M", HotKeyMask.SHIFT],
 };

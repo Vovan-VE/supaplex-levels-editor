@@ -6,14 +6,23 @@
   - Level title invalid chars.
   - Some errors which now goes to `console.error()`.
   - Internal editing exception from store manipulations.
-- Import/export single level.
+- WpColEd porting:
+  - Import/export single level:
+    - as standalone file;
+    - with real clipboard (binary file with level or special json);
+    - with internal buffer in browser storage.
+  - Export/copy level body/selection as image.
+- Compare levels.
+- End User Manual.
+  - Find or create jekyll template.
+- Draggable files buttons to reorder many opened files.
+- Electron/Wails based desktop application.
 - Tools:
   - Circle
-  - Line
+- Presets in Selection Editors
 - Enhance Read Only mode more?
 - Visualized level resizing with crop.
   - Separate "crop" & "extend" scenarios with Tabs, for example.
-- Sliders instead of some integer inputs and selects.
 
 ## Wishes from users (unsorted)
 
@@ -30,3 +39,4 @@
 - Some additional (temp?) tile selection ways, like "take this specially clicked
   in body tile". Some graphical editors have something similar.
 - Clickable "electron" icon to include/exclude n\*9 infotrons needed.
+- BIN demo export/import?

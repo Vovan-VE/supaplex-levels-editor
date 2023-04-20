@@ -1,14 +1,23 @@
+import { createEvent, restore } from "effector";
 import { useStore } from "effector-react";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { TileSelect } from "components/driver/TileSelect";
 import { getDriver, getTilesVariantsMap } from "drivers";
 import { $currentDriverName } from "models/levelsets";
+import { HotKeyMask } from "models/ui/hotkeys";
 import { Button } from "ui/button";
 import { svgs } from "ui/icon";
 import { Checkbox, Field } from "ui/input";
 import { ColorType } from "ui/types";
 import { SelectionEditor, SelectionEditorProps } from "./_types";
 import clC from "./common.module.scss";
+
+const setSearchTile = createEvent<number>();
+const setReplaceTile = createEvent<number>();
+const setKeepVariants = createEvent<boolean>();
+const $searchTile = restore(setSearchTile, -1);
+const $replaceTile = restore(setReplaceTile, -1);
+const $keepVariants = restore(setKeepVariants, true);
 
 const ReplaceEditor: FC<SelectionEditorProps> = ({
   region,
@@ -23,9 +32,9 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
   );
   const tileVariants = useMemo(() => getTilesVariantsMap(tiles), [tiles]);
 
-  const [searchTile, setSearchTile] = useState<number>(-1);
-  const [replaceTile, setReplaceTile] = useState<number>(-1);
-  const [keepVariants, setKeepVariants] = useState(true);
+  const searchTile = useStore($searchTile);
+  const replaceTile = useStore($replaceTile);
+  const keepVariants = useStore($keepVariants);
 
   const handleSubmit = useCallback(() => {
     const { width, height } = tempLevel;
@@ -100,4 +109,5 @@ export const replace: SelectionEditor = {
   title: "Replace",
   icon: <svgs.Replace />,
   Component: ReplaceEditor,
+  hotkeys: ["R", HotKeyMask.SHIFT],
 };

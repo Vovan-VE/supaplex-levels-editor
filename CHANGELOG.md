@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.0 (2023-04-20)
+
+- Add: "Straight line" drawing tool.
+- Add: Keyboard shortcuts to Selection Editors from previous release.
+- Add: Button to delete all the rest levels to the end of file.
+- Add: Tiles stats used in level.
+- Enh: Replace number inputs and selects in Maze and Random tools with sliders.
+- Enh: Selection Editors now remember theirs values.
+- Fix: Selection Editors was inaccessible in compact layout (small screen).
+
 ## 0.10.0 (2023-04-16)
 
 - Add: Pen tool with shapes 1x2 and 2x1 with Double Chips support. This will be
@@ -13,7 +23,7 @@
   - Random;
   - Flip.
 - Add: Display primitive notice when "Infotrons needed" = 0 (all), and level has
-  more than 256 infotrons.
+  more than 255 infotrons.
 - Enh: Special Ports buttons in tiles toolbar was merged with corresponding
   Regular Ports. So now there are 4 fewer buttons.
   - To switch Regular/Special port, Right-Click on the port in level body.

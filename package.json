@@ -1,6 +1,6 @@
 {
   "name": "supaplex-levels-editor",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "private": true,
   "description": "Supaplex Levels Editor in browser",
   "keywords": [
@@ -53,6 +53,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-popper": "^2.3.0",
+    "react-range": "^1.8.14",
     "react-scripts": "^5.0.1",
     "react-select": "^5.7.2",
     "sass": "^1.60.0",

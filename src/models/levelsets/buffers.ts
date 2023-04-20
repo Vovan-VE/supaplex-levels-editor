@@ -105,6 +105,11 @@ export const appendLevel = createEvent<any>();
 export const deleteCurrentLevel = createEvent<any>();
 const _deleteLevel = createEvent<_LevelRefStrict>();
 /**
+ * Delete all the rest levels after the current
+ */
+export const deleteRestLevels = createEvent<any>();
+const _deleteRestLevels = createEvent<_LevelRefStrict>();
+/**
  * Update current level in current levelset
  */
 export const updateCurrentLevel = createEvent<IBaseLevel>();
@@ -286,6 +291,17 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
       levels: RoArray.remove(buf.levels, index),
     })),
   )
+  // delete all the rest levels after the current
+  .on(_deleteRestLevels, (map, [key, curIndex]) =>
+    RoMap.update(map, key, (buf) =>
+      curIndex + 1 < buf.levels.length
+        ? {
+            ...buf,
+            levels: buf.levels.slice(0, curIndex + 1),
+          }
+        : buf,
+    ),
+  )
   // operations with current levels in current levelset
   .on(
     _withCurrentKey(updateCurrentLevel),
@@ -416,6 +432,12 @@ sample({
   target: _willSetCurrentLevelFx,
 });
 
+const _$currentDriverMinLevelsCount = combine(
+  $currentDriverName,
+  $currentDriverFormat,
+  (drv, fmt) => (drv && fmt && getDriverFormat(drv, fmt)?.minLevelsCount) || 1,
+);
+
 const _willDeleteLevelFx = createEffect(async (ref: _LevelRefStrict) => {
   await _willSetCurrentLevelFx(null);
   _deleteLevel(ref);
@@ -426,25 +448,51 @@ sample({
     files: _$buffersMap,
     key: $currentKey,
     _files: $levelsets,
-    _drv: $currentDriverName,
-    _fmt: $currentDriverFormat,
+    _minCount: _$currentDriverMinLevelsCount,
   },
-  filter: ({ files, key, _files, _drv, _fmt }) =>
-    Boolean(
-      key &&
-        _drv &&
-        _fmt &&
-        files.has(key) &&
-        _files.has(key) &&
-        files.get(key)!.currentIndex !== undefined &&
-        files.get(key)!.levels.length >
-          (getDriverFormat(_drv, _fmt)?.minLevelsCount ?? 1),
-    ),
+  filter: ({ files, key, _files, _minCount }) => {
+    if (key && _files.has(key)) {
+      const f = files.get(key);
+      return Boolean(
+        f && f.currentIndex !== undefined && f.levels.length > _minCount,
+      );
+    }
+    return false;
+  },
   fn: ({ files, key }): _LevelRefStrict => [
     key!,
     files.get(key!)!.currentIndex!,
   ],
   target: _willDeleteLevelFx,
+});
+
+sample({
+  clock: deleteRestLevels,
+  source: {
+    files: _$buffersMap,
+    key: $currentKey,
+    _files: $levelsets,
+    _drv: $currentDriverName,
+    _fmt: $currentDriverFormat,
+    _minCount: _$currentDriverMinLevelsCount,
+  },
+  filter: ({ files, key, _files, _minCount }) => {
+    if (key && _files.has(key)) {
+      const f = files.get(key);
+      return Boolean(
+        f &&
+          f.currentIndex !== undefined &&
+          f.currentIndex + 1 < f.levels.length &&
+          f.levels.length > _minCount,
+      );
+    }
+    return false;
+  },
+  fn: ({ files, key }): _LevelRefStrict => [
+    key!,
+    files.get(key!)!.currentIndex!,
+  ],
+  target: _deleteRestLevels,
 });
 
 // opened indices in loaded buffers

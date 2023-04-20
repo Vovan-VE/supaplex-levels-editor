@@ -1,7 +1,13 @@
 import { combine } from "effector";
 import * as RoMap from "@cubux/readonly-map";
 import { svgs } from "ui/icon";
-import { clipRect, fromDrag, IBounds, Rect } from "utils/rect";
+import {
+  clipRect,
+  fromDrag,
+  IBounds,
+  inBounds,
+  lineInterpolation,
+} from "utils/rect";
 import { $currentLevelSize } from "../../levelsets";
 import { cellKey, DrawLayerType, TilesPath, Tool, ToolUI } from "./interface";
 import { createDragTool } from "./_drag-tool";
@@ -9,6 +15,7 @@ import { createDragTool } from "./_drag-tool";
 export const enum RectType {
   FRAME,
   FILL,
+  LINE,
 }
 interface DrawProps {
   rectType: RectType;
@@ -22,17 +29,19 @@ interface DrawState extends DrawProps {
 }
 
 type DrawRectFn = (
-  rect: Rect,
+  state: DrawState,
   limit: IBounds,
   draw: (x: number, y: number) => void,
 ) => void;
 
 const drawers: Record<RectType, DrawRectFn> = {
-  [RectType.FRAME]: (
-    { x, y, width: w, height: h },
-    { width, height },
-    draw,
-  ) => {
+  [RectType.FRAME]: (s, { width, height }, draw) => {
+    const {
+      x,
+      y,
+      width: w,
+      height: h,
+    } = fromDrag(s.startX, s.startY, s.endX, s.endY);
     const preH = h - 1;
     const endX = x + w - 1;
     const endY = y + preH;
@@ -62,22 +71,25 @@ const drawers: Record<RectType, DrawRectFn> = {
       }
     }
   },
-  [RectType.FILL]: ({ x, y, width: w, height: h }, { width, height }, draw) => {
-    let endX = x + w;
-    let endY = y + h;
-    if (x < 0) {
-      x = 0;
-    } else if (endX > width) {
-      endX = width;
+  [RectType.FILL]: (s, limit, draw) => {
+    const { x, y, width, height } = clipRect(
+      fromDrag(s.startX, s.startY, s.endX, s.endY),
+      limit,
+    );
+    for (let j = height; j-- > 0; ) {
+      const cy = y + j;
+      for (let i = width; i-- > 0; ) {
+        draw(x + i, cy);
+      }
     }
-    if (y < 0) {
-      y = 0;
-    } else if (endY > height) {
-      endY = height;
-    }
-    for (let j = y; j < endY; j++) {
-      for (let i = x; i < endX; i++) {
-        draw(i, j);
+  },
+  [RectType.LINE]: (s, limit, draw) => {
+    for (const { x, y } of lineInterpolation(
+      { x: s.startX, y: s.startY },
+      { x: s.endX, y: s.endY },
+    )) {
+      if (inBounds(x, y, limit)) {
+        draw(x, y);
       }
     }
   },
@@ -86,21 +98,14 @@ const drawers: Record<RectType, DrawRectFn> = {
 const drawRect = <T>(
   v: T,
   b: IBounds,
-  { rectType, tile, startX, startY, endX, endY }: DrawState,
+  state: DrawState,
   draw: (v: T, x: number, y: number, tile: number) => T,
 ): T => {
-  drawers[rectType](fromDrag(startX, startY, endX, endY), b, (x, y) => {
+  const { rectType, tile } = state;
+  drawers[rectType](state, b, (x, y) => {
     v = draw(v, x, y, tile);
   });
   return v;
-};
-
-const getFillRect = ({ startX, startY, endX, endY }: DrawState, b: IBounds) => {
-  const { x, y, width, height } = clipRect(
-    fromDrag(startX, startY, endX, endY),
-    b,
-  );
-  return { x, y, width, height };
 };
 
 const {
@@ -116,6 +121,14 @@ const {
   eventsDragging,
 } = createDragTool<DrawProps, DrawState | null>({
   VARIANTS: [
+    {
+      internalName: "line",
+      title: "Straight line",
+      Icon: svgs.Line,
+      drawProps: {
+        rectType: RectType.LINE,
+      },
+    },
     {
       internalName: "frame",
       title: "Frame",
@@ -174,8 +187,21 @@ export const RECT: Tool = {
       drawLayers:
         drawState && size
           ? [
-              drawState.rectType === RectType.FRAME
+              drawState.rectType === RectType.FILL
                 ? {
+                    type: DrawLayerType.TILE_FILL,
+                    tile: drawState.tile,
+                    ...clipRect(
+                      fromDrag(
+                        drawState.startX,
+                        drawState.startY,
+                        drawState.endX,
+                        drawState.endY,
+                      ),
+                      size,
+                    ),
+                  }
+                : {
                     x: 0,
                     y: 0,
                     type: DrawLayerType.TILES,
@@ -186,11 +212,6 @@ export const RECT: Tool = {
                       (m, x, y, tile) =>
                         RoMap.set(m, cellKey({ x, y }), { x, y, tile }),
                     ),
-                  }
-                : {
-                    type: DrawLayerType.TILE_FILL,
-                    tile: drawState.tile,
-                    ...getFillRect(drawState, size),
                   },
             ]
           : undefined,
