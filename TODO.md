@@ -39,3 +39,4 @@
 - Some additional (temp?) tile selection ways, like "take this specially clicked
   in body tile". Some graphical editors have something similar.
 - Clickable "electron" icon to include/exclude n\*9 infotrons needed.
+- BIN demo export/import?
