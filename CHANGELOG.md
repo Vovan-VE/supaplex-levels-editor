@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.11.0 (DEV)
+## 0.12.0 (DEV)
+
+- ...
+
+## 0.11.0 (2023-04-20)
 
 - Add: "Straight line" drawing tool.
 - Add: Keyboard shortcuts to Selection Editors from previous release.
