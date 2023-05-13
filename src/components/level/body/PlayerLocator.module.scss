@@ -2,7 +2,9 @@
   position: absolute;
   inset: 0;
   // it still cause scroll issue, but much less than with `overflow: hidden`
+  // REFACT: remove when Safari support will spread wider https://caniuse.com/css-overflow
   clip: rect(auto, auto, auto, auto);
+  overflow: clip;
 
   .anchor {
     display: block;
