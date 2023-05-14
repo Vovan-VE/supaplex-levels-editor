@@ -8,7 +8,10 @@ const openFiles = async (files: FileList) => {
   const detected = await Promise.allSettled(
     Array.from(files).map(
       async (file) =>
-        [file, detectDriverFormat(await file.arrayBuffer())] as const,
+        [
+          file,
+          detectDriverFormat(await file.arrayBuffer(), file.name),
+        ] as const,
     ),
   );
   const errors: ReactNode[] = [];

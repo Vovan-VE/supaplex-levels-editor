@@ -40,14 +40,30 @@ const DETECT_ORDER: readonly DriverName[] = ["supaplex"];
 
 export const detectDriverFormat = (
   file: ArrayBuffer,
+  filename: string,
 ): readonly [DriverName, string] | undefined => {
   for (const name of DETECT_ORDER) {
+    // SP without demo was opening as DAT, and so cause no demo support.
+    // To resolve the issue I check file extension as the easiest way.
+    // This should be enhanced with separate "detect" function.
+    const matches: { format: string; extensionOk: boolean }[] = [];
+
     for (const [format, f] of Object.entries(Drivers[name].formats)) {
       try {
         if (f.readLevelset(file)) {
-          return [name, format];
+          const ext = getFileExt(filename);
+          matches.push({
+            format,
+            extensionOk: Boolean(ext && isExtValid(ext, name, format)),
+          });
         }
       } catch {}
+    }
+
+    if (matches.length) {
+      // `true` first, `false` last
+      matches.sort((a, b) => +b.extensionOk - +a.extensionOk);
+      return [name, matches[0].format];
     }
   }
 };
@@ -89,6 +105,8 @@ export const canResizeHeight = ({
 export const canResize = (r: ISizeLimit): boolean =>
   canResizeWidth(r) || canResizeHeight(r);
 
+const getFileExt = (filename: string) => filename.match(/.\.([^.]*)$/)?.[1];
+
 interface _FN {
   hasExt: boolean;
   isExtValid: boolean;
@@ -100,7 +118,7 @@ export const parseFormatFilename = (
   driverName: DriverName,
   driverFormat: string,
 ): _FN => {
-  const ext = filename.match(/.\.([^.]*)$/)?.[1];
+  const ext = getFileExt(filename);
   if (ext === undefined) {
     return {
       hasExt: false,

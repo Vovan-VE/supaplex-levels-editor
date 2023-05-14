@@ -867,7 +867,7 @@ sample({
       const { createLevelset, readLevelset, supportReport, writeLevelset } =
         formats[driverFormat];
 
-      const detected = detectDriverFormat(await file.arrayBuffer());
+      const detected = detectDriverFormat(await file.arrayBuffer(), file.name);
       if (!detected) {
         throw new Error(`"${file.name}": Unsupported file format.`);
       }
