@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { TileCoords } from "components/settings/display";
+import { showToastError } from "models/ui/toasts";
 import { Button } from "ui/button";
 import { Dialog } from "ui/feedback";
 import { Checkbox, RadioGroup, RadioOptions } from "ui/input";
@@ -42,11 +43,15 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
   const [port, setPort] = useState(hadProps);
 
   const handleOK = useCallback(() => {
-    let next = level.setTile(x, y, setPortIsSpecial(tile, isSpecial));
-    if (isSpecial) {
-      next = next.setSpecPort(x, y, port);
+    try {
+      let next = level.setTile(x, y, setPortIsSpecial(tile, isSpecial));
+      if (isSpecial) {
+        next = next.setSpecPort(x, y, port);
+      }
+      submit(next);
+    } catch (e) {
+      showToastError(e);
     }
-    submit(next);
   }, [submit, level, port, isSpecial, tile, x, y]);
 
   const options = useMemo<RadioOptions<boolean>>(

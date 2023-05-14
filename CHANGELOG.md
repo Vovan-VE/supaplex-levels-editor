@@ -3,6 +3,7 @@
 ## 0.12.0 (DEV)
 
 - Add: Export/Import current level to/from standalone file (SP/MPX).
+- Add: UI Toasts for some missing feedback messages.
 - Fix: An `*.sp` file without a demo was opening as DAT format, and so new demo
   could not be created. Now it opens correctly.
   - To fix in-memory SP file already opened earlier, you can use

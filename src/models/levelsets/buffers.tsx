@@ -923,10 +923,9 @@ sample({
       },
     ),
   );
-  importCurrentLevelFx.failData.watch((e) => {
-    console.log(e);
-    return msgBox(<>Cannot import level file file: {e.message}</>, {
+  importCurrentLevelFx.failData.watch((e) =>
+    msgBox(<>Cannot import level file file: {e.message}</>, {
       button: { uiColor: ColorType.MUTE, text: "Close" },
-    });
-  });
+    }),
+  );
 }

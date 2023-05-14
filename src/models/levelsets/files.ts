@@ -24,6 +24,7 @@ import { generateKey } from "utils/strings";
 import * as MapOrder from "utils/map/order";
 import { $instanceIsReadOnly } from "../instanceSemaphore";
 import { flushEvents, localStorageDriver } from "../_utils/persistent";
+import { showToastErrorWrap } from "../ui/toasts";
 import {
   LevelsetConvertOpt,
   LevelsetConvertTry,
@@ -47,7 +48,6 @@ const fulfillFileLevels = async (
   try {
     ab = await input.file.arrayBuffer();
   } catch (e) {
-    console.error(e);
     throw new Error(
       "Could not read data from blob: " +
         (e instanceof Error ? e.message : "unknown error"),
@@ -81,9 +81,9 @@ export const addLevelsetFileFx = createEffect(
     }),
   }),
 );
-addLevelsetFileFx.fail.watch(({ params, error }) => {
-  console.log("Could not load file", params, error);
-});
+addLevelsetFileFx.fail.watch(({ error }) =>
+  showToastErrorWrap("Could not load file", error),
+);
 
 interface LevelsetConvertContinue extends LevelsetConvertOpt {
   file: LevelsetFile;

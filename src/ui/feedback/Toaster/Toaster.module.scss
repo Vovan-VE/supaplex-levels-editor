@@ -1,0 +1,89 @@
+@use "styles/mixins";
+@use "styles/themes";
+
+.root {
+  position: fixed;
+  inset: auto 50% 1rem;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.instance {
+  margin-bottom: 0.5rem;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100vw - 4rem);
+
+  opacity: 0;
+  transition-duration: 0.5s;
+  .content {
+    transition-duration: 0.5s;
+  }
+
+  &._appear {
+    transition-duration: 0s;
+    margin-top: var(--m, 0);
+    margin-bottom: 0;
+    .content {
+      transform: translateY(100%);
+    }
+  }
+  &._shown {
+    opacity: 1;
+    margin-top: 0;
+  }
+  &._disappear {
+  }
+
+  .content {
+    padding: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    @include mixins.popup-shadow;
+  }
+  .icon {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+  }
+  .message {
+  }
+
+  &._default {
+    .content {
+      background: themes.$color-mute-bg;
+      color: themes.$color-default;
+    }
+  }
+  &._mute {
+    .content {
+      background: themes.$color-mute-bg;
+      color: themes.$color-mute;
+    }
+  }
+  &._primary {
+    .content {
+      background: themes.$color-primary-bg;
+      color: themes.$color-primary;
+    }
+  }
+  &._danger {
+    .content {
+      background: themes.$color-danger-bg;
+      color: themes.$color-danger;
+    }
+  }
+  &._warn {
+    .content {
+      background: themes.$color-warn-bg;
+      color: themes.$color-warn;
+    }
+  }
+  &._success {
+    .content {
+      background: themes.$color-success-bg;
+      color: themes.$color-success;
+    }
+  }
+}

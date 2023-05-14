@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { detectDriverFormat } from "drivers";
 import { addLevelsetFileFx } from "models/levelsets";
+import { showToastErrorWrap } from "models/ui/toasts";
 import { msgBox } from "ui/feedback";
 import { openFile } from "ui/input";
 
@@ -39,7 +40,7 @@ const openFiles = async (files: FileList) => {
           .
         </>,
       );
-      console.error("Cannot read file", item.reason);
+      showToastErrorWrap("Cannot read file", item.reason);
     }
   }
   if (errors.length) {

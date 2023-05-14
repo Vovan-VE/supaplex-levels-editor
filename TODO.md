@@ -3,8 +3,6 @@
 ## Internal
 
 - Toasts.
-  - Level title invalid chars.
-  - Some errors which now goes to `console.error()`.
   - Internal editing exception from store manipulations.
 - WpColEd porting:
   - Import/export single level:

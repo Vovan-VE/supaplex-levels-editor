@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { showToastError } from "models/ui/toasts";
 import { Checkbox, IntegerInput, useInputDebounce } from "ui/input";
 import { LevelConfiguratorProps } from "../types";
 import { InlineTile } from "./InlineTile";
@@ -33,8 +34,12 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
       gravity: (checked: boolean) => onChange(level.setInitialGravity(checked)),
       fz: (checked: boolean) => onChange(level.setInitialFreezeZonks(checked)),
       inf: (value: number | null) => {
-        if (value !== null && value >= 0 && value <= 255) {
-          onChange(level.setInfotronsNeed(value));
+        if (value !== null) {
+          if (value >= 0 && value <= 255) {
+            onChange(level.setInfotronsNeed(value));
+          } else {
+            showToastError("From 0 to 255");
+          }
         }
       },
     }),
