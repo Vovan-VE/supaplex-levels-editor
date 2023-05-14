@@ -78,7 +78,6 @@ export const Header: FC<Props> = (props) => {
                 <ButtonDropdown standalone={<UndoButton />}>
                   <Toolbar>
                     <EditToolbar isCompact />
-                    <ToolbarSeparator />
                     <Button
                       icon={<svgs.Wrench />}
                       iconStack={[[IconStackType.Index, <svgs.Rename />]]}
