@@ -8,7 +8,6 @@
   - Internal editing exception from store manipulations.
 - WpColEd porting:
   - Import/export single level:
-    - as standalone file;
     - with real clipboard (binary file with level or special json);
     - with internal buffer in browser storage.
   - Export/copy level body/selection as image.
@@ -23,6 +22,7 @@
 - Enhance Read Only mode more?
 - Visualized level resizing with crop.
   - Separate "crop" & "extend" scenarios with Tabs, for example.
+- Convert format config: SP: Which level to take.
 
 ## Wishes from users (unsorted)
 
@@ -40,3 +40,4 @@
   in body tile". Some graphical editors have something similar.
 - Clickable "electron" icon to include/exclude n\*9 infotrons needed.
 - BIN demo export/import?
+- MPX/SP signature.

@@ -6,3 +6,5 @@ export * from "./RadioGroup";
 export * from "./Range";
 export * from "./Select";
 export * from "./ValueInput";
+
+export * from "./openFile";

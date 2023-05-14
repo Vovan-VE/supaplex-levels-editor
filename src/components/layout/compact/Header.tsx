@@ -65,7 +65,6 @@ export const Header: FC<Props> = (props) => {
                   <Button icon={<svgs.Menu />} onClick={openLevelsListDialog}>
                     x{levelsetLevelsCount}
                   </Button>
-                  <ToolbarSeparator />
                   <LevelsToolbar isCompact />
                 </Toolbar>
                 <LevelsTabs className={cn(cl.scrollableList, cl.levelsList)} />

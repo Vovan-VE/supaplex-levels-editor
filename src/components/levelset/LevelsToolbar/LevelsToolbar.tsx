@@ -12,11 +12,14 @@ import {
   closeOtherLevels,
   deleteCurrentLevel,
   deleteRestLevels,
+  exportCurrentLevel,
+  importCurrentLevel,
   insertAtCurrentLevel,
 } from "models/levelsets";
 import { Button, ButtonDropdown, Toolbar } from "ui/button";
 import { ask } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
+import { openFile } from "ui/input";
 import { ColorType } from "ui/types";
 import { fmtLevelFull, fmtLevelNumber } from "../fmt";
 
@@ -87,6 +90,9 @@ const confirmDeleteRest = (currentIndex: number, count: number) => {
     },
   );
 };
+
+const handleImportLevelClick = () =>
+  openFile({ done: (files) => importCurrentLevel(files[0]) });
 
 export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
   const format = getDriverFormat(
@@ -219,6 +225,18 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
 
   return (
     <>
+      <Button
+        icon={<svgs.Save />}
+        iconStack={[[IconStackType.Index, <svgs.FileBlank />]]}
+        title="Export current level"
+        onClick={exportCurrentLevel}
+      />
+      <Button
+        icon={<svgs.DirOpen />}
+        iconStack={[[IconStackType.Index, <svgs.FileBlank />]]}
+        title="Import a level from file into current level"
+        onClick={handleImportLevelClick}
+      />
       {cannotAddLevel ||
         (isCompact ? (
           <>

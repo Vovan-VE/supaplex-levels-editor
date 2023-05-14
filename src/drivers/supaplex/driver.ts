@@ -1,4 +1,6 @@
-import { DAT, MPX, SP } from "./formats";
+import { detectExportFormat } from "./detectExportFormat";
+import { defaultFormat, formats } from "./formats";
+import { MPX } from "./formats/mpx";
 import { LevelConfigurator } from "./LevelConfigurator";
 import { applyLocalOptions, LevelLocalOptions } from "./LevelLocalOptions";
 import { ISupaplexDriver, ISupaplexLevelRegion } from "./types";
@@ -12,16 +14,9 @@ export const SupaplexDriver: ISupaplexDriver = {
   LevelConfigurator,
   LevelLocalOptions,
   applyLocalOptions,
-  formats: {
-    // "detect" order:
-    // MPX first since it has "MPX " header
-    mpx: MPX,
-    // DAT second because I check its length to be a module of 1536
-    dat: DAT,
-    // SP has only min size limit
-    sp: SP,
-  },
-  defaultFormat: "dat",
+  formats,
+  detectExportFormat,
+  defaultFormat,
   tempLevelFromRegion: (r) =>
     MPX.createLevel(r.tiles).pasteRegion(0, 0, r as ISupaplexLevelRegion),
 };

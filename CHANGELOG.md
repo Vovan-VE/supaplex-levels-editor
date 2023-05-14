@@ -2,7 +2,7 @@
 
 ## 0.12.0 (DEV)
 
-- ...
+- Add: Export/Import current level to/from standalone file (SP/MPX).
 
 ## 0.11.0 (2023-04-20)
 
