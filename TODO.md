@@ -21,6 +21,7 @@
 - Visualized level resizing with crop.
   - Separate "crop" & "extend" scenarios with Tabs, for example.
 - Convert format config: SP: Which level to take.
+- Drag-n-drop open files
 
 ## Wishes from users (unsorted)
 
@@ -34,8 +35,6 @@
   level buffer).
   - Control Selection state with undo history. It should let selection editors
     to work more intuitive.
-- Some additional (temp?) tile selection ways, like "take this specially clicked
-  in body tile". Some graphical editors have something similar.
 - Clickable "electron" icon to include/exclude n\*9 infotrons needed.
 - BIN demo export/import?
 - MPX/SP signature.

@@ -4,6 +4,7 @@
 
 - Add: Export/Import current level to/from standalone file (SP/MPX).
 - Add: UI Toasts for some missing feedback messages.
+- Add: Pick Tile from current level body by `Ctrl+Click`.
 - Fix: An `*.sp` file without a demo was opening as DAT format, and so new demo
   could not be created. Now it opens correctly.
   - To fix in-memory SP file already opened earlier, you can use

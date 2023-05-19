@@ -1,16 +1,19 @@
-import { FC, useEffect, useMemo } from "react";
+import { FC, useCallback, useEffect, useMemo } from "react";
 import cn from "classnames";
 import { useGate, useStore, useStoreMap } from "effector-react";
+import { getTilesVariantsMap } from "drivers";
 import {
   $bodyScale,
   $drvTileRender,
   $drvTiles,
   addInteraction,
   BodyVisibleRectGate,
+  setTile,
 } from "models/levels";
 import {
   $toolUI,
   GridContextEventHandler,
+  GridPickTileEventHandler,
   rollbackWork,
 } from "models/levels/tools";
 import { $currentLevelSize, $currentLevelUndoQueue } from "models/levelsets";
@@ -33,6 +36,7 @@ export const LevelBody: FC<Props> = ({ className, ...rest }) => {
   useEffect(() => rollbackWork, []);
 
   const handleContextMenu = useContextMenuHandler(events?.onContextMenu);
+  const handlePickTile = usePickTile();
 
   const { refRoot, refCanvas, rect } = useVisibleBodyRect(
     width,
@@ -70,6 +74,7 @@ export const LevelBody: FC<Props> = ({ className, ...rest }) => {
             className={cl.cover}
             {...events}
             onContextMenu={handleContextMenu}
+            onPickTile={handlePickTile}
           />
         </div>
       </div>
@@ -102,4 +107,19 @@ const useContextMenuHandler = (toolContextMenu?: GridContextEventHandler) => {
   }, [level, tiles, hasToolContextMenu, hasDrvContextMenu]);
 
   return toolContextMenu ?? drvContextMenu;
+};
+
+const usePickTile = () => {
+  const tiles = useStore($drvTiles)!;
+  const tileVariants = useMemo(() => getTilesVariantsMap(tiles), [tiles]);
+  const level = useStore($currentLevelUndoQueue)!.current;
+
+  return useCallback<GridPickTileEventHandler>(
+    ({ x, y }) => {
+      let tile = level.getTile(x, y);
+      tile = tileVariants.get(tile) ?? tile;
+      setTile(tiles.findIndex(({ value }) => value === tile));
+    },
+    [level, tileVariants, tiles],
+  );
 };
