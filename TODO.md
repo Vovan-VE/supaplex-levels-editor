@@ -13,7 +13,11 @@
 - End User Manual.
   - Find or create jekyll template.
 - Draggable files buttons to reorder many opened files.
-- Electron/Wails based desktop application.
+- Wails based desktop application.
+  - Define which entities will be in Wails backend.
+  - Define backend API.
+  - Extract those entities from current front into separate web "backend".
+  - Build target: web or Wails to apply appropriate backend.
 - Tools:
   - Circle
 - Presets in Selection Editors
