@@ -1,4 +1,3 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4">
-<!--  <path d="M13,7h38v50h-38z" opacity="0.3"/>-->
   <path d="M9,52l12-24h38l-12,24h-38v-36l5,-5h15l5,5h14v12"/>
 </svg>

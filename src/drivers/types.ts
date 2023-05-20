@@ -183,6 +183,7 @@ export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
   writeLevelset(levelset: S): ArrayBuffer;
   createLevelset(levels?: readonly L[] | Iterable<L>): S;
   createLevel(options?: INewLevelOptions): L;
+  // TODO: createLevelset config
 }
 
 export interface TileRenderProps {
@@ -212,8 +213,8 @@ export interface IBaseDriver<
    * Display order now is just sorted titles.
    */
   formats: Record<string, IBaseFormat<L, S>>;
+  // TODO: formats: optional separate display order
   defaultFormat?: string;
+  detectExportFormat: (level: L) => string;
   tempLevelFromRegion: (region: ILevelRegion) => L;
-  // TODO: optional separate display order
-  // TODO: create levelset config
 }

@@ -103,7 +103,7 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
         onClick={redoCurrentLevel}
         title={`Redo (${displayHotKey(HK_REDO)})`}
       />
-      <ToolbarSeparator />
+      {isCompact || <ToolbarSeparator />}
       <Button
         icon={<svgs.Cut />}
         disabled={noSelection}
@@ -139,12 +139,12 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
         </>
       )}
       {/*<Button disabled>PNG</Button>*/}
-      <ToolbarSeparator />
+      {isCompact || <ToolbarSeparator />}
       {/*<Button disabled>Copy level to clipboard</Button>*/}
       {/*<Button disabled>Paste level from clipboard</Button>*/}
       {/*<Button disabled>Internal/System clipboard? (via textarea?)</Button>*/}
       <TestingButtons />
-      <ToolbarSeparator />
+      {isCompact || <ToolbarSeparator />}
       <FindPlayerButton />
       <StatsButton />
     </>

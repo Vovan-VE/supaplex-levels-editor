@@ -7,7 +7,7 @@ import { MainLayout } from "components/layout";
 import { ErrorBoundary } from "components/page";
 import { SettingsDialog } from "components/settings";
 import { HotkeysManagerGate } from "models/ui/hotkeys";
-import { PromptContainer } from "ui/feedback";
+import { PromptContainer, Toaster } from "ui/feedback";
 import { PopupContainer } from "utils/react";
 
 export const App: FC = () => (
@@ -21,5 +21,6 @@ export const App: FC = () => (
       <SettingsDialog />
       <PromptContainer />
     </PopupContainer>
+    <Toaster />
   </ErrorBoundary>
 );

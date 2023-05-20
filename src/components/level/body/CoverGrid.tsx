@@ -112,6 +112,7 @@ export const CoverGrid: FC<Props> = ({
   onPointerLeave,
   onClick,
   onContextMenu,
+  onPickTile,
   className,
   ...rest
 }) => {
@@ -128,13 +129,19 @@ export const CoverGrid: FC<Props> = ({
     useCallback<GridPointerEventHandler>(
       (e, cell) => {
         if (e.isPrimary) {
+          if (e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey) {
+            e.preventDefault();
+            onPickTile?.({ x: cell.x, y: cell.y });
+            return;
+          }
+
           try {
             (e.target as HTMLElement).setPointerCapture(e.pointerId);
           } catch {}
         }
         onPointerDown?.(e, cell);
       },
-      [onPointerDown],
+      [onPointerDown, onPickTile],
     ),
     calc,
     prev,

@@ -7,6 +7,7 @@ import {
   $currentLevelUndoQueue,
   updateCurrentLevel,
 } from "models/levelsets";
+import { showToastError } from "models/ui/toasts";
 import { Button } from "ui/button";
 import { useInputDebounce, ValueInput } from "ui/input";
 import { promptResizeLevel } from "./promptResizeLevel";
@@ -55,7 +56,13 @@ export const LevelConfig: FC<Props> = ({ onDidResize }) => {
         {...useInputDebounce({
           value: rawLevel.title,
           onChangeEnd: useCallback(
-            (title: string) => updateCurrentLevel(rawLevel.setTitle(title)),
+            (title: string) => {
+              try {
+                updateCurrentLevel(rawLevel.setTitle(title));
+              } catch (e) {
+                showToastError(e);
+              }
+            },
             [rawLevel],
           ),
           debounceTimeout: 60 * 1000,

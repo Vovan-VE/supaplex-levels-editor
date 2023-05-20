@@ -35,6 +35,8 @@ export type GridPointerCancelEventHandler = (
 export interface CellContextEventSnapshot extends CellBaseEventProps {}
 export type GridContextEventHandler = (cell: CellContextEventSnapshot) => void;
 
+export type GridPickTileEventHandler = (at: Point2D) => void;
+
 export interface GridEventsProps {
   onPointerDown?: GridPointerEventHandler | undefined;
   onPointerMove?: GridPointerEventHandler | undefined;
@@ -44,6 +46,7 @@ export interface GridEventsProps {
   onPointerLeave?: GridPointerEventHandler | undefined;
   onClick?: GridPointerEventHandler | undefined;
   onContextMenu?: GridContextEventHandler | undefined;
+  onPickTile?: GridPickTileEventHandler | undefined;
 }
 
 //-------------------------------

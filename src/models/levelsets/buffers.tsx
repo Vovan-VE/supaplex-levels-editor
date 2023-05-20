@@ -15,12 +15,19 @@ import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
 import { APP_TITLE } from "configs";
 import {
+  detectDriverFormat,
+  getDriver,
   getDriverFormat,
   IBaseLevel,
   IBaseLevelset,
   levelSupportsDemo,
+  summarySupportReport,
+  SupportReportType,
 } from "drivers";
+import { SupportReport } from "components/files/FileToolbar/SupportReport";
 import { fmtLevelNumber } from "components/levelset/fmt";
+import { msgBox } from "ui/feedback";
+import { ColorType } from "ui/types";
 import { isNotNull } from "utils/fn";
 import { IBounds } from "utils/rect";
 import { $displayReadOnly, $instanceIsReadOnly } from "../instanceSemaphore";
@@ -28,6 +35,7 @@ import { localStorageDriver } from "../_utils/persistent";
 import {
   $currentDriverFormat,
   $currentDriverName,
+  $currentFileName,
   $currentKey,
   $currentLevelsetFile,
   $levelsets,
@@ -91,6 +99,8 @@ fileDidOpen.watch((key) => {
   setCurrentLevelset(key);
   setCurrentLevel(0);
 });
+export const exportCurrentLevel = createEvent<any>();
+export const importCurrentLevel = createEvent<File>();
 /**
  * Insert new level in current level index in current levelset
  */
@@ -150,8 +160,8 @@ export const downloadCurrentFile = createEvent<
 >();
 
 const _withCurrent =
-  <S>(current: Store<S | null>) =>
-  <T>(clock: Event<T>) =>
+  <S,>(current: Store<S | null>) =>
+  <T,>(clock: Event<T>) =>
     sample({
       clock,
       source: current,
@@ -812,3 +822,110 @@ combine(
     window.document.title = title;
   } catch {}
 });
+
+sample({
+  clock: exportCurrentLevel,
+  source: {
+    file: $currentFileName,
+    driverName: $currentDriverName,
+    level: $currentLevel,
+  },
+}).watch(({ file, driverName, level }) => {
+  if (file && driverName && level) {
+    const {
+      index,
+      level: {
+        undoQueue: { current: lvl },
+      },
+    } = level;
+    const { formats, detectExportFormat } = getDriver(driverName)!;
+    const format = formats[detectExportFormat(lvl)];
+    if (format) {
+      const { createLevelset, fileExtensionDefault, writeLevelset } = format;
+      const dotExt = `.${fileExtensionDefault}`;
+      saveAs(
+        new Blob([writeLevelset(createLevelset([lvl]))]),
+        `${
+          file.toUpperCase().endsWith(dotExt.toUpperCase())
+            ? file.substring(0, file.length - dotExt.length)
+            : file
+        }.${index + 1}${dotExt}`,
+      );
+    }
+  }
+});
+
+{
+  interface DriverOpt {
+    driverName: string;
+    driverFormat: string;
+  }
+
+  const importCurrentLevelFx = createEffect(
+    async ({ file, driverName, driverFormat }: { file: File } & DriverOpt) => {
+      const { formats } = getDriver(driverName)!;
+      const { createLevelset, readLevelset, supportReport, writeLevelset } =
+        formats[driverFormat];
+
+      const detected = detectDriverFormat(await file.arrayBuffer(), file.name);
+      if (!detected) {
+        throw new Error(`"${file.name}": Unsupported file format.`);
+      }
+      const [fromDriver, fromFormat] = detected;
+      if (fromDriver !== driverName) {
+        throw new Error(`"${file.name}": Different levelsets driver.`);
+      }
+      const from = formats[fromFormat];
+
+      let levelset = from.readLevelset(await file.arrayBuffer());
+      const report = summarySupportReport(supportReport(levelset));
+      if (report?.type === SupportReportType.ERR) {
+        return { report };
+      }
+      // apply the things warned by warnings
+      levelset = readLevelset(
+        writeLevelset(createLevelset([levelset.getLevel(0)])),
+      );
+      return { level: levelset.getLevel(0), report };
+    },
+  );
+  sample({
+    clock: importCurrentLevel,
+    source: {
+      driverName: $currentDriverName,
+      driverFormat: $currentDriverFormat,
+    },
+    filter: (o): o is DriverOpt => Boolean(o.driverName && o.driverFormat),
+    fn: (s: DriverOpt, file: File) => ({ ...s, file }),
+    target: importCurrentLevelFx,
+  });
+
+  sample({
+    source: importCurrentLevelFx.doneData.map(({ level }) => level),
+    filter: Boolean,
+    target: updateCurrentLevel,
+  });
+  sample({
+    source: importCurrentLevelFx.doneData.map(({ report }) => report),
+    filter: Boolean,
+  }).watch((report) =>
+    msgBox(
+      <>
+        <p>
+          {report.type === SupportReportType.ERR
+            ? "Cannot import level due to the following compatibility errors:"
+            : "Level was imported applying the following compatibility changes:"}
+        </p>
+        <SupportReport report={report} />
+      </>,
+      {
+        button: { uiColor: ColorType.MUTE, text: "Close" },
+      },
+    ),
+  );
+  importCurrentLevelFx.failData.watch((e) =>
+    msgBox(<>Cannot import level file file: {e.message}</>, {
+      button: { uiColor: ColorType.MUTE, text: "Close" },
+    }),
+  );
+}

@@ -3,12 +3,9 @@
 ## Internal
 
 - Toasts.
-  - Level title invalid chars.
-  - Some errors which now goes to `console.error()`.
   - Internal editing exception from store manipulations.
 - WpColEd porting:
   - Import/export single level:
-    - as standalone file;
     - with real clipboard (binary file with level or special json);
     - with internal buffer in browser storage.
   - Export/copy level body/selection as image.
@@ -16,13 +13,19 @@
 - End User Manual.
   - Find or create jekyll template.
 - Draggable files buttons to reorder many opened files.
-- Electron/Wails based desktop application.
+- Wails based desktop application.
+  - Define which entities will be in Wails backend.
+  - Define backend API.
+  - Extract those entities from current front into separate web "backend".
+  - Build target: web or Wails to apply appropriate backend.
 - Tools:
   - Circle
 - Presets in Selection Editors
 - Enhance Read Only mode more?
 - Visualized level resizing with crop.
   - Separate "crop" & "extend" scenarios with Tabs, for example.
+- Convert format config: SP: Which level to take.
+- Drag-n-drop open files
 
 ## Wishes from users (unsorted)
 
@@ -36,7 +39,6 @@
   level buffer).
   - Control Selection state with undo history. It should let selection editors
     to work more intuitive.
-- Some additional (temp?) tile selection ways, like "take this specially clicked
-  in body tile". Some graphical editors have something similar.
 - Clickable "electron" icon to include/exclude n\*9 infotrons needed.
 - BIN demo export/import?
+- MPX/SP signature.

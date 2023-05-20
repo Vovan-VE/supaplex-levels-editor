@@ -4,7 +4,6 @@ import {
   PropsWithChildren,
   ReactNode,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -26,6 +25,7 @@ import {
   updateCurrentLevel,
 } from "models/levelsets";
 import { $fileSupportsDemo, rememberDemoTarget } from "models/levelsets/demo";
+import { showToast } from "models/ui/toasts";
 import { Button, TextButton } from "ui/button";
 import { ask, msgBox } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
@@ -181,8 +181,6 @@ const ConfirmSO: FC<
     useStore($currentDriverName)!,
   )!;
 
-  const [tempCopyFeedback, setTempCopyFeedback] = useState(false);
-
   const optionsAsCode = useMemo(() => {
     if (level && applyLocalOptions) {
       const url = new URL(window.location.origin);
@@ -198,15 +196,15 @@ const ConfirmSO: FC<
     }
     return "";
   }, [level, applyLocalOptions]);
-  useEffect(() => setTempCopyFeedback(false), [optionsAsCode]);
 
   const handleCopy = useCallback(async () => {
     if (optionsAsCode) {
       try {
         await window.navigator.clipboard.writeText(optionsAsCode);
-        // TODO: toast: "Copied"
-        setTempCopyFeedback(true);
-        setTimeout(() => setTempCopyFeedback(false), 750);
+        showToast({
+          message: "Copied",
+          color: ColorType.SUCCESS,
+        });
       } catch (e) {
         await msgBox(
           <>
@@ -243,7 +241,6 @@ const ConfirmSO: FC<
             <LevelLocalOptions level={level} onChange={onChange} />
           </div>
           <Button
-            uiColor={tempCopyFeedback ? ColorType.SUCCESS : undefined}
             icon={<svgs.Copy />}
             onClick={handleCopy}
             title={`Copy code to clipboard to use in level upload request:\n\n${optionsAsCode}`}
