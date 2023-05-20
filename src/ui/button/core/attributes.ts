@@ -60,7 +60,6 @@ const makeHelpers = <
 const LINK_UNIQ_KEYS = keysTuple<keyof LinkUniqProps>()([
   // most used
   "href",
-  "rel",
   "target",
   // rest alphabetical
   "download",
@@ -74,7 +73,6 @@ const BUTTON_UNIQ_KEYS = keysTuple<keyof ButtonUniqProps>()([
   "disabled",
   "name",
   "value",
-  "autoFocus",
   "form",
   "formAction",
   "formEncType",
