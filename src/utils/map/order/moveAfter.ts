@@ -10,20 +10,15 @@ export const moveAfter = <K, V>(
   let entries = [...map];
   let moveIndex = -1;
   let afterIndex = -1;
-  SEARCH: for (let i = 0; i < entries.length; i++) {
+  for (let i = 0, left = 2; i < entries.length && left > 0; i++) {
     switch (entries[i][0]) {
       case moveKey:
         moveIndex = i;
-        if (afterIndex >= 0) {
-          break SEARCH;
-        }
+        left--;
         break;
-
       case afterKey:
         afterIndex = i;
-        if (moveIndex >= 0) {
-          break SEARCH;
-        }
+        left--;
         break;
     }
   }
