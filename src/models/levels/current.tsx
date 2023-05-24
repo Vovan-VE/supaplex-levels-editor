@@ -1,11 +1,10 @@
 import { createEvent, createStore, sample } from "effector";
 import { createGate } from "effector-react";
 import { withPersistent } from "@cubux/effector-persistent";
+import { $instanceIsReadOnly, configStorage } from "backend";
 import { getDriver } from "drivers";
 import { Rect } from "utils/rect";
-import { $instanceIsReadOnly } from "../instanceSemaphore";
 import { $currentDriverName } from "../levelsets";
-import { localStorageDriver } from "../_utils/persistent";
 
 const _$driver = $currentDriverName.map((d) => (d && getDriver(d)) || null);
 export const $drvTileRender = _$driver.map(
@@ -82,7 +81,7 @@ export const incBodyScale = createEvent<any>();
 export const decBodyScale = createEvent<any>();
 const $bodyScaleN = withPersistent(
   createStore(whichStep(SCALE_INIT_APPROX)),
-  localStorageDriver,
+  configStorage,
   "bodyScale",
   {
     readOnly: $instanceIsReadOnly,

@@ -8,11 +8,18 @@ import {
   sample,
   Store,
 } from "effector";
-import { saveAs } from "file-saver";
 import JSZip from "jszip";
 import { flushDelayed, withPersistent } from "@cubux/effector-persistent";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
+import {
+  $displayReadOnly,
+  $instanceIsReadOnly,
+  allowManualSave,
+  configStorage,
+  onDeactivate,
+  saveFileAs,
+} from "backend";
 import { APP_TITLE } from "configs";
 import {
   detectDriverFormat,
@@ -30,8 +37,7 @@ import { msgBox } from "ui/feedback";
 import { ColorType } from "ui/types";
 import { isNotNull } from "utils/fn";
 import { IBounds } from "utils/rect";
-import { $displayReadOnly, $instanceIsReadOnly } from "../instanceSemaphore";
-import { localStorageDriver } from "../_utils/persistent";
+import { $autoSave, $autoSaveDelay } from "../settings";
 import {
   $currentDriverFormat,
   $currentDriverName,
@@ -55,12 +61,6 @@ import {
   readToBuffers,
   updateBufferLevel,
 } from "./types";
-
-/**
- * Delay to flush changes to in-memory files after a changes was made. More
- * changes in sequence within this delay cause flush to delay more.
- */
-const AUTO_FLUSH_DELAY = 300;
 
 type _LevelRef = readonly [LevelsetFileKey, number | null];
 type _LevelRefStrict = readonly [LevelsetFileKey, number];
@@ -141,23 +141,27 @@ export const undoCurrentLevel = createEvent<any>();
  * Undo in current level in current levelset
  */
 export const redoCurrentLevel = createEvent<any>();
+
 /**
  * Flush changes for the given levelset to blob
  */
-export const flushBuffer = createEvent<LevelsetFileKey>();
+const flushBuffer = createEvent<LevelsetFileKey>();
 /**
  * Flush changes for all levelset to blob
  */
-export const flushBuffers = createEvent<any>();
-export interface DownloadFileOptions {
+const flushBuffers = createEvent<any>();
+sample({
+  source: onDeactivate,
+  filter: $autoSave,
+  target: flushBuffers,
+});
+export interface SaveAsOptions {
   withLocalOptions?: boolean;
 }
 /**
  * Download current levelset file
  */
-export const downloadCurrentFile = createEvent<
-  DownloadFileOptions | undefined
->();
+export const saveAsCurrentFile = createEvent<SaveAsOptions | undefined>();
 
 const _withCurrent =
   <S,>(current: Store<S | null>) =>
@@ -535,7 +539,7 @@ type _OpenedIndicesSerialized = readonly [
 type _OpenedIndicesSerializedList = readonly _OpenedIndicesSerialized[];
 withPersistent<string, _OpenedIndicesWakeUpMap, _OpenedIndicesSerializedList>(
   _$keepOpenedIndices,
-  localStorageDriver,
+  configStorage,
   "openedLevels",
   {
     wakeUp: _$wakeUpOpenedIndices,
@@ -574,13 +578,25 @@ _$wakeUpOpenedIndices.on(
   (map, keys) => RoMap.filter(map, (_, k) => !keys.has(k)),
 );
 
-type _SaveInnerParams = { key: LevelsetFileKey; options?: DownloadFileOptions };
+export const flushCurrentFile = createEvent<any>();
+// TODO: flushCurrentAndCloseFx
+// TODO: flushAllFx
+if (allowManualSave) {
+  sample({
+    clock: flushCurrentFile,
+    source: $currentKey,
+    filter: Boolean,
+    target: flushBuffer,
+  });
+}
+
+type _SaveAsInnerParams = { key: LevelsetFileKey; options?: SaveAsOptions };
 sample({
-  clock: downloadCurrentFile,
+  clock: saveAsCurrentFile,
   source: $currentKey,
   filter: Boolean,
   fn: (key, options) => ({ key, options }),
-  target: flushBuffer.prepend<_SaveInnerParams>(({ key }) => key),
+  target: flushBuffer.prepend<_SaveAsInnerParams>(({ key }) => key),
 }).watch(async ({ key, options: { withLocalOptions = false } = {} }) => {
   // https://effector.dev/docs/advanced-guide/computation-priority
   // Since `watch` classified as "side effect" (and actually it is so here),
@@ -604,13 +620,14 @@ sample({
           2,
         ) + "\n",
       );
-      saveAs(await zip.generateAsync({ type: "blob" }), `${file.name}.zip`);
+      saveFileAs(await zip.generateAsync({ type: "blob" }), `${file.name}.zip`);
     } else {
-      saveAs(file.file, file.name);
+      saveFileAs(file.file, file.name);
     }
   }
 });
 
+let _$dirtyKeys;
 {
   const _writeBuffersToFile = ({
     driverName,
@@ -639,11 +656,28 @@ sample({
           !isEqualLevels(levels, files.get(key)!.levelset.getLevels()),
       ),
   );
+  _$dirtyKeys = _$changedLevelsets.map<ReadonlySet<LevelsetFileKey>>(
+    (map, prev) => {
+      const next = new Set(map.keys());
+      // REFACT: RoSet.syncFrom()
+      if (
+        prev &&
+        prev !== next &&
+        prev.size === next.size &&
+        Array.from(prev).every((v) => next.has(v))
+      ) {
+        return prev;
+      }
+      return next;
+    },
+  );
+
   // auto trigger flush for all after buffers changed
   flushDelayed({
     source: _$changedLevelsets,
-    flushDelay: AUTO_FLUSH_DELAY,
+    flushDelay: $autoSaveDelay,
     target: _flushBuffers,
+    filter: $autoSave,
   });
   // trigger flush for the given levelset
   sample({
@@ -722,6 +756,10 @@ sample({
     ),
   );
 }
+export const $dirtyKeys = _$dirtyKeys;
+export const $currentFileIsDirty = combine($dirtyKeys, $currentKey, (set, k) =>
+  Boolean(k && set.has(k)),
+);
 
 /**
  * Editing buffer for current levelset
@@ -843,7 +881,7 @@ sample({
     if (format) {
       const { createLevelset, fileExtensionDefault, writeLevelset } = format;
       const dotExt = `.${fileExtensionDefault}`;
-      saveAs(
+      saveFileAs(
         new Blob([writeLevelset(createLevelset([lvl]))]),
         `${
           file.toUpperCase().endsWith(dotExt.toUpperCase())

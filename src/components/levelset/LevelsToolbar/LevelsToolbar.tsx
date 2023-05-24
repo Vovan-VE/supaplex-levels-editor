@@ -1,5 +1,6 @@
 import { useStore } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
+import { openFile } from "backend";
 import { getDriverFormat } from "drivers";
 import {
   $currentBuffer,
@@ -19,7 +20,6 @@ import {
 import { Button, ButtonDropdown, Toolbar } from "ui/button";
 import { ask } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
-import { openFile } from "ui/input";
 import { ColorType } from "ui/types";
 import { fmtLevelFull, fmtLevelNumber } from "../fmt";
 

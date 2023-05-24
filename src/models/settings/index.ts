@@ -1,35 +1,35 @@
-import { createEvent, createStore } from "effector";
+import { createEvent, createStore, restore } from "effector";
 import { withPersistent } from "@cubux/effector-persistent";
-import { $instanceIsReadOnly } from "../instanceSemaphore";
-import { localStorageDriver } from "../_utils/persistent";
+import { $instanceIsReadOnly, allowManualSave, configStorage } from "backend";
 
 export const openSettings = createEvent<any>();
 export const closeSettings = createEvent<any>();
-export const $opened = createStore(false)
-  .reset(closeSettings)
-  .on(openSettings, () => true);
+export const $opened = restore(
+  openSettings.map(() => true),
+  false,
+).reset(closeSettings);
 
 export const setPrefAskTestSO = createEvent<boolean>();
 export const $prefConfirmedTestSO = withPersistent(
-  createStore(false),
-  localStorageDriver,
+  restore(setPrefAskTestSO, false),
+  configStorage,
   "prefConfirmTestSO",
   {
     readOnly: $instanceIsReadOnly,
     unserialize: Boolean,
   },
-).on(setPrefAskTestSO, (_, v) => v);
+);
 
 export const setCoordsDisplayBasis = createEvent<0 | 1>();
 export const $coordsDisplayBasis = withPersistent(
-  createStore<0 | 1>(0),
-  localStorageDriver,
+  restore(setCoordsDisplayBasis, 0),
+  configStorage,
   "coordsBasis",
   {
     readOnly: $instanceIsReadOnly,
     unserialize: (v) => (v ? 1 : 0),
   },
-).on(setCoordsDisplayBasis, (_, v) => v);
+);
 
 export enum LayoutType {
   AUTO = "auto",
@@ -40,25 +40,62 @@ const isLayoutType = (v: any): v is LayoutType =>
   typeof v === "string" && LayoutType.hasOwnProperty(v);
 export const setLayoutType = createEvent<LayoutType>();
 export const $layoutType = withPersistent(
-  createStore<LayoutType>(LayoutType.AUTO),
-  localStorageDriver,
+  restore(setLayoutType, LayoutType.AUTO),
+  configStorage,
   "layout",
   {
     readOnly: $instanceIsReadOnly,
     unserialize: (v) => (isLayoutType(v) ? v : LayoutType.AUTO),
   },
-).on(setLayoutType, (_, v) => v);
+);
 
 type SpChipType = 0 | 1;
 const isSpChipType = (v: any): v is SpChipType =>
   typeof v === "number" && Number.isInteger(v) && v >= 0 && v <= 1;
 export const setSpChip = createEvent<SpChipType>();
 export const $spChip = withPersistent(
-  createStore<SpChipType>(0),
-  localStorageDriver,
+  restore(setSpChip, 0),
+  configStorage,
   "spChip",
   {
     readOnly: $instanceIsReadOnly,
     unserialize: (v) => (isSpChipType(v) ? v : 0),
   },
-).on(setSpChip, (_, v) => v);
+);
+
+export const setAutoSave = createEvent<boolean>();
+export const $autoSave = allowManualSave
+  ? withPersistent(restore(setAutoSave, false), configStorage, "autoSave", {
+      readOnly: $instanceIsReadOnly,
+      unserialize: Boolean,
+    })
+  : // it's always true without manual save
+    createStore(true);
+
+export const AUTO_SAVE_DELAY_MIN = 5 * 1000;
+export const AUTO_SAVE_DELAY_MAX = 30 * 60 * 1000;
+export const AUTO_SAVE_DELAY_STEP = 5 * 1000;
+const AUTO_SAVE_DELAY_DEF = 60 * 1000;
+export const setAutoSaveDelay = createEvent<number>();
+/**
+ * Delay to flush changes to in-memory files after a changes was made. More
+ * changes in sequence within this delay cause flush to delay more.
+ */
+export const $autoSaveDelay = allowManualSave
+  ? withPersistent(
+      restore(setAutoSaveDelay, AUTO_SAVE_DELAY_DEF),
+      configStorage,
+      "autoSaveDelay",
+      {
+        readOnly: $instanceIsReadOnly,
+        unserialize: (s) => {
+          const n = Number(s);
+          return Number.isSafeInteger(n) &&
+            n >= AUTO_SAVE_DELAY_MIN &&
+            n <= AUTO_SAVE_DELAY_MAX
+            ? n
+            : AUTO_SAVE_DELAY_DEF;
+        },
+      },
+    )
+  : createStore(300);

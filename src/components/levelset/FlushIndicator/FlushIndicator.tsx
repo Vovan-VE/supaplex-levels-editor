@@ -1,9 +1,9 @@
 import cn from "classnames";
 import { useStore } from "effector-react";
 import { FC, useMemo } from "react";
+import { $displayReadOnly } from "backend";
 import { APP_TITLE } from "configs";
-import { $displayReadOnly } from "models/instanceSemaphore";
-import { $flushError, $isFlushPending } from "models/_utils/persistent";
+import { $flushError, $isFlushPending } from "models/levelsets/flush";
 import { TextButton } from "ui/button";
 import { msgBox, Spinner } from "ui/feedback";
 import { svgs } from "ui/icon";

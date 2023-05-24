@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { FC, useCallback, useMemo } from "react";
+import { FC, ReactNode, useCallback, useMemo } from "react";
 import { Range as RRange } from "react-range";
 import {
   IProps,
@@ -16,6 +16,7 @@ interface Props extends IPropsRequired, IPropsOptional, ContainerProps {
   value: number;
   onChange: (value: number) => void;
   onFinalChange?: (value: number) => void;
+  format?: (value: number) => ReactNode;
 }
 
 export const Range: FC<Props> = ({
@@ -26,6 +27,7 @@ export const Range: FC<Props> = ({
   value,
   onChange,
   onFinalChange,
+  format,
   className,
   ...rest
 }) => (
@@ -51,8 +53,8 @@ export const Range: FC<Props> = ({
         className={cn(cl.root, disabled && cl._disabled, className)}
       >
         <span className={cl.value}>
-          <span className={cl.keep}>{max}</span>
-          <span className={cl.display}>{value}</span>
+          <span className={cl.keep}>{format ? format(max) : max}</span>
+          <span className={cl.display}>{format ? format(value) : value}</span>
         </span>
         <div {...props} className={cl.track}>
           {children}

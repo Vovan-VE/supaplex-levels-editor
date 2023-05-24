@@ -1,7 +1,7 @@
 import { FC, ReactNode, useEffect, useMemo, useRef } from "react";
 import { AnyKey } from "@cubux/types";
 import cn from "classnames";
-import { ContainerProps } from "../../types";
+import { ColorType, ContainerProps } from "../../types";
 import { Button } from "../Button";
 import { Toolbar } from "../Toolbar";
 import cl from "./TabsButtons.module.scss";
@@ -9,6 +9,7 @@ import cl from "./TabsButtons.module.scss";
 export interface TabItem<K extends AnyKey = AnyKey> {
   key: K;
   text: ReactNode;
+  uiColor?: ColorType;
 }
 
 interface Props<K extends AnyKey> extends ContainerProps {
@@ -46,11 +47,12 @@ export const TabsButtons = <K extends AnyKey = AnyKey>({
 
   return (
     <Toolbar {...rest} withBG={false} className={cn(cl.root, className)}>
-      {tabs.map(({ key, text }, i) => (
+      {tabs.map(({ key, text, uiColor }, i) => (
         <Button
           key={key}
           ref={key === current ? refCur : undefined}
           asLink={key !== current}
+          uiColor={uiColor}
           onClick={handleClick?.[i]}
         >
           {text}

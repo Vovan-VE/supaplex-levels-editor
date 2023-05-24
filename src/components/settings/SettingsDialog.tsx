@@ -1,9 +1,11 @@
 import { useStore } from "effector-react";
 import { FC } from "react";
+import { allowManualSave } from "backend";
 import { $opened, closeSettings } from "models/settings";
 import { Button } from "ui/button";
 import { Dialog } from "ui/feedback";
 import { ColorType } from "ui/types";
+import { AutoSave } from "./AutoSave";
 import { CoordsChoice } from "./CoordsChoice";
 import { LayoutChoice } from "./LayoutChoice";
 import { SpChips } from "./SpChips";
@@ -23,6 +25,7 @@ export const SettingsDialog: FC = () => {
         </Button>
       }
     >
+      {allowManualSave && <AutoSave />}
       <LayoutChoice />
       <CoordsChoice />
       {/*<Confirmations />*/}

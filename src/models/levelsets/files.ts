@@ -8,8 +8,14 @@ import {
 } from "effector";
 import { withPersistent, withPersistentMap } from "@cubux/effector-persistent";
 import * as RoMap from "@cubux/readonly-map";
-import { createIndexedDBDriver, createNullDriver } from "@cubux/storage-driver";
-import { APP_STORAGE_PREFIX } from "configs";
+import { StoreDriver } from "@cubux/storage-driver";
+import {
+  $instanceIsReadOnly,
+  allowManualSave,
+  configStorage,
+  filesStorage,
+  flushEvents,
+} from "backend";
 import {
   DriverName,
   FALLBACK_FORMAT,
@@ -22,8 +28,6 @@ import {
 } from "drivers";
 import { generateKey } from "utils/strings";
 import * as MapOrder from "utils/map/order";
-import { $instanceIsReadOnly } from "../instanceSemaphore";
-import { flushEvents, localStorageDriver } from "../_utils/persistent";
 import { showToastErrorWrap } from "../ui/toasts";
 import {
   LevelsetConvertOpt,
@@ -178,7 +182,7 @@ forward({
  */
 export const $currentKey = withPersistent(
   createStore<LevelsetFileKey | null>(null),
-  localStorageDriver,
+  configStorage,
   "currentFile",
   { readOnly: $instanceIsReadOnly },
 ).on(_setCurrentKey, (_, c) => c);
@@ -218,18 +222,10 @@ interface _DbLevelsetFile extends Omit<LevelsetFileDataOld, "file"> {
   fileBuffer: ArrayBuffer;
   _options?: LocalOptionsList;
 }
-/**
- * Loaded files in memory
- */
+
 export const $levelsets = withPersistentMap(
   createStore<ReadonlyMap<LevelsetFileKey, LevelsetFile>>(new Map()),
-  process.env.NODE_ENV === "test"
-    ? createNullDriver<LevelsetFileKey, _DbLevelsetFile>()
-    : createIndexedDBDriver<LevelsetFileKey, _DbLevelsetFile>({
-        dbName: APP_STORAGE_PREFIX,
-        dbVersion: 1,
-        table: "levelset-files",
-      }),
+  filesStorage as StoreDriver<LevelsetFileKey, _DbLevelsetFile>,
   {
     ...flushEvents,
     readOnly: $instanceIsReadOnly,
@@ -284,16 +280,6 @@ export const $levelsets = withPersistentMap(
     }
     return next;
   })
-  .on(
-    sample({
-      clock: renameCurrentLevelset,
-      source: $currentKey,
-      filter: Boolean,
-      fn: (key, name) => ({ key, name }),
-    }),
-    (map, { key, name }) =>
-      RoMap.update(map, key, (file) => ({ ...file, name })),
-  )
   .on(_removeLevelsetFile, RoMap.remove)
   .on(_removeOthersLevelsetFile, (map, key) => {
     if (map.size > 1) {
@@ -303,6 +289,18 @@ export const $levelsets = withPersistentMap(
       }
     }
   });
+if (!allowManualSave) {
+  $levelsets.on(
+    sample({
+      clock: renameCurrentLevelset,
+      source: $currentKey,
+      filter: Boolean,
+      fn: (key, name) => ({ key, name }),
+    }),
+    (map, { key, name }) =>
+      RoMap.update(map, key, (file) => ({ ...file, name })),
+  );
+}
 
 export const $hasFiles = $levelsets.map((m) => m.size > 0);
 export const $hasOtherFiles = combine(

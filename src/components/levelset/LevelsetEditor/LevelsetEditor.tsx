@@ -8,7 +8,6 @@ import {
   $currentBufferSelected,
   $currentKey,
   $currentLevelIndex,
-  flushBuffers,
 } from "models/levelsets";
 import { receivedDemoFromTest } from "models/levelsets/demo";
 import cl from "./LevelsetEditor.module.scss";
@@ -20,25 +19,11 @@ export const LevelsetEditor: FC = () => {
         receivedDemoFromTest(e.data);
       }
     }
-    function onSuspend() {
-      flushBuffers();
-    }
-    function onVisChange() {
-      if (window.document.visibilityState === "hidden") {
-        flushBuffers();
-      }
-    }
 
-    window.document.addEventListener("visibilitychange", onVisChange);
-    window.addEventListener("pagehide", onSuspend);
-    window.addEventListener("beforeunload", onSuspend);
     window.addEventListener("message", onMessage);
 
     return () => {
       window.removeEventListener("message", onMessage);
-      window.removeEventListener("beforeunload", onSuspend);
-      window.removeEventListener("pagehide", onSuspend);
-      window.document.removeEventListener("visibilitychange", onVisChange);
     };
   }, []);
 

@@ -1,13 +1,13 @@
 import { ReactNode } from "react";
+import { openFile } from "backend";
 import { detectDriverFormat } from "drivers";
 import { addLevelsetFileFx } from "models/levelsets";
 import { showToastErrorWrap } from "models/ui/toasts";
 import { msgBox } from "ui/feedback";
-import { openFile } from "ui/input";
 
-const openFiles = async (files: FileList) => {
+const openFiles = async (files: readonly File[]) => {
   const detected = await Promise.allSettled(
-    Array.from(files).map(
+    files.map(
       async (file) =>
         [
           file,
@@ -55,9 +55,8 @@ const openFiles = async (files: FileList) => {
   }
 };
 
-export const handleOpenClick = () => {
+export const handleOpenClick = () =>
   openFile({
     multiple: true,
     done: openFiles,
   });
-};

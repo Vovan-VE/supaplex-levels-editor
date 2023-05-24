@@ -26,4 +26,3 @@ export {
 };
 
 export const APP_TITLE = "SpLE";
-export const APP_STORAGE_PREFIX = "SpLE";

@@ -1,5 +1,6 @@
 import { useStore } from "effector-react";
 import { useMemo } from "react";
+import { allowManualSave } from "backend";
 import { SupportReportType } from "drivers";
 import {
   $currentFileName,
@@ -13,21 +14,23 @@ import { ColorType } from "ui/types";
 import { promptFormat } from "./promptFormat";
 import { SupportReport } from "./SupportReport";
 
-const handleRename = async (filename: string) => {
-  const newName = await promptString({
-    title: (
-      <>
-        Rename file "<b>{filename}</b>" in memory
-      </>
-    ),
-    label: "New filename",
-    defaultValue: filename,
-    required: true,
-  });
-  if (newName !== undefined) {
-    renameCurrentLevelset(newName);
-  }
-};
+const handleRename = allowManualSave
+  ? undefined
+  : async (filename: string) => {
+      const newName = await promptString({
+        title: (
+          <>
+            Rename file "<b>{filename}</b>" in memory
+          </>
+        ),
+        label: "New filename",
+        defaultValue: filename,
+        required: true,
+      });
+      if (newName !== undefined) {
+        renameCurrentLevelset(newName);
+      }
+    };
 
 const handleConvert = async () => {
   const toDriverFormat = await promptFormat();
@@ -58,6 +61,8 @@ const handleConvert = async () => {
     }
   }
 };
+
+// TODO: Ask to save before closing file or exiting app if `allowManualSave`
 
 const handleRemove = async (filename: string) => {
   if (
@@ -121,12 +126,12 @@ export const useFileButtonsProps = () => {
   const filename = useStore($currentFileName);
 
   return {
-    filename,
+    isFileOpened: Boolean(filename),
     handlers: useMemo(
       () =>
         filename
           ? {
-              rename: () => handleRename(filename),
+              ...(handleRename && { rename: () => handleRename(filename) }),
               convert: handleConvert,
               remove: () => handleRemove(filename),
               removeOthers: () => handleRemoveOthers(filename),
