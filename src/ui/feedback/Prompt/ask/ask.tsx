@@ -3,7 +3,12 @@ import { Button } from "ui/button";
 import { ColorType } from "ui/types";
 import { Dialog } from "../../Dialog";
 import { renderPrompt } from "../renderPrompt";
-import { AskButtonsDefaultProps, AskOptions } from "./types";
+import {
+  AskButtonsDefaultProps,
+  AskButtonsRenderProps,
+  AskFunction,
+  AskOptions,
+} from "./types";
 
 const createDefaultButtonsRenderer =
   (onOk: () => void, onCancel: () => void) =>
@@ -31,9 +36,9 @@ const createDefaultButtonsRenderer =
       </>
     );
 
-export function ask<V = true>(
+function ask_<V = true, P = {}>(
   content: ReactNode,
-  { buttons, ...options }: AskOptions<V> = {},
+  { buttons, buttonsProps, ...options }: AskOptions<V, P> = {},
 ) {
   return renderPrompt(({ show, onSubmit, onCancel }) => {
     const defaultButtonsRenderer = createDefaultButtonsRenderer(
@@ -48,10 +53,11 @@ export function ask<V = true>(
         buttons={
           typeof buttons === "function"
             ? buttons({
+                ...buttonsProps,
                 onSubmit: onSubmit as any,
                 onCancel,
                 defaults: defaultButtonsRenderer,
-              })
+              } as AskButtonsRenderProps<V> & P)
             : defaultButtonsRenderer(buttons)
         }
         onClose={onCancel}
@@ -61,3 +67,5 @@ export function ask<V = true>(
     );
   });
 }
+
+export const ask: AskFunction = ask_;

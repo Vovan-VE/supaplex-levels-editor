@@ -47,6 +47,7 @@ import {
   $levelsets,
   currentKeyBeforeWillGone,
   fileDidOpen,
+  removeCurrentLevelsetFile,
   setCurrentLevelset,
 } from "./files";
 import {
@@ -579,8 +580,8 @@ _$wakeUpOpenedIndices.on(
 );
 
 export const flushCurrentFile = createEvent<any>();
-// TODO: flushCurrentAndCloseFx
-// TODO: flushAllFx
+// TODO: export const flushAllFx = createEffect();
+export const saveAndClose = createEvent<any>();
 if (allowManualSave) {
   sample({
     clock: flushCurrentFile,
@@ -588,6 +589,11 @@ if (allowManualSave) {
     filter: Boolean,
     target: flushBuffer,
   });
+
+  sample({
+    source: saveAndClose,
+    target: flushCurrentFile,
+  }).watch(removeCurrentLevelsetFile);
 }
 
 type _SaveAsInnerParams = { key: LevelsetFileKey; options?: SaveAsOptions };

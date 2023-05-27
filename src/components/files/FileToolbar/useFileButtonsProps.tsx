@@ -1,15 +1,19 @@
+import { createEffect } from "effector";
 import { useStore } from "effector-react";
 import { useMemo } from "react";
 import { allowManualSave } from "backend";
 import { SupportReportType } from "drivers";
 import {
+  $currentFileIsDirty,
   $currentFileName,
   convertLevelsetTryFx,
   removeCurrentLevelsetFile,
   removeOthersLevelsetFile,
   renameCurrentLevelset,
+  saveAndClose,
 } from "models/levelsets";
-import { ask, msgBox, promptString } from "ui/feedback";
+import { $autoSave } from "models/settings";
+import { ask, msgBox, promptString, YesNoCancel } from "ui/feedback";
 import { ColorType } from "ui/types";
 import { promptFormat } from "./promptFormat";
 import { SupportReport } from "./SupportReport";
@@ -64,34 +68,69 @@ const handleConvert = async () => {
 
 // TODO: Ask to save before closing file or exiting app if `allowManualSave`
 
-const handleRemove = async (filename: string) => {
-  if (
-    await ask(
-      <>
-        Are you sure you want to remove file "<b>{filename}</b>" from memory?
-        <br />
-        You will loss all changes in the file. Consider download it first to
-        backup.
-        <br />
-        <b>This action can not be undone.</b>
-      </>,
-      {
-        buttons: {
-          okText: <>Forgot "{filename}"</>,
-          ok: {
-            uiColor: ColorType.DANGER,
-            autoFocus: false,
-          },
-          cancel: {
-            autoFocus: true,
-          },
-        },
+export const closeCurrentFileFx = createEffect(
+  allowManualSave
+    ? async (_: any) => {
+        if ($currentFileIsDirty.getState()) {
+          if (!$autoSave.getState()) {
+            const filename = $currentFileName.getState();
+            switch (
+              await ask(
+                <>
+                  File <b>{filename}</b> has some changes. Save changes?
+                </>,
+                {
+                  buttons: YesNoCancel,
+                  buttonsProps: {
+                    yesText: "Save",
+                    noText: "Don't save",
+                    no: { uiColor: ColorType.DANGER },
+                  },
+                },
+              )
+            ) {
+              case true:
+                saveAndClose();
+                break;
+              case false:
+                removeCurrentLevelsetFile();
+                break;
+            }
+          }
+        }
+      }
+    : async (_: any) => {
+        const filename = $currentFileName.getState();
+        if (
+          await ask(
+            <>
+              Are you sure you want to remove ALL OTHER FILES BUT "
+              <b>{filename}</b>" from memory?
+              <br />
+              You will loss all changes in that files. Consider download them
+              first to backup.
+              <br />
+              <b>This action can not be undone.</b>
+            </>,
+            {
+              buttons: {
+                okText: <>Forgot OTHER BUT "{filename}"</>,
+                ok: {
+                  uiColor: ColorType.DANGER,
+                  autoFocus: false,
+                },
+                cancel: {
+                  autoFocus: true,
+                },
+              },
+            },
+          )
+        ) {
+          removeCurrentLevelsetFile();
+        }
       },
-    )
-  ) {
-    removeCurrentLevelsetFile();
-  }
-};
+);
+
 const handleRemoveOthers = async (filename: string) => {
   if (
     await ask(
@@ -133,7 +172,6 @@ export const useFileButtonsProps = () => {
           ? {
               ...(handleRename && { rename: () => handleRename(filename) }),
               convert: handleConvert,
-              remove: () => handleRemove(filename),
               removeOthers: () => handleRemoveOthers(filename),
             }
           : undefined,

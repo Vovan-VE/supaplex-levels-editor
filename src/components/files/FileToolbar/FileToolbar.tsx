@@ -11,7 +11,7 @@ import {
 import { Button, ButtonDropdown, Toolbar } from "ui/button";
 import { ColorType } from "ui/types";
 import { IconStack, IconStackType, svgs } from "ui/icon";
-import { useFileButtonsProps } from "./useFileButtonsProps";
+import { closeCurrentFileFx, useFileButtonsProps } from "./useFileButtonsProps";
 
 const removeColor = allowManualSave ? ColorType.DEFAULT : ColorType.DANGER;
 const removeIcon = allowManualSave ? <svgs.Cross /> : <svgs.Trash />;
@@ -74,7 +74,7 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
             : "Remove file from memory"
           : undefined
       }
-      onClick={handlers?.remove}
+      onClick={closeCurrentFileFx}
     />
   );
   const removeOthersTitle = allowManualSave
