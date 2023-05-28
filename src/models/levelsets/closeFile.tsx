@@ -1,11 +1,15 @@
-import { createEffect } from "effector";
+import { combine, createEffect } from "effector";
+import { useStore } from "effector-react";
+import { useEffect } from "react";
 import { allowManualSave } from "backend";
 import { ask, YesNoCancel } from "ui/feedback";
 import { ColorType } from "ui/types";
 import { $autoSave } from "../settings";
 import {
   $currentFileIsDirty,
+  $isAnyDirty,
   $otherIsDirty,
+  saveAll,
   saveAndClose,
   saveOthersAndClose,
 } from "./buffers";
@@ -142,4 +146,49 @@ export const closeOtherFilesFx = createEffect(async (_: any) => {
   }
 });
 
-// TODO: Ask to save before closing file or exiting app if `allowManualSave`
+export const useBeforeUnloadHandling = allowManualSave
+  ? (() => {
+      async function displayConfirm() {
+        if (
+          await ask(
+            "There are some changes in files. Save all changed files?",
+            {
+              buttons: {
+                okText: "Save All",
+                ok: {
+                  uiColor: ColorType.SUCCESS,
+                  autoFocus: true,
+                },
+              },
+            },
+          )
+        ) {
+          saveAll();
+        }
+      }
+      function handleUnload(e: BeforeUnloadEvent) {
+        if (!$isAnyDirty.getState()) {
+          return;
+        }
+        if ($autoSave.getState()) {
+          saveAll();
+          return;
+        }
+        e.preventDefault();
+        displayConfirm();
+      }
+
+      const $enable = combine($isAnyDirty, $autoSave, (d, a) => d && !a);
+      return () => {
+        const on = useStore($enable);
+        useEffect(() => {
+          if (on) {
+            window.addEventListener("beforeunload", handleUnload);
+            return () => {
+              window.removeEventListener("beforeunload", handleUnload);
+            };
+          }
+        }, [on]);
+      };
+    })()
+  : () => {};

@@ -157,6 +157,14 @@ sample({
   filter: $autoSave,
   target: flushBuffers,
 });
+export const saveAll = createEvent<any>();
+if (allowManualSave) {
+  sample({
+    source: saveAll,
+    target: flushBuffers,
+  });
+}
+
 export interface SaveAsOptions {
   withLocalOptions?: boolean;
 }
@@ -637,7 +645,7 @@ sample({
   }
 });
 
-let _$dirtyKeys;
+let _$dirtyKeys: Store<ReadonlySet<LevelsetFileKey>>;
 {
   const _writeBuffersToFile = ({
     driverName,
@@ -789,11 +797,12 @@ let _$dirtyKeys;
   );
 }
 export const $dirtyKeys = _$dirtyKeys;
-export const $currentFileIsDirty = combine($dirtyKeys, $currentKey, (set, k) =>
+export const $isAnyDirty = $dirtyKeys.map((s) => s.size > 0);
+export const $currentFileIsDirty = combine(_$dirtyKeys, $currentKey, (set, k) =>
   Boolean(k && set.has(k)),
 );
 export const $otherIsDirty = combine(
-  $dirtyKeys,
+  _$dirtyKeys,
   $currentKey,
   (set, k) => set.size > (k && set.has(k) ? 1 : 0),
 );

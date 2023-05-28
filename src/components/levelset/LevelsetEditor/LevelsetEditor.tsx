@@ -8,11 +8,13 @@ import {
   $currentBufferSelected,
   $currentKey,
   $currentLevelIndex,
+  useBeforeUnloadHandling,
 } from "models/levelsets";
 import { receivedDemoFromTest } from "models/levelsets/demo";
 import cl from "./LevelsetEditor.module.scss";
 
 export const LevelsetEditor: FC = () => {
+  useBeforeUnloadHandling();
   useEffect(() => {
     function onMessage(e: MessageEvent) {
       if (e.origin === TEST_MESSAGE_ORIGIN) {
