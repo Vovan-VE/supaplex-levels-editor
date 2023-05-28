@@ -157,13 +157,11 @@ sample({
   filter: $autoSave,
   target: flushBuffers,
 });
-export const saveAll = createEvent<any>();
-if (allowManualSave) {
-  sample({
-    source: saveAll,
-    target: flushBuffers,
-  });
-}
+export const saveAllFx = allowManualSave
+  ? createEffect(async () => {
+      flushBuffers();
+    })
+  : async () => {};
 
 export interface SaveAsOptions {
   withLocalOptions?: boolean;

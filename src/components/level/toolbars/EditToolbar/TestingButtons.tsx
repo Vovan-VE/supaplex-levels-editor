@@ -106,7 +106,7 @@ const TestFrame: FC<{ url: URL }> = ({ url }) => (
     src={url.toString()}
     title="Testing Level"
     className={cl.soArea}
-    allow={`fullscreen ${url.origin}`}
+    allow={`autoplay fullscreen ${url.origin}`}
   />
 );
 

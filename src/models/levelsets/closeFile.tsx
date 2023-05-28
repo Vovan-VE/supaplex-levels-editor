@@ -1,7 +1,5 @@
 import { combine, createEffect } from "effector";
-import { useStore } from "effector-react";
-import { useEffect } from "react";
-import { allowManualSave } from "backend";
+import { allowManualSave, exitApp, onExitDirty, setIsDirty } from "backend";
 import { ask, YesNoCancel } from "ui/feedback";
 import { ColorType } from "ui/types";
 import { $autoSave } from "../settings";
@@ -9,7 +7,7 @@ import {
   $currentFileIsDirty,
   $isAnyDirty,
   $otherIsDirty,
-  saveAll,
+  saveAllFx,
   saveAndClose,
   saveOthersAndClose,
 } from "./buffers";
@@ -146,49 +144,47 @@ export const closeOtherFilesFx = createEffect(async (_: any) => {
   }
 });
 
-export const useBeforeUnloadHandling = allowManualSave
-  ? (() => {
-      async function displayConfirm() {
-        if (
-          await ask(
-            "There are some changes in files. Save all changed files?",
-            {
-              buttons: {
-                okText: "Save All",
-                ok: {
-                  uiColor: ColorType.SUCCESS,
-                  autoFocus: true,
-                },
-              },
+if (allowManualSave) {
+  const $enable = combine($isAnyDirty, $autoSave, (d, a) => d && !a);
+  if (setIsDirty) {
+    $enable.updates.watch(setIsDirty);
+  }
+  if (onExitDirty) {
+    onExitDirty.watch(async () => {
+      const message =
+        "There are some changes in files. Save all changed files?";
+      if (exitApp) {
+        switch (
+          await ask(message, {
+            buttons: YesNoCancel,
+            buttonsProps: {
+              yesText: "Save All",
+              yes: { uiColor: ColorType.SUCCESS },
+              noText: "Don't save",
+              no: { uiColor: ColorType.DANGER },
             },
-          )
+          })
         ) {
-          saveAll();
+          case true:
+            await saveAllFx();
+            exitApp();
+            break;
+          case false:
+            exitApp();
+            break;
+        }
+      } else {
+        if (
+          await ask(message, {
+            buttons: {
+              okText: "Save All",
+              ok: { uiColor: ColorType.SUCCESS },
+            },
+          })
+        ) {
+          await saveAllFx();
         }
       }
-      function handleUnload(e: BeforeUnloadEvent) {
-        if (!$isAnyDirty.getState()) {
-          return;
-        }
-        if ($autoSave.getState()) {
-          saveAll();
-          return;
-        }
-        e.preventDefault();
-        displayConfirm();
-      }
-
-      const $enable = combine($isAnyDirty, $autoSave, (d, a) => d && !a);
-      return () => {
-        const on = useStore($enable);
-        useEffect(() => {
-          if (on) {
-            window.addEventListener("beforeunload", handleUnload);
-            return () => {
-              window.removeEventListener("beforeunload", handleUnload);
-            };
-          }
-        }, [on]);
-      };
-    })()
-  : () => {};
+    });
+  }
+}

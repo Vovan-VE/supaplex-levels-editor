@@ -17,6 +17,9 @@ export const allowManualSave: B.AllowManualSave = web.allowManualSave;
 export const openFile: B.OpenFile = web.openFile;
 export const saveFileAs: B.SaveFileAs = web.saveFileAs;
 
+export const setIsDirty: B.SetIsDirty | undefined = web.setIsDirty;
+export const onExitDirty: B.OnExitDirty | undefined = web.onExitDirty;
 export const onDeactivate: B.OnDeactivate = web.onDeactivate;
+export const exitApp: B.ExitApp | undefined = web.exitApp;
 
 export const testInIframe: B.TestInIframe = web.testInIframe;

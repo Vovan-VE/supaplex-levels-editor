@@ -10,6 +10,9 @@ export const allowManualSave = false;
 export { openFile } from "./openFile";
 export { saveAs as saveFileAs } from "file-saver";
 
+export const setIsDirty = undefined;
+export const onExitDirty = undefined;
 export { onDeactivate } from "./onDeactivate";
+export const exitApp = undefined;
 
 export const testInIframe = false;
