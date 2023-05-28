@@ -13,11 +13,12 @@ import { TextButton } from "ui/button";
 import { svgs } from "ui/icon";
 import cl from "./Dialog.module.scss";
 
-export type DialogSize = "small" | "large" | "full";
+export type DialogSize = "small" | "large" | "full" | "fullscreen";
 const CL_SIZE: Record<DialogSize, string | undefined> = {
   small: cl._small,
   large: cl._large,
   full: cl._full,
+  fullscreen: cl._fullscreen,
 };
 
 type FormProps = Omit<FormHTMLAttributes<HTMLFormElement>, "children">;

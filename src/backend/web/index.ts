@@ -11,3 +11,5 @@ export { openFile } from "./openFile";
 export { saveAs as saveFileAs } from "file-saver";
 
 export { onDeactivate } from "./onDeactivate";
+
+export const testInIframe = false;

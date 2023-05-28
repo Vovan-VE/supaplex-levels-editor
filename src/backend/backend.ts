@@ -15,3 +15,5 @@ export type OpenFile = (options: I.OpenFileOptions) => void;
 export type SaveFileAs = (data: Blob | string, filename: string) => void;
 
 export type OnDeactivate = Event<any>;
+
+export type TestInIframe = boolean;

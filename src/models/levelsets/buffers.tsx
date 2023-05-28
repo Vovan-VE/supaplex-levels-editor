@@ -589,7 +589,6 @@ _$wakeUpOpenedIndices.on(
 );
 
 export const flushCurrentFile = createEvent<any>();
-// TODO: export const flushAllFx = createEffect();
 export const saveAndClose = createEvent<any>();
 export const saveOthersAndClose = createEvent<any>();
 if (allowManualSave) {

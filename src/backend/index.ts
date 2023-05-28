@@ -18,3 +18,5 @@ export const openFile: B.OpenFile = web.openFile;
 export const saveFileAs: B.SaveFileAs = web.saveFileAs;
 
 export const onDeactivate: B.OnDeactivate = web.onDeactivate;
+
+export const testInIframe: B.TestInIframe = web.testInIframe;

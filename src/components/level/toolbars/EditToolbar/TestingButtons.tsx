@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { ReactComponent as MurphyRuns } from "assets/img/murphy-run-right.svg";
+import { testInIframe } from "backend";
 import { TEST_DEMO_URL, TEST_LEVEL_TITLE, TEST_LEVEL_URL } from "configs";
 import {
   getDriver,
@@ -100,6 +101,15 @@ const packLevelToSend = (baseUrl: string) => {
   return url;
 };
 
+const TestFrame: FC<{ url: URL }> = ({ url }) => (
+  <iframe
+    src={url.toString()}
+    title="Testing Level"
+    className={cl.soArea}
+    allow={`fullscreen ${url.origin}`}
+  />
+);
+
 type ConfirmFC = FC<PropsWithChildren<LevelConfiguratorProps<IBaseLevel>>>;
 
 const sendLevelTo = ({
@@ -161,8 +171,19 @@ const sendLevelTo = ({
           const { applyLocalOptions } = getDriver(driverName)!;
           applyLocalOptions?.(level, url);
 
-          if (window.open(url, targetOrBlank)) {
+          if (testInIframe) {
             e.preventDefault();
+            msgBox(<TestFrame url={url} />, {
+              size: "fullscreen",
+              button: {
+                text: "Close",
+                uiColor: ColorType.MUTE,
+              },
+            });
+          } else {
+            if (window.open(url, targetOrBlank)) {
+              e.preventDefault();
+            }
           }
         },
       },

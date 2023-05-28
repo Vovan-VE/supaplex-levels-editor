@@ -15,7 +15,6 @@
 - Draggable files buttons to reorder many opened files.
 - Wails based desktop application.
   - Build target: web or Wails to apply appropriate backend.
-  - SO Test page: Demo recording - `iframe`?
   - libwebkit2gtk >= 2.40 + build options
 - Tools:
   - Circle
