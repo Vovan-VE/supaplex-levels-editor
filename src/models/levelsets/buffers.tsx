@@ -48,6 +48,7 @@ import {
   currentKeyBeforeWillGone,
   fileDidOpen,
   removeCurrentLevelsetFile,
+  removeOthersLevelsetFile,
   setCurrentLevelset,
 } from "./files";
 import {
@@ -582,6 +583,7 @@ _$wakeUpOpenedIndices.on(
 export const flushCurrentFile = createEvent<any>();
 // TODO: export const flushAllFx = createEffect();
 export const saveAndClose = createEvent<any>();
+export const saveOthersAndClose = createEvent<any>();
 if (allowManualSave) {
   sample({
     clock: flushCurrentFile,
@@ -592,7 +594,9 @@ if (allowManualSave) {
 
   sample({
     source: saveAndClose,
-    target: flushCurrentFile,
+    // since `sample()` returns `target`, we create new target event,
+    // so further `watch` is attached to that event, not to `flushCurrentFile`
+    target: flushCurrentFile.prepend(() => {}),
   }).watch(removeCurrentLevelsetFile);
 }
 
@@ -645,8 +649,8 @@ let _$dirtyKeys;
   };
 
   // internal intermediate event to actually flush specific buffers
-  const _flushBuffers =
-    createEvent<ReadonlyMap<LevelsetFileKey, IBaseLevelsList>>();
+  type _MapToFlush = ReadonlyMap<LevelsetFileKey, IBaseLevelsList>;
+  const _flushBuffers = createEvent<_MapToFlush>();
 
   // extract only levels from only actually changed buffers
   const _$changedLevelsets = combine(
@@ -681,8 +685,18 @@ let _$dirtyKeys;
   // auto trigger flush for all after buffers changed
   flushDelayed({
     source: _$changedLevelsets,
-    flushDelay: $autoSaveDelay,
     target: _flushBuffers,
+    flushDelay: $autoSaveDelay,
+    filter: $autoSave,
+  });
+  // delayed "flush all" when $autoSave becomes true
+  flushDelayed({
+    source: sample({
+      source: $autoSave.updates,
+      filter: Boolean,
+    }),
+    target: flushBuffers,
+    flushDelay: $autoSaveDelay,
     filter: $autoSave,
   });
   // trigger flush for the given levelset
@@ -698,6 +712,18 @@ let _$dirtyKeys;
     },
     target: _flushBuffers,
   });
+  if (allowManualSave) {
+    sample({
+      clock: saveOthersAndClose,
+      source: {
+        changed: _$changedLevelsets,
+        current: $currentKey,
+      },
+      filter: ({ current }) => Boolean(current),
+      fn: ({ changed, current }) => RoMap.remove(changed, current!),
+      target: _flushBuffers.prepend<_MapToFlush>((p) => p),
+    }).watch(removeOthersLevelsetFile);
+  }
   // trigger flush for all levelsets
   sample({
     clock: flushBuffers,
@@ -765,6 +791,11 @@ let _$dirtyKeys;
 export const $dirtyKeys = _$dirtyKeys;
 export const $currentFileIsDirty = combine($dirtyKeys, $currentKey, (set, k) =>
   Boolean(k && set.has(k)),
+);
+export const $otherIsDirty = combine(
+  $dirtyKeys,
+  $currentKey,
+  (set, k) => set.size > (k && set.has(k) ? 1 : 0),
 );
 
 /**

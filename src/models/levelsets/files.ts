@@ -308,6 +308,7 @@ export const $hasOtherFiles = combine(
   $currentKey,
   (m, current) => m.size > 1 && Boolean(current && m.has(current)),
 );
+export const $isFileOpened = $currentKey.map(Boolean);
 
 // reset current file key when is refers to non-existing file
 sample({

@@ -5,13 +5,16 @@ import {
   $currentFileHasLocalOptions,
   $currentFileIsDirty,
   $hasOtherFiles,
+  $isFileOpened,
+  closeCurrentFileFx,
+  closeOtherFilesFx,
   flushCurrentFile,
   saveAsCurrentFile,
 } from "models/levelsets";
 import { Button, ButtonDropdown, Toolbar } from "ui/button";
 import { ColorType } from "ui/types";
 import { IconStack, IconStackType, svgs } from "ui/icon";
-import { closeCurrentFileFx, useFileButtonsProps } from "./useFileButtonsProps";
+import { handleConvert, handleRename } from "./handlers";
 
 const removeColor = allowManualSave ? ColorType.DEFAULT : ColorType.DANGER;
 const removeIcon = allowManualSave ? <svgs.Cross /> : <svgs.Trash />;
@@ -37,7 +40,7 @@ const SaveFlushButton: FC<{ filename?: string }> = ({ filename }) => {
 export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
   const hasLocalOptions = useStore($currentFileHasLocalOptions);
   const hasOtherFiles = useStore($hasOtherFiles);
-  const { isFileOpened, handlers } = useFileButtonsProps();
+  const isFileOpened = useStore($isFileOpened);
 
   const saveAsButton = (
     <Button
@@ -119,14 +122,14 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
         icon={<svgs.FileConvert />}
         disabled={!isFileOpened}
         title="Convert format..."
-        onClick={handlers?.convert}
+        onClick={handleConvert}
       />
-      {allowManualSave || (
+      {handleRename && (
         <Button
           icon={<svgs.Rename />}
           disabled={!isFileOpened}
           title="Rename file"
-          onClick={handlers?.rename}
+          onClick={handleRename}
         />
       )}
 
@@ -140,7 +143,7 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
               uiColor={removeColor}
               icon={removeIcon}
               iconStack={removeOtherStack}
-              onClick={handlers?.removeOthers}
+              onClick={closeOtherFilesFx}
             >
               {removeOthersTitle}
             </Button>
@@ -155,7 +158,7 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
               icon={removeIcon}
               iconStack={removeOtherStack}
               title={removeOthersTitle}
-              onClick={handlers?.removeOthers}
+              onClick={closeOtherFilesFx}
             />
           )}
         </>
