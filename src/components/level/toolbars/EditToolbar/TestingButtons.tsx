@@ -110,6 +110,21 @@ const TestFrame: FC<{ url: URL }> = ({ url }) => (
   />
 );
 
+const openTestUrl = testInIframe
+  ? (url: URL): boolean => {
+      msgBox(<TestFrame url={url} />, {
+        size: "fullscreen",
+        button: {
+          text: "Close",
+          uiColor: ColorType.MUTE,
+        },
+      });
+      return true;
+    }
+  : (url: URL, target: string): boolean => {
+      return Boolean(window.open(url, target));
+    };
+
 type ConfirmFC = FC<PropsWithChildren<LevelConfiguratorProps<IBaseLevel>>>;
 
 const sendLevelTo = ({
@@ -171,19 +186,8 @@ const sendLevelTo = ({
           const { applyLocalOptions } = getDriver(driverName)!;
           applyLocalOptions?.(level, url);
 
-          if (testInIframe) {
+          if (openTestUrl(url, targetOrBlank)) {
             e.preventDefault();
-            msgBox(<TestFrame url={url} />, {
-              size: "fullscreen",
-              button: {
-                text: "Close",
-                uiColor: ColorType.MUTE,
-              },
-            });
-          } else {
-            if (window.open(url, targetOrBlank)) {
-              e.preventDefault();
-            }
           }
         },
       },
