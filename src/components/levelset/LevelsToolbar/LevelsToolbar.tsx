@@ -92,7 +92,7 @@ const confirmDeleteRest = (currentIndex: number, count: number) => {
 };
 
 const handleImportLevelClick = () =>
-  openFile({ done: (files) => importCurrentLevel(files[0]) });
+  openFile({ done: (items) => importCurrentLevel(items[0].file) });
 
 export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
   const format = getDriverFormat(

@@ -1,5 +1,5 @@
 import { createStore } from "effector";
-import { flushEvents } from "backend";
+import { flushEvents } from "./flushEvents";
 
 const $flushesPending = createStore(new Set<symbol>())
   // REFACT: RoSet

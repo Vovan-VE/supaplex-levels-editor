@@ -1,10 +1,11 @@
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
-import { CodeOf } from "@cubux/types";
+import { FilesStorageKey } from "backend";
 import { IBaseLevel, IBaseLevelset } from "drivers";
 import { UndoQueue } from "utils/data";
 
-export type LevelsetFileKey = CodeOf<"LevelsetFile">;
+// REFACT: unalias
+export type LevelsetFileKey = FilesStorageKey;
 
 export type IBaseLevelsList = readonly IBaseLevel[];
 

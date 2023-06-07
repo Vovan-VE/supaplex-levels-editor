@@ -1,24 +1,24 @@
 import { ReactNode } from "react";
-import { openFile } from "backend";
+import { openFile, OpenFileDoneItem } from "backend";
 import { detectDriverFormat } from "drivers";
 import { addLevelsetFileFx } from "models/levelsets";
 import { showToastErrorWrap } from "models/ui/toasts";
 import { msgBox } from "ui/feedback";
 
-const openFiles = async (files: readonly File[]) => {
+const openFiles = async (items: readonly OpenFileDoneItem[]) => {
   const detected = await Promise.allSettled(
-    files.map(
-      async (file) =>
+    items.map(
+      async (item) =>
         [
-          file,
-          detectDriverFormat(await file.arrayBuffer(), file.name),
+          item,
+          detectDriverFormat(await item.file.arrayBuffer(), item.file.name),
         ] as const,
     ),
   );
   const errors: ReactNode[] = [];
   for (const [i, item] of detected.entries()) {
     if (item.status === "fulfilled") {
-      const [file, d] = item.value;
+      const [{ file, key }, d] = item.value;
       if (d) {
         const [driverName, driverFormat] = d;
         addLevelsetFileFx({
@@ -26,6 +26,7 @@ const openFiles = async (files: readonly File[]) => {
           driverName,
           driverFormat,
           name: file.name,
+          key,
         });
       } else {
         errors.push(<>"{file.name}": Unsupported file format.</>);
@@ -33,7 +34,7 @@ const openFiles = async (files: readonly File[]) => {
     } else {
       errors.push(
         <>
-          "{files[i].name}": Couldn't read file:{" "}
+          "{items[i].file.name}": Couldn't read file:{" "}
           {item.reason instanceof Error
             ? item.reason.message
             : "unknown reason"}

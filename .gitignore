@@ -10,6 +10,7 @@
 
 # production
 /build
+/build-wails
 
 # misc
 .DS_Store

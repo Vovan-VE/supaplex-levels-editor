@@ -1,22 +1,21 @@
-import type { Event } from "effector";
-import type {
-  WithPersistentFlushEvent,
-  WithPersistentFlushFailEvent,
-} from "@cubux/effector-persistent";
 import type { StoreDriver, StoreDriverSingle } from "@cubux/storage-driver";
+import { CodeOf } from "@cubux/types";
 
 export type ConfigStorage = StoreDriverSingle<string, any>;
-export type FilesStorage = StoreDriver<string, any>;
 
-export type OpenFileDoneCallback = (files: readonly File[]) => void;
+export type FilesStorageKey = CodeOf<"FilesStorageItem">;
+export interface FilesStorageItem {
+  key: FilesStorageKey;
+  fileBuffer: ArrayBuffer;
+}
+export type FilesStorage = StoreDriver<string, FilesStorageItem>;
+
+export interface OpenFileDoneItem {
+  file: File;
+  key?: FilesStorageKey;
+}
+export type OpenFileDoneCallback = (items: readonly OpenFileDoneItem[]) => void;
 export interface OpenFileOptions {
   multiple?: boolean;
   done: OpenFileDoneCallback;
-}
-
-export interface FlushEvents {
-  readonly onFlushStart: Event<WithPersistentFlushEvent>;
-  readonly onFlushDone: Event<WithPersistentFlushEvent>;
-  readonly onFlushFail: Event<WithPersistentFlushFailEvent>;
-  readonly onFlushFinally: Event<WithPersistentFlushEvent>;
 }

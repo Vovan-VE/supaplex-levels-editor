@@ -13,8 +13,11 @@ import {
   $instanceIsReadOnly,
   allowManualSave,
   configStorage,
+  createFile,
+  exitApp,
   filesStorage,
-  flushEvents,
+  FilesStorageItem,
+  onExitDirty,
 } from "backend";
 import {
   DriverName,
@@ -29,6 +32,7 @@ import {
 import { generateKey } from "utils/strings";
 import * as MapOrder from "utils/map/order";
 import { showToastErrorWrap } from "../ui/toasts";
+import { flushEvents } from "./flushEvents";
 import {
   LevelsetConvertOpt,
   LevelsetConvertTry,
@@ -65,26 +69,53 @@ const fulfillFileLevels = async (
 
 interface AddFileParams extends LevelsetFileSource {
   insertAfterKey?: LevelsetFileKey;
+  key?: LevelsetFileKey;
 }
 interface AddFileResult {
   file: LevelsetFile;
   insertAfterKey: LevelsetFileKey | undefined;
 }
+
+const prepareCreateFileAborted = createFile ? new Error() : undefined;
+const prepareCreateFileFx = createFile
+  ? createEffect(
+      async ({ key, filename }: { key: LevelsetFileKey; filename: string }) => {
+        if (!(await createFile!(key, filename))) {
+          throw prepareCreateFileAborted;
+        }
+      },
+    )
+  : undefined;
 /**
  * Add new file from whatever source
  */
 export const addLevelsetFileFx = createEffect(
   async ({
     insertAfterKey,
+    key = generateKey() as LevelsetFileKey,
     ...source
-  }: AddFileParams): Promise<AddFileResult> => ({
-    insertAfterKey,
-    file: await fulfillFileLevels({
+  }: AddFileParams): Promise<AddFileResult | null> => {
+    const file = await fulfillFileLevels({
       ...source,
-      key: generateKey() as LevelsetFileKey,
-    }),
-  }),
+      key,
+    });
+    if (prepareCreateFileFx) {
+      try {
+        await prepareCreateFileFx({ key, filename: source.name });
+      } catch (e) {
+        if (e === prepareCreateFileAborted) {
+          return null;
+        }
+        throw e;
+      }
+    }
+    return { file, insertAfterKey };
+  },
 );
+const addLevelsetFileDoneData = sample({
+  source: addLevelsetFileFx.doneData,
+  filter: Boolean,
+});
 addLevelsetFileFx.fail.watch(({ error }) =>
   showToastErrorWrap("Could not load file", error),
 );
@@ -163,7 +194,7 @@ export const renameCurrentLevelset = createEvent<string>();
  */
 export const setCurrentLevelset = createEvent<LevelsetFileKey>();
 
-export const fileDidOpen = addLevelsetFileFx.doneData.map(
+export const fileDidOpen = addLevelsetFileDoneData.map(
   ({ file: { key } }) => key,
 );
 
@@ -184,7 +215,7 @@ export const $currentKey = withPersistent(
   createStore<LevelsetFileKey | null>(null),
   configStorage,
   "currentFile",
-  { readOnly: $instanceIsReadOnly },
+  $instanceIsReadOnly ? { readOnly: $instanceIsReadOnly } : undefined,
 ).on(_setCurrentKey, (_, c) => c);
 
 export const currentKeyWillGone = createEvent<LevelsetFileKey>();
@@ -218,7 +249,9 @@ const _removeOthersLevelsetFile = sample({
  * Any user can skip several >=0.6 versions, so `driverFormat` can still be
  * `undefined` for someone.
  */
-interface _DbLevelsetFile extends Omit<LevelsetFileDataOld, "file"> {
+interface _DbLevelsetFile
+  extends Omit<LevelsetFileDataOld, "file">,
+    FilesStorageItem {
   fileBuffer: ArrayBuffer;
   _options?: LocalOptionsList;
 }
@@ -228,7 +261,7 @@ export const $levelsets = withPersistentMap(
   filesStorage as StoreDriver<LevelsetFileKey, _DbLevelsetFile>,
   {
     ...flushEvents,
-    readOnly: $instanceIsReadOnly,
+    ...($instanceIsReadOnly ? { readOnly: $instanceIsReadOnly } : null),
     serialize: async ({
       file,
       name,
@@ -273,7 +306,7 @@ export const $levelsets = withPersistentMap(
   },
 )
   .on(updateLevelsetFile, (map, file) => RoMap.set(map, file.key, file))
-  .on(addLevelsetFileFx.doneData, (map, { file, insertAfterKey }) => {
+  .on(addLevelsetFileDoneData, (map, { file, insertAfterKey }) => {
     let next = RoMap.set(map, file.key, file);
     if (insertAfterKey) {
       next = MapOrder.moveAfter(next, file.key, insertAfterKey);
@@ -300,6 +333,31 @@ if (!allowManualSave) {
     (map, { key, name }) =>
       RoMap.update(map, key, (file) => ({ ...file, name })),
   );
+}
+
+export const onceFlushDone = createEvent<() => void>();
+if (onExitDirty && exitApp) {
+  type F = () => void;
+  type FS = readonly F[];
+  const run = createEvent<FS>();
+  const $queue = createStore<FS>([])
+    .reset(flushEvents.onFlushFail, run)
+    .on(onceFlushDone, (list, fn) => [...list, fn]);
+  sample({
+    clock: flushEvents.onFlushDone,
+    source: $queue,
+    filter: (q) => q.length > 0,
+    target: run,
+  });
+  run.watch((fs) => {
+    for (const f of fs) {
+      try {
+        f();
+      } catch (e) {
+        console.error("onFlushDone queue", f, "error:", e);
+      }
+    }
+  });
 }
 
 export const $hasFiles = $levelsets.map((m) => m.size > 0);

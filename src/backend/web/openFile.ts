@@ -27,7 +27,7 @@ export const openFile = ({ multiple, done }: OpenFileOptions) => {
     input.removeEventListener("change", handler);
     d.body.removeChild(input);
     if (files?.length) {
-      done(Array.from(files));
+      done(Array.from(files, (file) => ({ file })));
     }
     prev?.();
   }

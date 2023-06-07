@@ -3,9 +3,8 @@ import {
   WithPersistentFlushEvent,
   WithPersistentFlushFailEvent,
 } from "@cubux/effector-persistent";
-import { FlushEvents } from "./internal";
 
-export const flushEvents: FlushEvents = {
+export const flushEvents = {
   onFlushStart: createEvent<WithPersistentFlushEvent>(),
   onFlushDone: createEvent<WithPersistentFlushEvent>(),
   onFlushFail: createEvent<WithPersistentFlushFailEvent>(),

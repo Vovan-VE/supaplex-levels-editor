@@ -1,25 +1,57 @@
 import * as B from "./backend";
+import * as wails from "./wails";
 import * as web from "./web";
 
-// const WAILS = Boolean(process.env.REACT_APP_WAILS);
+export type {
+  OpenFileDoneItem,
+  FilesStorageKey,
+  FilesStorageItem,
+} from "./internal";
 
-export const init: B.Init = web.init;
+const WAILS = Boolean(process.env.REACT_APP_WAILS);
 
-export const configStorage: B.ConfigStorage = web.configStorage;
+export const init: B.Init = WAILS ? wails.init : web.init;
 
-export const $instanceIsReadOnly: B.InstanceIsReadOnly =
-  web.$instanceIsReadOnly;
-export const $displayReadOnly: B.DisplayReadOnly = web.$displayReadOnly;
+export const configStorage: B.ConfigStorage = WAILS
+  ? wails.configStorage
+  : web.configStorage;
 
-export const filesStorage: B.FilesStorage = web.filesStorage;
-export const flushEvents: B.FlushEvents = web.flushEvents;
-export const allowManualSave: B.AllowManualSave = web.allowManualSave;
-export const openFile: B.OpenFile = web.openFile;
-export const saveFileAs: B.SaveFileAs = web.saveFileAs;
+export const $instanceIsReadOnly: B.InstanceIsReadOnly | undefined = WAILS
+  ? wails.$instanceIsReadOnly
+  : web.$instanceIsReadOnly;
 
-export const setIsDirty: B.SetIsDirty | undefined = web.setIsDirty;
-export const onExitDirty: B.OnExitDirty | undefined = web.onExitDirty;
-export const onDeactivate: B.OnDeactivate = web.onDeactivate;
-export const exitApp: B.ExitApp | undefined = web.exitApp;
+export const $displayReadOnly: B.DisplayReadOnly | undefined = WAILS
+  ? wails.$displayReadOnly
+  : web.$displayReadOnly;
 
-export const testInIframe: B.TestInIframe = web.testInIframe;
+export const filesStorage: B.FilesStorage = WAILS
+  ? wails.filesStorage
+  : web.filesStorage;
+export const allowManualSave: B.AllowManualSave = WAILS
+  ? wails.allowManualSave
+  : web.allowManualSave;
+export const createFile: B.CreateFile | undefined = WAILS
+  ? wails.createFile
+  : web.createFile;
+export const openFile: B.OpenFile = WAILS ? wails.openFile : web.openFile;
+export const saveFileAs: B.SaveFileAs = WAILS
+  ? wails.saveFileAs
+  : web.saveFileAs;
+
+export const setTitle: B.SetTitle = WAILS ? wails.setTitle : web.setTitle;
+export const setIsDirty: B.SetIsDirty | undefined = WAILS
+  ? wails.setIsDirty
+  : web.setIsDirty;
+export const onExitDirty: B.OnExitDirty | undefined = WAILS
+  ? wails.onExitDirty
+  : web.onExitDirty;
+export const onDeactivate: B.OnDeactivate | undefined = WAILS
+  ? undefined
+  : web.onDeactivate;
+export const exitApp: B.ExitApp | undefined = WAILS
+  ? wails.exitApp
+  : web.exitApp;
+
+export const testInIframe: B.TestInIframe = WAILS
+  ? wails.testInIframe
+  : web.testInIframe;

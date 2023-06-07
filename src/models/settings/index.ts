@@ -9,13 +9,15 @@ export const $opened = restore(
   false,
 ).reset(closeSettings);
 
+const ro = $instanceIsReadOnly ? { readOnly: $instanceIsReadOnly } : undefined;
+
 export const setPrefAskTestSO = createEvent<boolean>();
 export const $prefConfirmedTestSO = withPersistent(
   restore(setPrefAskTestSO, false),
   configStorage,
   "prefConfirmTestSO",
   {
-    readOnly: $instanceIsReadOnly,
+    ...ro,
     unserialize: Boolean,
   },
 );
@@ -26,7 +28,7 @@ export const $coordsDisplayBasis = withPersistent(
   configStorage,
   "coordsBasis",
   {
-    readOnly: $instanceIsReadOnly,
+    ...ro,
     unserialize: (v) => (v ? 1 : 0),
   },
 );
@@ -44,7 +46,7 @@ export const $layoutType = withPersistent(
   configStorage,
   "layout",
   {
-    readOnly: $instanceIsReadOnly,
+    ...ro,
     unserialize: (v) => (isLayoutType(v) ? v : LayoutType.AUTO),
   },
 );
@@ -58,7 +60,7 @@ export const $spChip = withPersistent(
   configStorage,
   "spChip",
   {
-    readOnly: $instanceIsReadOnly,
+    ...ro,
     unserialize: (v) => (isSpChipType(v) ? v : 0),
   },
 );
@@ -66,7 +68,7 @@ export const $spChip = withPersistent(
 export const setAutoSave = createEvent<boolean>();
 export const $autoSave = allowManualSave
   ? withPersistent(restore(setAutoSave, false), configStorage, "autoSave", {
-      readOnly: $instanceIsReadOnly,
+      ...ro,
       unserialize: Boolean,
     })
   : // it's always true without manual save
@@ -87,7 +89,7 @@ export const $autoSaveDelay = allowManualSave
       configStorage,
       "autoSaveDelay",
       {
-        readOnly: $instanceIsReadOnly,
+        ...ro,
         unserialize: (s) => {
           const n = Number(s);
           return Number.isSafeInteger(n) &&

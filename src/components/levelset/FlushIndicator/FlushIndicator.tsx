@@ -10,10 +10,15 @@ import { svgs } from "ui/icon";
 import { ColorType, ContainerProps } from "ui/types";
 import cl from "./FlushIndicator.module.scss";
 
+const displayReadOnly = Boolean($displayReadOnly);
+const useDisplayRO = displayReadOnly
+  ? () => useStore($displayReadOnly!)
+  : () => false;
+
 interface Props extends ContainerProps {}
 
 export const FlushIndicator: FC<Props> = ({ className, ...rest }) => {
-  const readOnly = useStore($displayReadOnly);
+  const readOnly = useDisplayRO();
   const isPending = useStore($isFlushPending);
   const error = useStore($flushError);
 
@@ -35,7 +40,7 @@ export const FlushIndicator: FC<Props> = ({ className, ...rest }) => {
     [error],
   );
 
-  return readOnly ? (
+  return displayReadOnly && readOnly ? (
     <TextButton
       {...rest}
       key="r"

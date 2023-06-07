@@ -9,14 +9,18 @@ export type InstanceIsReadOnly = Store<boolean>;
 export type DisplayReadOnly = Store<boolean>;
 
 export type FilesStorage = I.FilesStorage | Promise<I.FilesStorage>;
-export type FlushEvents = I.FlushEvents;
 export type AllowManualSave = boolean;
+export type CreateFile = (
+  key: I.FilesStorageKey,
+  baseName: string,
+) => Promise<boolean>;
 export type OpenFile = (options: I.OpenFileOptions) => void;
-export type SaveFileAs = (data: Blob | string, filename: string) => void;
+export type SaveFileAs = (data: Blob, filename: string) => void;
 
+export type SetTitle = (title: string) => void;
 export type SetIsDirty = (isDirty: boolean) => Promise<unknown>;
 export type OnExitDirty = Event<any>;
 export type OnDeactivate = Event<any>;
-export type ExitApp = () => void;
+export type ExitApp = (ignoreDirty?: boolean) => void;
 
 export type TestInIframe = boolean;

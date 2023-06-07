@@ -14,8 +14,6 @@
   - Find or create jekyll template.
 - Draggable files buttons to reorder many opened files.
 - Wails based desktop application.
-  - Build target: web or Wails to apply appropriate backend.
-  - libwebkit2gtk >= 2.40 + build options
 - Tools:
   - Circle
 - Presets in Selection Editors

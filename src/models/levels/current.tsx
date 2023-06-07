@@ -84,7 +84,7 @@ const $bodyScaleN = withPersistent(
   configStorage,
   "bodyScale",
   {
-    readOnly: $instanceIsReadOnly,
+    ...($instanceIsReadOnly ? { readOnly: $instanceIsReadOnly } : null),
     unserialize: (v: unknown) => {
       const n = Number(v);
       if (isNaN(n)) {

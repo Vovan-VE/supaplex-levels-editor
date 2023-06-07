@@ -24,14 +24,14 @@ interface Props {
   isCompact?: boolean;
 }
 
-const SaveFlushButton: FC<{ filename?: string }> = ({ filename }) => {
+const SaveFlushButton: FC = () => {
   const isDirty = useStore($currentFileIsDirty);
   return (
     <Button
       uiColor={ColorType.SUCCESS}
       icon={<svgs.Save />}
-      disabled={!filename || !isDirty}
-      title={filename ? "Save changes" : undefined}
+      disabled={!isDirty}
+      title={"Save changes"}
       onClick={flushCurrentFile}
     />
   );

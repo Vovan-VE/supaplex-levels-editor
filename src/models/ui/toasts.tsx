@@ -24,6 +24,7 @@ sample({
   fn: (e: Error | string) => ({
     message: e instanceof Error ? e.message : e,
     color: ColorType.DANGER,
+    // TODO: longer timeout?
   }),
   target: showToast,
 });

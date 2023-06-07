@@ -13,6 +13,7 @@ import {
 } from "./buffers";
 import {
   $currentFileName,
+  onceFlushDone,
   removeCurrentLevelsetFile,
   removeOthersLevelsetFile,
 } from "./files";
@@ -170,11 +171,11 @@ if (allowManualSave) {
               })
             ) {
               case true:
+                onceFlushDone(exitApp!);
                 await saveAllFx();
-                exitApp!();
                 break;
               case false:
-                exitApp!();
+                exitApp!(true);
                 break;
             }
           }

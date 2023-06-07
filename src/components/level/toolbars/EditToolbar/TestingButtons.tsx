@@ -31,6 +31,7 @@ import { Button, TextButton } from "ui/button";
 import { ask, msgBox } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
 import { ColorType } from "ui/types";
+import { base64Encode } from "utils/encoding/base64";
 import cl from "./TestingButtons.module.scss";
 
 const CL_SVG_ANIMATE_HOVERABLE = "svg-animate_hover-target";
@@ -93,11 +94,7 @@ const packLevelToSend = (baseUrl: string) => {
   }
 
   const url = new URL(baseUrl);
-  url.hash = window.btoa(
-    String.fromCharCode(
-      ...new Uint8Array(writeLevelset(createLevelset([level]))),
-    ),
-  );
+  url.hash = base64Encode(writeLevelset(createLevelset([level])));
   return url;
 };
 

@@ -19,6 +19,7 @@ import {
   configStorage,
   onDeactivate,
   saveFileAs,
+  setTitle,
 } from "backend";
 import { APP_TITLE } from "configs";
 import {
@@ -152,11 +153,13 @@ const flushBuffer = createEvent<LevelsetFileKey>();
  * Flush changes for all levelset to blob
  */
 const flushBuffers = createEvent<any>();
-sample({
-  source: onDeactivate,
-  filter: $autoSave,
-  target: flushBuffers,
-});
+if (onDeactivate) {
+  sample({
+    source: onDeactivate,
+    filter: $autoSave,
+    target: flushBuffers,
+  });
+}
 export const saveAllFx = allowManualSave
   ? createEffect(async () => {
       flushBuffers();
@@ -551,7 +554,7 @@ withPersistent<string, _OpenedIndicesWakeUpMap, _OpenedIndicesSerializedList>(
   "openedLevels",
   {
     wakeUp: _$wakeUpOpenedIndices,
-    readOnly: $instanceIsReadOnly,
+    ...($instanceIsReadOnly ? { readOnly: $instanceIsReadOnly } : null),
     serialize: (map: _OpenedIndicesWakeUpMap) =>
       [...map]
         .map<_OpenedIndicesSerialized>(([key, item]) => [
@@ -882,27 +885,31 @@ export const $currentOpenedIndices = $currentBuffer.map(
     ),
 );
 
-combine(
-  $displayReadOnly,
-  $currentLevelsetFile.map(
-    (f) => f && ([f.name, f.levelset.levelsCount] as const),
-  ),
-  $currentBuffer.map((b) => b && (b.currentIndex ?? null)),
-  (ro, file, index) =>
-    (ro ? "[RO!] " : "") +
-    (file
-      ? `${
-          index !== null
-            ? `${fmtLevelNumber(index, String(file[1]).length)}: `
-            : ""
-        }${file[0]} - `
-      : "") +
-    APP_TITLE,
-).watch((title) => {
-  try {
-    window.document.title = title;
-  } catch {}
-});
+{
+  const $titleFile = combine(
+    $currentLevelsetFile.map(
+      (f) => f && ([f.name, f.levelset.levelsCount] as const),
+    ),
+    $currentBuffer.map((b) => b && (b.currentIndex ?? null)),
+    (file, index) =>
+      file
+        ? `${
+            index !== null
+              ? `${fmtLevelNumber(index, String(file[1]).length)}: `
+              : ""
+          }${file[0]} - `
+        : "",
+  );
+  const $titleWithDirty = allowManualSave
+    ? combine($titleFile, $currentFileIsDirty, (s, d) => (d ? `*${s}` : s))
+    : $titleFile;
+  const $titlePrefix = $displayReadOnly
+    ? combine($displayReadOnly, $titleWithDirty, (r, s) =>
+        r ? `[RO!] ${s}` : s,
+      )
+    : $titleWithDirty;
+  $titlePrefix.watch((title) => setTitle(title + APP_TITLE));
+}
 
 sample({
   clock: exportCurrentLevel,
