@@ -1,0 +1,15 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "SpLE",
+  "outputfilename": "sple",
+  "wailsjsdir": "./frontend",
+  "info": {
+    "companyName": "Vovan-VE",
+    "productVersion": "0.1.0",
+    "comments": "Desktop version of https://sple.me/\nRepo: https://github.com/vovan-ve/sple-desktop\nBuilt using Wails (https://wails.io)"
+  },
+  "author": {
+    "name": "Vovan-VE",
+    "email": "vovan-ve@yandex.ru"
+  }
+}
