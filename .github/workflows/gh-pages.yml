@@ -27,28 +27,34 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Setup Node.js environment
         uses: actions/setup-node@v3.5.0
         with:
           node-version: 18.x
           cache: npm
+
       - name: Run npm
+        working-directory: ./frontend
         run: |
           npm ci --omit=dev
           npm run build
         env:
           CI: true
+
       - name: Setup Pages
         uses: actions/configure-pages@v2
+
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./docs
-          destination: ./build/docs
+          destination: ./frontend/build/docs
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./build
+          path: ./frontend/build
 
   # Deployment job
   deploy:
