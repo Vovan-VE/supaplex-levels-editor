@@ -1,0 +1,34 @@
+<svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    xmlns="http://www.w3.org/2000/svg"
+>
+  <rect width="100%" height="100%" fill="#000" class="sp-color-black" />
+  <path
+      fill="#F3F3F3"
+      class="sp-color-white"
+      d="M0,1h1v1h-1z M0,3h1v1h-1z M0,5h1v1h-1z M0,7h1v1h-1z M0,9h1v1h-1z M0,11h1v1h-1z M0,13h1v1h-1z M0,15h1v1h-1z"
+  />
+  <path
+      fill="#F39241"
+      class="sp-color-orange"
+      d="M15,1h1v1h-1z M15,3h1v1h-1z M15,5h1v1h-1z M15,7h1v1h-1z M15,9h1v1h-1z M15,11h1v1h-1z M15,13h1v1h-1z M15,15h1v1h-1z"
+  />
+  <path
+      fill="#E3E300"
+      class="sp-color-yellow"
+      d="M1,1h14v1h-14z M1,3h14v1h-14z M1,5h14v1h-14z M1,7h14v1h-14z M1,9h14v1h-14z M1,11h14v1h-14z M1,13h14v1h-14z M1,15h14v1h-14z"
+  />
+  <path fill="#717171" class="sp-color-grey-dark" d="M2,0h12v16h-12z"/>
+  <path
+      fill="#616161"
+      class="sp-color-grey-xdark"
+      d="M7,6h2v2h-2z M6,0h1v3h1v1h-1v-1h-1z M13,0h1v16h-1z"
+  />
+  <path
+      fill="#828282"
+      class="sp-color-grey"
+      d="M8,7h1v1h-1z M2,0h4v1h-3v15h-1z M9,0h3v1h-2v1h-1z M7,12h1v1h-1v1h1v1h-1v-1h-1v-1h1z M9,12h1v3h-1z"
+  />
+</svg>

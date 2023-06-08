@@ -1,0 +1,64 @@
+@use "sass:color";
+@use "../colors/sp";
+@use "./vars";
+
+$hover-lighter: 20%;
+$hover-lighter-bg: 10%;
+$active-lighter: 25%;
+$active-lighter-bg: 15%;
+
+@function _hover($color, $lighter: $hover-lighter) {
+  @return color.adjust($color, $lightness: $lighter);
+}
+@function _active($color, $lighter: $active-lighter) {
+  @return color.adjust($color, $lightness: $lighter);
+}
+@function _focus($color, $alpha: -0.4) {
+  @return color.adjust($color, $alpha: $alpha);
+}
+
+$_dark-primary-bg: color.adjust(sp.$color-blue-dark, $lightness: -18%);
+$_dark-success-bg: color.adjust(sp.$color-green-dark, $lightness: -10%);
+$_dark-warn-bg: sp.$color-brown;
+$_dark-danger-bg: color.adjust(sp.$color-red-dark, $lightness: -10%);
+
+$theme-dark: (
+  #{vars.$color-default}: sp.$color-grey-xlight,
+  #{vars.$color-default-bg}: sp.$color-black,
+  #{vars.$color-default-focus}: _focus(sp.$color-grey-xlight),
+  #{vars.$color-mute}: sp.$color-grey,
+  #{vars.$color-mute-bg}: sp.$color-grey-xdark,
+  #{vars.$color-panel-bg}: color.adjust(sp.$color-grey-xdark, $lightness: -10%),
+  #{vars.$color-shadow}: sp.$color-white,
+  #{vars.$color-primary}: sp.$color-blue-light,
+  #{vars.$color-primary-bg}: $_dark-primary-bg,
+  #{vars.$color-primary-hover}: _hover(sp.$color-blue-light),
+  #{vars.$color-primary-hover-bg}: _hover($_dark-primary-bg),
+  #{vars.$color-primary-active}: _active(sp.$color-blue-light),
+  #{vars.$color-primary-active-bg}: _active($_dark-primary-bg),
+  #{vars.$color-primary-focus}: _focus(sp.$color-blue-light),
+  #{vars.$color-success}: sp.$color-green-light,
+  #{vars.$color-success-bg}: $_dark-success-bg,
+  #{vars.$color-success-hover}: _hover(sp.$color-green-light),
+  #{vars.$color-success-hover-bg}: _hover($_dark-success-bg, $hover-lighter-bg),
+  #{vars.$color-success-active}: _active(sp.$color-green-light),
+  #{vars.$color-success-active-bg}: _active($_dark-success-bg, $active-lighter-bg),
+  #{vars.$color-success-focus}: _focus(sp.$color-green-light),
+  #{vars.$color-warn}: sp.$color-orange,
+  #{vars.$color-warn-bg}: $_dark-warn-bg,
+  #{vars.$color-warn-hover}: _hover(sp.$color-orange),
+  #{vars.$color-warn-hover-bg}: _hover($_dark-warn-bg, $hover-lighter-bg),
+  #{vars.$color-warn-active}: _active(sp.$color-orange),
+  #{vars.$color-warn-active-bg}: _active($_dark-warn-bg, $active-lighter-bg),
+  #{vars.$color-warn-focus}: _focus(sp.$color-orange),
+  #{vars.$color-danger}: sp.$color-red-light,
+  #{vars.$color-danger-bg}: $_dark-danger-bg,
+  #{vars.$color-danger-hover}: _hover(sp.$color-red-light),
+  #{vars.$color-danger-hover-bg}: _hover($_dark-danger-bg, $hover-lighter-bg),
+  #{vars.$color-danger-active}: _active(sp.$color-red-light),
+  #{vars.$color-danger-active-bg}: _active($_dark-danger-bg, $active-lighter-bg),
+  #{vars.$color-danger-focus}: _focus(sp.$color-red-light)
+);
+
+//$theme-light: (
+//);

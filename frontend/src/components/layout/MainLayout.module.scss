@@ -1,0 +1,29 @@
+.root {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 100%;
+}
+._full {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "head"
+    "main"
+    "foot";
+}
+._compact {
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "head"
+    "main";
+}
+
+.header {
+  grid-area: head;
+}
+.main {
+  grid-area: main;
+}
+.footer {
+  grid-area: foot;
+}

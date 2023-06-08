@@ -1,0 +1,41 @@
+@use "styles/components";
+@use "styles/mixins";
+
+.root {
+  display: grid;
+  grid-gap: 0.1rem;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: "start tabs end";
+  align-items: center;
+}
+
+.start {
+  grid-area: start;
+}
+.tabs {
+  grid-area: tabs;
+}
+.end {
+  grid-area: end;
+}
+
+.start {
+  &,
+  > *,
+  .select2 {
+    align-self: stretch;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+}
+.select2 {
+  --react-select-value-width: 10ch;
+  @extend %font-family-mono;
+
+  :global(.app-react-select__menu) {
+    width: auto;
+    min-width: 100%;
+    max-width: calc(100vw - 10px);
+  }
+}

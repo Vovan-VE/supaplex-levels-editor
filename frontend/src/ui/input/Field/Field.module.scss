@@ -1,0 +1,50 @@
+@use "styles/themes";
+
+.root {
+  position: relative;
+
+  &._isError {
+    .label,
+    .error {
+      color: themes.$color-danger;
+    }
+  }
+  &._noError {
+    margin-bottom: 0.75rem;
+  }
+}
+
+label.labelElement {
+  display: block;
+}
+
+.label {
+  + .control {
+    margin-top: 0.25rem;
+  }
+}
+
+.control {
+}
+
+.help,
+.error {
+  font-size: 0.9rem;
+  line-height: 1.35;
+  margin-top: 0.25rem;
+}
+
+.help {
+  margin-bottom: 0.25rem;
+  color: themes.$color-mute;
+}
+
+.error {
+  margin-bottom: 0.5rem;
+
+  &:empty {
+    &::before {
+      content: "\00A0";
+    }
+  }
+}

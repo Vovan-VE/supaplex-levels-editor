@@ -1,0 +1,24 @@
+@use "styles/components";
+
+._primary {
+  @extend %button-primary;
+}
+._success {
+  @extend %button-success;
+}
+._warn {
+  @extend %button-warn;
+}
+._danger {
+  @extend %button-danger;
+}
+
+.button {
+  @extend %button;
+  &._asLink {
+    @extend %button-link;
+  }
+}
+.textButton {
+  @extend %button, %button-link;
+}

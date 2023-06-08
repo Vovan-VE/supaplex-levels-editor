@@ -1,0 +1,10 @@
+@use "styles/components";
+
+.hoveredCell {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  @extend %panel-colors;
+  padding: 0.2rem;
+  z-index: var(--z-index-interactive);
+}

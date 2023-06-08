@@ -1,0 +1,41 @@
+@use "styles/components";
+
+.root {
+  @extend %button, %button-link;
+  //--btn-pad-x: 0.4rem;
+  cursor: pointer;
+
+  > * {
+    vertical-align: middle;
+  }
+  .wrap {
+    position: relative;
+    display: inline-block;
+
+    .icon {
+      display: block;
+      width: 1.5em;
+      height: 1.5em;
+    }
+
+    input {
+      position: absolute;
+      display: block;
+      inset: 0;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      opacity: 0;
+      cursor: inherit;
+    }
+  }
+
+  > * + * {
+    margin-left: 0.5rem;
+  }
+
+  &:focus-within {
+    @extend %button-primary;
+    background-color: transparent;
+  }
+}

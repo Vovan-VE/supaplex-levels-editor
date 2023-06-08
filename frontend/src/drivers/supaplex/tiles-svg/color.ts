@@ -1,0 +1,16 @@
+export const CL_BLACK = "#000000";
+export const CL_GREY_XD = "#616161";
+export const CL_GREY_D = "#717171";
+export const CL_GREY = "#828282";
+export const CL_GREY_L = "#929292";
+export const CL_GREY_XL = "#B2B2B2";
+export const CL_WHITE = "#F3F3F3";
+export const CL_RED_L = "#E31010";
+export const CL_RED_D = "#B20000";
+export const CL_BROWN = "#824100";
+export const CL_ORANGE = "#F39241";
+export const CL_YELLOW = "#E3E300";
+export const CL_GREEN_D = "#008251";
+export const CL_GREEN_L = "#00B261";
+export const CL_BLUE_D = "#5151D3";
+export const CL_BLUE_L = "#7192E3";

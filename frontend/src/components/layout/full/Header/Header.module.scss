@@ -1,0 +1,21 @@
+.files {
+  font-size: 1.2rem;
+  display: grid;
+  grid-gap: 0.1rem;
+  grid-template-columns: auto 1fr auto auto;
+  grid-template-areas: "start tabs flush end";
+  align-items: center;
+}
+
+.start {
+  grid-area: start;
+}
+.tabs {
+  grid-area: tabs;
+}
+.flush {
+  grid-area: flush;
+}
+.end {
+  grid-area: end;
+}

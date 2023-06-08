@@ -1,0 +1,22 @@
+@use "styles/components/input/config" as i;
+@use "styles/mixins";
+
+.field {
+  display: inline-flex;
+  align-items: center;
+
+  > :not(:first-child) {
+    margin-left: 0.5rem;
+  }
+}
+
+.inf {
+  @extend %font-family-mono;
+  display: inline-block;
+  width: calc(4ch + #{i.$all-extras-x});
+  text-align: right;
+}
+
+.infModNotice {
+  border-bottom: currentColor dotted 1px;
+}

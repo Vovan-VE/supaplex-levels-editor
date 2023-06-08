@@ -1,0 +1,15 @@
+@use "./reset";
+@use "./config" as c;
+
+:root {
+  --scrollbar-thin: #{c.$scrollbar-thin};
+  --scrollbar-norm: #{c.$scrollbar-norm};
+
+  @media (hover: none) {
+    --scrollbar-thin: #{c.$scrollbar-touch-thin};
+    --scrollbar-norm: #{c.$scrollbar-touch-norm};
+  }
+
+  --z-index-interactive: 1;
+  --z-index-popup: 2;
+}

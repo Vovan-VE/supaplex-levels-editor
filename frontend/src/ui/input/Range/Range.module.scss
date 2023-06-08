@@ -1,0 +1,38 @@
+@use "styles/components/input/config" as ic;
+@use "styles/components/button";
+@use "styles/themes";
+
+.root {
+  display: grid;
+  grid-gap: 0.5rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+
+  &._disabled {
+    > .value {
+      color: themes.$color-mute;
+    }
+  }
+}
+.value {
+  position: relative;
+  > .keep {
+    visibility: hidden;
+  }
+  > .display {
+    position: absolute;
+    inset: 0;
+    text-align: right;
+  }
+}
+.track {
+  margin: 0 calc(#{ic.$actual-height} / 2);
+  border-top: themes.$color-mute solid 0.1rem;
+}
+
+.thumb {
+  @extend %button, %button-primary;
+  height: ic.$actual-height;
+  width: auto;
+  aspect-ratio: 1;
+}

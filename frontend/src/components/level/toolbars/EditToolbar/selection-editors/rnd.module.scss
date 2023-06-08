@@ -1,0 +1,44 @@
+@use "styles/themes";
+
+.tile {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.btn {
+  &._checked {
+    background-color: themes.$color-warn;
+    border-color: themes.$color-warn;
+  }
+}
+
+.gridSmall {
+  display: grid;
+  grid-gap: 0.5rem 2rem;
+  --cols: 1;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  align-items: center;
+  @media (min-width: 530px) {
+    --cols: 2;
+  }
+
+  > * {
+    display: grid;
+    grid-gap: 0.25rem;
+    grid-template-columns: min-content minmax(0, 1fr) 6ch;
+    grid-template-areas: "icon input help";
+    align-items: center;
+
+    > .icon {
+      grid-area: icon;
+    }
+    > .input {
+      grid-area: input;
+    }
+    > .help {
+      grid-area: help;
+      text-align: right;
+    }
+  }
+}

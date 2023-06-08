@@ -1,0 +1,44 @@
+.root {
+  position: absolute;
+  inset: 0;
+  // it still cause scroll issue, but much less than with `overflow: hidden`
+  // REFACT: remove when Safari support will spread wider https://caniuse.com/css-overflow
+  clip: rect(auto, auto, auto, auto);
+  overflow: clip;
+
+  .anchor {
+    display: block;
+    position: absolute;
+    left: calc(var(--tile-size) * var(--x));
+    top: calc(var(--tile-size) * var(--y));
+    width: var(--tile-size);
+    height: var(--tile-size);
+
+    &::before {
+      content: " ";
+      display: block;
+      position: absolute;
+      inset: 0;
+      border: #fff solid 2px;
+      border-radius: 500px;
+      transform: scale(1);
+      visibility: hidden;
+      animation: 750ms linear 0s 1 inset-collapse;
+    }
+  }
+}
+
+@keyframes inset-collapse {
+  0% {
+    transform: scale(5);
+    visibility: visible;
+  }
+  99.9% {
+    transform: scale(1);
+    visibility: visible;
+  }
+  100% {
+    transform: scale(1);
+    visibility: hidden;
+  }
+}

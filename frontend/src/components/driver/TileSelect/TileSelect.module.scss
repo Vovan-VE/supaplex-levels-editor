@@ -1,0 +1,15 @@
+.root {
+  .menuList {
+    display: flex;
+    flex-wrap: wrap;
+
+    .option {
+      width: auto;
+      padding: 0.3rem;
+
+      i {
+        margin: 0;
+      }
+    }
+  }
+}

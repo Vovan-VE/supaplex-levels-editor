@@ -1,0 +1,54 @@
+@use "sass:math";
+
+.root {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  width: auto;
+  height: 1em;
+
+  svg {
+    display: block;
+    width: auto;
+    height: 100%;
+  }
+}
+
+// stack: index
+//
+// +--------+
+// |        |
+// |        |
+// |     +----+   ---
+// |     |    |    ^  $index-percent % of .root
+// +-----|    |    V
+//       +----+   ---
+//          | |
+//           >> $index-offset % of self
+
+$index-percent: 60%;
+$index-offset: 35%;
+
+// REFACT: :has
+.root._withStackIndex {
+  > svg {
+    $d: 100% - $index-percent * math.div($index-offset, 100%) - 10%;
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% #{$d},
+      #{$d} #{$d},
+      #{$d} 100%,
+      0 100%
+    );
+  }
+}
+.stackIndex {
+  position: absolute;
+  display: inline-block;
+  width: auto;
+  height: $index-percent;
+  right: 0;
+  bottom: 0;
+  transform: translate($index-offset, $index-offset);
+}

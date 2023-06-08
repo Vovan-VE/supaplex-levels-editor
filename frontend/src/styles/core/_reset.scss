@@ -1,0 +1,132 @@
+@use "../themes";
+@use "../mixins";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+}
+
+body {
+  &,
+  &.theme-dark {
+    @extend %theme-dark;
+  }
+  //&.theme-light {
+  //  @extend %theme-light;
+  //}
+
+  margin: 0;
+  color: themes.$color-default;
+  background: themes.$color-default-bg;
+  font-size: 16px;
+  line-height: 1.4;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  @include mixins.default-scrollbar;
+}
+
+a {
+  color: themes.$color-primary;
+  text-decoration: underline;
+
+  &:hover {
+    color: themes.$color-primary-hover;
+    text-decoration: underline;
+  }
+
+  &:not([href]) {
+    &,
+    &:hover {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+}
+
+pre,
+code,
+kbd,
+samp {
+  @extend %font-family-mono;
+  font-size: 1em;
+}
+
+img,
+svg {
+  vertical-align: middle;
+}
+
+label {
+  display: inline-block;
+}
+
+button {
+  border-radius: 0;
+
+  &:focus:not(:focus-visible) {
+    outline: 0;
+  }
+}
+
+input,
+button,
+select,
+optgroup,
+textarea {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+button,
+select {
+  text-transform: none;
+}
+[role="button"] {
+  cursor: pointer;
+}
+select {
+  word-wrap: normal;
+
+  &:disabled {
+    opacity: 1;
+  }
+}
+
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance: button;
+
+  &:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+::-moz-focus-inner {
+  padding: 0;
+  border-style: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+wbr {
+  display: none !important;
+}

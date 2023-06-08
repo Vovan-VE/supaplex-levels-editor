@@ -1,0 +1,23 @@
+.root {
+  h1 span {
+    font-size: 0.9rem;
+    font-weight: normal;
+  }
+
+  > :first-child {
+    margin-top: 0;
+  }
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+  .logo {
+    display: inline-block;
+    float: right;
+    width: 6rem;
+    height: auto;
+    aspect-ratio: 1;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+  }
+}

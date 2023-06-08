@@ -1,0 +1,52 @@
+@use "./themes";
+@use "./vars";
+
+@mixin _apply-vars($theme) {
+  @each $name in map-keys($theme) {
+    --#{$name}: #{map-get($theme, $name)};
+  }
+}
+
+//%theme-light {
+//  @include _apply-vars(themes.$theme-light);
+//}
+
+%theme-dark {
+  @include _apply-vars(themes.$theme-dark);
+}
+
+$color-default: var(--#{vars.$color-default});
+$color-default-bg: var(--#{vars.$color-default-bg});
+$color-default-focus: var(--#{vars.$color-default-focus});
+$color-mute: var(--#{vars.$color-mute});
+$color-mute-bg: var(--#{vars.$color-mute-bg});
+$color-panel-bg: var(--#{vars.$color-panel-bg});
+$color-shadow: var(--#{vars.$color-shadow});
+$color-primary: var(--#{vars.$color-primary});
+$color-primary-bg: var(--#{vars.$color-primary-bg});
+$color-primary-hover: var(--#{vars.$color-primary-hover});
+$color-primary-hover-bg: var(--#{vars.$color-primary-hover-bg});
+$color-primary-active: var(--#{vars.$color-primary-active});
+$color-primary-active-bg: var(--#{vars.$color-primary-active-bg});
+$color-primary-focus: var(--#{vars.$color-primary-focus});
+$color-success: var(--#{vars.$color-success});
+$color-success-bg: var(--#{vars.$color-success-bg});
+$color-success-hover: var(--#{vars.$color-success-hover});
+$color-success-hover-bg: var(--#{vars.$color-success-hover-bg});
+$color-success-active: var(--#{vars.$color-success-active});
+$color-success-active-bg: var(--#{vars.$color-success-active-bg});
+$color-success-focus: var(--#{vars.$color-success-focus});
+$color-warn: var(--#{vars.$color-warn});
+$color-warn-bg: var(--#{vars.$color-warn-bg});
+$color-warn-hover: var(--#{vars.$color-warn-hover});
+$color-warn-hover-bg: var(--#{vars.$color-warn-hover-bg});
+$color-warn-active: var(--#{vars.$color-warn-active});
+$color-warn-active-bg: var(--#{vars.$color-warn-active-bg});
+$color-warn-focus: var(--#{vars.$color-warn-focus});
+$color-danger: var(--#{vars.$color-danger});
+$color-danger-bg: var(--#{vars.$color-danger-bg});
+$color-danger-hover: var(--#{vars.$color-danger-hover});
+$color-danger-hover-bg: var(--#{vars.$color-danger-hover-bg});
+$color-danger-active: var(--#{vars.$color-danger-active});
+$color-danger-active-bg: var(--#{vars.$color-danger-active-bg});
+$color-danger-focus: var(--#{vars.$color-danger-focus});

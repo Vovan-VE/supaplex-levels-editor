@@ -1,0 +1,72 @@
+@use "styles/components";
+@use "styles/components/toolbar/config" as tb;
+@use "styles/mixins";
+
+.root {
+  @extend %panel-colors;
+  display: grid;
+  align-items: center;
+
+  grid-template-columns: 1fr min-content min-content;
+  grid-template-areas:
+    "config driver driver"
+    "tools  tools  edit"
+    "tiles  tiles  tiles";
+}
+
+.config {
+  grid-area: config;
+}
+.driver {
+  grid-area: driver;
+}
+.tools {
+  grid-area: tools;
+}
+.edit {
+  grid-area: edit;
+}
+.tiles {
+  grid-area: tiles;
+}
+
+.root {
+  @include mixins.media-breakpoint-only(lg) {
+    .config {
+      text-align: right;
+    }
+  }
+
+  @include mixins.media-breakpoint-up(lg) {
+    .tiles {
+      button {
+        --w-fit: #{tb.fit-buttons-width-no-margin(100vw, 37)};
+        --f-fit: calc(var(--w-fit) - 2 * var(--btn-pad-x));
+        --w-limited: calc(min(1.5rem, var(--f-fit)) + 2 * var(--btn-pad-x));
+
+        //width: $w-limited;
+        width: var(--w-limited);
+        height: auto;
+        aspect-ratio: 1;
+
+        span,
+        i {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+
+  @include mixins.media-breakpoint-up(xl) {
+    grid-gap: 0 0.25rem;
+    grid-template-columns: 22.4rem min-content 1fr min-content;
+    grid-template-areas:
+      "tiles config driver driver"
+      "tiles tools  tools  edit";
+  }
+
+  @include mixins.media-breakpoint-up(xxl) {
+    grid-template-columns: 32.6rem min-content 1fr min-content;
+  }
+}

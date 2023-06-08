@@ -1,0 +1,168 @@
+@use "sass:color";
+@use "styles/themes";
+@use "./config";
+
+@mixin button-variant(
+  $bg,
+  $border,
+  $color,
+  $hover-bg,
+  $hover-border,
+  $hover-color,
+  $active-bg,
+  $active-border,
+  $active-color,
+  $disabled-bg: $bg,
+  $disabled-border: $border,
+  $disabled-color: $color,
+  $focus-color
+) {
+  --btn-bg: #{$bg};
+  --btn-color: #{$color};
+  --btn-border-color: #{$border};
+  --btn-hover-bg: #{$hover-bg};
+  --btn-hover-color: #{$hover-color};
+  --btn-hover-border-color: #{$hover-border};
+  --btn-active-bg: #{$active-bg};
+  --btn-active-color: #{$active-color};
+  --btn-active-border-color: #{$active-border};
+  --btn-disabled-bg: #{$disabled-bg};
+  --btn-disabled-color: #{$disabled-color};
+  --btn-disabled-border-color: #{$disabled-border};
+  --btn-focus-color: #{$focus-color};
+}
+
+%button {
+  --btn-pad-x: #{config.$padding-x};
+  --btn-pad-y: #{config.$padding-y};
+  --btn-font-size: #{config.$font-size};
+  --btn-line-height: #{config.$line-height};
+  --btn-color: #{themes.$color-default};
+  --btn-bg: transparent;
+  --btn-border-width: #{config.$border-width};
+  --btn-border-color: transparent;
+  --btn-disabled-opacity: #{config.$disabled-opacity};
+  --btn-focus-box-shadow: 0 0 0 #{config.$focus-width} var(--btn-focus-color);
+
+  display: inline-block;
+  padding: var(--btn-pad-y) var(--btn-pad-x);
+  font-size: var(--btn-font-size);
+  line-height: var(--btn-line-height);
+  color: var(--btn-color);
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: var(--btn-border-width) solid var(--btn-border-color);
+  background: var(--btn-bg);
+  transition: config.$btn-transition;
+  touch-action: manipulation;
+
+  &:hover {
+    color: var(--btn-hover-color);
+    text-decoration: none;
+    background-color: var(--btn-hover-bg);
+    border-color: var(--btn-hover-border-color);
+  }
+
+  &:focus {
+    color: var(--btn-hover-color);
+    background-color: var(--btn-hover-bg);
+    border-color: var(--btn-hover-border-color);
+    outline: 0;
+    box-shadow: var(--btn-focus-box-shadow);
+  }
+
+  &:active,
+  &:global(._active) {
+    color: var(--btn-active-color);
+    background-color: var(--btn-active-bg);
+    border-color: var(--btn-active-border-color);
+
+    &:focus {
+      box-shadow: var(--btn-focus-box-shadow);
+    }
+  }
+
+  &:disabled,
+  &:global(._disabled) {
+    color: var(--btn-disabled-color);
+    background-color: var(--btn-disabled-bg);
+    border-color: var(--btn-disabled-border-color);
+    pointer-events: none;
+    opacity: var(--btn-disabled-opacity);
+    box-shadow: none;
+  }
+}
+
+%button-primary {
+  @include button-variant(
+    $bg: themes.$color-primary-bg,
+    $border: themes.$color-primary-bg,
+    $color: themes.$color-primary,
+    $hover-bg: themes.$color-primary-hover-bg,
+    $hover-border: themes.$color-primary-hover-bg,
+    $hover-color: themes.$color-primary-hover,
+    $active-bg: themes.$color-primary-active-bg,
+    $active-border: themes.$color-primary-active-bg,
+    $active-color: themes.$color-primary-active,
+    $focus-color: themes.$color-primary-focus
+  );
+}
+
+%button-success {
+  @include button-variant(
+    $bg: themes.$color-success-bg,
+    $border: themes.$color-success-bg,
+    $color: themes.$color-success,
+    $hover-bg: themes.$color-success-hover-bg,
+    $hover-border: themes.$color-success-hover-bg,
+    $hover-color: themes.$color-success-hover,
+    $active-bg: themes.$color-success-active-bg,
+    $active-border: themes.$color-success-active-bg,
+    $active-color: themes.$color-success-active,
+    $focus-color: themes.$color-success-focus
+  );
+}
+
+%button-warn {
+  @include button-variant(
+    $bg: themes.$color-warn-bg,
+    $border: themes.$color-warn-bg,
+    $color: themes.$color-warn,
+    $hover-bg: themes.$color-warn-hover-bg,
+    $hover-border: themes.$color-warn-hover-bg,
+    $hover-color: themes.$color-warn-hover,
+    $active-bg: themes.$color-warn-active-bg,
+    $active-border: themes.$color-warn-active-bg,
+    $active-color: themes.$color-warn-active,
+    $focus-color: themes.$color-warn-focus
+  );
+}
+
+%button-danger {
+  @include button-variant(
+    $bg: themes.$color-danger-bg,
+    $border: themes.$color-danger-bg,
+    $color: themes.$color-danger,
+    $hover-bg: themes.$color-danger-hover-bg,
+    $hover-border: themes.$color-danger-hover-bg,
+    $hover-color: themes.$color-danger-hover,
+    $active-bg: themes.$color-danger-active-bg,
+    $active-border: themes.$color-danger-active-bg,
+    $active-color: themes.$color-danger-active,
+    $focus-color: themes.$color-danger-focus
+  );
+}
+
+%button-link {
+  --btn-bg: transparent;
+  --btn-border-color: transparent;
+  --btn-hover-bg: transparent;
+  --btn-hover-border-color: transparent;
+  --btn-active-bg: transparent;
+  --btn-active-border-color: transparent;
+  --btn-disabled-bg: transparent;
+  --btn-disabled-border-color: transparent;
+}

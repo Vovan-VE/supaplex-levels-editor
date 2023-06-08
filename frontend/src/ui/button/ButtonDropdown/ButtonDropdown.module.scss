@@ -1,0 +1,56 @@
+@use "styles/mixins";
+
+.container {
+  display: inline-block;
+  // no relative, or popup will shrink to button width
+  //position: relative;
+}
+
+.wrapButton {
+  display: grid;
+  grid-gap: 0.1rem;
+  grid-template-columns: auto auto;
+
+  :first-child {
+    align-self: center;
+  }
+  .button {
+    align-self: stretch;
+    @media (pointer: fine) {
+      --btn-pad-x: 0;
+    }
+  }
+}
+
+.button {
+  display: block;
+
+  &._noTrigger > * > * + * {
+    margin-left: 0;
+  }
+
+  > * > * > .arrow {
+    position: relative;
+    left: calc(var(--btn-pad-x) * 0.75);
+  }
+  > * > * + *:empty {
+    display: none;
+  }
+}
+
+.arrow {
+  display: inline-block;
+  width: auto;
+  height: 1em;
+  transition: transform 0.4s;
+  transform: rotate(180deg);
+
+  &._opened {
+    transform: rotate(360deg);
+  }
+}
+
+.popup {
+  z-index: var(--z-index-popup);
+  @include mixins.popup-shadow;
+}

@@ -1,0 +1,28 @@
+@use "styles/themes";
+
+.root {
+}
+
+.tiles {
+  margin-top: 1rem;
+  display: grid;
+  grid-gap: 0.2rem;
+  grid-template-columns: repeat(auto-fit, calc(1.5rem + 0.25rem + 11ch));
+  align-items: center;
+}
+.cell {
+  display: grid;
+  grid-gap: 0.25rem;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  border: themes.$color-mute solid 1px;
+  padding: 0.2rem 0.5rem;
+  .tile {
+    height: 1.5rem;
+    aspect-ratio: 1;
+  }
+  .count {
+    text-align: right;
+    font-size: 1.5rem;
+  }
+}

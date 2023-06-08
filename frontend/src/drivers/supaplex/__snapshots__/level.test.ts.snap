@@ -1,0 +1,272 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createNewLevel all 1`] = `
+Object {
+  "cells": Array [
+    "ooooo",
+    "o&&&o",
+    "ooooo",
+  ],
+  "demo": null,
+  "height": 3,
+  "infotronsNeed": 0,
+  "initialFreezeZonks": false,
+  "initialGravity": false,
+  "maxTitleLength": 23,
+  "specialPorts": Array [],
+  "title": "                       ",
+  "width": 5,
+}
+`;
+
+exports[`createNewLevel all 2`] = `
+Object {
+  "cells": Array [
+    "&&&&&",
+    "&&&&&",
+    "&&&&&",
+  ],
+  "demo": null,
+  "height": 3,
+  "infotronsNeed": 0,
+  "initialFreezeZonks": false,
+  "initialGravity": false,
+  "maxTitleLength": 23,
+  "specialPorts": Array [],
+  "title": "                       ",
+  "width": 5,
+}
+`;
+
+exports[`createNewLevel border 1`] = `
+Object {
+  "cells": Array [
+    "ooooo",
+    "o   o",
+    "ooooo",
+  ],
+  "demo": null,
+  "height": 3,
+  "infotronsNeed": 0,
+  "initialFreezeZonks": false,
+  "initialGravity": false,
+  "maxTitleLength": 23,
+  "specialPorts": Array [],
+  "title": "                       ",
+  "width": 5,
+}
+`;
+
+exports[`createNewLevel fill 1`] = `
+Object {
+  "cells": Array [
+    "▓▓▓▓▓",
+    "▓&&&▓",
+    "▓▓▓▓▓",
+  ],
+  "demo": null,
+  "height": 3,
+  "infotronsNeed": 0,
+  "initialFreezeZonks": false,
+  "initialGravity": false,
+  "maxTitleLength": 23,
+  "specialPorts": Array [],
+  "title": "                       ",
+  "width": 5,
+}
+`;
+
+exports[`createNewLevel no options 1`] = `
+Object {
+  "cells": Array [
+    "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓                                                          ▓",
+    "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
+  ],
+  "demo": null,
+  "height": 24,
+  "infotronsNeed": 0,
+  "initialFreezeZonks": false,
+  "initialGravity": false,
+  "maxTitleLength": 23,
+  "specialPorts": Array [],
+  "title": "                       ",
+  "width": 60,
+}
+`;
+
+exports[`createNewLevel size 1`] = `
+Object {
+  "cells": Array [
+    "▓▓▓▓▓",
+    "▓   ▓",
+    "▓▓▓▓▓",
+  ],
+  "demo": null,
+  "height": 3,
+  "infotronsNeed": 0,
+  "initialFreezeZonks": false,
+  "initialGravity": false,
+  "maxTitleLength": 23,
+  "specialPorts": Array [],
+  "title": "                       ",
+  "width": 5,
+}
+`;
+
+exports[`level constructor data 1`] = `
+Object {
+  "cells": Array [
+    " ∩&",
+    "o@▢",
+  ],
+  "demo": null,
+  "height": 2,
+  "infotronsNeed": 42,
+  "initialFreezeZonks": true,
+  "initialGravity": true,
+  "maxTitleLength": 23,
+  "specialPorts": Array [
+    Object {
+      "setsFreezeEnemies": true,
+      "setsFreezeZonks": true,
+      "setsGravity": true,
+      "x": 1,
+      "y": 0,
+    },
+  ],
+  "title": "-- Lorem ipsum --      ",
+  "width": 3,
+}
+`;
+
+exports[`level constructor no params 1`] = `
+Object {
+  "cells": Array [
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+    "                                                            ",
+  ],
+  "demo": null,
+  "height": 24,
+  "infotronsNeed": 0,
+  "initialFreezeZonks": false,
+  "initialGravity": false,
+  "maxTitleLength": 23,
+  "specialPorts": Array [],
+  "title": "                       ",
+  "width": 60,
+}
+`;
+
+exports[`level resize simple 1`] = `
+Object {
+  "cells": Array [
+    " ∩&▓▓",
+    "o@▢ ▓",
+    "▓   ▓",
+    "▓▓▓▓▓",
+  ],
+  "demo": null,
+  "height": 4,
+  "infotronsNeed": 42,
+  "initialFreezeZonks": true,
+  "initialGravity": true,
+  "maxTitleLength": 23,
+  "specialPorts": Array [
+    Object {
+      "setsFreezeEnemies": true,
+      "setsFreezeZonks": true,
+      "setsGravity": true,
+      "x": 1,
+      "y": 0,
+    },
+  ],
+  "title": "-- Lorem ipsum --      ",
+  "width": 5,
+}
+`;
+
+exports[`level resize simple 2`] = `
+Object {
+  "cells": Array [
+    " ∩&&⊃",
+    "o@▢ ▓",
+    "o   ▓",
+    "∪▓▓▓▓",
+  ],
+  "demo": null,
+  "height": 4,
+  "infotronsNeed": 42,
+  "initialFreezeZonks": true,
+  "initialGravity": true,
+  "maxTitleLength": 23,
+  "specialPorts": Array [
+    Object {
+      "setsFreezeEnemies": true,
+      "setsFreezeZonks": true,
+      "setsGravity": true,
+      "x": 1,
+      "y": 0,
+    },
+    Object {
+      "setsFreezeEnemies": true,
+      "setsFreezeZonks": false,
+      "setsGravity": true,
+      "x": 4,
+      "y": 0,
+    },
+    Object {
+      "setsFreezeEnemies": true,
+      "setsFreezeZonks": true,
+      "setsGravity": false,
+      "x": 0,
+      "y": 3,
+    },
+  ],
+  "title": "-- Lorem ipsum --      ",
+  "width": 5,
+}
+`;

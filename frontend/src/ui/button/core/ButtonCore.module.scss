@@ -1,0 +1,44 @@
+.root {
+  position: relative;
+  --btn-icon-size: 1.5em;
+
+  .icon,
+  .text {
+    display: block;
+  }
+  .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: stretch;
+  }
+  .icon {
+    flex: 0 0 auto;
+    font-size: var(--btn-icon-size);
+  }
+  &._withIcon {
+    .text {
+      flex: 1 1 0;
+    }
+  }
+  .icon + .text,
+  .text + .icon {
+    margin-left: 0.5rem;
+  }
+
+  &._loading {
+    &:not(:disabled) > *:not(.loader) {
+      opacity: 0.4;
+    }
+  }
+  > .loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    > * {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+}

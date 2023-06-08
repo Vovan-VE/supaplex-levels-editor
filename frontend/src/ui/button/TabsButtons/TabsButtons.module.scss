@@ -1,0 +1,6 @@
+@use "styles/mixins";
+
+.root {
+  overflow-x: scroll;
+  @include mixins.default-scrollbar($thin: thin);
+}

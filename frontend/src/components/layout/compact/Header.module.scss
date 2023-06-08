@@ -1,0 +1,49 @@
+@use "styles/components";
+@use "styles/components/button/config" as b;
+@use "styles/mixins";
+@use "styles/themes";
+
+.root {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
+}
+.space {
+  flex: 1 1 0;
+}
+
+.popupPanel,
+.popupToolbar {
+  @extend %panel-colors;
+}
+
+.scrollableList {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+
+  > a,
+  > button {
+    text-align: left;
+  }
+}
+
+.scrollableList {
+  overflow: visible auto;
+  max-height: calc(5 * #{b.$full-height-oneline});
+  margin-left: 0.3rem;
+  margin-right: 0.3rem;
+  padding-bottom: 0.3rem;
+}
+
+.ver {
+  font-size: 0.8rem;
+  color: themes.$color-mute;
+}
+
+.levelsList {
+  @extend %font-family-mono;
+}

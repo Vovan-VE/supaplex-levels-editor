@@ -1,0 +1,81 @@
+@use "../themes";
+@use "../core/config" as c;
+
+//@function _w($thin: null) {
+//  @if $thin {
+//    @return var(--scrollbar-thin);
+//  }
+//  @return var(--scrollbar-norm);
+//}
+@mixin _size($size, $size-touch) {
+  width: $size;
+  height: $size;
+  @media (hover: none) {
+    width: $size-touch;
+    height: $size-touch;
+  }
+}
+
+@mixin scrollbar-custom(
+  $color-bar,
+  $color-track,
+  $thin: null,
+  $show-track: null
+) {
+  scrollbar-color: $color-bar $color-track;
+  @if $thin {
+    scrollbar-width: thin;
+  } @else {
+    scrollbar-width: auto;
+  }
+
+  //$width: _w($thin);
+
+  &::-webkit-scrollbar {
+    // BUG: debugger says `var(--scrollbar-thin)` is undefined when it IS defined
+    //width: $width;
+    //height: $width;
+    @if $thin {
+      @include _size(c.$scrollbar-thin, c.$scrollbar-touch-thin);
+    } @else {
+      @include _size(c.$scrollbar-norm, c.$scrollbar-touch-norm);
+    }
+    @if $show-track {
+      background-color: $color-track;
+    } @else {
+      background-color: transparent;
+    }
+    border-radius: 0;
+  }
+
+  @if $show-track {
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      border: $color-bar solid 1px;
+
+      &:horizontal {
+        border-left: none;
+        border-right: none;
+      }
+
+      &:vertical {
+        border-top: none;
+        border-bottom: none;
+      }
+    }
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $color-bar;
+    border-radius: 0;
+  }
+}
+
+@mixin default-scrollbar($thin: null, $show-track: null) {
+  @include scrollbar-custom(
+    themes.$color-default,
+    themes.$color-default-bg,
+    $thin,
+    $show-track
+  );
+}

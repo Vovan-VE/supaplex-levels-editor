@@ -1,0 +1,16 @@
+.root {
+  touch-action: pinch-zoom;
+  cursor: crosshair;
+
+  &._one {
+    //background: rgba(0, 128, 0, 0.3);
+  }
+  &._scrolling {
+    pointer-events: none;
+    //background: rgba(192, 0, 0, 0.3);
+  }
+  &._drawing {
+    touch-action: none;
+    //background: rgba(0, 0, 128, 0.3);
+  }
+}

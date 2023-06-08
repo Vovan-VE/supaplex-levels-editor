@@ -1,0 +1,51 @@
+@use "styles/colors/sp";
+@use "styles/mixins";
+
+.root {
+  overflow: auto;
+  @include mixins.default-scrollbar;
+  padding: 0.5rem;
+
+  --tile-size: 24px;
+  --tiles-x: 1;
+  --tiles-y: 1;
+
+  user-select: none;
+}
+
+.canvas {
+  position: relative;
+  margin: 0 auto;
+  // https://github.com/postcss/postcss-calc/issues/77
+  width: calc(var(--tile-size) * var(--tiles-x));
+  height: calc(var(--tile-size) * var(--tiles-y));
+  //width: calc(var(--tile-size) / (1 / var(--tiles-x)));
+  //height: calc(var(--tile-size) / (1 / var(--tiles-y)));
+  box-shadow: 0 0 0.5rem 0.3rem #{sp.$color-orange};
+}
+
+.tiles,
+.drawLayer,
+.cover {
+  position: absolute;
+  inset: 0;
+}
+
+.drawLayer,
+.tiles {
+  display: grid;
+  grid-gap: 0;
+  grid-template-columns: repeat(var(--tiles-x), var(--tile-size));
+  grid-template-rows: repeat(var(--tiles-y), var(--tile-size));
+}
+
+.tiles {
+  > i {
+    grid-column-start: calc(var(--x) + 1);
+    grid-column-end: span var(--w);
+    grid-row: calc(var(--y) + 1);
+    aspect-ratio: auto;
+    background-repeat: repeat;
+    background-size: var(--tile-size);
+  }
+}

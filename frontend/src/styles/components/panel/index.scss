@@ -1,0 +1,6 @@
+@use "../../themes";
+
+%panel-colors {
+  background-color: themes.$color-panel-bg;
+  color: themes.$color-default;
+}
