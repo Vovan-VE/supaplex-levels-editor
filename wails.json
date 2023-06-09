@@ -5,9 +5,10 @@
   "frontend:dir": "./frontend",
   "frontend:install": "npm ci",
   "frontend:build": "npm run build:wails",
+  "frontend:dev:build": "npm run build:wails:dev",
   "frontend:dev:watcher": "npm run start:wails",
   "frontend:dev:serverUrl": "http://localhost:3017",
-  "wailsjsdir": "./frontend/src/backend/wails",
+  "wailsjsdir": "./frontend",
   "info": {
     "companyName": "Vovan-VE",
     "productVersion": "0.1.0",
