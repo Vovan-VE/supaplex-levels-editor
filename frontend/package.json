@@ -23,6 +23,7 @@
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "prepare": "npm ls husky > /dev/null && cd .. && husky install || exit 0",
     "start": "react-scripts start",
+    "start:wails": "cross-env REACT_APP_WAILS=1 PORT=3017 BROWSER=none react-scripts start",
     "build": "react-scripts build",
     "build:wails": "cross-env REACT_APP_WAILS=1 BUILD_PATH=./build-wails react-scripts build",
     "test": "tsc && npm run test:unit && npm run test:dependencies",

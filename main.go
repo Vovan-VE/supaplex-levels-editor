@@ -11,7 +11,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
-//go:embed all:frontend/dist
+//go:embed all:frontend/build-wails
 var assets embed.FS
 
 func main() {
