@@ -55,3 +55,6 @@ export const exitApp: B.ExitApp | undefined = WAILS
 export const testInIframe: B.TestInIframe = WAILS
   ? wails.testInIframe
   : web.testInIframe;
+
+export const VersionTag = WAILS ? wails.VersionTag : web.VersionTag;
+export const InfoDetails = WAILS ? wails.InfoDetails : web.InfoDetails;

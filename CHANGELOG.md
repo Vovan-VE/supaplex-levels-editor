@@ -2,7 +2,7 @@
 
 ## 0.13.0 (DEV)
 
-- ...
+- Fix: Broken link in "Info" dialog.
 
 ## 0.12.0 (2023-05-20)
 

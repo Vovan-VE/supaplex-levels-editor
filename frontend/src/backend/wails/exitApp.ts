@@ -1,5 +1,5 @@
 import { SetIsDirty } from "./go/main/App";
-import { Quit } from "./runtime/runtime";
+import { Quit } from "./runtime";
 
 export const exitApp = (ignoreDirty?: boolean) => {
   if (ignoreDirty) {

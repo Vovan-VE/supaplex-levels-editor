@@ -17,3 +17,6 @@ export { onDeactivate } from "./onDeactivate";
 export const exitApp = undefined;
 
 export const testInIframe = true;
+
+export const VersionTag = undefined;
+export { InfoDetails } from "./InfoDetails";
