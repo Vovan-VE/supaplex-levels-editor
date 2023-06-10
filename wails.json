@@ -5,7 +5,6 @@
   "frontend:dir": "./frontend",
   "frontend:install": "npm ci",
   "frontend:build": "npm run build:wails",
-  "frontend:dev:build": "npm run build:wails:dev",
   "frontend:dev:watcher": "npm run start:wails",
   "frontend:dev:serverUrl": "http://localhost:3017",
   "wailsjsdir": "./frontend",
@@ -13,7 +12,7 @@
     "companyName": "Vovan-VE",
     "productVersion": "0.1.0",
     "copyright": "Copyright (C) 2021-2023 Vovan-VE",
-    "comments": "Desktop version of https://sple.me/\nRepo: https://github.com/Vovan-VE/supaplex-levels-editor\nBuilt using Wails (https://wails.io)"
+    "comments": "Desktop version of https://sple.me/ (repo: https://github.com/Vovan-VE/supaplex-levels-editor) built using Wails (https://wails.io)"
   },
   "author": {
     "name": "Vovan-VE",

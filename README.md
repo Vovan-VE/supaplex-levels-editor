@@ -82,12 +82,16 @@ on your device, like other whatever desktop editors do.
 
 ## Contribution, Development
 
-Project root directory was bootstrapped with [Wails][wails]. To run in live
-development mode, run `wails dev` in the project directory.
+Project root directory was bootstrapped with [Wails][wails].
 
 Frontend common app is now located in `./frontend/` subdirectory. It was
 bootstrapped with [Create React App][cra]. Web [sple.me][sple.me] built from
 that.
+
+- To run Desktop SpLE in live development mode, run `wails dev` in the project
+  directory.
+- To run Web SpLE in live development mode, run `npm start` in `./frontend`
+  subdirectory.
 
 [cra]: https://github.com/facebook/create-react-app
 [sple.me]: https://sple.me

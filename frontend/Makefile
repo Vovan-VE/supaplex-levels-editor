@@ -14,10 +14,6 @@ wails-prod: wails clean-wails-map
 wails:
 	$(NPM) run build:wails
 
-.PHONY: dev
-dev:
-	$(NPM) start
-
 .PHONY: test
 test:
 	$(NPM) test
@@ -28,7 +24,7 @@ clean-wails-map:
 
 .PHONY: clean
 clean:
-	rm -r ./build
-	rm -r ./build-wails
+	rm -rf ./build
+	rm -rf ./build-wails
 
 FORCE:

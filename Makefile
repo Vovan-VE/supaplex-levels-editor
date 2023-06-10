@@ -4,8 +4,15 @@ WAILS ?= $(GOPATH)/bin/wails
 
 FRONT_DIR = ./frontend
 
-.PHONY: all
-all:
+FRONT_TARGET = wails-prod
+BUILD_ARGS =
+FILE_NAME = sple
+FILE_TAG =
+ifneq ($(DEBUG),)
+  FRONT_TARGET = wails
+  BUILD_ARGS = -debug
+  FILE_TAG = "[debug]"
+endif
 
 # -platform https://wails.io/docs/reference/cli/#platforms
 #   darwin/amd64
@@ -15,28 +22,29 @@ all:
 #   windows/arm64
 #   linux/amd64
 #   linux/arm64
-#
+PLATFORMS = linux-amd64 windows-amd64
+
+.PHONY: all
+all: bin
+
+.PHONY: bin
+bin: $(foreach P,$(PLATFORMS),$(addprefix bin.,$(P)))
+
 # -o <filename>
 # -s                skip build frontend
 # -debug            debug information + devtools in the application window
-.PHONY: bin
-bin:
-	make -C $(FRONT_DIR) wails-prod
-	$(WAILS) build -v 2 -trimpath -s
+bin.%: front
+	$(WAILS) build -v 2 -trimpath -s $(BUILD_ARGS) \
+	  -platform $(subst -,/,$*) \
+	  -o "$(FILE_NAME)-$*$(FILE_TAG)$(if $(findstring windows,$*),.exe)" \
 
-.PHONY: bin-debug
-bin-debug:
-	make -C $(FRONT_DIR) wails
-	$(WAILS) build -v 2 -trimpath -s -debug
-
-.PHONY: dev
-dev:
-	$(WAILS) generate module
-	$(WAILS) dev -skipbindings
+.PHONY: front
+front:
+	make -C $(FRONT_DIR) $(FRONT_TARGET)
 
 .PHONY: clean
 clean:
-	rm -r build/bin
+	rm -rf build/bin
 	make -C $(FRONT_DIR) clean
 
 FORCE:

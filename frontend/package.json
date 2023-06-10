@@ -26,8 +26,6 @@
     "start:wails": "cross-env REACT_APP_WAILS=1 PORT=3017 BROWSER=none react-scripts start",
     "build": "react-scripts build",
     "build:wails": "cross-env REACT_APP_WAILS=1 BUILD_PATH=./build-wails react-scripts build",
-    "build:wails:dev": "npm run pretty:wails && npm run build:wails",
-    "pretty:wails": "prettier --write ./wailsjs",
     "test": "tsc && npm run test:unit && npm run test:dependencies",
     "test:dependencies": "npm exec --yes -- madge@^5 -c src/index.tsx --warning --ts-config tsconfig.json",
     "test:unit": "cross-env CI=true react-scripts test --env=./jest-env-jsdom-ext.js",
