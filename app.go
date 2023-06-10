@@ -38,13 +38,13 @@ func (a *App) startup(ctx context.Context) {
 
 	configDir := path.Join(xdg.ConfigHome, "sple")
 	if err := config.EnsureConfigDir(configDir); err != nil {
-		runtime.LogErrorf(ctx, "config dir:", err)
+		runtime.LogErrorf(ctx, "config dir: %v", err)
 		return
 	}
 
 	front, err := config.NewFileStorage(path.Join(configDir, "front.json"))
 	if err != nil {
-		runtime.LogErrorf(ctx, "front config:", err)
+		runtime.LogErrorf(ctx, "front config: %v", err)
 		return
 	}
 
@@ -52,7 +52,7 @@ func (a *App) startup(ctx context.Context) {
 	chosenReg := files.NewChosenRegistry()
 	fs, err := files.NewStorage(filesRegPath, chosenReg)
 	if err != nil {
-		runtime.LogErrorf(ctx, "files registry:", err)
+		runtime.LogErrorf(ctx, "files registry: %v", err)
 		return
 	}
 
