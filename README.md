@@ -24,6 +24,8 @@ failure. And so, here it is: yet another Supaplex levels editor!
 > **SpLE** is under development still. Feel free to report bugs, suggest
 > enhancements and correct grammar mistakes.
 
+![screenshot](./.github/preview.png)
+
 ## [sple.me][sple.me] Important notes
 
 [sple.me][sple.me] is completely frontend (client side) application (web page).
