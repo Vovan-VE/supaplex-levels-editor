@@ -74,6 +74,11 @@ backend bindings to work with its host binary in desktop environment.
 **Desktop SpLE** compared to [sple.me][sple.me] _DOES_ work with regular files
 on your device, like other whatever desktop editors do.
 
+### Supported platforms
+
+- Windows 10/11 AMD64: requires [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/);
+- Linux AMD64: requires `libwebkit`.
+
 ## Planned features (unsorted)
 
 - More features from Winplex Collection Editor.
