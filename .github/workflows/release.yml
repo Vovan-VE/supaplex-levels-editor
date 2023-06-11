@@ -184,7 +184,8 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           draft: true
           prerelease: false
-          title: v${{ needs.build_front.outputs.version }}
+          automatic_release_tag: "v${{ needs.build_front.outputs.version }}"
+          title: "v${{ needs.build_front.outputs.version }}"
           files: ./release-files/*
 
   deploy_web:
