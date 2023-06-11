@@ -104,7 +104,8 @@ func (f *fullStorage) GetAll() (map[string]*Record, error) {
 	for k, s := range ms {
 		r, err := recordFromString(k, s)
 		if err != nil {
-			return nil, err
+			// TODO: log error
+			continue
 		}
 		mr[k] = r
 	}
