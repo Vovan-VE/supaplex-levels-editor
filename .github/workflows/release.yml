@@ -120,20 +120,19 @@ jobs:
           FILE_VER: ${{ needs.build_front.outputs.version }}
           DEBUG: 1
 
+      - name: Clean front map files
+        run: make -C ./frontend clean-wails-map
+
       - name: Build on linux
         if: matrix.platform == 'ubuntu-latest'
-        run: |
-          make -C ./frontend clean-wails-map
-          make linux win
+        run: make linux win
         env:
           SKIP_FRONT: 1
           FILE_VER: ${{ needs.build_front.outputs.version }}
 
       - name: Build on mac
         if: matrix.platform == 'macos-latest'
-        run: |
-          make -C ./frontend clean-wails-map
-          make darwin
+        run: make darwin
         env:
           SKIP_FRONT: 1
           FILE_VER: ${{ needs.build_front.outputs.version }}
@@ -168,7 +167,8 @@ jobs:
       - name: Prepare release files
         working-directory: ./release-files
         run: |
-          FILES = "$( ls )"
+          ls -al
+          FILES="$( ls )"
           for FILE in $FILES ; do
             md5sum $FILE > $FILE.md5.txt
             sha1sum $FILE > $FILE.sha1.txt
