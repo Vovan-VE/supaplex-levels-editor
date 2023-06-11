@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.13.0 (DEV)
+## 0.13.0 (2023-06-11)
 
 This version has no significant feature changes in <https://sple.me>. This
 release brings experimental Desktop SpLE app.
