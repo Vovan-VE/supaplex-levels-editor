@@ -27,6 +27,9 @@ device.
   - Auto save feature is OFF by default and can be turned ON in Settings with
     wanted timeout. Web sple.me have no this option because it's always ON with
     minimal timeout to prevent data loss.
+  - Level testing and demo replay are run in `iframe` due to technical
+    limitations. This cause a minor issue: you must click inside `iframe` after
+    it opens to start hear its sounds and interact with it.
 
 ## 0.12.0 (2023-05-20)
 
