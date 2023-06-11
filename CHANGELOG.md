@@ -5,6 +5,7 @@
 ### Desktop
 
 - Fix: "Open file" was broken, causing unexpected "Save file" dialog to appear.
+- Fix: Refused to reopen previously opened files if one of them errored.
 
 ## 0.13.0 (2023-06-11)
 
