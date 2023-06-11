@@ -92,14 +92,16 @@ const prepareCreateFileFx = createFile
 export const addLevelsetFileFx = createEffect(
   async ({
     insertAfterKey,
-    key = generateKey() as LevelsetFileKey,
+    key,
     ...source
   }: AddFileParams): Promise<AddFileResult | null> => {
+    const isNew = !key;
+    key ??= generateKey() as LevelsetFileKey;
     const file = await fulfillFileLevels({
       ...source,
       key,
     });
-    if (prepareCreateFileFx) {
+    if (prepareCreateFileFx && isNew) {
       try {
         await prepareCreateFileFx({ key, filename: source.name });
       } catch (e) {

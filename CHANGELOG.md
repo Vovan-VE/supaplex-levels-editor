@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.1 (2023-06-11)
+
+### Desktop
+
+- Fix: "Open file" was broken, causing unexpected "Save file" dialog to appear.
+
 ## 0.13.0 (2023-06-11)
 
 This version has no significant feature changes in <https://sple.me>. This
