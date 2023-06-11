@@ -21,9 +21,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-front:
+  build_front:
     name: Build frontend with NPM
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract_version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -33,6 +35,10 @@ jobs:
         with:
           node-version: 18.x
           cache: npm
+
+      - name: Extract version
+        id: extract_version
+        uses: Saionaro/extract-package-version@v1.2.1
 
       - name: Run npm
         working-directory: ./frontend
@@ -63,7 +69,7 @@ jobs:
           name: desktop-front
           path: ./frontend/build-wails/
 
-  build-desktop:
+  build_desktop:
     name: Build desktop apps
     strategy:
       fail-fast: true
@@ -72,7 +78,7 @@ jobs:
         #platform: [ ubuntu-latest, macos-latest ]
         go-version: [ 1.20.3 ]
     runs-on: ${{ matrix.platform }}
-    needs: build-front
+    needs: build_front
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -103,6 +109,7 @@ jobs:
         run: make linux win
         env:
           SKIP_FRONT: 1
+          FILE_VER: ${{ needs.build_front.outputs.version }}
           DEBUG: 1
 
       - name: Build on mac + debug
@@ -110,6 +117,7 @@ jobs:
         run: make darwin
         env:
           SKIP_FRONT: 1
+          FILE_VER: ${{ needs.build_front.outputs.version }}
           DEBUG: 1
 
       - name: Build on linux
@@ -119,6 +127,7 @@ jobs:
           make linux win
         env:
           SKIP_FRONT: 1
+          FILE_VER: ${{ needs.build_front.outputs.version }}
 
       - name: Build on mac
         if: matrix.platform == 'macos-latest'
@@ -127,6 +136,7 @@ jobs:
           make darwin
         env:
           SKIP_FRONT: 1
+          FILE_VER: ${{ needs.build_front.outputs.version }}
 
       - name: Upload desktop artifact
         uses: actions/upload-artifact@v3
@@ -134,12 +144,14 @@ jobs:
           name: desktop-bin-${{ matrix.platform }}
           path: ./build/bin/*
 
-  release-desktop:
+  release_desktop:
     name: Draft Release
     environment:
       name: release-draft
     runs-on: ubuntu-latest
-    needs: build-desktop
+    needs:
+      - build_front
+      - build_desktop
     steps:
       - name: Download app artifacts from linux
         uses: actions/download-artifact@v3
@@ -169,17 +181,18 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           draft: true
           prerelease: false
+          title: v${{ needs.build_front.outputs.version }}
           files: ./release-files/*
 
-  deploy-web:
+  deploy_web:
     name: Deploy web with GitHub Pages
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs:
-      - build-front
-      - release-desktop
+      - build_front
+      - release_desktop
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

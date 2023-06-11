@@ -4,6 +4,7 @@ WAILS ?= $(GOPATH)/bin/wails
 
 FRONT_DIR = ./frontend
 SKIP_FRONT ?=
+FILE_VER ?=
 
 FRONT_TARGET = wails-prod
 BUILD_ARGS =
@@ -45,7 +46,7 @@ darwin: $(foreach ARCH,$(DARWIN_ARCH),$(addprefix bin.darwin-,$(ARCH)))
 bin.%: $(if $(SKIP_FRONT),,front)
 	$(WAILS) build -v 2 -trimpath -s $(BUILD_ARGS) \
 	  -platform $(subst -,/,$*) \
-	  -o "$(FILE_NAME)-$*$(FILE_TAG)$(if $(findstring windows,$*),.exe)" \
+	  -o "$(FILE_NAME)-$*$(if $(FILE_VER),.v$(FILE_VER))$(FILE_TAG)$(if $(findstring windows,$*),.exe)" \
 
 .PHONY: front
 front:
