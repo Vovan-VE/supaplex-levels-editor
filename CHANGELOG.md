@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.13.0 (2023-06-11)
+
+This version has no significant feature changes in <https://sple.me>. This
+release brings experimental Desktop SpLE app.
+
+Desktop version of **SpLE** built using [Wails](https://wails.io). It uses the
+same source code as web app <https://sple.me> to render frontend, but with some
+different backend bindings to work with its host binary in desktop environment.
+It doesn't need internet connection, and it works with regular files on your
+device.
+
+### Common changed
+
+- Fix: Broken link in "Info" dialog.
+
+### sple.me
+
+- No new features.
+
+### Desktop
+
+- First release.
+  - There are some changes in how new/open/save works to fit desktop
+    environment.
+  - Auto save feature is OFF by default and can be turned ON in Settings with
+    wanted timeout. Web sple.me have no this option because it's always ON with
+    minimal timeout to prevent data loss.
+  - Level testing and demo replay are run in `iframe` due to technical
+    limitations. This cause a minor issue: you must click inside `iframe` after
+    it opens to start hear its sounds and interact with it.
+
+
 ## 0.12.0 (2023-05-20)
 
 - Add: Export/Import current level to/from standalone file (SP/MPX).

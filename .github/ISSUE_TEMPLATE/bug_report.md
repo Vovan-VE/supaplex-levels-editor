@@ -23,6 +23,10 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
+**Type, Version**
+ - web sple.me or desktop?
+ - if desktop, which SpLE version?
+
 **Desktop (please complete the following information):**
  - OS: [e.g. Win, iOS, linux]
  - Browser [e.g. chrome, firefox, safari]

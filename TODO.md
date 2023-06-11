@@ -13,11 +13,6 @@
 - End User Manual.
   - Find or create jekyll template.
 - Draggable files buttons to reorder many opened files.
-- Wails based desktop application.
-  - Define which entities will be in Wails backend.
-  - Define backend API.
-  - Extract those entities from current front into separate web "backend".
-  - Build target: web or Wails to apply appropriate backend.
 - Tools:
   - Circle
 - Presets in Selection Editors
@@ -26,6 +21,7 @@
   - Separate "crop" & "extend" scenarios with Tabs, for example.
 - Convert format config: SP: Which level to take.
 - Drag-n-drop open files
+- Demo path visualization
 
 ## Wishes from users (unsorted)
 
@@ -42,3 +38,9 @@
 - Clickable "electron" icon to include/exclude n\*9 infotrons needed.
 - BIN demo export/import?
 - MPX/SP signature.
+
+## Desktop
+
+- Prevent multiple instance
+  - Communication: pass opened file
+- Screenshot in README

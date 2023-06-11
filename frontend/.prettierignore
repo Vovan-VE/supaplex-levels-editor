@@ -1,0 +1,6 @@
+/.husky/
+/build/
+/build-wails/
+/coverage/
+/node_modules/
+/wailsjs/

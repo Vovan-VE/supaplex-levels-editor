@@ -1,0 +1,105 @@
+{
+  "name": "supaplex-levels-editor",
+  "version": "0.13.0",
+  "private": true,
+  "description": "Supaplex Levels Editor in browser",
+  "keywords": [
+    "supaplex",
+    "megaplex"
+  ],
+  "author": {
+    "name": "Vovan-VE",
+    "email": "vovan-ve@yandex.ru"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vovan-VE/supaplex-levels-editor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Vovan-VE/supaplex-levels-editor/issues"
+  },
+  "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "prepare": "npm ls husky > /dev/null && cd .. && husky install || exit 0",
+    "start": "react-scripts start",
+    "start:wails": "cross-env REACT_APP_WAILS=1 PORT=3017 BROWSER=none react-scripts start",
+    "build": "react-scripts build",
+    "build:wails": "cross-env REACT_APP_WAILS=1 BUILD_PATH=./build-wails react-scripts build",
+    "test": "tsc && npm run test:unit && npm run test:dependencies",
+    "test:dependencies": "npm exec --yes -- madge@^5 -c src/index.tsx --warning --ts-config tsconfig.json",
+    "test:unit": "cross-env CI=true react-scripts test --env=./jest-env-jsdom-ext.js",
+    "test:watch": "react-scripts test --env=./jest-env-jsdom-ext.js",
+    "typescript": "tsc"
+  },
+  "dependencies": {
+    "@cubux/effector-persistent": "^0.5.0",
+    "@cubux/readonly-array": "^1.0.0",
+    "@cubux/readonly-map": "^1.0.0",
+    "@cubux/storage-driver": "^0.3.1",
+    "@cubux/types": "^1.0.0",
+    "@popperjs/core": "^2.11.7",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^14.0.0",
+    "@types/file-saver": "^2.0.5",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^18.16.13",
+    "@types/react": "^18.2.6",
+    "@types/react-dom": "^18.2.4",
+    "classnames": "^2.3.1",
+    "cross-env": "^7.0.3",
+    "effector": "^22.8.6",
+    "effector-react": "^22.5.3",
+    "fast-deep-equal": "^3.1.3",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-popper": "^2.3.0",
+    "react-range": "^1.8.14",
+    "react-scripts": "^5.0.1",
+    "react-select": "^5.7.3",
+    "sass": "^1.62.1",
+    "typescript": "~4.9"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.2",
+    "prettier": "2.8.8",
+    "source-map-explorer": "^2.5.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/.*\\.dev/.*"
+    ]
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md,html}": [
+      "prettier --write"
+    ]
+  },
+  "prettier": {
+    "trailingComma": "all"
+  }
+}
