@@ -2,7 +2,6 @@ import cn from "classnames";
 import { useStore } from "effector-react";
 import { FC, Fragment } from "react";
 import { ReactComponent as GitHubLogo } from "assets/img/github.svg";
-import { VersionTag } from "backend";
 import { showInfoDialog, ZoomButtons } from "components/common";
 import { EditorTabs, FilesToolbar, FileToolbar } from "components/files";
 import {
@@ -35,7 +34,6 @@ import { ToolButton } from "./ToolButton";
 import { TilesButton } from "./TilesButton";
 import cl from "./Header.module.scss";
 
-const VersionTagC = VersionTag;
 const MUTE = ColorType.MUTE;
 
 interface Props extends ContainerProps {}
@@ -118,16 +116,7 @@ export const Header: FC<Props> = (props) => {
               icon={<svgs.Info />}
               onClick={showInfoDialog}
             >
-              Info{" "}
-              <span className={cl.ver}>
-                v{APP_VERSION}
-                {VersionTagC && (
-                  <>
-                    {" "}
-                    (<VersionTagC />)
-                  </>
-                )}
-              </span>
+              Info <span className={cl.ver}>v{APP_VERSION}</span>
             </TextButton>
           </Toolbar>
         </ButtonDropdown>

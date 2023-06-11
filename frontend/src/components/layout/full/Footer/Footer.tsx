@@ -1,7 +1,6 @@
 import { FC } from "react";
 import cn from "classnames";
 import { ReactComponent as GitHubLogo } from "assets/img/github.svg";
-import { VersionTag } from "backend";
 import { APP_VERSION, REPO_URL, VERSION_URL } from "configs";
 import { showInfoDialog, ZoomButtons } from "components/common";
 import { HoveredCell } from "components/level";
@@ -10,8 +9,6 @@ import { TextButton } from "ui/button";
 import { svgs } from "ui/icon";
 import { ContainerProps } from "ui/types";
 import cl from "./Footer.module.scss";
-
-const VersionTagC = VersionTag;
 
 interface Props extends ContainerProps {}
 
@@ -31,12 +28,6 @@ export const Footer: FC<Props> = ({ className, ...rest }) => (
       className={cl.text}
     >
       v{APP_VERSION}
-      {VersionTagC && (
-        <>
-          {" "}
-          (<VersionTagC />)
-        </>
-      )}
     </TextButton>{" "}
     <span className={cl.space} />
     <HoveredCell className={cl.text} />
