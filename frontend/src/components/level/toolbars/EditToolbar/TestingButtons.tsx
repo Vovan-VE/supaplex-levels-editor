@@ -109,11 +109,17 @@ const TestFrame: FC<{ url: URL }> = ({ url }) => (
 
 const openTestUrl = testInIframe
   ? (url: URL): boolean => {
-      msgBox(<TestFrame url={url} />, {
+      ask(<TestFrame url={url} />, {
         size: "fullscreen",
-        button: {
-          text: "Close",
-          uiColor: ColorType.MUTE,
+        buttons: {
+          okText: (
+            <>
+              Click inside <code>iframe</code> to activate
+            </>
+          ),
+          ok: { disabled: true, uiColor: ColorType.MUTE },
+          cancelText: "Close",
+          cancel: { uiColor: ColorType.WARN },
         },
       });
       return true;
