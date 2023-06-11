@@ -39,6 +39,8 @@ jobs:
       - name: Extract version
         id: extract_version
         uses: Saionaro/extract-package-version@v1.2.1
+        with:
+          path: ./frontend
 
       - name: Run npm
         working-directory: ./frontend
