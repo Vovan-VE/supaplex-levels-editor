@@ -1,0 +1,186 @@
+# Sample workflow for building and deploying a Jekyll site to GitHub Pages
+name: Release
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "release"
+  cancel-in-progress: true
+
+jobs:
+  build-front:
+    name: Build frontend with NPM
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.5.0
+        with:
+          node-version: 18.x
+          cache: npm
+
+      - name: Run npm
+        working-directory: ./frontend
+        run: |
+          npm ci --omit=dev
+          npm run build
+          npm run build:wails
+        env:
+          CI: true
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./docs
+          destination: ./frontend/build/docs
+
+      - name: Upload web artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./frontend/build
+
+      - name: Upload desktop artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: desktop-front
+          path: ./frontend/build-wails/
+
+  build-desktop:
+    name: Build desktop apps
+    strategy:
+      fail-fast: true
+      matrix:
+        platform: [ ubuntu-latest ]
+        #platform: [ ubuntu-latest, macos-latest ]
+        go-version: [ 1.20.3 ]
+    runs-on: ${{ matrix.platform }}
+    needs: build-front
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Linux dependencies
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt update
+          sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+
+      - name: Download desktop front artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: desktop-front
+          path: frontend/build-wails
+
+      - name: Install Wails
+        run: |
+          go install github.com/wailsapp/wails/v2/cmd/wails@latest
+          wails doctor
+
+      - name: Build on linux + debug
+        if: matrix.platform == 'ubuntu-latest'
+        run: make linux win
+        env:
+          SKIP_FRONT: 1
+          DEBUG: 1
+
+      - name: Build on mac + debug
+        if: matrix.platform == 'macos-latest'
+        run: make darwin
+        env:
+          SKIP_FRONT: 1
+          DEBUG: 1
+
+      - name: Build on linux
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          make -C ./frontend clean-wails-map
+          make linux win
+        env:
+          SKIP_FRONT: 1
+
+      - name: Build on mac
+        if: matrix.platform == 'macos-latest'
+        run: |
+          make -C ./frontend clean-wails-map
+          make darwin
+        env:
+          SKIP_FRONT: 1
+
+      - name: Upload desktop artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: desktop-bin-${{ matrix.platform }}
+          path: ./build/bin/*
+
+  release-desktop:
+    name: Draft Release
+    environment:
+      name: release-draft
+    runs-on: ubuntu-latest
+    needs: build-desktop
+    steps:
+      - name: Download app artifacts from linux
+        uses: actions/download-artifact@v3
+        with:
+          name: desktop-bin-ubuntu-latest
+          path: ./release-files
+
+#      - name: Download app artifacts from max
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: desktop-bin-macos-latest
+#          #path: ./release-files
+
+      - name: Prepare release files
+        working-directory: ./release-files
+        run: |
+          FILES = "$( ls )"
+          for FILE in $FILES ; do
+            md5sum $FILE > $FILE.md5.txt
+            sha1sum $FILE > $FILE.sha1.txt
+          done
+          cat *.txt
+
+      - name: Draft release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          draft: true
+          prerelease: false
+          files: ./release-files/*
+
+  deploy-web:
+    name: Deploy web with GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs:
+      - build-front
+      - release-desktop
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

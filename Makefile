@@ -3,6 +3,7 @@ GOPATH ?= $(shell $(GO) env GOPATH)
 WAILS ?= $(GOPATH)/bin/wails
 
 FRONT_DIR = ./frontend
+SKIP_FRONT ?=
 
 FRONT_TARGET = wails-prod
 BUILD_ARGS =
@@ -22,18 +23,26 @@ endif
 #   windows/arm64
 #   linux/amd64
 #   linux/arm64
-PLATFORMS = linux-amd64 windows-amd64
+LINUX_ARCH = amd64
+WIN_ARCH = amd64
+DARWIN_ARCH = amd64 arm64 universal
 
 .PHONY: all
-all: bin
+all: linux win darwin
 
-.PHONY: bin
-bin: $(foreach P,$(PLATFORMS),$(addprefix bin.,$(P)))
+.PHONY: linux
+linux: $(foreach ARCH,$(LINUX_ARCH),$(addprefix bin.linux-,$(ARCH)))
+
+.PHONY: win
+win: $(foreach ARCH,$(WIN_ARCH),$(addprefix bin.windows-,$(ARCH)))
+
+.PHONY: darwin
+darwin: $(foreach ARCH,$(DARWIN_ARCH),$(addprefix bin.darwin-,$(ARCH)))
 
 # -o <filename>
 # -s                skip build frontend
 # -debug            debug information + devtools in the application window
-bin.%: front
+bin.%: $(if $(SKIP_FRONT),,front)
 	$(WAILS) build -v 2 -trimpath -s $(BUILD_ARGS) \
 	  -platform $(subst -,/,$*) \
 	  -o "$(FILE_NAME)-$*$(FILE_TAG)$(if $(findstring windows,$*),.exe)" \
