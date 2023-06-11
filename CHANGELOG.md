@@ -11,15 +11,15 @@ different backend bindings to work with its host binary in desktop environment.
 It doesn't need internet connection, and it works with regular files on your
 device.
 
-#### Common changed
+### Common changed
 
 - Fix: Broken link in "Info" dialog.
 
-#### sple.me
+### sple.me
 
 - No new features.
 
-#### Desktop
+### Desktop
 
 - First release.
   - There are some changes in how new/open/save works to fit desktop
@@ -30,6 +30,7 @@ device.
   - Level testing and demo replay are run in `iframe` due to technical
     limitations. This cause a minor issue: you must click inside `iframe` after
     it opens to start hear its sounds and interact with it.
+
 
 ## 0.12.0 (2023-05-20)
 
