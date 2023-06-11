@@ -170,7 +170,6 @@ jobs:
       - name: Prepare release files
         working-directory: ./release-files
         run: |
-          ls -al
           FILES="$( ls )"
           for FILE in $FILES ; do
             md5sum $FILE > $FILE.md5.txt
