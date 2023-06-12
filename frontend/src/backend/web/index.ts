@@ -16,7 +16,7 @@ export const onExitDirty = undefined;
 export { onDeactivate } from "./onDeactivate";
 export const exitApp = undefined;
 
-export const testInIframe = true;
+export const testInIframe = false;
 
 export const VersionTag = undefined;
 export { InfoDetails } from "./InfoDetails";
