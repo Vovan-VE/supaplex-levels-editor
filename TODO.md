@@ -21,7 +21,14 @@
   - Separate "crop" & "extend" scenarios with Tabs, for example.
 - Convert format config: SP: Which level to take.
 - Drag-n-drop open files
+  - Desktop: cannot handle from backend to get real file path?
 - Demo path visualization
+  - Is it possible without gameplay simulation?
+
+### Desktop
+
+- Prevent multiple instance
+  - Communication: pass opened file
 
 ## Wishes from users (unsorted)
 
@@ -39,8 +46,6 @@
 - BIN demo export/import?
 - MPX/SP signature.
 
-## Desktop
+### Desktop
 
-- Prevent multiple instance
-  - Communication: pass opened file
-- Screenshot in README
+- Dir tree

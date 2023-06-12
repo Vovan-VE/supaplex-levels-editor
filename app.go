@@ -21,6 +21,7 @@ import (
 // App struct
 type App struct {
 	ctx         context.Context
+	appConfig   storage.Full[string]
 	frontConfig storage.Full[string]
 	chosenReg   files.ChosenRegistry
 	files       storage.Full[*files.Record]
@@ -42,6 +43,12 @@ func (a *App) startup(ctx context.Context) {
 		return
 	}
 
+	appConfig, err := config.NewFileStorage(path.Join(configDir, "config.json"))
+	if err != nil {
+		runtime.LogErrorf(ctx, "front config: %v", err)
+		return
+	}
+
 	front, err := config.NewFileStorage(path.Join(configDir, "front.json"))
 	if err != nil {
 		runtime.LogErrorf(ctx, "front config: %v", err)
@@ -56,15 +63,28 @@ func (a *App) startup(ctx context.Context) {
 		return
 	}
 
+	a.appConfig = appConfig
 	a.frontConfig = front
 	a.chosenReg = chosenReg
 	a.files = fs
 }
 
-//// domReady is called after front-end resources have been loaded
-//func (a *App) domReady(ctx context.Context) {
-//	// Add your action here
-//}
+// domReady is called after front-end resources have been loaded
+func (a *App) domReady(ctx context.Context) {
+	// Add your action here
+
+	winPl, _, err := a.appConfig.GetItem(config.AppWindowPlacement)
+	if err != nil {
+		runtime.LogErrorf(ctx, "cannot read window placement", err)
+	}
+	p := config.WindowPlacementFromString(winPl)
+	if p.IsMax {
+		runtime.WindowMaximise(ctx)
+	} else {
+		runtime.WindowSetPosition(ctx, p.X, p.Y)
+		runtime.WindowSetSize(ctx, p.W, p.H)
+	}
+}
 
 // beforeClose is called when the application is about to quit,
 // either by clicking the window close button or calling runtime.Quit.
@@ -73,6 +93,15 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 	prevent = a.isDirty
 	if prevent {
 		a.triggerFront(backend.FEExitDirty, nil)
+	} else {
+		p := config.WindowPlacement{}
+		p.X, p.Y = runtime.WindowGetPosition(ctx)
+		p.W, p.H = runtime.WindowGetSize(ctx)
+		p.IsMax = runtime.WindowIsMaximised(ctx)
+
+		if err := a.appConfig.SetItem(config.AppWindowPlacement, p.String()); err != nil {
+			runtime.LogErrorf(ctx, "cannot save window placement: %v", err)
+		}
 	}
 	return
 }
@@ -112,7 +141,7 @@ func (a *App) triggerFront(event string, data any) {
 
 var _ backend.Interface = (*App)(nil)
 
-func (a *App) CreateFile(key string, baseFileName string) (ok bool, err error) {
+func (a *App) CreateFile(key string, baseFileName string) (actualName string, err error) {
 	filepath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
 		DefaultFilename: baseFileName,
 		Title:           "Create File",
@@ -130,7 +159,7 @@ func (a *App) CreateFile(key string, baseFileName string) (ok bool, err error) {
 	if err = a.chosenReg.AddFileWithKey(key, filepath); err != nil {
 		return
 	}
-	return true, nil
+	return path.Base(filepath), nil
 }
 
 func (a *App) OpenFile(multiple bool) []*backend.WebFileRef {

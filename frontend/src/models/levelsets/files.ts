@@ -80,9 +80,11 @@ const prepareCreateFileAborted = createFile ? new Error() : undefined;
 const prepareCreateFileFx = createFile
   ? createEffect(
       async ({ key, filename }: { key: LevelsetFileKey; filename: string }) => {
-        if (!(await createFile!(key, filename))) {
+        const actualName = await createFile!(key, filename);
+        if (!actualName) {
           throw prepareCreateFileAborted;
         }
+        return actualName;
       },
     )
   : undefined;
@@ -93,17 +95,14 @@ export const addLevelsetFileFx = createEffect(
   async ({
     insertAfterKey,
     key,
+    name,
     ...source
   }: AddFileParams): Promise<AddFileResult | null> => {
     const isNew = !key;
     key ??= generateKey() as LevelsetFileKey;
-    const file = await fulfillFileLevels({
-      ...source,
-      key,
-    });
     if (prepareCreateFileFx && isNew) {
       try {
-        await prepareCreateFileFx({ key, filename: source.name });
+        name = await prepareCreateFileFx({ key, filename: name });
       } catch (e) {
         if (e === prepareCreateFileAborted) {
           return null;
@@ -111,6 +110,11 @@ export const addLevelsetFileFx = createEffect(
         throw e;
       }
     }
+    const file = await fulfillFileLevels({
+      ...source,
+      key,
+      name,
+    });
     return { file, insertAfterKey };
   },
 );

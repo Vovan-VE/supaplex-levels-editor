@@ -20,18 +20,18 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:            "SpLE",
-		Width:            1024,
-		Height:           768,
-		WindowStartState: options.Maximised,
+		Title:  "SpLE",
+		Width:  1024,
+		Height: 768,
+		//WindowStartState: options.Maximised,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
 		BackgroundColour:   options.NewRGB(64, 64, 64),
 		LogLevelProduction: logger.INFO,
 		OnStartup:          app.startup,
-		//OnDomReady:       app.domReady,
-		OnBeforeClose: app.beforeClose,
+		OnDomReady:         app.domReady,
+		OnBeforeClose:      app.beforeClose,
 		//OnShutdown:       app.shutdown,
 		Bind: []interface{}{
 			app,

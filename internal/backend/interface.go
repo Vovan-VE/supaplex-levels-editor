@@ -6,7 +6,7 @@ import (
 )
 
 type Interface interface {
-	CreateFile(key string, baseFileName string) (ok bool, err error)
+	CreateFile(key string, baseFileName string) (actualName string, err error)
 	OpenFile(multiple bool) []*WebFileRef
 	SaveFileAs(blob64 helpers.Blob64, baseFileName string)
 

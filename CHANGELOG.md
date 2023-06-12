@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.13.2 (2023-06-12)
+
+### sple.me
+
+- Fix: Demo recording/playback accidentally was switched to `iframe` mode as in
+  desktop build. Now it's restored as it was before.
+
+### Desktop
+
+- Add: Remember window position and size.
+- Fix: "New file" could display outdated file name if renamed in "Save" dialog.
+
 ## 0.13.1 (2023-06-11)
 
 ### Desktop
@@ -37,7 +49,6 @@ device.
   - Level testing and demo replay are run in `iframe` due to technical
     limitations. This cause a minor issue: you must click inside `iframe` after
     it opens to start hear its sounds and interact with it.
-
 
 ## 0.12.0 (2023-05-20)
 
