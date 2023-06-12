@@ -98,14 +98,43 @@ const packLevelToSend = (baseUrl: string) => {
   return url;
 };
 
-const TestFrame: FC<{ url: URL }> = ({ url }) => (
-  <iframe
-    src={url.toString()}
-    title="Testing Level"
-    className={cl.soArea}
-    allow={`autoplay fullscreen ${url.origin}`}
-  />
-);
+const TestFrame: FC<{ url: URL }> = ({ url }) => {
+  // // Cross-Origin `iframe` must be clicked/focused manually by user to get
+  // // permissions for sounds, and to let game playable with keyboard.
+  // // So, here I create a link in empty same-origin iframe to force user to click
+  // // the link first. This puts focus to `iframe` before navigating to cross-origin.
+  // const ref = useRef<HTMLIFrameElement | null>(null);
+  // useEffect(() => {
+  //   const f = ref.current;
+  //   if (f) {
+  //     const d = f.contentDocument!;
+  //     const ds = d.body.style;
+  //     ds.backgroundColor = "#000";
+  //     ds.color = "#ddd";
+  //     ds.padding = "1rem";
+  //     ds.display = "flex";
+  //     ds.alignItems = "center";
+  //     ds.justifyContent = "center";
+  //     const a = d.body.appendChild(d.createElement("a"));
+  //     a.setAttribute("href", url.toString());
+  //     a.appendChild(d.createTextNode("Click to load testing page"));
+  //     const as = a.style;
+  //     as.color = "inherit";
+  //     as.fontSize = "1.5rem";
+  //   }
+  // }, [url]);
+
+  return (
+    <iframe
+      src={url.toString()}
+      // key={url.toString()}
+      // ref={ref}
+      title="Testing Level"
+      className={cl.soArea}
+      allow={`autoplay 'self' ${url.origin}; fullscreen 'self' ${url.origin}`}
+    />
+  );
+};
 
 const openTestUrl = testInIframe
   ? (url: URL): boolean => {
