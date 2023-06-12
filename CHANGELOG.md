@@ -2,6 +2,11 @@
 
 ## 0.13.2 (2023-06-12)
 
+### sple.me
+
+- Fix: Demo recording/playback accidentally was switched to `iframe` mode as in
+  desktop build. Now it's restored as it was before.
+
 ### Desktop
 
 - Add: Remember window position and size.
