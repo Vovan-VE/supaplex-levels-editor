@@ -12,6 +12,7 @@
 
 ### Desktop
 
+- Add: Remember window position and size.
 - Fix: "New file" could display outdated file name if renamed in "Save" dialog.
 
 ## 0.13.1 (2023-06-11)

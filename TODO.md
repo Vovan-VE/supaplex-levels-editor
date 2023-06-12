@@ -25,7 +25,6 @@
 
 ### Desktop
 
-- Remember window pos+size
 - Prevent multiple instance
   - Communication: pass opened file
 
