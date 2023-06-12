@@ -112,7 +112,7 @@ func (a *App) triggerFront(event string, data any) {
 
 var _ backend.Interface = (*App)(nil)
 
-func (a *App) CreateFile(key string, baseFileName string) (ok bool, err error) {
+func (a *App) CreateFile(key string, baseFileName string) (actualName string, err error) {
 	filepath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
 		DefaultFilename: baseFileName,
 		Title:           "Create File",
@@ -130,7 +130,7 @@ func (a *App) CreateFile(key string, baseFileName string) (ok bool, err error) {
 	if err = a.chosenReg.AddFileWithKey(key, filepath); err != nil {
 		return
 	}
-	return true, nil
+	return path.Base(filepath), nil
 }
 
 func (a *App) OpenFile(multiple bool) []*backend.WebFileRef {

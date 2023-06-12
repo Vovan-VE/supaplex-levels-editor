@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.14.0 (DEV)
+
+### Common
+
+- ...
+
+### sple.me
+
+- ...
+
+### Desktop
+
+- Fix: "New file" could display outdated file name if renamed in "Save" dialog.
+
 ## 0.13.1 (2023-06-11)
 
 ### Desktop
@@ -37,7 +51,6 @@ device.
   - Level testing and demo replay are run in `iframe` due to technical
     limitations. This cause a minor issue: you must click inside `iframe` after
     it opens to start hear its sounds and interact with it.
-
 
 ## 0.12.0 (2023-05-20)
 

@@ -13,7 +13,7 @@ export type AllowManualSave = boolean;
 export type CreateFile = (
   key: I.FilesStorageKey,
   baseName: string,
-) => Promise<boolean>;
+) => Promise<string>;
 export type OpenFile = (options: I.OpenFileOptions) => void;
 export type SaveFileAs = (data: Blob, filename: string) => void;
 

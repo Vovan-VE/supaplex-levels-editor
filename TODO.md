@@ -23,6 +23,12 @@
 - Drag-n-drop open files
 - Demo path visualization
 
+### Desktop
+
+- Remember window pos+size
+- Prevent multiple instance
+  - Communication: pass opened file
+
 ## Wishes from users (unsorted)
 
 - "Show border" option from Megaplex? (but it may cause confusion, so it must
@@ -39,8 +45,6 @@
 - BIN demo export/import?
 - MPX/SP signature.
 
-## Desktop
+### Desktop
 
-- Prevent multiple instance
-  - Communication: pass opened file
-- Screenshot in README
+- Dir tree
