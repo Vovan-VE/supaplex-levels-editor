@@ -8,7 +8,7 @@
 
 ### sple.me
 
-- ...
+- Fix: Wrong text in "close file" prompt.
 
 ### Desktop
 

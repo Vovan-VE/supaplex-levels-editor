@@ -57,18 +57,17 @@ export const closeCurrentFileFx = allowManualSave
       if (
         await ask(
           <>
-            Are you sure you want to remove ALL OTHER FILES BUT "
-            <b>{filename}</b>
-            " from memory?
+            Are you sure you want to remove file "<b>{filename}</b>" from
+            memory?
             <br />
-            You will loss all changes in that files. Consider download them
-            first to backup.
+            You will loss all changes in the file. Consider download it first to
+            backup.
             <br />
             <b>This action can not be undone.</b>
           </>,
           {
             buttons: {
-              okText: <>Forgot OTHER BUT "{filename}"</>,
+              okText: <>Forgot "{filename}"</>,
               ok: {
                 uiColor: ColorType.DANGER,
                 autoFocus: false,
