@@ -391,6 +391,17 @@ class SupaplexLevel implements ISupaplexLevel {
     return this.#withFooter(this.#footer.setDemo(demo));
   }
 
+  get signature() {
+    return this.#footer.signature;
+  }
+  get signatureString() {
+    return this.#footer.signatureString;
+  }
+
+  setSignature(signature: Uint8Array | string | null) {
+    return this.#withFooter(this.#footer.setSignature(signature));
+  }
+
   get localOptions() {
     const o: LocalOptions = {};
     if (this.usePlasma) {

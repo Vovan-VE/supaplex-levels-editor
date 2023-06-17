@@ -16,14 +16,31 @@
 - Tools:
   - Circle
 - Presets in Selection Editors
-- Enhance Read Only mode more?
 - Visualized level resizing with crop.
   - Separate "crop" & "extend" scenarios with Tabs, for example.
 - Convert format config: SP: Which level to take.
 - Drag-n-drop open files
-  - Desktop: cannot handle from backend to get real file path?
+  - Desktop: cannot handle from backend to get real file path
 - Demo path visualization
-  - Is it possible without gameplay simulation?
+  - Impossible without gameplay simulation. Only if SO will provide a path
+    actually walked.
+- CompressionStream for test (no support in libwebkit)
+  `TVBYIAEAAQAMAAsAFQAAADUBAAAGBgYGBgYGBgYGBgYGBwAAAAAAAAAAAAYGAAAAAAAAAAAAAAYGAAAAAAAAAAAAAAYGAAAAAAAAAAAAAAYGABIAAAAAAAAAAAYGFAAAAAAAAAAAAAYGFAAAAAAAAAABAAYGFAAAAAEAAAABAAYGAwAAAAEAAAABAAYGBgYGBgYGBgYGBgYAAAAAAABFTVBUWSAgICAgICAgICAgICAgICAgIAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4BcA8BAUUELxgfT0lPNzVCBxkPn5+fmJEOH0VNPy8vIi9HRzAPLy8hJEIPEh8pLw8HBCAGOg+fn5+TkmovDw8ACy8ABU8AD0NPCQsvHx8UGCgv8`
+  `gz,H4sIAAAAAAAAE/MNiFBgZGBk4GHgZhBlYGAwZWRgYEMG7AwwwMbGQAxbCMEWYcBkM0LZjFA2MxIbCUAUu/oGhEQqYAAmBgrBA3GGDwIiAU4fG798mfK5OEShcMJPIOgUePgl5PKnT5+UvpQUMwBpIReFj4qfJn34UODEkLwApMRSbdGHDx8YNn1gCPnA8MXkw4RNHz9+dGxq+g8Az4EFGUkBAAA`
+- shorter parameters
+  `?use-plasma=&use-plasma-limit=20&use-plasma-time=200&use-zonkers=&use-serial-ports=#`
+  becomes:
+  `?2a=20x200&2b&ps#`
+  `use-serial-ports` can now just be `ps`
+  no `=` needed
+  `use-zonkers` is now `2b`, same as zonker hex code
+  now instead of 3 params for plasma we use
+  `2a={plasma_limit}x{plasma_time}`
+  for default values use space
+  `2a=16x`
+  this will use limit of `16` and default plasma time
+  if both params are default then `2a=x` works, but you can then omit the value
+  and just use `2a`
 
 ### Desktop
 
@@ -44,7 +61,6 @@
     to work more intuitive.
 - Clickable "electron" icon to include/exclude n\*9 infotrons needed.
 - BIN demo export/import?
-- MPX/SP signature.
 
 ### Desktop
 

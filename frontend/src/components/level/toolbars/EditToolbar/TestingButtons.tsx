@@ -16,6 +16,7 @@ import {
   IBaseLevel,
   LevelConfiguratorProps,
   levelSupportsDemo,
+  levelSupportSignature,
 } from "drivers";
 import { ReactComponent as DiskYellow } from "drivers/supaplex/tiles-svg/12-yellow-disk.svg";
 import { ReactComponent as HwLampGreen } from "drivers/supaplex/tiles-svg/1d-hw-g-lamp.svg";
@@ -32,11 +33,13 @@ import { ask, msgBox } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
 import { ColorType } from "ui/types";
 import { base64Encode } from "utils/encoding/base64";
+import { openSignatureEdit } from "./SignatureEdit";
 import cl from "./TestingButtons.module.scss";
 
 const CL_SVG_ANIMATE_HOVERABLE = "svg-animate_hover-target";
 const TEST_WITH_DEMO_STACK: IconStack = [[IconStackType.Index, <DiskYellow />]];
 const PLAY_DEMO_STACK: IconStack = [[IconStackType.Index, <HwLampGreen />]];
+const SIGNATURE_STACK: IconStack = [[IconStackType.Index, <svgs.Pencil />]];
 
 export const TestingButtons: FC = () => {
   const undoQueue = useStore($currentLevelUndoQueue)!;
@@ -45,6 +48,7 @@ export const TestingButtons: FC = () => {
   const rawLevel = undoQueue.current;
   const hasDemo =
     demoSupport && levelSupportsDemo(rawLevel) && rawLevel.demo !== null;
+  const signatureSupport = demoSupport && levelSupportSignature(rawLevel);
 
   return (
     <>
@@ -58,14 +62,23 @@ export const TestingButtons: FC = () => {
         }`}
       />
       {demoSupport && (
-        <TextButton
-          onClick={handleDemoClick}
-          icon={<MurphyRuns />}
-          iconStack={PLAY_DEMO_STACK}
-          className={CL_SVG_ANIMATE_HOVERABLE}
-          title={`Play embedded demo with ${TEST_LEVEL_TITLE}`}
-          disabled={!hasDemo}
-        />
+        <>
+          <TextButton
+            onClick={handleDemoClick}
+            icon={<MurphyRuns />}
+            iconStack={PLAY_DEMO_STACK}
+            className={CL_SVG_ANIMATE_HOVERABLE}
+            title={`Play embedded demo with ${TEST_LEVEL_TITLE}`}
+            disabled={!hasDemo}
+          />
+          <Button
+            onClick={openSignatureEdit}
+            icon={<svgs.FileBlank />}
+            iconStack={SIGNATURE_STACK}
+            title="Edit demo signature"
+            disabled={!signatureSupport}
+          />
+        </>
       )}
     </>
   );

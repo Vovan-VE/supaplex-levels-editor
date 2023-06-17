@@ -4,7 +4,7 @@
 
 ### Common
 
-- ...
+- Add: Demo Signature editing.
 
 ### sple.me
 

@@ -8,6 +8,7 @@ import {
   ILevelRegion,
   IResizeLevelOptions,
   IWithDemo,
+  IWithSignature,
   LocalOptions,
 } from "../types";
 import {
@@ -19,7 +20,7 @@ import {
 export interface ISupaplexLevelRegion extends ILevelRegion {
   readonly specPorts: readonly ISupaplexSpecPort[];
 }
-export interface ISupaplexLevel extends IBaseLevel, IWithDemo {
+export interface ISupaplexLevel extends IBaseLevel, IWithDemo, IWithSignature {
   copyRegion(r: Rect): ISupaplexLevelRegion;
   pasteRegion(x: number, y: number, region: ISupaplexLevelRegion): this;
   readonly length: number;

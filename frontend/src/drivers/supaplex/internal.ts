@@ -4,6 +4,7 @@ import {
   ITilesRegion,
   ITilesStreamItem,
   IWithDemo,
+  IWithSignature,
 } from "../types";
 
 export interface ISupaplexBox extends IBounds {
@@ -37,7 +38,7 @@ export interface ISupaplexSpecPortProps {
 
 export interface ISupaplexSpecPort extends ISupaplexSpecPortProps, Point2D {}
 
-export interface ILevelFooter extends IWithDemo {
+export interface ILevelFooter extends IWithDemo, IWithSignature {
   readonly length: number;
   getRaw(): Uint8Array;
   readonly title: string;
