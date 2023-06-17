@@ -33,6 +33,7 @@ import { ask, msgBox } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
 import { ColorType } from "ui/types";
 import { base64Encode } from "utils/encoding/base64";
+import { tryGzipCompress } from "utils/encoding/gzip";
 import { openSignatureEdit } from "./SignatureEdit";
 import cl from "./TestingButtons.module.scss";
 
@@ -84,13 +85,13 @@ export const TestingButtons: FC = () => {
   );
 };
 
-const packLevelToSend = (baseUrl: string) => {
+const packLevelToSend = async (baseUrl: string, withDemo: boolean) => {
   const driverName = $currentDriverName.getState()!;
   const { writeLevelset, createLevelset } = getDriverFormat(
     driverName,
     $currentDriverFormat.getState()!,
   )!;
-  const level = $currentLevelUndoQueue.getState()!.current;
+  let level = $currentLevelUndoQueue.getState()!.current;
   const [valid, errors] = level.isPlayable();
   if (!valid) {
     msgBox(
@@ -105,9 +106,14 @@ const packLevelToSend = (baseUrl: string) => {
     );
     return;
   }
+  if (!withDemo && levelSupportsDemo(level)) {
+    level = level.setDemo(null);
+  }
 
   const url = new URL(baseUrl);
-  url.hash = base64Encode(writeLevelset(createLevelset([level])));
+  const raw = writeLevelset(createLevelset([level]));
+  const compressed = await tryGzipCompress(raw);
+  url.hash = compressed ? "gz," + base64Encode(compressed) : base64Encode(raw);
   return url;
 };
 
@@ -172,9 +178,10 @@ const openTestUrl = testInIframe
 
 type ConfirmFC = FC<PropsWithChildren<LevelConfiguratorProps<IBaseLevel>>>;
 
-const sendLevelTo = ({
+const sendLevelTo = async ({
   baseUrl,
   target,
+  withDemo = false,
   // actionTitle,
   serviceTitle,
   // $confirmed,
@@ -183,13 +190,14 @@ const sendLevelTo = ({
 }: {
   baseUrl: string;
   target?: string;
+  withDemo?: boolean;
   // actionTitle: string;
   serviceTitle: string;
   // $confirmed: Store<boolean>;
   Confirm: ConfirmFC;
   onConfirmed?: () => void;
 }) => {
-  const url = packLevelToSend(baseUrl);
+  const url = await packLevelToSend(baseUrl, withDemo);
   if (!url) {
     return;
   }
@@ -218,7 +226,7 @@ const sendLevelTo = ({
   // REFACT: adequate components with state
   let level = $currentLevelUndoQueue.getState()!.current;
 
-  ask(<Confirm level={level} onChange={(l) => (level = l)} />, {
+  await ask(<Confirm level={level} onChange={(l) => (level = l)} />, {
     buttons: {
       okText: `Go to ${serviceTitle} test`,
       ok: {
@@ -357,10 +365,10 @@ const ConfirmTestSO: ConfirmFC = ({ level, onChange }) => {
   );
 };
 
-const handleTestClick = () => {
+const handleTestClick = async () => {
   const demoSupport = $fileSupportsDemo.getState();
 
-  sendLevelTo({
+  await sendLevelTo({
     baseUrl: TEST_LEVEL_URL,
     target: demoSupport ? "test-level" : undefined,
     // actionTitle: "Test level",
@@ -375,12 +383,12 @@ const ConfirmPlayDemoSO: FC = () => (
   <ConfirmSO toDoWhat="To play embedded demo in level" />
 );
 
-const handleDemoClick = () => {
+const handleDemoClick = () =>
   sendLevelTo({
     baseUrl: TEST_DEMO_URL,
+    withDemo: true,
     // actionTitle: "Play demo",
     serviceTitle: TEST_LEVEL_TITLE,
     // $confirmed: $prefConfirmedTestSO,
     Confirm: ConfirmPlayDemoSO,
   });
-};
