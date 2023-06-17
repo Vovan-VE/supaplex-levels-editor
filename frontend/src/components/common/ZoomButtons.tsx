@@ -6,23 +6,10 @@ import {
   decBodyScale,
   incBodyScale,
 } from "models/levels";
-import {
-  displayHotKey,
-  HotKeyMask,
-  HotKeyShortcuts,
-  useHotKey,
-} from "models/ui/hotkeys";
+import { displayHotKey, useHotKey } from "models/ui/hotkeys";
+import { HK_ZOOM_IN, HK_ZOOM_OUT } from "models/ui/hotkeys-defined";
 import { TextButton } from "ui/button";
 import { svgs } from "ui/icon";
-
-const HK_ZOOM_IN: HotKeyShortcuts = [
-  // Num pad <+>
-  ["+", HotKeyMask.CTRL],
-  // regular <=> which has "+" with <Shift>
-  ["=", HotKeyMask.CTRL],
-  ["ZoomIn"],
-];
-const HK_ZOOM_OUT: HotKeyShortcuts = [["-", HotKeyMask.CTRL], ["ZoomOut"]];
 
 const handleZoomIn = (e: UIEvent) => {
   e.preventDefault();

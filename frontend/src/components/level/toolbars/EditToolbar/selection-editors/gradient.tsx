@@ -4,7 +4,7 @@ import { FC, useCallback, useMemo } from "react";
 import { TileSelect } from "components/driver/TileSelect";
 import { FlipDirection, getDriver } from "drivers";
 import { $currentDriverName } from "models/levelsets";
-import { HotKeyMask } from "models/ui/hotkeys";
+import { HK_EDIT_GRADIENT } from "models/ui/hotkeys-defined";
 import { Button } from "ui/button";
 import { svgs } from "ui/icon";
 import { Field, RadioGroup, RadioOptions } from "ui/input";
@@ -125,5 +125,5 @@ export const gradient: SelectionEditor = {
   title: "Gradient",
   icon: <svgs.Gradient />,
   Component: GradientEditor,
-  hotkeys: ["G", HotKeyMask.SHIFT],
+  hotkeys: HK_EDIT_GRADIENT,
 };

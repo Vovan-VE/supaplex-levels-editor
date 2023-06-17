@@ -5,7 +5,7 @@ import { FC, useCallback, useMemo } from "react";
 import * as RoMap from "@cubux/readonly-map";
 import { getDriver, getTilesForToolbar } from "drivers";
 import { $currentDriverName } from "models/levelsets";
-import { HotKeyMask } from "models/ui/hotkeys";
+import { HK_EDIT_RANDOM } from "models/ui/hotkeys-defined";
 import { Button, TextButton } from "ui/button";
 import { svgs } from "ui/icon";
 import { Field, Range } from "ui/input";
@@ -155,5 +155,5 @@ export const rnd: SelectionEditor = {
   title: "Random",
   icon: <svgs.Random />,
   Component: RndEditor,
-  hotkeys: ["N", HotKeyMask.SHIFT],
+  hotkeys: HK_EDIT_RANDOM,
 };
