@@ -8,6 +8,7 @@ import {
   sample,
 } from "effector";
 import { IBaseLevel, ILevelRegion } from "drivers";
+import { HK_TOOL_SELECTION } from "models/ui/hotkeys-defined";
 import { svgs } from "ui/icon";
 import { isNotNull } from "utils/fn";
 import { minmax } from "utils/number";
@@ -79,6 +80,7 @@ const {
       internalName: "d",
       title: "Selection",
       Icon: svgs.Selection,
+      hotkey: HK_TOOL_SELECTION,
       drawProps: undefined,
     },
   ],

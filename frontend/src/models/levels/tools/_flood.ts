@@ -1,5 +1,6 @@
 import { createEvent, createStore, sample } from "effector";
 import { IBaseLevel } from "drivers";
+import { HK_TOOL_FLOOD } from "models/ui/hotkeys-defined";
 import { svgs } from "ui/icon";
 import { $currentLevel, updateCurrentLevel } from "../../levelsets";
 import { $tileIndex } from "../current";
@@ -91,6 +92,7 @@ export const FLOOD: Tool = {
       internalName: "d",
       title: "Flood Fill",
       Icon: svgs.FloodFill,
+      hotkey: HK_TOOL_FLOOD,
     },
   ],
   $ui: createStore<ToolUI>({

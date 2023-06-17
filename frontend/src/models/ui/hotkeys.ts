@@ -28,6 +28,7 @@ type HotKeyShortcut = readonly [key: string, mask?: number];
 export type HotKeyShortcuts = HotKeyShortcut | readonly HotKeyShortcut[];
 const _isSingle = (hk: HotKeyShortcuts): hk is HotKeyShortcut =>
   hk.length === 2 && typeof hk[0] === "string";
+export const hotkeysList = (hk: HotKeyShortcuts) => (_isSingle(hk) ? [hk] : hk);
 
 export const displayHotKey = (hk: HotKeyShortcuts) => {
   const [key, mask = 0] = _isSingle(hk) ? hk : hk[0];
@@ -46,7 +47,7 @@ export const displayHotKey = (hk: HotKeyShortcuts) => {
 };
 const eventKeyString = (eventKey: string) =>
   /^[A-Z]$/i.test(eventKey) ? eventKey.toUpperCase() : eventKey;
-const shortcutToString = ([key, mask = 0]: HotKeyShortcut) =>
+export const shortcutToString = ([key, mask = 0]: HotKeyShortcut) =>
   `${eventKeyString(key)}\t${mask}`;
 const eventToShortcutString = (e: KeyboardEvent) =>
   shortcutToString([eventKeyString(e.key), getModMask(e)]);

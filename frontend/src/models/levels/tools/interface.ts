@@ -1,6 +1,7 @@
 import { Event, Store } from "effector";
 import { CSSProperties, FC, PointerEvent } from "react";
 import { ITilesRegion } from "drivers";
+import { HotKeyShortcuts } from "models/ui/hotkeys";
 import { IBounds, Point2D, Rect } from "utils/rect";
 
 export interface CellEventProps extends IBounds {
@@ -161,6 +162,7 @@ export interface ToolVariantUI {
   title: string;
   internalName: string;
   Icon: FC;
+  hotkey?: HotKeyShortcuts;
 }
 
 export interface Tool {

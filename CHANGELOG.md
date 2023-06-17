@@ -5,6 +5,14 @@
 ### Common
 
 - Add: Demo Signature editing.
+- Add: Hotkey Shortcuts for Drawing Tools:
+  - `1` - Pencil;
+  - `2` - Pencil 1x2 and 2x1 (cycled);
+  - `3` - Pencil 3x3;
+  - `F` - Flood Fill;
+  - `L` - Straight Line;
+  - `R` - Frame and Filled Rect (cycled);
+  - `S` - Selection.
 
 ### sple.me
 
