@@ -96,8 +96,7 @@ const useContextMenuHandler = (toolContextMenu?: GridContextEventHandler) => {
       return (e) => {
         if (e.inBounds) {
           const tile = level.getTile(e.x, e.y);
-          const { interaction } = tiles[tile];
-          const action = interaction?.onContextMenu?.(e, level);
+          const action = tiles[tile]?.interaction?.onContextMenu?.(e, level);
           if (action) {
             addInteraction(action);
           }
