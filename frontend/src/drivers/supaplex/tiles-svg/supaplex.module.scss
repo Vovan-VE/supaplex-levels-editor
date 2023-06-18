@@ -4,46 +4,46 @@
 
 $urls: (
   none,
-  url("./01-zonk.svg"),
-  url("./02-base.svg"),
-  url("./03-murphy.svg"),
-  url("./04-infotron.svg"),
-  url("./05-chip.svg"),
-  url("./06-hardware.svg"),
-  url("./07-exit.svg"),
-  url("./08-orange-disk.svg"),
-  url("./09-port-r.svg"),
-  url("./0a-port-d.svg"),
-  url("./0b-port-l.svg"),
-  url("./0c-port-u.svg"),
-  url("./0d-spec-port-r.svg"),
-  url("./0e-spec-port-d.svg"),
-  url("./0f-spec-port-l.svg"),
-  url("./10-spec-port-u.svg"),
-  url("./11-snik-snak.svg"),
-  url("./12-yellow-disk.svg"),
-  url("./13-terminal.svg"),
-  url("./14-red-disk.svg"),
-  url("./15-port-vertical.svg"),
-  url("./16-port-horizontal.svg"),
-  url("./17-port-cross.svg"),
-  url("./18-electron.svg"),
-  url("./19-bug.svg"),
-  url("./1a-chip-left.svg"),
-  url("./1b-chip-right.svg"),
-  url("./1c-hw-circular.svg"),
-  url("./1d-hw-g-lamp.svg"),
-  url("./1e-hw-b-lamp.svg"),
-  url("./1f-hw-r-lamp.svg"),
-  url("./20-hw-stripes.svg"),
-  url("./21-hw-res.svg"),
-  url("./22-hw-cap.svg"),
-  url("./23-hw-res-var.svg"),
-  url("./24-hw-res-vert.svg"),
-  url("./25-hw-res-horz.svg"),
-  url("./26-chip-top.svg"),
-  url("./27-chip-bottom.svg"),
-  url("./28-invis-wall.svg")
+  url("./01-01-zonk.svg"),
+  url("./02-02-base.svg"),
+  url("./03-03-murphy.svg"),
+  url("./04-04-infotron.svg"),
+  url("./05-05-chip.svg"),
+  url("./06-06-hardware.svg"),
+  url("./07-07-exit.svg"),
+  url("./08-08-orange-disk.svg"),
+  url("./09-09-port-r.svg"),
+  url("./10-0a-port-d.svg"),
+  url("./11-0b-port-l.svg"),
+  url("./12-0c-port-u.svg"),
+  url("./13-0d-spec-port-r.svg"),
+  url("./14-0e-spec-port-d.svg"),
+  url("./15-0f-spec-port-l.svg"),
+  url("./16-10-spec-port-u.svg"),
+  url("./17-11-snik-snak.svg"),
+  url("./18-12-yellow-disk.svg"),
+  url("./19-13-terminal.svg"),
+  url("./20-14-red-disk.svg"),
+  url("./21-15-port-vertical.svg"),
+  url("./22-16-port-horizontal.svg"),
+  url("./23-17-port-cross.svg"),
+  url("./24-18-electron.svg"),
+  url("./25-19-bug.svg"),
+  url("./26-1a-chip-left.svg"),
+  url("./27-1b-chip-right.svg"),
+  url("./28-1c-hw-circular.svg"),
+  url("./29-1d-hw-g-lamp.svg"),
+  url("./30-1e-hw-b-lamp.svg"),
+  url("./31-1f-hw-r-lamp.svg"),
+  url("./32-20-hw-stripes.svg"),
+  url("./33-21-hw-res.svg"),
+  url("./34-22-hw-cap.svg"),
+  url("./35-23-hw-res-var.svg"),
+  url("./36-24-hw-res-vert.svg"),
+  url("./37-25-hw-res-horz.svg"),
+  url("./38-26-chip-top.svg"),
+  url("./39-27-chip-bottom.svg"),
+  url("./40-28-invis-wall.svg")
 );
 $variants: (
   13: (
@@ -86,34 +86,34 @@ $variants: (
 
 .chip0 {
   &.t26 {
-    background-image: url("./1a-chip-left.svg");
+    background-image: url("26-1a-chip-left.svg");
   }
   &.t27 {
-    background-image: url("./1b-chip-right.svg");
+    background-image: url("27-1b-chip-right.svg");
   }
   &.t38 {
-    background-image: url("./26-chip-top.svg");
+    background-image: url("38-26-chip-top.svg");
   }
   &.t39 {
-    background-image: url("./27-chip-bottom.svg");
+    background-image: url("39-27-chip-bottom.svg");
   }
 }
 .chip1 {
   .t26,
   &.t26 {
-    background-image: url("./1a-chip-left.2.svg");
+    background-image: url("26-1a-chip-left.2.svg");
   }
   .t27,
   &.t27 {
-    background-image: url("./1b-chip-right.2.svg");
+    background-image: url("27-1b-chip-right.2.svg");
   }
   .t38,
   &.t38 {
-    background-image: url("./26-chip-top.2.svg");
+    background-image: url("38-26-chip-top.2.svg");
   }
   .t39,
   &.t39 {
-    background-image: url("./27-chip-bottom.2.svg");
+    background-image: url("39-27-chip-bottom.2.svg");
   }
 }
 

@@ -18,8 +18,8 @@ import {
   levelSupportsDemo,
   levelSupportSignature,
 } from "drivers";
-import { ReactComponent as DiskYellow } from "drivers/supaplex/tiles-svg/12-yellow-disk.svg";
-import { ReactComponent as HwLampGreen } from "drivers/supaplex/tiles-svg/1d-hw-g-lamp.svg";
+import { ReactComponent as DiskYellow } from "drivers/supaplex/tiles-svg/18-12-yellow-disk.svg";
+import { ReactComponent as HwLampGreen } from "drivers/supaplex/tiles-svg/29-1d-hw-g-lamp.svg";
 import {
   $currentDriverFormat,
   $currentDriverName,
