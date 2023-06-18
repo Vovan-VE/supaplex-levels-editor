@@ -13,6 +13,7 @@
   - `L` - Straight Line;
   - `R` - Frame and Filled Rect (cycled);
   - `S` - Selection.
+- Add: Files buttons can be reordered by drag-n-drop.
 
 ### sple.me
 

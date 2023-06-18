@@ -12,7 +12,6 @@
 - Compare levels.
 - End User Manual.
   - Find or create jekyll template.
-- Draggable files buttons to reorder many opened files.
 - Tools:
   - Circle
 - Presets in Selection Editors

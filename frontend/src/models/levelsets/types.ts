@@ -2,6 +2,7 @@ import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
 import { FilesStorageKey } from "backend";
 import { IBaseLevel, IBaseLevelset } from "drivers";
+import { strCmp } from "utils/strings";
 import { UndoQueue } from "utils/data";
 
 // REFACT: unalias
@@ -19,7 +20,10 @@ interface LevelsetFileSourceOld {
   file: Blob;
   name: string;
   driverName: string;
+  /** @since 0.6 */
   driverFormat: string | undefined;
+  /** @since 0.14 */
+  order?: number | undefined;
 }
 export interface LevelsetFileSource extends LevelsetFileSourceOld {
   driverFormat: string;
@@ -39,6 +43,8 @@ export interface LevelsetFileData extends LevelsetFileDataOld {
 export interface LevelsetFile extends LevelsetFileData {
   levelset: IBaseLevelset<IBaseLevel>;
 }
+export const cmpLevelsetFiles = (a: LevelsetFileData, b: LevelsetFileData) =>
+  (a.order ?? 0) - (b.order ?? 0) || strCmp(a.key, b.key);
 
 export interface LevelsetConvertOpt {
   toDriverFormat: string;

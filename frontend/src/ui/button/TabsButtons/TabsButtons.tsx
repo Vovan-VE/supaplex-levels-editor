@@ -1,10 +1,48 @@
-import { FC, ReactNode, useEffect, useMemo, useRef } from "react";
-import { AnyKey } from "@cubux/types";
 import cn from "classnames";
+import {
+  FC,
+  forwardRef,
+  MutableRefObject,
+  PropsWithChildren,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
+import { AnyKey } from "@cubux/types";
+import { useMergeRefs } from "utils/react";
+import { SortableItemProps, SortableList } from "../../list";
 import { ColorType, ContainerProps } from "../../types";
-import { Button } from "../Button";
+import { Button, ButtonProps } from "../Button";
 import { Toolbar } from "../Toolbar";
 import cl from "./TabsButtons.module.scss";
+
+type P = PropsWithChildren<ButtonProps> & {
+  key: string;
+  curRef?: MutableRefObject<HTMLButtonElement | null>;
+};
+const Item = forwardRef<HTMLButtonElement, SortableItemProps<P>>(
+  (
+    {
+      item: { curRef, className, children, ...props },
+      isDragging,
+      itemProps,
+      handleProps,
+    },
+    ref,
+  ) => (
+    <Button
+      ref={useMergeRefs(ref, curRef)}
+      {...props}
+      {...itemProps}
+      {...handleProps}
+      className={cn(className, isDragging && cl._dragging)}
+    >
+      {children}
+    </Button>
+  ),
+);
 
 export interface TabItem<K extends AnyKey = AnyKey> {
   key: K;
@@ -16,17 +54,20 @@ interface Props<K extends AnyKey> extends ContainerProps {
   tabs: readonly TabItem<K>[];
   current?: K;
   onClick?: (key: K) => void;
+  onSort?: (order: readonly K[]) => void;
 }
 
 export const TabsButtons = <K extends AnyKey = AnyKey>({
   tabs,
   current,
   onClick,
+  onSort,
   className,
   ...rest
 }: Props<K>): ReturnType<FC> => {
   const refCur = useRef<HTMLButtonElement | null>(null);
   useEffect(() => {
+    // FIXME: doesn't work with sortable
     refCur.current?.scrollIntoView({
       block: "nearest",
       inline: "nearest",
@@ -34,30 +75,34 @@ export const TabsButtons = <K extends AnyKey = AnyKey>({
     });
   }, [current]);
 
-  const handleClick = useMemo(
+  const handleSort = useCallback(
+    // REFACT: key is `string` here, not `K`
+    (items: readonly P[]) => onSort?.(items.map(({ key }) => key as K)),
+    [onSort],
+  );
+
+  const items = useMemo(
     () =>
-      onClick &&
-      tabs.map(
-        ({ key }) =>
-          () =>
-            onClick(key),
-      ),
-    [tabs, onClick],
+      tabs.map<P>(({ key, text, uiColor }) => ({
+        key: String(key),
+        curRef: key === current ? refCur : undefined,
+        asLink: key !== current,
+        uiColor,
+        onClick: onClick && (() => onClick(key)),
+        children: text,
+      })),
+    [tabs, onClick, current],
   );
 
   return (
     <Toolbar {...rest} withBG={false} className={cn(cl.root, className)}>
-      {tabs.map(({ key, text, uiColor }, i) => (
-        <Button
-          key={key}
-          ref={key === current ? refCur : undefined}
-          asLink={key !== current}
-          uiColor={uiColor}
-          onClick={handleClick?.[i]}
-        >
-          {text}
-        </Button>
-      ))}
+      {onSort ? (
+        <SortableList items={items} onSort={handleSort} itemRenderer={Item} />
+      ) : (
+        items.map((item, i) => (
+          <Item key={item.key} item={item} itemProps={{}} index={i} />
+        ))
+      )}
     </Toolbar>
   );
 };

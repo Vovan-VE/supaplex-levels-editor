@@ -30,10 +30,10 @@ import {
   summarySupportReport,
 } from "drivers";
 import { generateKey } from "utils/strings";
-import * as MapOrder from "utils/map/order";
 import { showToastErrorWrap } from "../ui/toasts";
 import { flushEvents } from "./flushEvents";
 import {
+  cmpLevelsetFiles,
   LevelsetConvertOpt,
   LevelsetConvertTry,
   LevelsetFile,
@@ -68,12 +68,10 @@ const fulfillFileLevels = async (
 };
 
 interface AddFileParams extends LevelsetFileSource {
-  insertAfterKey?: LevelsetFileKey;
   key?: LevelsetFileKey;
 }
 interface AddFileResult {
   file: LevelsetFile;
-  insertAfterKey: LevelsetFileKey | undefined;
 }
 
 const prepareCreateFileAborted = createFile ? new Error() : undefined;
@@ -93,7 +91,6 @@ const prepareCreateFileFx = createFile
  */
 export const addLevelsetFileFx = createEffect(
   async ({
-    insertAfterKey,
     key,
     name,
     ...source
@@ -115,7 +112,7 @@ export const addLevelsetFileFx = createEffect(
       key,
       name,
     });
-    return { file, insertAfterKey };
+    return { file };
   },
 );
 const addLevelsetFileDoneData = sample({
@@ -153,7 +150,7 @@ const convertLevelsetContinueFx = createEffect(
         name: newFileName,
         driverName: file.driverName,
         driverFormat: toDriverFormat,
-        insertAfterKey: file.key,
+        order: file.order !== undefined ? file.order + 1 : undefined,
       });
     }
   },
@@ -199,6 +196,8 @@ export const renameCurrentLevelset = createEvent<string>();
  * Switch currently selected file
  */
 export const setCurrentLevelset = createEvent<LevelsetFileKey>();
+
+export const sortLevelsets = createEvent<readonly LevelsetFileKey[]>();
 
 export const fileDidOpen = addLevelsetFileDoneData.map(
   ({ file: { key } }) => key,
@@ -261,9 +260,18 @@ interface _DbLevelsetFile
   fileBuffer: ArrayBuffer;
   _options?: LocalOptionsList;
 }
-
+type _LevelsetsMap = ReadonlyMap<LevelsetFileKey, LevelsetFile>;
+const updateOrders = (map: _LevelsetsMap): _LevelsetsMap =>
+  new Map(
+    Array.from(map)
+      .sort(([_1, av], [_2, bv]) => cmpLevelsetFiles(av, bv))
+      .map(([k, v], i) => {
+        const order = i * 10;
+        return [k, v.order === order ? v : { ...v, order }];
+      }),
+  );
 export const $levelsets = withPersistentMap(
-  createStore<ReadonlyMap<LevelsetFileKey, LevelsetFile>>(new Map()),
+  createStore<_LevelsetsMap>(new Map()),
   filesStorage as StoreDriver<LevelsetFileKey, _DbLevelsetFile>,
   {
     ...flushEvents,
@@ -273,12 +281,14 @@ export const $levelsets = withPersistentMap(
       name,
       driverName,
       driverFormat,
+      order,
       key,
       levelset,
     }: LevelsetFile): Promise<_DbLevelsetFile> => ({
       name,
       driverName,
       driverFormat,
+      order,
       key,
       fileBuffer: await file.arrayBuffer(),
       _options: levelset.localOptions,
@@ -292,6 +302,7 @@ export const $levelsets = withPersistentMap(
       name,
       driverName,
       driverFormat,
+      order,
       key,
       fileBuffer,
       _options,
@@ -302,6 +313,7 @@ export const $levelsets = withPersistentMap(
         driverName: REPLACED_DRIVERS[driverName] || driverName,
         driverFormat:
           driverFormat ?? FALLBACK_FORMAT[driverName] ?? "_unknown_",
+        order,
         key,
       });
       return {
@@ -312,13 +324,15 @@ export const $levelsets = withPersistentMap(
   },
 )
   .on(updateLevelsetFile, (map, file) => RoMap.set(map, file.key, file))
-  .on(addLevelsetFileDoneData, (map, { file, insertAfterKey }) => {
-    let next = RoMap.set(map, file.key, file);
-    if (insertAfterKey) {
-      next = MapOrder.moveAfter(next, file.key, insertAfterKey);
-    }
-    return next;
-  })
+  .on(addLevelsetFileDoneData, (map, { file }) =>
+    updateOrders(
+      RoMap.set(
+        map,
+        file.key,
+        file.order === undefined ? { ...file, order: map.size * 10 } : file,
+      ),
+    ),
+  )
   .on(_removeLevelsetFile, RoMap.remove)
   .on(_removeOthersLevelsetFile, (map, key) => {
     if (map.size > 1) {
@@ -327,7 +341,18 @@ export const $levelsets = withPersistentMap(
         return new Map([[key, v]]);
       }
     }
-  });
+  })
+  .on(sortLevelsets, (map, keys) =>
+    updateOrders(
+      keys.reduce(
+        (m, k, i) =>
+          RoMap.update(m, k, (v) =>
+            v.order === i * 10 ? v : { ...v, order: i * 10 },
+          ),
+        map,
+      ),
+    ),
+  );
 if (!allowManualSave) {
   $levelsets.on(
     sample({
