@@ -47,8 +47,8 @@ jobs:
         working-directory: ./frontend
         run: |
           npm ci --omit=dev
-          npm run build
-          npm run build:wails
+          make web
+          make wails
         env:
           CI: true
 
