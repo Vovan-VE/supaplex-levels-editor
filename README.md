@@ -23,6 +23,8 @@ failure. And so, here it is: yet another Supaplex levels editor!
 
 > **SpLE** is under development still. Feel free to report bugs, suggest
 > enhancements and correct grammar mistakes.
+>
+> See also [TODO](./TODO.md).
 
 ![screenshot](./.github/preview.png)
 
@@ -78,14 +80,6 @@ on your device, like other whatever desktop editors do.
 
 - Windows 10/11 AMD64: requires [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/);
 - Linux AMD64: requires `libwebkit`.
-
-## Planned features (unsorted)
-
-- More features from Winplex Collection Editor.
-- Compare levels.
-- End User Manual.
-- Draggable files buttons to reorder many opened files.
-- See more in [TODO](./TODO.md).
 
 ## Contribution, Development
 
