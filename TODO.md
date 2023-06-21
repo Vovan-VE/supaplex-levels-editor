@@ -8,7 +8,6 @@
   - Import/export single level:
     - with real clipboard (binary file with level or special json);
     - with internal buffer in browser storage.
-  - Export/copy level body/selection as image.
 - Compare levels.
 - End User Manual.
   - Find or create jekyll template.

@@ -3,6 +3,10 @@ import { FC, useCallback, useMemo } from "react";
 import { openFile } from "backend";
 import { getDriverFormat } from "drivers";
 import {
+  exportAsImageToClipboard,
+  exportAsImageToFile,
+} from "models/levels/export-img";
+import {
   $currentBuffer,
   $currentBufferHasOtherOpened,
   $currentDriverFormat,
@@ -17,7 +21,7 @@ import {
   importCurrentLevel,
   insertAtCurrentLevel,
 } from "models/levelsets";
-import { Button, ButtonDropdown, Toolbar } from "ui/button";
+import { Button, ButtonDropdown, TextButton, Toolbar } from "ui/button";
 import { ask } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
 import { ColorType } from "ui/types";
@@ -225,17 +229,36 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
 
   return (
     <>
-      <Button
-        icon={<svgs.Save />}
-        iconStack={[[IconStackType.Index, <svgs.FileBlank />]]}
-        title="Export current level"
-        onClick={exportCurrentLevel}
-      />
+      <ButtonDropdown
+        triggerIcon={<svgs.Save />}
+        buttonProps={{
+          iconStack: [[IconStackType.Index, <svgs.FileBlank />]],
+          title: "Export level",
+          disabled: !level,
+        }}
+      >
+        <Toolbar isMenu>
+          <TextButton onClick={exportCurrentLevel} uiColor={ColorType.DEFAULT}>
+            Save level as File
+          </TextButton>
+          <TextButton onClick={exportAsImageToFile} uiColor={ColorType.DEFAULT}>
+            Save level/selection as Image
+          </TextButton>
+          <TextButton
+            icon={<svgs.Copy />}
+            uiColor={ColorType.DEFAULT}
+            onClick={exportAsImageToClipboard}
+          >
+            Copy level/selection as Image
+          </TextButton>
+        </Toolbar>
+      </ButtonDropdown>
       <Button
         icon={<svgs.DirOpen />}
         iconStack={[[IconStackType.Index, <svgs.FileBlank />]]}
         title="Import a level from file into current level"
         onClick={handleImportLevelClick}
+        disabled={!level}
       />
       {cannotAddLevel ||
         (isCompact ? (

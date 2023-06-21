@@ -319,6 +319,20 @@ const $selectionSizeHash = $selectionSize.map(
   (s) => s && (`${s.width}x${s.height}` as const),
 );
 
+export const $selectionRect = $drawState.map<Rect | null>((d, prev) => {
+  if (!d || d.op !== Op.STABLE) {
+    return null;
+  }
+  const { x, y, width, height } = d;
+  return prev &&
+    prev.x === x &&
+    prev.y === y &&
+    prev.width === width &&
+    prev.height === height
+    ? prev
+    : { x, y, width, height };
+});
+
 export const deleteSelectionFx = createEffect(async () => {
   if ($openedSelectionEdit.getState()) {
     return;

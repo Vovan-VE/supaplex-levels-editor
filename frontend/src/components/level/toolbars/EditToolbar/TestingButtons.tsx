@@ -94,7 +94,7 @@ const packLevelToSend = async (baseUrl: string, withDemo: boolean) => {
   let level = $currentLevelUndoQueue.getState()!.current;
   const [valid, errors] = level.isPlayable();
   if (!valid) {
-    msgBox(
+    return msgBox(
       <div>
         <p>The level is unplayable due to the following:</p>
         <ul>
@@ -104,7 +104,6 @@ const packLevelToSend = async (baseUrl: string, withDemo: boolean) => {
         </ul>
       </div>,
     );
-    return;
   }
   if (!withDemo && levelSupportsDemo(level)) {
     level = level.setDemo(null);

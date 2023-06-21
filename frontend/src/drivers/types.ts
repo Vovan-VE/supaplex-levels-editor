@@ -158,6 +158,7 @@ export interface IBaseMetaTile {
 export interface IBaseTile<L extends IBaseLevel> {
   value: number;
   title: string;
+  src?: string;
   metaTile?: IBaseMetaTile;
   toolbarOrder?: number;
   interaction?: IBaseTileInteraction<L>;
