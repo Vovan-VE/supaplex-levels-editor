@@ -40,32 +40,26 @@ const saveRegionToImageFileFx = createEffect(
 copyRegionImageToClipboardFx.done.watch(() =>
   showToast({ message: "Image copied", color: ColorType.SUCCESS }),
 );
-sample({
-  clock: exportAsImageToClipboard,
-  source: {
-    filename: $currentFileName,
-    levelIndex: $currentLevelIndex,
-    undoQueue: $currentLevelUndoQueue,
-    driverName: $currentDriverName,
-    selection: $selectionRect,
-  },
-  filter: (p): p is ExportImgParams =>
-    Boolean(p.filename && p.levelIndex !== null && p.undoQueue && p.driverName),
-  target: copyRegionImageToClipboardFx,
-});
-sample({
-  clock: exportAsImageToFile,
-  source: {
-    filename: $currentFileName,
-    levelIndex: $currentLevelIndex,
-    undoQueue: $currentLevelUndoQueue,
-    driverName: $currentDriverName,
-    selection: $selectionRect,
-  },
-  filter: (p): p is ExportImgParams =>
-    Boolean(p.filename && p.levelIndex !== null && p.undoQueue && p.driverName),
-  target: saveRegionToImageFileFx,
-});
+for (const [clock, target] of [
+  [exportAsImageToClipboard, copyRegionImageToClipboardFx],
+  [exportAsImageToFile, saveRegionToImageFileFx],
+] as const) {
+  sample({
+    clock,
+    source: {
+      filename: $currentFileName,
+      levelIndex: $currentLevelIndex,
+      undoQueue: $currentLevelUndoQueue,
+      driverName: $currentDriverName,
+      selection: $selectionRect,
+    },
+    filter: (p): p is ExportImgParams =>
+      Boolean(
+        p.filename && p.levelIndex !== null && p.undoQueue && p.driverName,
+      ),
+    target,
+  });
+}
 
 // TODO: have no ideas where should it be and should it be configurable
 const TILE_SIZE = 16;

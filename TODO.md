@@ -5,9 +5,8 @@
 - Toasts.
   - Internal editing exception from store manipulations.
 - WpColEd porting:
-  - Import/export single level:
-    - with real clipboard (binary file with level or special json);
-    - with internal buffer in browser storage.
+  - Import single level:
+    - with real clipboard as test/demo url;
 - Compare levels.
 - End User Manual.
   - Find or create jekyll template.

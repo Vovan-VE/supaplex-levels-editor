@@ -12,7 +12,6 @@ import { testInIframe } from "backend";
 import { TEST_DEMO_URL, TEST_LEVEL_TITLE, TEST_LEVEL_URL } from "configs";
 import {
   getDriver,
-  getDriverFormat,
   IBaseLevel,
   LevelConfiguratorProps,
   levelSupportsDemo,
@@ -20,8 +19,8 @@ import {
 } from "drivers";
 import { ReactComponent as DiskYellow } from "drivers/supaplex/tiles-svg/18-12-yellow-disk.svg";
 import { ReactComponent as HwLampGreen } from "drivers/supaplex/tiles-svg/29-1d-hw-g-lamp.svg";
+import { exportLevelAsLink } from "models/levels/export-url";
 import {
-  $currentDriverFormat,
   $currentDriverName,
   $currentLevelUndoQueue,
   updateCurrentLevel,
@@ -32,8 +31,6 @@ import { Button, TextButton } from "ui/button";
 import { ask, msgBox } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
 import { ColorType } from "ui/types";
-import { base64Encode } from "utils/encoding/base64";
-import { tryGzipCompress } from "utils/encoding/gzip";
 import { openSignatureEdit } from "./SignatureEdit";
 import cl from "./TestingButtons.module.scss";
 
@@ -86,11 +83,6 @@ export const TestingButtons: FC = () => {
 };
 
 const packLevelToSend = async (baseUrl: string, withDemo: boolean) => {
-  const driverName = $currentDriverName.getState()!;
-  const { writeLevelset, createLevelset } = getDriverFormat(
-    driverName,
-    $currentDriverFormat.getState()!,
-  )!;
   let level = $currentLevelUndoQueue.getState()!.current;
   const [valid, errors] = level.isPlayable();
   if (!valid) {
@@ -105,15 +97,7 @@ const packLevelToSend = async (baseUrl: string, withDemo: boolean) => {
       </div>,
     );
   }
-  if (!withDemo && levelSupportsDemo(level)) {
-    level = level.setDemo(null);
-  }
-
-  const url = new URL(baseUrl);
-  const raw = writeLevelset(createLevelset([level]));
-  const compressed = await tryGzipCompress(raw);
-  url.hash = compressed ? "gz," + base64Encode(compressed) : base64Encode(raw);
-  return url;
+  return exportLevelAsLink(level, baseUrl, withDemo);
 };
 
 const TestFrame: FC<{ url: URL }> = ({ url }) => {

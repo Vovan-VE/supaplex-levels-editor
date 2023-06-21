@@ -134,11 +134,7 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
           <SelectionEditButton />
         </>
       )}
-      {/*<Button disabled>PNG</Button>*/}
       {isCompact || <ToolbarSeparator />}
-      {/*<Button disabled>Copy level to clipboard</Button>*/}
-      {/*<Button disabled>Paste level from clipboard</Button>*/}
-      {/*<Button disabled>Internal/System clipboard? (via textarea?)</Button>*/}
       <TestingButtons />
       {isCompact || <ToolbarSeparator />}
       <FindPlayerButton />

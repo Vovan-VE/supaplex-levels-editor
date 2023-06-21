@@ -16,6 +16,7 @@
 - Add: Files buttons can be reordered by drag-n-drop.
 - Add: Export current level body (or selection) as PNG image to a file or to
   clipboard.
+- Add: Export current level as Test or Demo Link to SO test page.
 
 ### sple.me
 

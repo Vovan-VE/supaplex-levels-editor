@@ -1,11 +1,15 @@
 import { useStore } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { openFile } from "backend";
-import { getDriverFormat } from "drivers";
+import { getDriverFormat, levelSupportsDemo } from "drivers";
 import {
   exportAsImageToClipboard,
   exportAsImageToFile,
 } from "models/levels/export-img";
+import {
+  copyLevelAsDemoLink,
+  copyLevelAsTestLink,
+} from "models/levels/export-url";
 import {
   $currentBuffer,
   $currentBufferHasOtherOpened,
@@ -103,9 +107,18 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
     useStore($currentDriverName)!,
     useStore($currentDriverFormat)!,
   );
-  const { minLevelsCount = 1, maxLevelsCount = null } = format || {};
+  const {
+    minLevelsCount = 1,
+    maxLevelsCount = null,
+    demoSupport = false,
+  } = format || {};
   const levelset = useStore($currentBuffer)!;
   const level = useStore($currentLevel);
+  const hasDemo = Boolean(
+    level &&
+      ((lvl = level.level.undoQueue.current) =>
+        levelSupportsDemo(lvl) && lvl.demo != null)(),
+  );
 
   const levelsCount = levelset.levels.length;
   const levelsCountDigits = String(levelsCount).length;
@@ -251,6 +264,23 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
           >
             Copy level/selection as Image
           </TextButton>
+          <TextButton
+            icon={<svgs.Copy />}
+            uiColor={ColorType.DEFAULT}
+            onClick={copyLevelAsTestLink}
+          >
+            Copy level as Test Link
+          </TextButton>
+          {demoSupport && (
+            <TextButton
+              icon={<svgs.Copy />}
+              uiColor={ColorType.DEFAULT}
+              onClick={copyLevelAsDemoLink}
+              disabled={!hasDemo}
+            >
+              Copy level as Demo Link{hasDemo || " (no demo)"}
+            </TextButton>
+          )}
         </Toolbar>
       </ButtonDropdown>
       <Button
