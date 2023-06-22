@@ -124,7 +124,7 @@ jobs:
           DEBUG: 1
 
       - name: Clean front map files
-        run: make -C ./frontend clean-wails-map
+        run: make -C ./frontend clean-map
 
       - name: Build on linux
         if: matrix.platform == 'ubuntu-latest'
