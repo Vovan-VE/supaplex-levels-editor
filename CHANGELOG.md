@@ -2,8 +2,6 @@
 
 ## 0.14.0 (DEV)
 
-### Common
-
 - Add: Demo Signature editing.
 - Add: Hotkey Shortcuts for Drawing Tools:
   - `1` - Pencil;
@@ -21,10 +19,6 @@
 ### sple.me
 
 - Fix: Wrong text in "close file" prompt.
-
-### Desktop
-
-- ...
 
 ## 0.13.2 (2023-06-12)
 
