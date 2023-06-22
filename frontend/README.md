@@ -13,6 +13,9 @@ npm start
 
 # run tests in watch mode
 npm run test:watch
+
+# build static
+make web
 ```
 
 [cra]: https://github.com/facebook/create-react-app
