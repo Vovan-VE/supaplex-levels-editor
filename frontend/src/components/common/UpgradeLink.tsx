@@ -43,8 +43,6 @@ if (onUpgradeAvailable) {
       }
     },
   );
-  onUpgradeAvailable.watch((p) => console.log(">> onUpgradeAvailable", p));
-  $upgradeAvailable.watch((p) => console.log(">> $upgradeAvailable", p));
 
   UpgradeLink = (props) => {
     const upgradeAvailable = useStore($upgradeAvailable);
