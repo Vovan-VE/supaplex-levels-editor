@@ -45,7 +45,7 @@ const SCALE_MAX_APPROX = 256;
 const SCALE_FACTOR_MIN = 2;
 // scale step factor, so `scale in px = base * factor**n`
 // obviously it must be >1, else zoom will work in reverse
-const SCALE_FACTOR = (SCALE_BASE + SCALE_FACTOR_MIN) / SCALE_BASE;
+const SCALE_FACTOR = 1 + SCALE_FACTOR_MIN / SCALE_BASE;
 // calculating how many scale steps we need to reach beyond "at least" maximum above
 // max = base * factor**n
 // factor**n = max / base
@@ -66,12 +66,17 @@ const SCALE_FACTOR = (SCALE_BASE + SCALE_FACTOR_MIN) / SCALE_BASE;
 const whichStep = (max: number) =>
   Math.ceil(Math.log(max / SCALE_BASE) / Math.log(SCALE_FACTOR));
 
-const SCALE_STEPS_TOTAL = whichStep(SCALE_MAX_APPROX);
+// max scale step, so 0 <= step <= SCALE_STEP_MAX
+const SCALE_STEP_MAX = whichStep(SCALE_MAX_APPROX);
+// final scale in `px`
+// rounded to SCALE_FACTOR_MIN
+const ROUND_TO_PIXELS = 1 / SCALE_FACTOR_MIN;
+const stepToScale = (n: number) =>
+  Math.round(SCALE_BASE * SCALE_FACTOR ** n * ROUND_TO_PIXELS) /
+  ROUND_TO_PIXELS;
 // console.log(
-//   SCALE_STEPS_TOTAL,
-//   Array.from({ length: SCALE_STEPS_TOTAL + 1 }).map((_, i) =>
-//     (SCALE_BASE * SCALE_FACTOR ** i).toFixed(4),
-//   ),
+//   SCALE_STEP_MAX,
+//   Array.from({ length: SCALE_STEP_MAX + 1 }).map((_, i) => stepToScale(i)),
 // );
 
 // approx initial scale in `px`
@@ -90,20 +95,15 @@ const $bodyScaleN = withPersistent(
       if (isNaN(n)) {
         return whichStep(SCALE_INIT_APPROX);
       }
-      return Math.max(0, Math.min(SCALE_STEPS_TOTAL, Math.round(n)));
+      return Math.max(0, Math.min(SCALE_STEP_MAX, Math.round(n)));
     },
   },
 )
-  .on(incBodyScale, (n) => Math.min(n + 1, SCALE_STEPS_TOTAL))
+  .on(incBodyScale, (n) => Math.min(n + 1, SCALE_STEP_MAX))
   .on(decBodyScale, (n) => Math.max(n - 1, 0));
 
-// final scale in `px`
-// rounded to SCALE_FACTOR_MIN
-const k = 1 / SCALE_FACTOR_MIN;
-export const $bodyScale = $bodyScaleN.map(
-  (n) => Math.round(SCALE_BASE * SCALE_FACTOR ** n * k) / k,
-);
-export const $bodyScaleCanInc = $bodyScaleN.map((n) => n < SCALE_STEPS_TOTAL);
+export const $bodyScale = $bodyScaleN.map(stepToScale);
+export const $bodyScaleCanInc = $bodyScaleN.map((n) => n < SCALE_STEP_MAX);
 export const $bodyScaleCanDec = $bodyScaleN.map((n) => n > 0);
 
 export const BodyVisibleRectGate = createGate<{ rect: Rect | null }>({

@@ -6,6 +6,7 @@ type FrontEvent struct {
 }
 
 const (
-	FEExitDirty = "exitDirty"
-	FEShowError = "showError"
+	FEExitDirty        = "exitDirty"
+	FEShowError        = "showError"
+	FEUpgradeAvailable = "upgradeAvailable"
 )

@@ -4,7 +4,7 @@ import { FC, useCallback, useMemo } from "react";
 import { TileSelect } from "components/driver/TileSelect";
 import { getDriver, getTilesVariantsMap } from "drivers";
 import { $currentDriverName } from "models/levelsets";
-import { HotKeyMask } from "models/ui/hotkeys";
+import { HK_EDIT_REPLACE } from "models/ui/hotkeys-defined";
 import { Button } from "ui/button";
 import { svgs } from "ui/icon";
 import { Checkbox, Field } from "ui/input";
@@ -109,5 +109,5 @@ export const replace: SelectionEditor = {
   title: "Replace",
   icon: <svgs.Replace />,
   Component: ReplaceEditor,
-  hotkeys: ["R", HotKeyMask.SHIFT],
+  hotkeys: HK_EDIT_REPLACE,
 };

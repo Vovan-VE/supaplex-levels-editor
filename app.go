@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/adrg/xdg"
@@ -37,25 +37,25 @@ func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
 
-	configDir := path.Join(xdg.ConfigHome, "sple")
+	configDir := filepath.Join(xdg.ConfigHome, "sple")
 	if err := config.EnsureConfigDir(configDir); err != nil {
 		runtime.LogErrorf(ctx, "config dir: %v", err)
 		return
 	}
 
-	appConfig, err := config.NewFileStorage(path.Join(configDir, "config.json"))
+	appConfig, err := config.NewFileStorage(filepath.Join(configDir, "config.json"))
 	if err != nil {
 		runtime.LogErrorf(ctx, "front config: %v", err)
 		return
 	}
 
-	front, err := config.NewFileStorage(path.Join(configDir, "front.json"))
+	front, err := config.NewFileStorage(filepath.Join(configDir, "front.json"))
 	if err != nil {
 		runtime.LogErrorf(ctx, "front config: %v", err)
 		return
 	}
 
-	filesRegPath := path.Join(configDir, "files.json")
+	filesRegPath := filepath.Join(configDir, "files.json")
 	chosenReg := files.NewChosenRegistry()
 	fs, err := files.NewStorage(filesRegPath, chosenReg)
 	if err != nil {
@@ -75,7 +75,7 @@ func (a *App) domReady(ctx context.Context) {
 
 	winPl, _, err := a.appConfig.GetItem(config.AppWindowPlacement)
 	if err != nil {
-		runtime.LogErrorf(ctx, "cannot read window placement", err)
+		runtime.LogErrorf(ctx, "cannot read %s: %v", config.AppWindowPlacement, err)
 	}
 	p := config.WindowPlacementFromString(winPl)
 	if p.IsMax {
@@ -83,6 +83,56 @@ func (a *App) domReady(ctx context.Context) {
 	} else {
 		runtime.WindowSetPosition(ctx, p.X, p.Y)
 		runtime.WindowSetSize(ctx, p.W, p.H)
+	}
+
+	go a.checkUpdate()
+}
+
+func (a *App) checkUpdate() {
+	lastKnownUpdateS, _, err := a.appConfig.GetItem(config.AppLatestRelease)
+	if err != nil {
+		runtime.LogErrorf(a.ctx, "cannot read %s: %v", config.AppLatestRelease, err)
+	}
+	lastKnownUpdate := config.UpdateReleaseFromString(lastKnownUpdateS)
+
+	go func() {
+		if lastKnownUpdate != nil {
+			select {
+			case <-a.ctx.Done():
+				return
+			default:
+			}
+
+			v := lastKnownUpdate.VersionNumber()
+
+			// if triggered after front init
+			a.triggerFront(backend.FEUpgradeAvailable, v)
+
+			// if triggered before front init
+			b, err := json.Marshal(v)
+			if err != nil {
+				runtime.LogErrorf(a.ctx, "json marshal: %v", err)
+				return
+			}
+			runtime.WindowExecJS(a.ctx, "window.spleLatestVersion="+string(b)+";")
+		}
+	}()
+
+	latestRelease, err := config.UpdateReleaseFetch(a.ctx)
+	if err != nil {
+		runtime.LogErrorf(a.ctx, "check update: %v", err)
+		return
+	}
+	if latestRelease == nil {
+		return
+	}
+	if !latestRelease.IsNewer(lastKnownUpdate) {
+		return
+	}
+	// have new release
+	lastKnownUpdate = latestRelease
+	if err = a.appConfig.SetItem(config.AppLatestRelease, latestRelease.String()); err != nil {
+		runtime.LogErrorf(a.ctx, "remember latest release: %v", err)
 	}
 }
 
@@ -142,24 +192,24 @@ func (a *App) triggerFront(event string, data any) {
 var _ backend.Interface = (*App)(nil)
 
 func (a *App) CreateFile(key string, baseFileName string) (actualName string, err error) {
-	filepath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+	fPath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
 		DefaultFilename: baseFileName,
 		Title:           "Create File",
 	})
-	if err != nil || filepath == "" {
+	if err != nil || fPath == "" {
 		return
 	}
-	f, err := os.OpenFile(filepath, os.O_WRONLY|os.O_CREATE, 0664)
+	f, err := os.OpenFile(fPath, os.O_WRONLY|os.O_CREATE, 0664)
 	if err != nil {
 		return
 	}
 	if err = f.Close(); err != nil {
 		return
 	}
-	if err = a.chosenReg.AddFileWithKey(key, filepath); err != nil {
+	if err = a.chosenReg.AddFileWithKey(key, fPath); err != nil {
 		return
 	}
-	return path.Base(filepath), nil
+	return filepath.Base(fPath), nil
 }
 
 func (a *App) OpenFile(multiple bool) []*backend.WebFileRef {

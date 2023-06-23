@@ -1,6 +1,6 @@
 import { FlipDirection, getDriver } from "drivers";
 import { $currentDriverName } from "models/levelsets";
-import { HotKeyMask } from "models/ui/hotkeys";
+import { HK_EDIT_FLIP_H, HK_EDIT_FLIP_V } from "models/ui/hotkeys-defined";
 import { svgs } from "ui/icon";
 import { IBounds, Point2D } from "utils/rect";
 import { SelectionEditor, SelectionEditorFn } from "./_types";
@@ -37,7 +37,7 @@ export const flipH: SelectionEditor = {
     (v, c) => ({ x: v, y: c }),
     FlipDirection.H,
   ),
-  hotkeys: ["H", HotKeyMask.SHIFT],
+  hotkeys: HK_EDIT_FLIP_H,
 };
 export const flipV: SelectionEditor = {
   title: "Flip Vertical",
@@ -47,5 +47,5 @@ export const flipV: SelectionEditor = {
     (v, c) => ({ x: c, y: v }),
     FlipDirection.V,
   ),
-  hotkeys: ["V", HotKeyMask.SHIFT],
+  hotkeys: HK_EDIT_FLIP_V,
 };

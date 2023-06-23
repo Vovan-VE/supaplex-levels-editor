@@ -1,5 +1,6 @@
 import { combine } from "effector";
 import * as RoMap from "@cubux/readonly-map";
+import { HK_TOOL_LINE, HK_TOOL_RECT } from "models/ui/hotkeys-defined";
 import { svgs } from "ui/icon";
 import {
   clipRect,
@@ -125,6 +126,7 @@ const {
       internalName: "line",
       title: "Straight line",
       Icon: svgs.Line,
+      hotkey: HK_TOOL_LINE,
       drawProps: {
         rectType: RectType.LINE,
       },
@@ -133,6 +135,7 @@ const {
       internalName: "frame",
       title: "Frame",
       Icon: svgs.RectFrame,
+      hotkey: HK_TOOL_RECT,
       drawProps: {
         rectType: RectType.FRAME,
       },
@@ -141,6 +144,7 @@ const {
       internalName: "fill",
       title: "Filled Rect",
       Icon: svgs.RectFill,
+      hotkey: HK_TOOL_RECT,
       drawProps: {
         rectType: RectType.FILL,
       },

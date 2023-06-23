@@ -1,6 +1,10 @@
 import { inRect, Rect } from "utils/rect";
 import { DemoSeed } from "../types";
-import { FOOTER_BYTE_LENGTH, TITLE_LENGTH } from "./formats/std";
+import {
+  FOOTER_BYTE_LENGTH,
+  SIGNATURE_MAX_LENGTH,
+  TITLE_LENGTH,
+} from "./formats/std";
 import {
   ILevelFooter,
   ISupaplexSpecPort,
@@ -70,6 +74,7 @@ class LevelFooter implements ILevelFooter {
   readonly #width: number;
   readonly #src: Uint8Array;
   #demo: Uint8Array | null = null;
+  #signature: Uint8Array | null = null;
 
   #usePlasma = false;
   #usePlasmaLimit: number | undefined;
@@ -93,7 +98,10 @@ class LevelFooter implements ILevelFooter {
         );
       }
 
-      if (data.length > FOOTER_BYTE_LENGTH && data[data.length - 1] === 0xff) {
+      if (data.length > FOOTER_BYTE_LENGTH) {
+        // <level-index> <demo> FF [<signature> FF]
+        //     1 byte      n          0..511
+
         // SPFIX63a.pdf:
         //
         // Original *.BIN demo used first byte to store target level index.
@@ -101,7 +109,21 @@ class LevelFooter implements ILevelFooter {
         // presented and unused.
         //
         // This is why here is `+1`.
-        this.#demo = data.slice(FOOTER_BYTE_LENGTH + 1, data.length - 1);
+        const demoStart = FOOTER_BYTE_LENGTH + 1;
+        let endAt = data.indexOf(0xff, demoStart);
+        if (endAt > demoStart) {
+          this.#demo = data.slice(demoStart, endAt);
+        }
+        if (endAt >= demoStart) {
+          const signatureStart = endAt + 1;
+          endAt = data.indexOf(0xff, signatureStart);
+          if (
+            endAt > signatureStart &&
+            endAt - signatureStart <= SIGNATURE_MAX_LENGTH
+          ) {
+            this.#signature = data.slice(signatureStart, endAt);
+          }
+        }
       }
     } else {
       this.#src = new Uint8Array(FOOTER_BYTE_LENGTH);
@@ -130,22 +152,55 @@ class LevelFooter implements ILevelFooter {
   }
 
   get length() {
-    return this.#src.length + (this.#demo ? this.#demo.length + 2 : 0);
+    const demo = this.#demo;
+    const sign = this.#signature;
+    let length = this.#src.length;
+    if (demo || sign) {
+      // <level-index> <demo> FF
+      length += 1 + (demo?.length ?? 0) + 1;
+      if (sign) {
+        // <signature> FF
+        length += sign.length + 1;
+      }
+    }
+    return length;
   }
 
   getRaw() {
-    const main = new Uint8Array(this.#src);
-    const demo = this.#demo;
-    if (demo) {
-      const result = new Uint8Array(main.length + demo.length + 2);
-      result.set(main, 0);
-      result[main.length] = 0;
-      result.set(demo, main.length + 1);
-      // See the comment for similar `+1` in `constructor`.
-      result[main.length + 1 + demo.length] = 0xff;
-      return result;
+    const result = new Uint8Array(this.length);
+    result.set(this.#src, 0);
+    if (result.length > this.#src.length) {
+      let pos = this.#src.length;
+      // <level-index> useless
+      result[pos] = 0;
+      pos++;
+      const demo = this.#demo;
+      if (demo) {
+        result.set(demo, pos);
+        pos += demo.length;
+      }
+      result[pos] = 0xff;
+      pos++;
+
+      const sign = this.#signature;
+      if (sign) {
+        result.set(sign, pos);
+        pos += sign.length;
+        result[pos] = 0xff;
+      }
     }
-    return main;
+    return result;
+
+    // const main = new Uint8Array(this.#src);
+    // if (demo) {
+    //   const result = new Uint8Array(main.length + demo.length + 2);
+    //   result[main.length] = 0;
+    //   result.set(demo, main.length + 1);
+    //   // See the comment for similar `+1` in `constructor`.
+    //   result[main.length + 1 + demo.length] = 0xff;
+    //   return result;
+    // }
+    // return main;
   }
 
   get title() {
@@ -376,6 +431,47 @@ class LevelFooter implements ILevelFooter {
     }
     const copy = this.copy();
     copy.#demo = demo && new Uint8Array(demo);
+    return copy;
+  }
+
+  get signature() {
+    return this.#signature && new Uint8Array(this.#signature);
+  }
+  get signatureString() {
+    return this.#signature ? String.fromCharCode(...this.#signature) : "";
+  }
+
+  setSignature(signature: Uint8Array | string | null) {
+    if (typeof signature === "string") {
+      signature = Uint8Array.of(
+        ...Array.from(signature, (c: string) => {
+          const b = c.charCodeAt(0);
+          if (b > 255) {
+            throw new Error("Invalid character out of support range");
+          }
+          return b;
+        }),
+      );
+    }
+
+    if (signature) {
+      if (
+        this.#signature &&
+        signature.length === this.#signature.length &&
+        signature.every((v, i) => v === this.#signature![i])
+      ) {
+        return this;
+      }
+      if (signature.length > SIGNATURE_MAX_LENGTH) {
+        throw new Error("Too long signature");
+      }
+    } else {
+      if (!this.#signature) {
+        return this;
+      }
+    }
+    const copy = this.copy();
+    copy.#signature = signature && new Uint8Array(signature);
     return copy;
   }
 

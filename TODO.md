@@ -5,25 +5,36 @@
 - Toasts.
   - Internal editing exception from store manipulations.
 - WpColEd porting:
-  - Import/export single level:
-    - with real clipboard (binary file with level or special json);
-    - with internal buffer in browser storage.
-  - Export/copy level body/selection as image.
+  - Import single level:
+    - with real clipboard as test/demo url;
 - Compare levels.
 - End User Manual.
   - Find or create jekyll template.
-- Draggable files buttons to reorder many opened files.
 - Tools:
   - Circle
 - Presets in Selection Editors
-- Enhance Read Only mode more?
 - Visualized level resizing with crop.
   - Separate "crop" & "extend" scenarios with Tabs, for example.
 - Convert format config: SP: Which level to take.
 - Drag-n-drop open files
-  - Desktop: cannot handle from backend to get real file path?
+  - Desktop: cannot handle from backend to get real file path
 - Demo path visualization
-  - Is it possible without gameplay simulation?
+  - Impossible without gameplay simulation. Only if SO will provide a path
+    actually walked.
+- shorter parameters
+  `?use-plasma=&use-plasma-limit=20&use-plasma-time=200&use-zonkers=&use-serial-ports=#`
+  becomes:
+  `?2a=20x200&2b&ps#`
+  `use-serial-ports` can now just be `ps`
+  no `=` needed
+  `use-zonkers` is now `2b`, same as zonker hex code
+  now instead of 3 params for plasma we use
+  `2a={plasma_limit}x{plasma_time}`
+  for default values use space
+  `2a=16x`
+  this will use limit of `16` and default plasma time
+  if both params are default then `2a=x` works, but you can then omit the value
+  and just use `2a`
 
 ### Desktop
 
@@ -44,7 +55,6 @@
     to work more intuitive.
 - Clickable "electron" icon to include/exclude n\*9 infotrons needed.
 - BIN demo export/import?
-- MPX/SP signature.
 
 ### Desktop
 

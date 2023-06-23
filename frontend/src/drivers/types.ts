@@ -45,6 +45,17 @@ export type ITilesStreamItem = readonly [
   variant?: number,
 ];
 
+export interface IWithSignature {
+  readonly signature: Uint8Array | null;
+  readonly signatureString: string;
+  setSignature(signature: Uint8Array | string | null): this;
+}
+
+export const levelSupportSignature = (level: any): level is IWithSignature =>
+  typeof level === "object" &&
+  level !== null &&
+  typeof level.setSignature === "function";
+
 export interface ITilesRegion extends IBounds {
   getTile(x: number, y: number): number;
   tilesRenderStream(
@@ -147,6 +158,7 @@ export interface IBaseMetaTile {
 export interface IBaseTile<L extends IBaseLevel> {
   value: number;
   title: string;
+  src?: string;
   metaTile?: IBaseMetaTile;
   toolbarOrder?: number;
   interaction?: IBaseTileInteraction<L>;
@@ -178,6 +190,7 @@ export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
   readonly minLevelsCount: number;
   readonly maxLevelsCount: number | null;
   readonly demoSupport?: boolean;
+  readonly signatureMaxLength?: number;
   supportReport(levelset: S): Iterable<ISupportReportMessage>;
   readLevelset(file: ArrayBuffer): S;
   writeLevelset(levelset: S): ArrayBuffer;

@@ -8,6 +8,7 @@ import {
   sample,
 } from "effector";
 import { IBaseLevel, ILevelRegion } from "drivers";
+import { HK_TOOL_SELECTION } from "models/ui/hotkeys-defined";
 import { svgs } from "ui/icon";
 import { isNotNull } from "utils/fn";
 import { minmax } from "utils/number";
@@ -79,6 +80,7 @@ const {
       internalName: "d",
       title: "Selection",
       Icon: svgs.Selection,
+      hotkey: HK_TOOL_SELECTION,
       drawProps: undefined,
     },
   ],
@@ -316,6 +318,20 @@ export const $selectionSize = $drawState.map<IBounds | null>((d, prev) => {
 const $selectionSizeHash = $selectionSize.map(
   (s) => s && (`${s.width}x${s.height}` as const),
 );
+
+export const $selectionRect = $drawState.map<Rect | null>((d, prev) => {
+  if (!d || d.op !== Op.STABLE) {
+    return null;
+  }
+  const { x, y, width, height } = d;
+  return prev &&
+    prev.x === x &&
+    prev.y === y &&
+    prev.width === width &&
+    prev.height === height
+    ? prev
+    : { x, y, width, height };
+});
 
 export const deleteSelectionFx = createEffect(async () => {
   if ($openedSelectionEdit.getState()) {

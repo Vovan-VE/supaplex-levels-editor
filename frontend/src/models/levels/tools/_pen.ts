@@ -1,5 +1,10 @@
 import { combine } from "effector";
 import * as RoMap from "@cubux/readonly-map";
+import {
+  HK_TOOL_PEN,
+  HK_TOOL_PEN2,
+  HK_TOOL_PEN3,
+} from "models/ui/hotkeys-defined";
 import { svgs } from "ui/icon";
 import { inBounds } from "utils/rect";
 import {
@@ -34,6 +39,7 @@ const {
       internalName: "x1",
       title: "Pencil",
       Icon: svgs.Pencil,
+      hotkey: HK_TOOL_PEN,
       drawProps: {
         shape: PenShape.DOT,
       },
@@ -42,6 +48,7 @@ const {
       internalName: "x1x2",
       title: "Pencil 1x2",
       Icon: svgs.Grid1x2,
+      hotkey: HK_TOOL_PEN2,
       drawProps: {
         shape: PenShape._1x2,
       },
@@ -50,6 +57,7 @@ const {
       internalName: "x2x1",
       title: "Pencil 2x1",
       Icon: svgs.Grid2x1,
+      hotkey: HK_TOOL_PEN2,
       drawProps: {
         shape: PenShape._2x1,
       },
@@ -58,6 +66,7 @@ const {
       internalName: "x3",
       title: "Pencil 3x3",
       Icon: svgs.Grid3x3,
+      hotkey: HK_TOOL_PEN3,
       drawProps: {
         shape: PenShape._3x3,
       },

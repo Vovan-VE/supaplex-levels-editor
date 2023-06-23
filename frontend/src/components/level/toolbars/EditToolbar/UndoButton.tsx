@@ -1,16 +1,11 @@
 import { useStoreMap } from "effector-react";
 import { FC } from "react";
 import { $currentLevelUndoQueue, undoCurrentLevel } from "models/levelsets";
-import {
-  displayHotKey,
-  HotKeyMask,
-  HotKeyShortcuts,
-  useHotKey,
-} from "models/ui/hotkeys";
+import { displayHotKey, useHotKey } from "models/ui/hotkeys";
+import { HK_UNDO } from "models/ui/hotkeys-defined";
 import { Button } from "ui/button";
 import { svgs } from "ui/icon";
 
-const HK_UNDO: HotKeyShortcuts = [["Z", HotKeyMask.CTRL], ["Undo"]];
 const handleHotUndo = (e: UIEvent) => {
   e.preventDefault();
   undoCurrentLevel();

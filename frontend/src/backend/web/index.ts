@@ -20,3 +20,5 @@ export const testInIframe = false;
 
 export const VersionTag = undefined;
 export { InfoDetails } from "./InfoDetails";
+
+export const onUpgradeAvailable = undefined;

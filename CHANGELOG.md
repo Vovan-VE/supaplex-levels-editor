@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.14.0 (2023-06-23)
+
+- Add: Demo Signature editing.
+- Add: Hotkey Shortcuts for Drawing Tools:
+  - `1` - Pencil;
+  - `2` - Pencil 1x2 and 2x1 (cycled);
+  - `3` - Pencil 3x3;
+  - `F` - Flood Fill;
+  - `L` - Straight Line;
+  - `R` - Frame and Filled Rect (cycled);
+  - `S` - Selection.
+- Add: Files buttons can be reordered by drag-n-drop.
+- Add: Export current level body (or selection) as PNG image to a file or to
+  clipboard.
+- Add: Export current level as Test or Demo Link to SO test page.
+
+### sple.me
+
+- Fix: Wrong text in "close file" prompt.
+
+### Desktop
+
+- Add: Checking if new release available.
+- Fix: Navigating to external link not worked as expected.
+- Fix: Windows: "New file" displays full file path in UI.
+
 ## 0.13.2 (2023-06-12)
 
 ### sple.me

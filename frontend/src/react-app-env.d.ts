@@ -1,5 +1,10 @@
 /// <reference types="react-scripts" />
 
+declare interface CompressionStreamConstructor {
+  new <R = any, W = any>(format: string): ReadableWritablePair<R, W>;
+}
+declare const CompressionStream: CompressionStreamConstructor;
+
 declare module "classnames" {
   import classnames from "classnames/";
 

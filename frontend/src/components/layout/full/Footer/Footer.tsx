@@ -2,13 +2,15 @@ import { FC } from "react";
 import cn from "classnames";
 import { ReactComponent as GitHubLogo } from "assets/img/github.svg";
 import { APP_VERSION, REPO_URL, VERSION_URL } from "configs";
-import { showInfoDialog, ZoomButtons } from "components/common";
+import { showInfoDialog, UpgradeLink, ZoomButtons } from "components/common";
 import { HoveredCell } from "components/level";
 import { openSettings } from "models/settings";
 import { TextButton } from "ui/button";
 import { svgs } from "ui/icon";
 import { ContainerProps } from "ui/types";
 import cl from "./Footer.module.scss";
+
+const UpgradeLinkC = UpgradeLink;
 
 interface Props extends ContainerProps {}
 
@@ -29,6 +31,7 @@ export const Footer: FC<Props> = ({ className, ...rest }) => (
     >
       v{APP_VERSION}
     </TextButton>{" "}
+    {UpgradeLinkC && <UpgradeLinkC />}
     <span className={cl.space} />
     <HoveredCell className={cl.text} />
     <span className={cl.space} />

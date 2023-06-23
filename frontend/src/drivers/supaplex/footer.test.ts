@@ -335,7 +335,7 @@ describe("footer", () => {
     expect(footer.demoSeed).toEqual(seed1);
   });
 
-  it("demo", () => {
+  describe("demo", () => {
     const srcMain = new Uint8Array(FOOTER_BYTE_LENGTH);
     srcMain.set(
       ""
@@ -345,55 +345,136 @@ describe("footer", () => {
       6,
     );
 
-    const src = Uint8Array.of(
+    const demoA = Uint8Array.of(10, 20, 30, 40, 50, 60, 42, 0, 23);
+    const srcDemoOnly = Uint8Array.of(...srcMain, 0, ...demoA, 0xff);
+
+    const signatureA = Uint8Array.of(
+      ...Array.from("Lorem ipsum dolor\nsit amet.", (s) => s.charCodeAt(0)),
+    );
+    const srcDemoSignature = Uint8Array.of(...srcDemoOnly, ...signatureA, 0xff);
+
+    const demo1 = Uint8Array.of(2, 4, 8);
+    const demo2 = Uint8Array.of(11, 13, 17, 19, 23);
+    const signature1 = Uint8Array.of(
+      ...Array.from("Foo bar", (s) => s.charCodeAt(0)),
+    );
+
+    const srcSignatureOnly = Uint8Array.of(
       ...srcMain,
       0,
-      10,
-      20,
-      30,
-      40,
-      50,
-      60,
-      42,
-      0,
-      23,
+      0xff,
+      ...signatureA,
       0xff,
     );
 
-    let footer = createLevelFooter(1, src);
-    expect(footer.demo).toEqual(
-      Uint8Array.of(10, 20, 30, 40, 50, 60, 42, 0, 23),
-    );
-    expect(footer.length).toEqual(FOOTER_BYTE_LENGTH + 9 + 2);
+    it("demo only", () => {
+      let footer = createLevelFooter(1, srcDemoOnly);
+      expect(footer.demo).toEqual(demoA);
+      expect(footer.length).toEqual(FOOTER_BYTE_LENGTH + demoA.length + 2);
 
-    footer = footer.setDemo(Uint8Array.of(2, 4, 8));
-    expect(footer.demo).toEqual(Uint8Array.of(2, 4, 8));
-    expect(footer.length).toEqual(FOOTER_BYTE_LENGTH + 3 + 2);
-    expect(footer.getRaw()).toEqual(
-      Uint8Array.of(...srcMain, 0, 2, 4, 8, 0xff),
-    );
+      footer = footer.setDemo(demo1);
+      expect(footer.demo).toEqual(demo1);
+      expect(footer.length).toEqual(FOOTER_BYTE_LENGTH + demo1.length + 2);
+      expect(footer.getRaw()).toEqual(
+        Uint8Array.of(...srcMain, 0, ...demo1, 0xff),
+      );
 
-    footer = footer.setDemo(Uint8Array.of(11, 13, 17, 19, 23));
-    expect(footer.demo).toEqual(Uint8Array.of(11, 13, 17, 19, 23));
-    expect(footer.length).toEqual(FOOTER_BYTE_LENGTH + 5 + 2);
-    expect(footer.getRaw()).toEqual(
-      Uint8Array.of(...srcMain, 0, 11, 13, 17, 19, 23, 0xff),
-    );
+      footer = footer.setDemo(demo2);
+      expect(footer.demo).toEqual(demo2);
+      expect(footer.length).toEqual(FOOTER_BYTE_LENGTH + demo2.length + 2);
+      expect(footer.getRaw()).toEqual(
+        Uint8Array.of(...srcMain, 0, ...demo2, 0xff),
+      );
 
-    footer = footer.setDemo(null);
-    expect(footer.demo).toBe(null);
-    expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
-    expect(footer.getRaw()).toEqual(srcMain);
+      footer = footer.setDemo(null);
+      expect(footer.demo).toBe(null);
+      expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
+      expect(footer.getRaw()).toEqual(srcMain);
 
-    footer = createLevelFooter(1, srcMain);
-    expect(footer.demo).toBe(null);
-    expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
-    expect(footer.getRaw()).toEqual(srcMain);
+      footer = createLevelFooter(1, srcMain);
+      expect(footer.demo).toBe(null);
+      expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
+      expect(footer.getRaw()).toEqual(srcMain);
 
-    footer = createLevelFooter(1);
-    expect(footer.demo).toBe(null);
-    expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
-    expect(footer.getRaw()).toEqual(srcMain);
+      footer = createLevelFooter(1);
+      expect(footer.demo).toBe(null);
+      expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
+      expect(footer.getRaw()).toEqual(srcMain);
+    });
+
+    it("demo with signature", () => {
+      let footer = createLevelFooter(1, srcDemoSignature);
+      expect(footer.demo).toEqual(demoA);
+      expect(footer.signature).toEqual(signatureA);
+      expect(footer.length).toEqual(
+        FOOTER_BYTE_LENGTH + demoA.length + signatureA.length + 3,
+      );
+      expect(footer.getRaw()).toEqual(
+        Uint8Array.of(...srcMain, 0, ...demoA, 0xff, ...signatureA, 0xff),
+      );
+
+      footer = footer.setDemo(demo1);
+      expect(footer.demo).toEqual(demo1);
+      expect(footer.signature).toEqual(signatureA);
+      expect(footer.length).toEqual(
+        FOOTER_BYTE_LENGTH + demo1.length + signatureA.length + 3,
+      );
+      expect(footer.getRaw()).toEqual(
+        Uint8Array.of(...srcMain, 0, ...demo1, 0xff, ...signatureA, 0xff),
+      );
+
+      footer = footer.setSignature(signature1);
+      expect(footer.demo).toEqual(demo1);
+      expect(footer.signature).toEqual(signature1);
+      expect(footer.length).toEqual(
+        FOOTER_BYTE_LENGTH + demo1.length + signature1.length + 3,
+      );
+      expect(footer.getRaw()).toEqual(
+        Uint8Array.of(...srcMain, 0, ...demo1, 0xff, ...signature1, 0xff),
+      );
+
+      footer = footer.setDemo(null);
+      expect(footer.demo).toBe(null);
+      expect(footer.signature).toEqual(signature1);
+      expect(footer.length).toEqual(FOOTER_BYTE_LENGTH + signature1.length + 3);
+      expect(footer.getRaw()).toEqual(
+        Uint8Array.of(...srcMain, 0, 0xff, ...signature1, 0xff),
+      );
+
+      footer = footer.setSignature(null);
+      expect(footer.demo).toBe(null);
+      expect(footer.signature).toBe(null);
+      expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
+      expect(footer.getRaw()).toEqual(srcMain);
+    });
+
+    it("signature only", () => {
+      let footer = createLevelFooter(1, srcSignatureOnly);
+      expect(footer.demo).toBe(null);
+      expect(footer.signature).toEqual(signatureA);
+      expect(footer.length).toEqual(FOOTER_BYTE_LENGTH + signatureA.length + 3);
+      expect(footer.getRaw()).toEqual(
+        Uint8Array.of(...srcMain, 0, 0xff, ...signatureA, 0xff),
+      );
+
+      footer = footer.setDemo(demo1);
+      expect(footer.demo).toEqual(demo1);
+      expect(footer.signature).toEqual(signatureA);
+      expect(footer.length).toEqual(
+        FOOTER_BYTE_LENGTH + demo1.length + signatureA.length + 3,
+      );
+      expect(footer.getRaw()).toEqual(
+        Uint8Array.of(...srcMain, 0, ...demo1, 0xff, ...signatureA, 0xff),
+      );
+
+      footer = footer.setSignature(null);
+      expect(footer.demo).toEqual(demo1);
+      expect(footer.signature).toBe(null);
+      expect(footer.length).toEqual(FOOTER_BYTE_LENGTH + demo1.length + 2);
+      expect(footer.getRaw()).toEqual(
+        Uint8Array.of(...srcMain, 0, ...demo1, 0xff),
+      );
+    });
   });
 
   it("usePlasma", () => {

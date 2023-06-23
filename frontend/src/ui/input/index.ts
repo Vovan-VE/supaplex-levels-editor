@@ -5,4 +5,5 @@ export * from "./IntegerInput";
 export * from "./RadioGroup";
 export * from "./Range";
 export * from "./Select";
+export * from "./Textarea";
 export * from "./ValueInput";

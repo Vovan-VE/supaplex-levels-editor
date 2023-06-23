@@ -24,3 +24,5 @@ export type OnDeactivate = Event<any>;
 export type ExitApp = (ignoreDirty?: boolean) => void;
 
 export type TestInIframe = boolean;
+
+export type OnUpgradeAvailable = Event<string>;

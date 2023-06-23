@@ -11,12 +11,14 @@ import {
   pasteSelectionFx,
   SELECTION,
 } from "models/levels/tools/_selection";
+import { displayHotKey, useHotKey } from "models/ui/hotkeys";
 import {
-  displayHotKey,
-  HotKeyMask,
-  HotKeyShortcuts,
-  useHotKey,
-} from "models/ui/hotkeys";
+  HK_COPY,
+  HK_CUT,
+  HK_DEL,
+  HK_PASTE,
+  HK_REDO,
+} from "models/ui/hotkeys-defined";
 import { Button, ToolbarSeparator } from "ui/button";
 import { svgs } from "ui/icon";
 import { FindPlayerButton } from "./FindPlayerButton";
@@ -56,12 +58,6 @@ const handleHotPaste = (e: UIEvent) => {
 const noopHandler = (e: UIEvent) => {
   e.preventDefault();
 };
-
-const HK_REDO: HotKeyShortcuts = [["Y", HotKeyMask.CTRL], ["Redo"]];
-const HK_CUT: HotKeyShortcuts = [["X", HotKeyMask.CTRL], ["Cut"]];
-const HK_COPY: HotKeyShortcuts = [["C", HotKeyMask.CTRL], ["Copy"]];
-const HK_PASTE: HotKeyShortcuts = [["V", HotKeyMask.CTRL], ["Paste"]];
-const HK_DEL: HotKeyShortcuts = [["Delete"], ["Clear"]];
 
 interface Props {
   isCompact?: boolean;
@@ -138,11 +134,7 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
           <SelectionEditButton />
         </>
       )}
-      {/*<Button disabled>PNG</Button>*/}
       {isCompact || <ToolbarSeparator />}
-      {/*<Button disabled>Copy level to clipboard</Button>*/}
-      {/*<Button disabled>Paste level from clipboard</Button>*/}
-      {/*<Button disabled>Internal/System clipboard? (via textarea?)</Button>*/}
       <TestingButtons />
       {isCompact || <ToolbarSeparator />}
       <FindPlayerButton />

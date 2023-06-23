@@ -1,7 +1,15 @@
 import { useStore } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { openFile } from "backend";
-import { getDriverFormat } from "drivers";
+import { getDriverFormat, levelSupportsDemo } from "drivers";
+import {
+  exportAsImageToClipboard,
+  exportAsImageToFile,
+} from "models/levels/export-img";
+import {
+  copyLevelAsDemoLink,
+  copyLevelAsTestLink,
+} from "models/levels/export-url";
 import {
   $currentBuffer,
   $currentBufferHasOtherOpened,
@@ -17,7 +25,7 @@ import {
   importCurrentLevel,
   insertAtCurrentLevel,
 } from "models/levelsets";
-import { Button, ButtonDropdown, Toolbar } from "ui/button";
+import { Button, ButtonDropdown, TextButton, Toolbar } from "ui/button";
 import { ask } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
 import { ColorType } from "ui/types";
@@ -99,9 +107,18 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
     useStore($currentDriverName)!,
     useStore($currentDriverFormat)!,
   );
-  const { minLevelsCount = 1, maxLevelsCount = null } = format || {};
+  const {
+    minLevelsCount = 1,
+    maxLevelsCount = null,
+    demoSupport = false,
+  } = format || {};
   const levelset = useStore($currentBuffer)!;
   const level = useStore($currentLevel);
+  const hasDemo = Boolean(
+    level &&
+      ((lvl = level.level.undoQueue.current) =>
+        levelSupportsDemo(lvl) && lvl.demo != null)(),
+  );
 
   const levelsCount = levelset.levels.length;
   const levelsCountDigits = String(levelsCount).length;
@@ -225,17 +242,53 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
 
   return (
     <>
-      <Button
-        icon={<svgs.Save />}
-        iconStack={[[IconStackType.Index, <svgs.FileBlank />]]}
-        title="Export current level"
-        onClick={exportCurrentLevel}
-      />
+      <ButtonDropdown
+        triggerIcon={<svgs.Save />}
+        buttonProps={{
+          iconStack: [[IconStackType.Index, <svgs.FileBlank />]],
+          title: "Export level",
+          disabled: !level,
+        }}
+      >
+        <Toolbar isMenu>
+          <TextButton onClick={exportCurrentLevel} uiColor={ColorType.DEFAULT}>
+            Save level as File
+          </TextButton>
+          <TextButton onClick={exportAsImageToFile} uiColor={ColorType.DEFAULT}>
+            Save level/selection as Image
+          </TextButton>
+          <TextButton
+            icon={<svgs.Copy />}
+            uiColor={ColorType.DEFAULT}
+            onClick={exportAsImageToClipboard}
+          >
+            Copy level/selection as Image
+          </TextButton>
+          <TextButton
+            icon={<svgs.Copy />}
+            uiColor={ColorType.DEFAULT}
+            onClick={copyLevelAsTestLink}
+          >
+            Copy level as Test Link
+          </TextButton>
+          {demoSupport && (
+            <TextButton
+              icon={<svgs.Copy />}
+              uiColor={ColorType.DEFAULT}
+              onClick={copyLevelAsDemoLink}
+              disabled={!hasDemo}
+            >
+              Copy level as Demo Link{hasDemo || " (no demo)"}
+            </TextButton>
+          )}
+        </Toolbar>
+      </ButtonDropdown>
       <Button
         icon={<svgs.DirOpen />}
         iconStack={[[IconStackType.Index, <svgs.FileBlank />]]}
         title="Import a level from file into current level"
         onClick={handleImportLevelClick}
+        disabled={!level}
       />
       {cannotAddLevel ||
         (isCompact ? (
