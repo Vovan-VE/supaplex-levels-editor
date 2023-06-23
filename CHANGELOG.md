@@ -23,6 +23,7 @@
 ### Desktop
 
 - Add: Checking if new release available.
+- Fix: Navigating to external link not worked as expected.
 
 ## 0.13.2 (2023-06-12)
 

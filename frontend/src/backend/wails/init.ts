@@ -25,6 +25,7 @@ export const init = () => {
         for (let el: HTMLElement | null = tr; el; el = el.parentElement) {
           if (el.matches("a[href]")) {
             BrowserOpenURL(el.getAttribute("href")!);
+            e.preventDefault();
             return;
           }
         }
