@@ -24,6 +24,7 @@
 
 - Add: Checking if new release available.
 - Fix: Navigating to external link not worked as expected.
+- Fix: Windows: "New file" displays full file path in UI.
 
 ## 0.13.2 (2023-06-12)
 
