@@ -35,10 +35,10 @@ if (onUpgradeAvailable) {
     return 0;
   };
 
-  const $upgradeAvailable = createStore(APP_VERSION ?? "").on(
+  const $upgradeAvailable = createStore("").on(
     onUpgradeAvailable,
     (prev, next) => {
-      if (cmpVer(prev, next) < 0) {
+      if (cmpVer(prev || (APP_VERSION ?? ""), next) < 0) {
         return next;
       }
     },
