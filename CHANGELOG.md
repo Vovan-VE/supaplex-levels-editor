@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.14.0 (DEV)
+## 0.15.0 (DEV)
+
+- ...
+
+## 0.14.0 (2023-06-23)
 
 - Add: Demo Signature editing.
 - Add: Hotkey Shortcuts for Drawing Tools:
