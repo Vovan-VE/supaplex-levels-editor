@@ -20,3 +20,5 @@ export const testInIframe = true;
 
 export { VersionTag } from "./VersionTag";
 export { InfoDetails } from "./InfoDetails";
+
+export { onUpgradeAvailable } from "./trigger";

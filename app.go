@@ -75,7 +75,7 @@ func (a *App) domReady(ctx context.Context) {
 
 	winPl, _, err := a.appConfig.GetItem(config.AppWindowPlacement)
 	if err != nil {
-		runtime.LogErrorf(ctx, "cannot read window placement", err)
+		runtime.LogErrorf(ctx, "cannot read %s: %v", config.AppWindowPlacement, err)
 	}
 	p := config.WindowPlacementFromString(winPl)
 	if p.IsMax {
@@ -83,6 +83,56 @@ func (a *App) domReady(ctx context.Context) {
 	} else {
 		runtime.WindowSetPosition(ctx, p.X, p.Y)
 		runtime.WindowSetSize(ctx, p.W, p.H)
+	}
+
+	go a.checkUpdate()
+}
+
+func (a *App) checkUpdate() {
+	lastKnownUpdateS, _, err := a.appConfig.GetItem(config.AppLatestRelease)
+	if err != nil {
+		runtime.LogErrorf(a.ctx, "cannot read %s: %v", config.AppLatestRelease, err)
+	}
+	lastKnownUpdate := config.UpdateReleaseFromString(lastKnownUpdateS)
+
+	go func() {
+		if lastKnownUpdate != nil {
+			select {
+			case <-a.ctx.Done():
+				return
+			default:
+			}
+
+			v := lastKnownUpdate.VersionNumber()
+
+			// if triggered after front init
+			a.triggerFront(backend.FEUpgradeAvailable, v)
+
+			// if triggered before front init
+			b, err := json.Marshal(v)
+			if err != nil {
+				runtime.LogErrorf(a.ctx, "json marshal: %v", err)
+				return
+			}
+			runtime.WindowExecJS(a.ctx, "window.spleLatestVersion="+string(b)+";")
+		}
+	}()
+
+	latestRelease, err := config.UpdateReleaseFetch(a.ctx)
+	if err != nil {
+		runtime.LogErrorf(a.ctx, "check update: %v", err)
+		return
+	}
+	if latestRelease == nil {
+		return
+	}
+	if !latestRelease.IsNewer(lastKnownUpdate) {
+		return
+	}
+	// have new release
+	lastKnownUpdate = latestRelease
+	if err = a.appConfig.SetItem(config.AppLatestRelease, latestRelease.String()); err != nil {
+		runtime.LogErrorf(a.ctx, "remember latest release: %v", err)
 	}
 }
 

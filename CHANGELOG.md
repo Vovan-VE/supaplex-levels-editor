@@ -20,6 +20,10 @@
 
 - Fix: Wrong text in "close file" prompt.
 
+### Desktop
+
+- Add: Checking if new release available.
+
 ## 0.13.2 (2023-06-12)
 
 ### sple.me

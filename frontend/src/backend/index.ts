@@ -58,3 +58,7 @@ export const testInIframe: B.TestInIframe = WAILS
 
 export const VersionTag = WAILS ? wails.VersionTag : web.VersionTag;
 export const InfoDetails = WAILS ? wails.InfoDetails : web.InfoDetails;
+
+export const onUpgradeAvailable: B.OnUpgradeAvailable | undefined = WAILS
+  ? wails.onUpgradeAvailable
+  : web.onUpgradeAvailable;

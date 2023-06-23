@@ -1,7 +1,12 @@
 import { sample } from "effector";
 import { showToastError } from "models/ui/toasts";
 import { BrowserOpenURL } from "./runtime";
-import { onShowError, spleFrontError, spleFrontEvent } from "./trigger";
+import {
+  onShowError,
+  onUpgradeAvailable,
+  spleFrontError,
+  spleFrontEvent,
+} from "./trigger";
 
 export const init = () => {
   const w: any = window;
@@ -26,4 +31,8 @@ export const init = () => {
       }
     }
   });
+
+  if (typeof w.spleLatestVersion === "string") {
+    onUpgradeAvailable(w.spleLatestVersion);
+  }
 };

@@ -2,6 +2,7 @@ import { FC } from "react";
 import { InfoDetails, VersionTag } from "backend";
 import { APP_TITLE, APP_VERSION } from "configs";
 import { msgBox } from "ui/feedback";
+import { UpgradeLink } from "./UpgradeLink";
 import cl from "./InfoContent.module.scss";
 
 export const showInfoDialog = () =>
@@ -15,6 +16,7 @@ export const showInfoDialog = () =>
   });
 
 const VersionTagC = VersionTag;
+const UpgradeLinkC = UpgradeLink;
 
 const InfoContent: FC = () => (
   <div className={cl.root}>
@@ -35,6 +37,7 @@ const InfoContent: FC = () => (
             (<VersionTagC />)
           </>
         )}
+        {UpgradeLinkC && <UpgradeLinkC />}
       </span>
     </h1>
     <p>
