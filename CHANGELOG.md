@@ -2,7 +2,8 @@
 
 ## 0.15.0 (DEV)
 
-- ...
+- Fix: Produced MPX files now should work better in Megaplex. Dropped support of
+  incorrect MPX header (with spaces) when saving MPX file with 1 level.
 
 ## 0.14.0 (2023-06-23)
 

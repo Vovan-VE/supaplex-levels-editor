@@ -127,12 +127,8 @@ export const writeLevelset = (levelset: ISupaplexLevelset): ArrayBuffer => {
 
   const result = new Uint8Array(offset);
   result.set(MPX_SIGN, 0);
-  if (levelsCount === 1 && !levels[0].demo) {
-    setInt32LE(result, 4, 0x20202020);
-  } else {
-    setInt16LE(result, 4, 1);
-    setInt16LE(result, 6, levelsCount);
-  }
+  setInt16LE(result, 4, 1);
+  setInt16LE(result, 6, levelsCount);
   for (let i = 0, at = 8; i < levelsCount; i++, at += 12) {
     setInt16LE(result, at, widths[i]);
     setInt16LE(result, at + 2, heights[i]);
