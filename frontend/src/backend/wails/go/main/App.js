@@ -5,6 +5,10 @@ export function CreateFile(arg1, arg2) {
   return window["go"]["main"]["App"]["CreateFile"](arg1, arg2);
 }
 
+export function GetAppInfo() {
+  return window["go"]["main"]["App"]["GetAppInfo"]();
+}
+
 export function OpenFile(arg1) {
   return window["go"]["main"]["App"]["OpenFile"](arg1);
 }

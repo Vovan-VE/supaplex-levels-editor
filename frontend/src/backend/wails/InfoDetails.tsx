@@ -1,4 +1,16 @@
+import { createEffect, restore, sample } from "effector";
+import { createGate, useStore } from "effector-react";
 import { FC } from "react";
+import { GetAppInfo } from "./go/main/App";
+
+const fetchFx = createEffect(GetAppInfo);
+const $appInfo = restore(fetchFx.doneData, "");
+const FetchGate = createGate();
+sample({
+  source: FetchGate.open,
+  filter: $appInfo.map((s) => !s),
+  target: fetchFx,
+});
 
 export const InfoDetails: FC = () => (
   <>
@@ -22,5 +34,9 @@ export const InfoDetails: FC = () => (
       <a href="https://sple.me">sple.me</a> <strong>DOES</strong> work with
       regular files on your device, like other whatever desktop editors do.
     </p>
+
+    <h3>App Info</h3>
+    <FetchGate />
+    <pre>{useStore($appInfo)}</pre>
   </>
 );

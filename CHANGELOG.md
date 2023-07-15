@@ -5,6 +5,11 @@
 - Fix: Produced MPX files now should work better in Megaplex. Dropped support of
   incorrect MPX header (with spaces) when saving MPX file with 1 level.
 
+### Desktop
+
+- Add: Logging errors to a log file for debug purpose to simplify feedback.
+- Add: Display app directories in "Info" dialog.
+
 ## 0.14.0 (2023-06-23)
 
 - Add: Demo Signature editing.

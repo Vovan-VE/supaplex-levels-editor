@@ -4,6 +4,7 @@ import (
 	"embed"
 
 	"github.com/vovan-ve/sple-desktop/internal/backend"
+	"github.com/vovan-ve/sple-desktop/internal/logging"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -18,6 +19,8 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp()
 
+	lg := logging.GetLogger()
+
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "SpLE",
@@ -28,7 +31,9 @@ func main() {
 			Assets: assets,
 		},
 		BackgroundColour:   options.NewRGB(64, 64, 64),
-		LogLevelProduction: logger.INFO,
+		Logger:             lg,
+		LogLevel:           logger.DEBUG,
+		LogLevelProduction: logger.WARNING,
 		OnStartup:          app.startup,
 		OnDomReady:         app.domReady,
 		OnBeforeClose:      app.beforeClose,
