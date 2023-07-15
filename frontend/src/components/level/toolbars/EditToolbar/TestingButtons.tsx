@@ -43,15 +43,24 @@ export const TestingButtons: FC = () => {
   const undoQueue = useStore($currentLevelUndoQueue)!;
   const demoSupport = useStore($fileSupportsDemo);
 
-  const rawLevel = undoQueue.current;
+  const level = undoQueue.current;
   const hasDemo =
-    demoSupport && levelSupportsDemo(rawLevel) && rawLevel.demo !== null;
-  const signatureSupport = demoSupport && levelSupportSignature(rawLevel);
+    demoSupport && levelSupportsDemo(level) && level.demo !== null;
+  const signatureSupport = demoSupport && levelSupportSignature(level);
+
+  const handleTest = useCallback(
+    () => sendToTest(level, demoSupport),
+    [level, demoSupport],
+  );
+  const handleDemo = useMemo(
+    () => (demoSupport ? () => sendToDemo(level) : undefined),
+    [level, demoSupport],
+  );
 
   return (
     <>
       <TextButton
-        onClick={handleTestClick}
+        onClick={handleTest}
         icon={<MurphyRuns />}
         iconStack={demoSupport ? TEST_WITH_DEMO_STACK : undefined}
         className={CL_SVG_ANIMATE_HOVERABLE}
@@ -62,7 +71,7 @@ export const TestingButtons: FC = () => {
       {demoSupport && (
         <>
           <TextButton
-            onClick={handleDemoClick}
+            onClick={handleDemo}
             icon={<MurphyRuns />}
             iconStack={PLAY_DEMO_STACK}
             className={CL_SVG_ANIMATE_HOVERABLE}
@@ -80,24 +89,6 @@ export const TestingButtons: FC = () => {
       )}
     </>
   );
-};
-
-const packLevelToSend = async (baseUrl: string, withDemo: boolean) => {
-  let level = $currentLevelUndoQueue.getState()!.current;
-  const [valid, errors] = level.isPlayable();
-  if (!valid) {
-    return msgBox(
-      <div>
-        <p>The level is unplayable due to the following:</p>
-        <ul>
-          {errors.map((err, i) => (
-            <li key={i}>{err}</li>
-          ))}
-        </ul>
-      </div>,
-    );
-  }
-  return exportLevelAsLink(level, baseUrl, withDemo);
 };
 
 const TestFrame: FC<{ url: URL }> = ({ url }) => {
@@ -162,6 +153,7 @@ const openTestUrl = testInIframe
 type ConfirmFC = FC<PropsWithChildren<LevelConfiguratorProps<IBaseLevel>>>;
 
 const sendLevelTo = async ({
+  level,
   baseUrl,
   target,
   withDemo = false,
@@ -171,6 +163,7 @@ const sendLevelTo = async ({
   Confirm,
   onConfirmed,
 }: {
+  level: IBaseLevel;
   baseUrl: string;
   target?: string;
   withDemo?: boolean;
@@ -180,9 +173,18 @@ const sendLevelTo = async ({
   Confirm: ConfirmFC;
   onConfirmed?: () => void;
 }) => {
-  const url = await packLevelToSend(baseUrl, withDemo);
-  if (!url) {
-    return;
+  const [valid, errors] = level.isPlayable();
+  if (!valid) {
+    return msgBox(
+      <div>
+        <p>The level is unplayable due to the following:</p>
+        <ul>
+          {errors.map((err, i) => (
+            <li key={i}>{err}</li>
+          ))}
+        </ul>
+      </div>,
+    );
   }
 
   const targetOrBlank = target ?? "_blank";
@@ -207,23 +209,23 @@ const sendLevelTo = async ({
   // }
 
   // REFACT: adequate components with state
-  let level = $currentLevelUndoQueue.getState()!.current;
 
   await ask(<Confirm level={level} onChange={(l) => (level = l)} />, {
     buttons: {
       okText: `Go to ${serviceTitle} test`,
       ok: {
         uiColor: ColorType.SUCCESS,
-        onClick: (e) => {
+        onClick: async () => {
           updateCurrentLevel(level);
           onConfirmed?.();
 
+          const url = await exportLevelAsLink(level, baseUrl, withDemo);
           const driverName = $currentDriverName.getState()!;
           const { applyLocalOptions } = getDriver(driverName)!;
           applyLocalOptions?.(level, url);
 
           if (openTestUrl(url, targetOrBlank)) {
-            e.preventDefault();
+            // e.preventDefault();
           }
         },
       },
@@ -348,10 +350,9 @@ const ConfirmTestSO: ConfirmFC = ({ level, onChange }) => {
   );
 };
 
-const handleTestClick = async () => {
-  const demoSupport = $fileSupportsDemo.getState();
-
-  await sendLevelTo({
+const sendToTest = (level: IBaseLevel, demoSupport: boolean) =>
+  sendLevelTo({
+    level,
     baseUrl: TEST_LEVEL_URL,
     target: demoSupport ? "test-level" : undefined,
     // actionTitle: "Test level",
@@ -360,14 +361,14 @@ const handleTestClick = async () => {
     Confirm: ConfirmTestSO,
     onConfirmed: demoSupport ? rememberDemoTarget : undefined,
   });
-};
 
 const ConfirmPlayDemoSO: FC = () => (
   <ConfirmSO toDoWhat="To play embedded demo in level" />
 );
 
-const handleDemoClick = () =>
+const sendToDemo = (level: IBaseLevel) =>
   sendLevelTo({
+    level,
     baseUrl: TEST_DEMO_URL,
     withDemo: true,
     // actionTitle: "Play demo",
