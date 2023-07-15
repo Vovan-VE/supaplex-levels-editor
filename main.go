@@ -2,6 +2,8 @@ package main
 
 import (
 	"embed"
+	"fmt"
+	"os"
 
 	"github.com/vovan-ve/sple-desktop/internal/backend"
 	"github.com/vovan-ve/sple-desktop/internal/logging"
@@ -16,10 +18,25 @@ import (
 var assets embed.FS
 
 func main() {
+	var lg logger.Logger
+	defer func() {
+		r := recover()
+		if r == nil {
+			return
+		}
+
+		if lg != nil {
+			lg.Fatal(fmt.Sprintf("PANIC recovery: %+v\n", r))
+		} else {
+			println("PANIC recovery:", r)
+		}
+		os.Exit(1)
+	}()
+
 	// Create an instance of the app structure
 	app := NewApp()
 
-	lg := logging.GetLogger()
+	lg = logging.GetLogger()
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -40,8 +57,14 @@ func main() {
 		//OnShutdown:       app.shutdown,
 		Bind: []interface{}{
 			app,
-			&backend.ConfigStorage{F: app.configStorage},
-			&backend.FilesStorage{F: app.filesStorage},
+			&backend.ConfigStorage{
+				F:     app.configStorage,
+				Catch: app.catchPanic,
+			},
+			&backend.FilesStorage{
+				F:     app.filesStorage,
+				Catch: app.catchPanic,
+			},
 		},
 		Windows: &windows.Options{
 			IsZoomControlEnabled: false,
@@ -54,6 +77,10 @@ func main() {
 		},
 	})
 	if err != nil {
-		println("Error:", err)
+		if lg != nil {
+			lg.Error(err.Error())
+		} else {
+			println("Error:", err)
+		}
 	}
 }

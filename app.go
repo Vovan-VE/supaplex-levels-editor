@@ -188,9 +188,16 @@ func (a *App) triggerFront(event string, data any) {
 	runtime.WindowExecJS(a.ctx, "window.spleFrontEvent("+string(b)+")")
 }
 
-var _ backend.Interface = (*App)(nil)
+func (a *App) catchPanic() {
+	p := recover()
+	if p == nil {
+		return
+	}
+	runtime.LogFatalf(a.ctx, "panic: %+v", p)
+}
 
 func (a *App) CreateFile(key string, baseFileName string) (actualName string, err error) {
+	defer a.catchPanic()
 	fPath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
 		DefaultFilename: baseFileName,
 		Title:           "Create File",
@@ -212,6 +219,7 @@ func (a *App) CreateFile(key string, baseFileName string) (actualName string, er
 }
 
 func (a *App) OpenFile(multiple bool) []*backend.WebFileRef {
+	defer a.catchPanic()
 	var err error
 	defer a.showError(&err)
 
@@ -265,6 +273,7 @@ func (a *App) OpenFile(multiple bool) []*backend.WebFileRef {
 }
 
 func (a *App) SaveFileAs(blob64 helpers.Blob64, baseFileName string) {
+	defer a.catchPanic()
 	var err error
 	defer a.showError(&err)
 
@@ -285,9 +294,11 @@ func (a *App) SaveFileAs(blob64 helpers.Blob64, baseFileName string) {
 }
 
 func (a *App) SetIsDirty(isDirty bool) {
+	defer a.catchPanic()
 	a.isDirty = isDirty
 }
 
 func (a *App) GetAppInfo() string {
+	defer a.catchPanic()
 	return config.ReportInfo()
 }
