@@ -5,6 +5,7 @@
 - Add: Option to SO Test Page to override number of infotrons needed.
 - Fix: Produced MPX files now should work better in Megaplex. Dropped support of
   incorrect MPX header (with spaces) when saving MPX file with 1 level.
+- Enh: Short options to SO Test Page
 
 ### Desktop
 

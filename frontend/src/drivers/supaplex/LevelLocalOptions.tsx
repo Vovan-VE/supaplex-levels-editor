@@ -98,25 +98,36 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
   );
 };
 
-const P_PLASMA = "use-plasma";
-const P_PLASMA_LIMIT = "use-plasma-limit";
-const P_PLASMA_TIME = "use-plasma-time";
-const P_ZONKER = "use-zonkers";
-const P_SERIAL_PORTS = "use-serial-ports";
-const P_INFOTRONS_NEEDED = "use-infotrons-needed";
+// shorter parameters
+// `?use-plasma=&use-plasma-limit=20&use-plasma-time=200&use-zonkers=&use-serial-ports=#`
+// becomes:
+// `?2a=20x200&2b&ps#`
+// `use-serial-ports` can now just be `ps`
+// no `=` needed
+// `use-zonkers` is now `2b`, same as zonker hex code
+// now instead of 3 params for plasma we use
+// `2a={plasma_limit}x{plasma_time}`
+// for default values use space
+// `2a=16x`
+// this will use limit of `16` and default plasma time
+// if both params are default then `2a=x` works, but you can then omit the value
+// and just use `2a`
+// `use-infotrons-needed` is `in`
+const P_PLASMA = "2a";
+const P_ZONKER = "2b";
+const P_SERIAL_PORTS = "ps";
+const P_INFOTRONS_NEEDED = "in";
 export const applyLocalOptions = <L extends ISupaplexLevel>(
   level: L,
   url: URL,
 ) => {
   const p = url.searchParams;
   if (level.usePlasma) {
-    p.set(P_PLASMA, "");
-    if (level.usePlasmaLimit !== undefined) {
-      p.set(P_PLASMA_LIMIT, String(level.usePlasmaLimit));
-    }
-    if (level.usePlasmaTime !== undefined) {
-      p.set(P_PLASMA_TIME, String(level.usePlasmaTime));
-    }
+    const limit =
+      level.usePlasmaLimit !== undefined ? String(level.usePlasmaLimit) : "";
+    const time =
+      level.usePlasmaTime !== undefined ? String(level.usePlasmaTime) : "";
+    p.set(P_PLASMA, limit || time ? `${limit}x${time}` : "");
   }
   if (level.useZonker) {
     p.set(P_ZONKER, "");
