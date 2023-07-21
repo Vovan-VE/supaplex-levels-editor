@@ -97,6 +97,7 @@ class LevelFooter implements ILevelFooter {
   #usePlasmaTime: number | undefined;
   #useZonker = false;
   #useSerialPorts = false;
+  #useInfotronsNeeded: number | undefined;
 
   constructor(width: number, data?: Uint8Array) {
     this.#width = width;
@@ -160,6 +161,7 @@ class LevelFooter implements ILevelFooter {
     copy.#usePlasmaTime = this.#usePlasmaTime;
     copy.#useZonker = this.#useZonker;
     copy.#useSerialPorts = this.#useSerialPorts;
+    copy.#useInfotronsNeeded = this.#useInfotronsNeeded;
     return copy;
   }
 
@@ -548,6 +550,18 @@ class LevelFooter implements ILevelFooter {
     }
     const next = this.copy();
     next.#useSerialPorts = on;
+    return next;
+  }
+
+  get useInfotronsNeeded() {
+    return this.#useInfotronsNeeded;
+  }
+  setUseInfotronsNeeded(n: number | undefined): this {
+    if (n === this.#useInfotronsNeeded) {
+      return this;
+    }
+    const next = this.copy();
+    next.#useInfotronsNeeded = n;
     return next;
   }
 }

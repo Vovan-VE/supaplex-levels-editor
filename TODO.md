@@ -35,6 +35,7 @@
   this will use limit of `16` and default plasma time
   if both params are default then `2a=x` works, but you can then omit the value
   and just use `2a`
+  `use-infotrons-needed` is `in`
 
 ### Desktop
 

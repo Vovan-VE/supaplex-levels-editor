@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { Checkbox, IntegerInput } from "ui/input";
 import { LevelConfiguratorProps } from "../types";
 import { InlineTile } from "./InlineTile";
-import { TILE_HW_LAMP_R, TILE_HW_STRIPES } from "./tiles-id";
+import { TILE_HW_LAMP_R, TILE_HW_STRIPES, TILE_INFOTRON } from "./tiles-id";
 import { ISupaplexLevel } from "./types";
 import cl from "./LevelLocalOptions.module.scss";
 
@@ -16,6 +16,7 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
     usePlasmaTime,
     useZonker,
     useSerialPorts,
+    useInfotronsNeeded,
   } = level;
 
   const handlePlasmaChange = useCallback(
@@ -36,6 +37,10 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
   );
   const handleSerialPortsChange = useCallback(
     (checked: boolean) => onChange(level.setUseSerialPorts(checked)),
+    [level, onChange],
+  );
+  const handleInfotronsNeededChange = useCallback(
+    (v: number | null) => onChange(level.setUseInfotronsNeeded(v ?? undefined)),
     [level, onChange],
   );
 
@@ -80,6 +85,15 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
           Allow serial ports
         </Checkbox>
       </div>
+      <div className={cl.notCheckbox}>
+        Override <InlineTile tile={TILE_INFOTRON} /> Needed{" "}
+        <IntegerInput
+          value={useInfotronsNeeded ?? null}
+          onChange={handleInfotronsNeededChange}
+          className={cl.shortInt}
+        />{" "}
+        (can be &gt; <code>255</code> or exactly <code>0</code>)
+      </div>
     </>
   );
 };
@@ -89,6 +103,7 @@ const P_PLASMA_LIMIT = "use-plasma-limit";
 const P_PLASMA_TIME = "use-plasma-time";
 const P_ZONKER = "use-zonkers";
 const P_SERIAL_PORTS = "use-serial-ports";
+const P_INFOTRONS_NEEDED = "use-infotrons-needed";
 export const applyLocalOptions = <L extends ISupaplexLevel>(
   level: L,
   url: URL,
@@ -108,6 +123,9 @@ export const applyLocalOptions = <L extends ISupaplexLevel>(
   }
   if (level.useSerialPorts) {
     p.set(P_SERIAL_PORTS, "");
+  }
+  if (level.useInfotronsNeeded !== undefined) {
+    p.set(P_INFOTRONS_NEEDED, String(level.useInfotronsNeeded));
   }
   return url;
 };
