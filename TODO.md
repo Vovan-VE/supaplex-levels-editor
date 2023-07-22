@@ -45,13 +45,3 @@
 ### Desktop
 
 - Dir tree
-
--------------------
-
-Wails 2.5.1
-A user of my app sent me a log of "random crash" from Win10.
-
-A similar crash report and this solution didn't help: https://github.com/wailsapp/wails/issues/2575#issuecomment-1515637289
-> Thank you very much, this problem was solved, after I turned off some security software, it was working fine
-
-User disabled Kaspersky, but my app still crashes.
