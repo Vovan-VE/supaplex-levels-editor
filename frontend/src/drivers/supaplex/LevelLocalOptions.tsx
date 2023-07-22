@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { Checkbox, IntegerInput } from "ui/input";
 import { LevelConfiguratorProps } from "../types";
 import { InlineTile } from "./InlineTile";
-import { TILE_HW_LAMP_R, TILE_HW_STRIPES } from "./tiles-id";
+import { TILE_HW_LAMP_R, TILE_HW_STRIPES, TILE_INFOTRON } from "./tiles-id";
 import { ISupaplexLevel } from "./types";
 import cl from "./LevelLocalOptions.module.scss";
 
@@ -16,6 +16,7 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
     usePlasmaTime,
     useZonker,
     useSerialPorts,
+    useInfotronsNeeded,
   } = level;
 
   const handlePlasmaChange = useCallback(
@@ -36,6 +37,10 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
   );
   const handleSerialPortsChange = useCallback(
     (checked: boolean) => onChange(level.setUseSerialPorts(checked)),
+    [level, onChange],
+  );
+  const handleInfotronsNeededChange = useCallback(
+    (v: number | null) => onChange(level.setUseInfotronsNeeded(v ?? undefined)),
     [level, onChange],
   );
 
@@ -80,34 +85,58 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
           Allow serial ports
         </Checkbox>
       </div>
+      <div className={cl.notCheckbox}>
+        Override <InlineTile tile={TILE_INFOTRON} /> Needed{" "}
+        <IntegerInput
+          value={useInfotronsNeeded ?? null}
+          onChange={handleInfotronsNeededChange}
+          className={cl.shortInt}
+        />{" "}
+        (can be &gt; <code>255</code> or exactly <code>0</code>)
+      </div>
     </>
   );
 };
 
-const P_PLASMA = "use-plasma";
-const P_PLASMA_LIMIT = "use-plasma-limit";
-const P_PLASMA_TIME = "use-plasma-time";
-const P_ZONKER = "use-zonkers";
-const P_SERIAL_PORTS = "use-serial-ports";
+// shorter parameters
+// `?use-plasma=&use-plasma-limit=20&use-plasma-time=200&use-zonkers=&use-serial-ports=#`
+// becomes:
+// `?2a=20x200&2b&ps#`
+// `use-serial-ports` can now just be `ps`
+// no `=` needed
+// `use-zonkers` is now `2b`, same as zonker hex code
+// now instead of 3 params for plasma we use
+// `2a={plasma_limit}x{plasma_time}`
+// for default values use space
+// `2a=16x`
+// this will use limit of `16` and default plasma time
+// if both params are default then `2a=x` works, but you can then omit the value
+// and just use `2a`
+// `use-infotrons-needed` is `in`
+const P_PLASMA = "2a";
+const P_ZONKER = "2b";
+const P_SERIAL_PORTS = "ps";
+const P_INFOTRONS_NEEDED = "in";
 export const applyLocalOptions = <L extends ISupaplexLevel>(
   level: L,
   url: URL,
 ) => {
   const p = url.searchParams;
   if (level.usePlasma) {
-    p.set(P_PLASMA, "");
-    if (level.usePlasmaLimit !== undefined) {
-      p.set(P_PLASMA_LIMIT, String(level.usePlasmaLimit));
-    }
-    if (level.usePlasmaTime !== undefined) {
-      p.set(P_PLASMA_TIME, String(level.usePlasmaTime));
-    }
+    const limit =
+      level.usePlasmaLimit !== undefined ? String(level.usePlasmaLimit) : "";
+    const time =
+      level.usePlasmaTime !== undefined ? String(level.usePlasmaTime) : "";
+    p.set(P_PLASMA, limit || time ? `${limit}x${time}` : "");
   }
   if (level.useZonker) {
     p.set(P_ZONKER, "");
   }
   if (level.useSerialPorts) {
     p.set(P_SERIAL_PORTS, "");
+  }
+  if (level.useInfotronsNeeded !== undefined) {
+    p.set(P_INFOTRONS_NEEDED, String(level.useInfotronsNeeded));
   }
   return url;
 };

@@ -568,6 +568,7 @@ describe("level", () => {
         [LocalOpt.UsePlasmaTime]: undefined,
         [LocalOpt.UseZonker]: 0,
         [LocalOpt.UseSerialPorts]: "",
+        [LocalOpt.UseInfotronsNeeded]: undefined,
       }),
     ).toBe(level);
 
@@ -606,24 +607,34 @@ describe("level", () => {
       [LocalOpt.UseSerialPorts]: 1,
     });
 
+    const inf = level.setLocalOptions({ [LocalOpt.UseInfotronsNeeded]: 257 });
+    expect(inf.useInfotronsNeeded).toBe(257);
+    expect(inf.localOptions).toEqual({ [LocalOpt.UseInfotronsNeeded]: 257 });
+    expect(level.setUseInfotronsNeeded(257).localOptions).toEqual({
+      [LocalOpt.UseInfotronsNeeded]: 257,
+    });
+
     const all = level.setLocalOptions({
       [LocalOpt.UsePlasma]: true,
       [LocalOpt.UsePlasmaLimit]: 42,
       [LocalOpt.UsePlasmaTime]: 37,
       [LocalOpt.UseZonker]: 91,
       [LocalOpt.UseSerialPorts]: "lol",
+      [LocalOpt.UseInfotronsNeeded]: 257,
     });
     expect(all.usePlasma).toBe(true);
     expect(all.usePlasmaLimit).toBe(42);
     expect(all.usePlasmaTime).toBe(37);
     expect(all.useZonker).toBe(true);
     expect(all.useSerialPorts).toBe(true);
+    expect(all.useInfotronsNeeded).toBe(257);
     expect(all.localOptions).toEqual({
       [LocalOpt.UsePlasma]: 1,
       [LocalOpt.UsePlasmaLimit]: 42,
       [LocalOpt.UsePlasmaTime]: 37,
       [LocalOpt.UseZonker]: 1,
       [LocalOpt.UseSerialPorts]: 1,
+      [LocalOpt.UseInfotronsNeeded]: 257,
     });
   });
 });

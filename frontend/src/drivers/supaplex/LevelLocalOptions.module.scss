@@ -3,6 +3,9 @@
 .nested {
   margin: 5px 50px 10px;
 }
+.notCheckbox {
+  margin: 0.5rem 2.25rem;
+}
 .shortInt {
   display: inline-block;
   width: calc(#{i.$all-extras-x} + 7ch);

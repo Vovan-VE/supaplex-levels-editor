@@ -419,6 +419,9 @@ class SupaplexLevel implements ISupaplexLevel {
     if (this.useSerialPorts) {
       o[LocalOpt.UseSerialPorts] = 1;
     }
+    if (this.useInfotronsNeeded !== undefined) {
+      o[LocalOpt.UseInfotronsNeeded] = this.useInfotronsNeeded;
+    }
     if (isEmptyObject(o)) {
       return undefined;
     }
@@ -435,7 +438,8 @@ class SupaplexLevel implements ISupaplexLevel {
         .setUsePlasmaLimit(toInt(opt[LocalOpt.UsePlasmaLimit]))
         .setUsePlasmaTime(toInt(opt[LocalOpt.UsePlasmaTime]))
         .setUseZonker(Boolean(opt[LocalOpt.UseZonker]))
-        .setUseSerialPorts(Boolean(opt[LocalOpt.UseSerialPorts])),
+        .setUseSerialPorts(Boolean(opt[LocalOpt.UseSerialPorts]))
+        .setUseInfotronsNeeded(toInt(opt[LocalOpt.UseInfotronsNeeded])),
     );
   }
 
@@ -472,5 +476,12 @@ class SupaplexLevel implements ISupaplexLevel {
   }
   setUseSerialPorts(on: boolean): this {
     return this.#withFooter(this.#footer.setUseSerialPorts(on));
+  }
+
+  get useInfotronsNeeded() {
+    return this.#footer.useInfotronsNeeded;
+  }
+  setUseInfotronsNeeded(n: number | undefined): this {
+    return this.#withFooter(this.#footer.setUseInfotronsNeeded(n));
   }
 }

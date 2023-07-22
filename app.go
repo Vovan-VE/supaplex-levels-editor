@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/adrg/xdg"
 	"github.com/pkg/errors"
 	"github.com/vovan-ve/sple-desktop/internal/backend"
 	"github.com/vovan-ve/sple-desktop/internal/config"
@@ -37,9 +36,9 @@ func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
 
-	configDir := filepath.Join(xdg.ConfigHome, "sple")
-	if err := config.EnsureConfigDir(configDir); err != nil {
-		runtime.LogErrorf(ctx, "config dir: %v", err)
+	configDir := config.GetConfigsDir()
+	if err := config.EnsureDir(configDir, "config dir"); err != nil {
+		runtime.LogErrorf(ctx, "%v", err)
 		return
 	}
 
@@ -189,9 +188,16 @@ func (a *App) triggerFront(event string, data any) {
 	runtime.WindowExecJS(a.ctx, "window.spleFrontEvent("+string(b)+")")
 }
 
-var _ backend.Interface = (*App)(nil)
+func (a *App) catchPanic() {
+	p := recover()
+	if p == nil {
+		return
+	}
+	runtime.LogFatalf(a.ctx, "panic: %+v", p)
+}
 
 func (a *App) CreateFile(key string, baseFileName string) (actualName string, err error) {
+	defer a.catchPanic()
 	fPath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
 		DefaultFilename: baseFileName,
 		Title:           "Create File",
@@ -213,6 +219,7 @@ func (a *App) CreateFile(key string, baseFileName string) (actualName string, er
 }
 
 func (a *App) OpenFile(multiple bool) []*backend.WebFileRef {
+	defer a.catchPanic()
 	var err error
 	defer a.showError(&err)
 
@@ -266,6 +273,7 @@ func (a *App) OpenFile(multiple bool) []*backend.WebFileRef {
 }
 
 func (a *App) SaveFileAs(blob64 helpers.Blob64, baseFileName string) {
+	defer a.catchPanic()
 	var err error
 	defer a.showError(&err)
 
@@ -274,17 +282,23 @@ func (a *App) SaveFileAs(blob64 helpers.Blob64, baseFileName string) {
 		return
 	}
 
-	filepath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+	path, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
 		DefaultFilename: baseFileName,
 		Title:           "Save As",
 	})
-	if err != nil || filepath == "" {
+	if err != nil || path == "" {
 		return
 	}
-	err = files.NewFile(filepath).Write(b)
+	err = files.NewFile(path).Write(b)
 	return
 }
 
 func (a *App) SetIsDirty(isDirty bool) {
+	defer a.catchPanic()
 	a.isDirty = isDirty
+}
+
+func (a *App) GetAppInfo() string {
+	defer a.catchPanic()
+	return config.ReportInfo()
 }

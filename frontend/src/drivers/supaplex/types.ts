@@ -43,11 +43,13 @@ export interface ISupaplexLevel extends IBaseLevel, IWithDemo, IWithSignature {
   readonly usePlasmaTime: number | undefined;
   readonly useZonker: boolean;
   readonly useSerialPorts: boolean;
+  readonly useInfotronsNeeded: number | undefined;
   setUsePlasma(on: boolean): this;
   setUsePlasmaLimit(n: number | undefined): this;
   setUsePlasmaTime(n: number | undefined): this;
   setUseZonker(on: boolean): this;
   setUseSerialPorts(on: boolean): this;
+  setUseInfotronsNeeded(n: number | undefined): this;
 }
 
 export interface ISupaplexTile extends IBaseTile<ISupaplexLevel> {}

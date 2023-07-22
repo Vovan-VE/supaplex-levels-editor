@@ -12,17 +12,33 @@ import {
   SPEC_PORT_MAX_COUNT,
 } from "./internal";
 
-const GRAVITY_OFFSET = 4;
-const TITLE_OFFSET = GRAVITY_OFFSET + 2;
-const FREEZE_ZONKS_OFFSET = TITLE_OFFSET + TITLE_LENGTH;
-const INFOTRONS_NEED_OFFSET = FREEZE_ZONKS_OFFSET + 1;
-const SPEC_PORT_COUNT_OFFSET = INFOTRONS_NEED_OFFSET + 1;
-const SPEC_PORT_DB_OFFSET = SPEC_PORT_COUNT_OFFSET + 1;
+//      |    |  0  1  2  3   4  5  6  7   8  9  A  B   C  D  E  F |
+// -----|----|----------------------------------------------------|------------------
+// 05A0 | 00 | .. .. .. ..  GG .. TT TT  TT TT TT TT  TT TT TT TT | ....G.LEVEL_TITL
+// 05B0 | 10 | TT TT TT TT  TT TT TT TT  TT TT TT TT  TT FZ IN SC | E_LEVEL_TITLEzic
+// 05C0 | 20 | OH OL GG FZ  FE .. OH OL  GG FZ FE ..  OH OL GG FZ | hlgze.hlgze.hlgz
+// 05D0 | 30 | FE .. OH OL  GG FZ FE ..  OH OL GG FZ  FE .. OH OL | e.hlgze.hlgze.hl
+// 05E0 | 40 | GG FZ FE ..  OH OL GG FZ  FE .. OH OL  GG FZ FE .. | gze.hlgze.hlgze.
+// 05F0 | 50 | OH OL GG FZ  FE .. OH OL  GG FZ FE ..  SA SB SL SH | hlgze.hlgze.ABLH
+//
+//        00                GG    TT
+//        10                 |     |                     FZ IN SC
+//        20   SD            |     |         .------------'  |  |
+//        30    |            |     |         |  .------------'  |
+//        40    '------------|-----|-----.   |  |  .------------'
+//        50                 |     |     |   |  |  |  SA SB SL SH
+const GRAVITY_OFFSET = 4; //-'     |     |   |  |  |   |  |  |  |
+const TITLE_OFFSET = 6; //---------'     |   |  |  |   |  |  |  |
+const FREEZE_ZONKS_OFFSET = 0x1d; //---------'  |  |   |  |  |  |
+const INFOTRONS_NEED_OFFSET = 0x1e; //----------'  |   |  |  |  |
+const SPEC_PORT_COUNT_OFFSET = 0x1f; //------------'   |  |  |  |
+const SPEC_PORT_DB_OFFSET = 0x20; //-----'             |  |  |  |
+const DEMO_SPEED_A_OFFSET = 0x5c; //-------------------'  |  |  |
+const DEMO_SPEED_B_OFFSET = 0x5d; //----------------------'  |  |
+const DEMO_RNG_SEED_LO_OFFSET = 0x5e; //---------------------'  |
+const DEMO_RNG_SEED_HI_OFFSET = 0x5f; //------------------------'
+
 const SPEC_PORT_ITEM_LENGTH = 6;
-const DEMO_SPEED_A_OFFSET = 92;
-const DEMO_SPEED_B_OFFSET = 93;
-const DEMO_RNG_SEED_LO_OFFSET = 94;
-const DEMO_RNG_SEED_HI_OFFSET = 95;
 
 const validateByte =
   process.env.NODE_ENV === "production"
@@ -81,6 +97,7 @@ class LevelFooter implements ILevelFooter {
   #usePlasmaTime: number | undefined;
   #useZonker = false;
   #useSerialPorts = false;
+  #useInfotronsNeeded: number | undefined;
 
   constructor(width: number, data?: Uint8Array) {
     this.#width = width;
@@ -144,6 +161,7 @@ class LevelFooter implements ILevelFooter {
     copy.#usePlasmaTime = this.#usePlasmaTime;
     copy.#useZonker = this.#useZonker;
     copy.#useSerialPorts = this.#useSerialPorts;
+    copy.#useInfotronsNeeded = this.#useInfotronsNeeded;
     return copy;
   }
 
@@ -532,6 +550,18 @@ class LevelFooter implements ILevelFooter {
     }
     const next = this.copy();
     next.#useSerialPorts = on;
+    return next;
+  }
+
+  get useInfotronsNeeded() {
+    return this.#useInfotronsNeeded;
+  }
+  setUseInfotronsNeeded(n: number | undefined): this {
+    if (n === this.#useInfotronsNeeded) {
+      return this;
+    }
+    const next = this.copy();
+    next.#useInfotronsNeeded = n;
     return next;
   }
 }

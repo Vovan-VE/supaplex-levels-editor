@@ -541,4 +541,17 @@ describe("footer", () => {
 
     expect(footer.useSerialPorts).toBe(false);
   });
+
+  it("useInfotronsNeeded", () => {
+    const footer = createLevelFooter(LEVEL_WIDTH);
+
+    expect(footer.useInfotronsNeeded).toBe(undefined);
+    expect(footer.setUseInfotronsNeeded(undefined)).toBe(footer);
+
+    const next = footer.setUseInfotronsNeeded(42);
+    expect(next.useInfotronsNeeded).toBe(42);
+    expect(next.setUseInfotronsNeeded(42)).toBe(next);
+
+    expect(footer.useInfotronsNeeded).toBe(undefined);
+  });
 });

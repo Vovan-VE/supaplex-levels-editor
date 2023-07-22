@@ -21,20 +21,6 @@
 - Demo path visualization
   - Impossible without gameplay simulation. Only if SO will provide a path
     actually walked.
-- shorter parameters
-  `?use-plasma=&use-plasma-limit=20&use-plasma-time=200&use-zonkers=&use-serial-ports=#`
-  becomes:
-  `?2a=20x200&2b&ps#`
-  `use-serial-ports` can now just be `ps`
-  no `=` needed
-  `use-zonkers` is now `2b`, same as zonker hex code
-  now instead of 3 params for plasma we use
-  `2a={plasma_limit}x{plasma_time}`
-  for default values use space
-  `2a=16x`
-  this will use limit of `16` and default plasma time
-  if both params are default then `2a=x` works, but you can then omit the value
-  and just use `2a`
 
 ### Desktop
 
