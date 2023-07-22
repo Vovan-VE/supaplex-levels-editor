@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.15.0 (DEV)
+## 0.15.0 (2023-07-22)
 
 - Add: Option to SO Test Page to override number of infotrons needed.
 - Fix: Produced MPX files now should work better in Megaplex. Dropped support of

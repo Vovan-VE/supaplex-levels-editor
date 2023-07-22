@@ -10,7 +10,7 @@
   "wailsjsdir": "./frontend",
   "info": {
     "companyName": "Vovan-VE",
-    "productVersion": "0.1.0",
+    "productVersion": "0.15.0",
     "copyright": "Copyright (C) 2021-2023 Vovan-VE",
     "comments": "Desktop version of https://sple.me/ (repo: https://github.com/Vovan-VE/supaplex-levels-editor) built using Wails (https://wails.io)"
   },
