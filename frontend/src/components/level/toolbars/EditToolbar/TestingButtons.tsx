@@ -124,7 +124,8 @@ const TestFrame: FC<{ url: URL }> = ({ url }) => {
       // ref={ref}
       title="Testing Level"
       className={cl.soArea}
-      allow={`autoplay 'self' ${url.origin}; fullscreen 'self' ${url.origin}`}
+      // allow={`autoplay 'self' ${url.origin}; fullscreen 'self' ${url.origin}`}
+      allow="autoplay *; fullscreen *"
     />
   );
 };
