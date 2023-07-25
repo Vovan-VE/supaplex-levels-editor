@@ -88,13 +88,15 @@ func (a *App) domReady(ctx context.Context) {
 }
 
 func (a *App) checkUpdate() {
+	defer a.catchPanic()
+
 	lastKnownUpdateS, _, err := a.appConfig.GetItem(config.AppLatestRelease)
 	if err != nil {
 		runtime.LogErrorf(a.ctx, "cannot read %s: %v", config.AppLatestRelease, err)
 	}
 	lastKnownUpdate := config.UpdateReleaseFromString(lastKnownUpdateS)
 
-	go func() {
+	defer func() {
 		if lastKnownUpdate != nil {
 			select {
 			case <-a.ctx.Done():
