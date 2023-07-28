@@ -40,14 +40,14 @@
     "@cubux/types": "^1.0.0",
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/sortable": "^7.0.2",
-    "@popperjs/core": "^2.11.7",
-    "@testing-library/jest-dom": "^5.16.4",
+    "@popperjs/core": "^2.11.8",
+    "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@types/file-saver": "^2.0.5",
     "@types/jest": "^27.5.2",
-    "@types/node": "^18.16.13",
-    "@types/react": "^18.2.6",
-    "@types/react-dom": "^18.2.4",
+    "@types/node": "^18.17.1",
+    "@types/react": "^18.2.17",
+    "@types/react-dom": "^18.2.7",
     "classnames": "^2.3.1",
     "cross-env": "^7.0.3",
     "effector": "^22.8.6",
@@ -60,14 +60,14 @@
     "react-popper": "^2.3.0",
     "react-range": "^1.8.14",
     "react-scripts": "^5.0.1",
-    "react-select": "^5.7.3",
-    "sass": "^1.62.1",
+    "react-select": "^5.7.4",
+    "sass": "^1.64.1",
     "typescript": "~4.9"
   },
   "devDependencies": {
     "husky": "^8.0.3",
-    "lint-staged": "^13.2.2",
-    "prettier": "2.8.8",
+    "lint-staged": "^13.2.3",
+    "prettier": "3.0.0",
     "source-map-explorer": "^2.5.3"
   },
   "engines": {
@@ -102,6 +102,5 @@
     ]
   },
   "prettier": {
-    "trailingComma": "all"
   }
 }
