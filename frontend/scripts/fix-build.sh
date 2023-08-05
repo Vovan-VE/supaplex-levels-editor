@@ -86,7 +86,7 @@ function _replaceInJs() {
   local FILE="$1"
 
   local CONTENT
-  read -r -d '' CONTENT < "$FILE"
+  IFS='' read -r -d '' CONTENT < "$FILE"
   # `read` returns 1 on EOF
   # redirection returns 1 on read error
   if [ -z "$CONTENT" ]; then

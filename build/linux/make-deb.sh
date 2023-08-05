@@ -58,10 +58,10 @@ function _cleanup_exit() {
 
 function _tpl_replace() {
   local CONTENT
-  read -rs -d '' CONTENT
+  IFS='' read -rs -d '' CONTENT
   CONTENT="${CONTENT//'{{ARCH}}'/"$ARCH"}"
   CONTENT="${CONTENT//'{{VERSION}}'/"$VERSION"}"
-  echo "$CONTENT"
+  echo -n "$CONTENT"
   return 0
 }
 
