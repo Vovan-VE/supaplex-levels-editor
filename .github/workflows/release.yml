@@ -159,7 +159,11 @@ jobs:
           prerelease: false
           automatic_release_tag: "v${{ needs.build_front.outputs.version }}"
           title: "v${{ needs.build_front.outputs.version }}"
-          files: ./release-files/*
+          files: |
+            ./release-files/*.exe
+            ./release-files/*.deb
+            ./release-files/*.zip
+            ./release-files/*.txt
 
   deploy_web:
     name: Deploy web with GitHub Pages
