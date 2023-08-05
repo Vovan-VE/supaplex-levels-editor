@@ -92,13 +92,27 @@ that.
 - To run SpLE in live development mode:
   - Desktop: run `wails dev` in the project directory.
   - Web: run `npm start` in `./frontend` subdirectory.
-- To build SpLE:
-  - Desktop: run `make linux` and/or `make win` in the project directory. This
-    will build binaries in `./build/bin/` directory. Notice environment
-    variables `DEBUG`, `FILE_VER` and `SKIP_FRONT` in root `Makefile`.
-  - Web: run `make -C frontend web` in project root (or `make web` in
-    `./frontend` subdirectory which is the same). This will build static web in
-    `./frontend/build` directory.
+- To build Desktop SpLE run `make` in the project directory with one of
+  following targets:
+  - `make` or `make all`: This will build all possible binaries under you OS.
+  - `make linux`, `make windows` or `make darwin`: This will try to build
+    binaries for the given OS. Not every cross-OS build is possible.
+
+  That will build binaries and packages in `./build/bin/` directory. Notice the
+  following variables in root `Makefile`:
+  - `SKIP_FRONT` if `./frontend/build-wails` was pre-built;
+  - `SKIP_DEBUG` to skip debug binaries;
+  - `SKIP_ZIP` to skip making zip;
+  - `SKIP_PKG` to skip making packages/installers;
+  - `SKIP_PKG_NSIS` to skip windows NSIS installer;
+  - `SKIP_PKG_DEB` to skip Debian DEB package.
+
+  For example `make SKIP_DEBUG=1 SKIP_ZIP=1 SKIP_PKG=1`.
+
+  Don't use `DEBUG` variable, since it's internal.
+- To build web SpLE run `make -C frontend web` in project root (or `make web` in
+  `./frontend` subdirectory which is the same). This will build static web in
+  `./frontend/build` directory.
 
 See also [frontend/README.md](./frontend/README.md).
 
