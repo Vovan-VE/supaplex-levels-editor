@@ -64,7 +64,7 @@ VIAddVersionKey "ProductName"     "${INFO_PRODUCTNAME}"
 #!finalize 'signtool --file "%1"'
 
 Name "${INFO_PRODUCTNAME}"
-OutFile "..\..\bin\${OUTPUT_FILENAME}" # Name of the installer's file.
+OutFile "${OUTPUT_FILENAME}" # Name of the installer's file.
 InstallDir "$PROGRAMFILES64\${INFO_COMPANYNAME}\${INFO_PRODUCTNAME}" # Default installing folder ($PROGRAMFILES is Program Files folder).
 ShowInstDetails show # This will always show the installation details.
 

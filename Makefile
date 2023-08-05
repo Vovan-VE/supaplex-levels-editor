@@ -159,18 +159,25 @@ $(BIN_PLATFORMS): $(BIN_DIR)/%:
 	$(WAILS) build $(BUILD_ARGS) \
 	  -platform $* \
 	  -o $(call INNER_BIN_NAME,$*)
-	$(if $(SKIP_ZIP),,zip --junk-paths $(call RESULT_BIN_NAME_ZIP,$*) $(BIN_DIR)/$(call INNER_BIN_NAME,$*))
+ifeq (,$(SKIP_ZIP))
+	zip --junk-paths $(call RESULT_BIN_NAME_ZIP,$*) $(BIN_DIR)/$(call INNER_BIN_NAME,$*)
+endif
 
 # ----------------------------------------------------------
 
 # build/bin/<OS>/<ARCH>/-pkg
 ifeq (,$(SKIP_PKG_NSIS))
 $(BIN_DIR)/windows/%/$(TAG_PKG): win-wv2
-	$(NSIS) -DARG_WAILS_$(ARCH_UC_$*)_BINARY=../../../$(BIN_DIR)/$(call INNER_BIN_NAME,windows/$*) \
-	        $(if $(SKIP_DEBUG),,-DARG_WAILS_$(ARCH_UC_$*)_BINARY_DEBUG=../../../$(BIN_DIR)/$(call INNER_BIN_NAME_3,windows,$*,debug)) \
-	        -DOUTPUT_FILENAME=../../$(call RESULT_BIN_NAME_WINDOWS_PKG,$*) \
-	        $(if $(VERSION),-DINFO_PRODUCTVERSION=$(VERSION)) \
-	        build/windows/installer/sple.nsi
+	$(NSIS) \
+	  -DARG_WAILS_$(ARCH_UC_$*)_BINARY=../../../$(BIN_DIR)/$(call INNER_BIN_NAME,windows/$*) \
+	  $(if $(SKIP_DEBUG),,\
+	    -DARG_WAILS_$(ARCH_UC_$*)_BINARY_DEBUG=../../../$(BIN_DIR)/$(call INNER_BIN_NAME_3,windows,$*,debug)\
+	  ) \
+	  -DOUTPUT_FILENAME=../../../$(call RESULT_BIN_NAME_WINDOWS_PKG,$*) \
+	  $(if $(VERSION),\
+	    -DINFO_PRODUCTVERSION=$(VERSION)\
+	  ) \
+	  build/windows/installer/sple.nsi
 else
 $(BIN_DIR)/windows/%/$(TAG_PKG):
 	echo NSIS skipped
@@ -181,7 +188,9 @@ ifeq (,$(SKIP_PKG_DEB))
 	ARCH='$*' \
 	  VERSION='$(VERSION)' \
 	  BIN_FILE='$(BIN_DIR)/$(call INNER_BIN_NAME,linux/$*)' \
-	  $(if $(SKIP_DEBUG),,BIN_FILE_DEBUG='$(BIN_DIR)/$(call INNER_BIN_NAME_3,linux,$*,debug)') \
+	  $(if $(SKIP_DEBUG),,\
+	    BIN_FILE_DEBUG='$(BIN_DIR)/$(call INNER_BIN_NAME_3,linux,$*,debug)'\
+	  ) \
 	  DEB_TPL_DIR=build/linux/deb \
 	  OUT_FILE=$(call RESULT_BIN_NAME_LINUX_DEB,$*) \
 	  build/linux/make-deb.sh
