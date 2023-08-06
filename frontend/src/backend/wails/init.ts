@@ -1,17 +1,17 @@
 import { sample } from "effector";
 import { showToastError } from "models/ui/toasts";
-import { BrowserOpenURL } from "./runtime";
+import { BrowserOpenURL, EventsOn } from "./runtime";
 import {
+  frontEventsHandlers,
   onShowError,
   onUpgradeAvailable,
-  spleFrontError,
-  spleFrontEvent,
 } from "./trigger";
 
 export const init = () => {
   const w: any = window;
-  w.spleFrontError = spleFrontError;
-  w.spleFrontEvent = spleFrontEvent;
+  for (const [name, handler] of Object.entries(frontEventsHandlers)) {
+    EventsOn(name, handler);
+  }
 
   sample({
     source: onShowError,

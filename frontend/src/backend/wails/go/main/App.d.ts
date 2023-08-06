@@ -5,7 +5,9 @@ export function CreateFile(arg1: string, arg2: string): Promise<string>;
 
 export function GetAppInfo(): Promise<string>;
 
-export function OpenFile(arg1: boolean): Promise<Array<files.WebFileRef>>;
+export function OpenFile(
+  arg1: boolean,
+): Promise<Array<files.WebFileRef> | null>;
 
 export function SaveFileAs(arg1: string, arg2: string): Promise<void>;
 

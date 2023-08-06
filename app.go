@@ -178,16 +178,7 @@ func (a *App) showError(pErr *error) {
 }
 
 func (a *App) triggerFront(event string, data any) {
-	b, err := json.Marshal(&backend.FrontEvent{
-		Type: event,
-		Data: data,
-	})
-	if err != nil {
-		runtime.LogErrorf(a.ctx, "triggerFront: marshal: %v", err)
-		runtime.WindowExecJS(a.ctx, "window.spleFrontError()")
-		return
-	}
-	runtime.WindowExecJS(a.ctx, "window.spleFrontEvent("+string(b)+")")
+	runtime.EventsEmit(a.ctx, event, data)
 }
 
 func (a *App) catchPanic() {
