@@ -266,7 +266,6 @@ const Result = memo<{
     first: A,
     second: B,
     driverName,
-    result,
     result: { firstAt: aAt, secondAt: bAt, area },
     zoom,
     ignoreFancy,
@@ -463,7 +462,6 @@ const Result = memo<{
             />
           </div>
         </div>
-        <pre>{JSON.stringify(result, null, 2)}</pre>
       </div>
     );
   },
