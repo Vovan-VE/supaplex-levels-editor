@@ -104,7 +104,7 @@ jobs:
 
       - name: Install Wails
         run: |
-          go install github.com/wailsapp/wails/v2/cmd/wails@latest
+          go install github.com/wailsapp/wails/v2/cmd/wails@v2.6.0
           wails doctor
 
       - name: Build
