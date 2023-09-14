@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/vovan-ve/sple-desktop/internal/backend"
+	"github.com/vovan-ve/sple-desktop/internal/config"
 	"github.com/vovan-ve/sple-desktop/internal/logging"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -69,6 +70,7 @@ func main() {
 		Windows: &windows.Options{
 			IsZoomControlEnabled: false,
 			Theme:                windows.Dark,
+			WebviewUserDataPath:  config.GetConfigsDir(),
 		},
 		//Linux: &linux.Options{},
 		//Mac: &mac.Options{},

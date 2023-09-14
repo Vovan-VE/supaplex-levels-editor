@@ -3,7 +3,11 @@
 ## 0.16.0 (DEV)
 
 - Add: Compare levels tool.
+
+### Desktop
+
 - Add: Installer for Windows, DEB package for Debian.
+- Fix: Windows: Stable path for WebView data.
 
 ## 0.15.0 (2023-07-22)
 
