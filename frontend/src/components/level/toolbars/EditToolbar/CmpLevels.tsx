@@ -44,18 +44,15 @@ import { rectDiff, RectDiffResult } from "utils/rect-diff/rectDiff";
 import cl from "./CmpLevels.module.scss";
 
 export const CmpLevelsButton: FC = () => (
-  <>
-    <Button
-      icon={<svgs.Cmp />}
-      uiColor={useStore($cmpLevelHasFirst) ? ColorType.SUCCESS : undefined}
-      title={useStore($cmpLevelFirstTitle)}
-      onClick={cmpLevelToggle}
-    />
-    <CmpLevelsDialog />
-  </>
+  <Button
+    icon={<svgs.Cmp />}
+    uiColor={useStore($cmpLevelHasFirst) ? ColorType.SUCCESS : undefined}
+    title={useStore($cmpLevelFirstTitle)}
+    onClick={cmpLevelToggle}
+  />
 );
 
-const CmpLevelsDialog: FC = () => (
+export const CmpLevelsDialog: FC = () => (
   <Dialog
     open={useStore($hasCmpLevelsRefs)}
     onClose={closeCmpLevels}
