@@ -28,6 +28,7 @@ Unicode true
 ## !define REQUEST_EXECUTION_LEVEL "admin"            # Default "admin"  see also https://nsis.sourceforge.io/Docs/Chapter4.html
 ####
 !define PRODUCT_EXECUTABLE "sple.exe"
+!define PRODUCT_EXECUTABLE_DEBUG "sple-debug.exe"
 !include "sple_inc.nsh"
 
 # The version information for this two must consist of 4 parts
