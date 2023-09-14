@@ -166,6 +166,9 @@ export interface IBaseTile<L extends IBaseLevel> {
   // TODO: limits like spec ports counts and coords<=>offset, Murphy presence
   //   and like notices for infotrons % 256 in case of 'all'
 }
+export type BorderTiles = ReadonlySet<number>;
+// fancy => canonical
+export type FancyTiles = ReadonlyMap<number, number>;
 
 export const enum SupportReportType {
   ERR = 0,
@@ -211,12 +214,21 @@ export interface LevelConfiguratorProps<L extends IBaseLevel> {
   onChange: (level: L) => void;
 }
 
+export type DiffItemValue = null | boolean | number | string | ReactElement;
+export interface DiffItem {
+  label: ReactNode;
+  a?: DiffItemValue;
+  b?: DiffItemValue;
+}
+
 export interface IBaseDriver<
   L extends IBaseLevel = IBaseLevel,
   S extends IBaseLevelset<L> = IBaseLevelset<L>,
 > {
   title: string;
   tiles: readonly IBaseTile<L>[];
+  fancyTiles?: FancyTiles;
+  borderTiles?: BorderTiles;
   TileRender: FC<TileRenderProps>;
   LevelConfigurator?: FC<LevelConfiguratorProps<L>>;
   LevelLocalOptions?: FC<LevelConfiguratorProps<L>>;
@@ -230,4 +242,5 @@ export interface IBaseDriver<
   defaultFormat?: string;
   detectExportFormat: (level: L) => string;
   tempLevelFromRegion: (region: ILevelRegion) => L;
+  cmpLevels?: (a: L, b: L) => DiffItem[];
 }

@@ -7,7 +7,6 @@
 - WpColEd porting:
   - Import single level:
     - with real clipboard as test/demo url;
-- Compare levels.
 - End User Manual.
   - Find or create jekyll template.
 - Tools:
@@ -21,6 +20,10 @@
 - Demo path visualization
   - Impossible without gameplay simulation. Only if SO will provide a path
     actually walked.
+- Tooltips with interactive content support.
+- Demo handmade
+  - demo to text
+  - text to demo
 
 ### Desktop
 

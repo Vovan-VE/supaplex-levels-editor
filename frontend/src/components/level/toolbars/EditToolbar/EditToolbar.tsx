@@ -21,6 +21,7 @@ import {
 } from "models/ui/hotkeys-defined";
 import { Button, ToolbarSeparator } from "ui/button";
 import { svgs } from "ui/icon";
+import { CmpLevelsButton } from "./CmpLevels";
 import { FindPlayerButton } from "./FindPlayerButton";
 import { SelectionEditButton } from "./SelectionEditButton";
 import { StatsButton } from "./StatsButton";
@@ -139,6 +140,7 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
       {isCompact || <ToolbarSeparator />}
       <FindPlayerButton />
       <StatsButton />
+      <CmpLevelsButton />
     </>
   );
 };

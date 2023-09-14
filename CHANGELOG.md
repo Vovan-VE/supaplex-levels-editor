@@ -2,6 +2,7 @@
 
 ## 0.16.0 (DEV)
 
+- Add: Compare levels tool.
 - Add: Installer for Windows, DEB package for Debian.
 
 ## 0.15.0 (2023-07-22)
