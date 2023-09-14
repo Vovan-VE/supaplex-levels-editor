@@ -23,7 +23,7 @@
   .second {
     display: grid;
     grid-gap: 1rem;
-    grid-template-columns: 1ch 1fr 5ch 25ch;
+    grid-template-columns: 1ch 1fr 5ch min-content;
     .numeric {
       text-align: end;
       font-family: monospace;
@@ -31,6 +31,7 @@
     .title {
       @extend %font-family-mono;
       white-space: pre-wrap;
+      width: 24ch;
     }
   }
   .first {
