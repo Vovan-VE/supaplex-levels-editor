@@ -23,7 +23,8 @@ ifeq (,$(SKIP_PKG_DEB))
 endif
 
 APP_BASENAME := sple
-BUILD_ARGS := -v 2 -trimpath -s -noPackage
+# -noPackage cause missing ico & info in windows exe
+BUILD_ARGS := -v 2 -trimpath -s
 ifneq ($(DEBUG),)
   BUILD_ARGS += -debug
 endif
