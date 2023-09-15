@@ -4,47 +4,15 @@
     viewBox="0 0 16 16"
     xmlns="http://www.w3.org/2000/svg"
 >
-  <path fill="#008251" class="sp-color-green-dark" d="M0,0h16v16h-16z"/>
-  <path
-      fill="#00B261"
-      class="sp-color-green-light"
-      d="M1,1h14v3h-11v1h-2v7h1v2h-2z M2,2v2h1v-1h5v-1z"
-  />
-  <path
-      fill="#F3F3F3"
-      class="sp-color-white"
-      d="M9,2h1v1h-1z M12,2h1v1h-1z"
-  />
-  <path
-      fill="#929292"
-      class="sp-color-grey-light"
-      d="M1,7h3v2h-3z M1,10h3v2h-3z"
-  />
-  <path
-      fill="#B2B2B2"
-      class="sp-color-grey-xlight"
-      d="M9,3h1v1h-1z M12,3h1v1h-1z M1,7h1v1h-1z M1,10h1v1h-1z"
-  />
-  <path
-      fill="#717171"
-      class="sp-color-grey-dark"
-      d="M10,2h1v1h-1z M13,2h1v1h-1z"
-  />
-  <path
-      fill="#616161"
-      class="sp-color-grey-xdark"
-      d="M10,3h1v1h-1z M13,3h1v1h-1z M4,5h10v2h2v8h-10v-1h-1v-1l-1,-1h-2v-1h2v-2h-2v-1h2z"
-  />
-  <path fill="#E31010" class="sp-color-red-light" d="M4,6h10v4h-10z"/>
-  <path fill="#F39241" class="sp-color-orange" d="M4,7h9v1h-9z"/>
-  <path
-      fill="#B20000"
-      class="sp-color-red-dark"
-      d="M5,5h8v1h-8z M4,10h10v2h-10z M6,5h1v6h-1z"
-  />
-  <path
-      fill="#824100"
-      class="sp-color-brown"
-      d="M6,5h1v1h-1z M6,10h1v3h-1z M4,12h10v1h-10z"
-  />
+  <path fill="#008251" d="M0,0h16v16h-16z"/>
+  <path fill="#00B261" d="M1,1h14v3h-11v1h-2v7h1v2h-2z M2,2v2h1v-1h5v-1z"/>
+  <path fill="#F3F3F3" d="M9,2h1v1h-1z M12,2h1v1h-1z"/>
+  <path fill="#929292" d="M1,7h3v2h-3z M1,10h3v2h-3z"/>
+  <path fill="#B2B2B2" d="M9,3h1v1h-1z M12,3h1v1h-1z M1,7h1v1h-1z M1,10h1v1h-1z"/>
+  <path fill="#717171" d="M10,2h1v1h-1z M13,2h1v1h-1z"/>
+  <path fill="#616161" d="M10,3h1v1h-1z M13,3h1v1h-1z M4,5h10v2h2v8h-10v-1h-1v-1l-1,-1h-2v-1h2v-2h-2v-1h2z"/>
+  <path fill="#E31010" d="M4,6h10v4h-10z"/>
+  <path fill="#F39241" d="M4,7h9v1h-9z"/>
+  <path fill="#B20000" d="M5,5h8v1h-8z M4,10h10v2h-10z M6,5h1v6h-1z"/>
+  <path fill="#824100" d="M6,5h1v1h-1z M6,10h1v3h-1z M4,12h10v1h-10z"/>
 </svg>
