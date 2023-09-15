@@ -5,6 +5,7 @@ import {
   createStore,
   Event,
   forward,
+  restore,
   sample,
   Store,
 } from "effector";
@@ -33,7 +34,7 @@ import {
   SupportReportType,
 } from "drivers";
 import { SupportReport } from "components/files/FileToolbar/SupportReport";
-import { fmtLevelNumber } from "components/levelset/fmt";
+import { fmtLevelNumber, fmtLevelShort } from "components/levelset/fmt";
 import { msgBox } from "ui/feedback";
 import { ColorType } from "ui/types";
 import { isNotNull } from "utils/fn";
@@ -64,6 +65,8 @@ import {
   readToBuffers,
   updateBufferLevel,
 } from "./types";
+
+// REFACT: split too long file
 
 type _LevelRef = readonly [LevelsetFileKey, number | null];
 type _LevelRefStrict = readonly [LevelsetFileKey, number];
@@ -431,7 +434,7 @@ sample({
   target: _closeOtherLevels,
 });
 
-sample({
+const _insertAtCurrentLevel = sample({
   clock: insertAtCurrentLevel,
   source: {
     files: _$buffersMap,
@@ -441,7 +444,14 @@ sample({
     Boolean(
       key && files.has(key) && files.get(key)!.currentIndex !== undefined,
     ),
-  fn: ({ files, key }) => files.get(key!)!.currentIndex!,
+  fn: ({ files, key }): _LevelRefStrict => [
+    key!,
+    files.get(key!)!.currentIndex!,
+  ],
+});
+sample({
+  source: _insertAtCurrentLevel,
+  fn: ([, index]) => index,
   target: _willSetCurrentLevelFx,
 });
 sample({
@@ -1017,3 +1027,132 @@ sample({
     }),
   );
 }
+
+export const cmpLevelToggle = createEvent<any>();
+const setCmpFirstLevelRef = createEvent<_LevelRefStrict | null>();
+export const closeCmpLevels = createEvent<any>();
+export const swapCmpLevels = createEvent<any>();
+const setCmpLevels = createEvent<[_LevelRefStrict, _LevelRefStrict]>();
+const $cmpLevelsRefs = restore(setCmpLevels, null)
+  .reset(closeCmpLevels)
+  .on(swapCmpLevels, (r) => r && [r[1], r[0]]);
+export const $hasCmpLevelsRefs = $cmpLevelsRefs.map(Boolean);
+export type CmpEntry = { file: LevelsetFile; index: number; level: IBaseLevel };
+type _CmpEntries = [CmpEntry, CmpEntry];
+export const $cmpLevels = combine(
+  $levelsets,
+  _$buffersMap,
+  $cmpLevelsRefs,
+  (files, buffers, refs): _CmpEntries | null => {
+    if (!refs) {
+      return null;
+    }
+    const [a, b] = refs.map<CmpEntry | null>(([key, index]) => {
+      const file = files.get(key);
+      const level = buffers.get(key)?.levels[index]?.undoQueue.current;
+      if (file && level) {
+        return { file, index, level };
+      }
+      return null;
+    });
+    if (a && b) {
+      return [a, b];
+    }
+    return null;
+  },
+);
+const $cmpFirstLevelRef = restore(setCmpFirstLevelRef, null)
+  .reset(setCmpLevels, closeCmpLevels)
+  .on($levelsets.updates, (ref, files) => {
+    if (ref) {
+      const [key] = ref;
+      if (!files.has(key)) {
+        return null;
+      }
+    }
+  })
+  .on(_deleteLevel, (ref, del) => {
+    if (ref) {
+      const [key, index] = ref;
+      const [delKey, delIndex] = del;
+      if (delKey === key) {
+        if (delIndex === index) {
+          return null;
+        }
+        if (delIndex < index) {
+          return [key, index - 1];
+        }
+      }
+    }
+  })
+  .on(_deleteRestLevels, (ref, del) => {
+    if (ref) {
+      const [key, index] = ref;
+      const [delKey, delIndex] = del;
+      if (delKey === key && index > delIndex) {
+        return null;
+      }
+    }
+  })
+  .on(_insertAtCurrentLevel, (ref, ins) => {
+    if (ref) {
+      const [key, index] = ref;
+      const [insKey, insIndex] = ins;
+      if (key === insKey && index >= insIndex) {
+        return [key, index + 1];
+      }
+    }
+  });
+export const $cmpLevelHasFirst = $cmpFirstLevelRef.map(Boolean);
+export const $cmpLevelFirstTitle = combine(
+  $cmpFirstLevelRef,
+  $levelsets,
+  $currentKey,
+  _$buffersMap,
+  (ref, levelsets, currentKey, files) => {
+    if (!ref) {
+      return "Compare levels: set current as first";
+    }
+    const [key, index] = ref;
+    const buffer = files.get(key);
+    if (currentKey && key === currentKey && buffer?.currentIndex === index) {
+      return "Compare levels: select another level to compare with and click again";
+    }
+    const levelset = levelsets.get(key);
+    const level = buffer?.levels[index]?.undoQueue.current;
+    if (levelset && level) {
+      return `Compare "${levelset.name}" level "${fmtLevelShort(
+        index,
+        String(levelset.levelset.levelsCount).length,
+        level.title,
+      )}" (${level.width}x${level.height}) with current level`;
+    }
+    return undefined;
+  },
+);
+sample({
+  clock: cmpLevelToggle,
+  source: {
+    files: _$buffersMap,
+    key: $currentKey,
+    prev: $cmpFirstLevelRef,
+  },
+  filter: ({ files, key }) =>
+    Boolean(
+      key && files.has(key) && files.get(key)!.currentIndex !== undefined,
+    ),
+  fn: ({ files, key, prev }): [_LevelRefStrict, _LevelRefStrict | null] => [
+    [key!, files.get(key!)!.currentIndex!],
+    prev,
+  ],
+}).watch(([ref, prev]) => {
+  if (!prev) {
+    setCmpFirstLevelRef(ref);
+    return;
+  }
+  if (prev[0] === ref[0] && prev[1] === ref[1]) {
+    setCmpFirstLevelRef(null);
+    return;
+  }
+  setCmpLevels([prev, ref]);
+});

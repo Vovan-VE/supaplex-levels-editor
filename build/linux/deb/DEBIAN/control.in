@@ -1,0 +1,7 @@
+Package: sple
+Version: {{VERSION}}
+Architecture: {{ARCH}}
+Maintainer: Vovan-VE <vovan-ve@yandex.ru>
+Description: Supaplex Levels Editor, desktop version of sple.me
+ Desktop SpLE works with regular files compared to web sple.me.
+Depends: libc6 (>= 2.34), libgdk-pixbuf-2.0-0 (>= 2.22.0), libglib2.0-0 (>= 2.16.0), libgtk-3-0 (>= 3.21.4), libjavascriptcoregtk-4.0-18, libwebkit2gtk-4.0-37 (>= 2.21.1)

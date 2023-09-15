@@ -94,7 +94,7 @@ jobs:
         if: matrix.platform == 'ubuntu-latest'
         run: |
           sudo apt update
-          sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+          sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev nsis
 
       - name: Download desktop front artifact
         uses: actions/download-artifact@v3
@@ -104,41 +104,15 @@ jobs:
 
       - name: Install Wails
         run: |
-          go install github.com/wailsapp/wails/v2/cmd/wails@latest
+          go install github.com/wailsapp/wails/v2/cmd/wails@v2.6.0
           wails doctor
 
-      - name: Build on linux + debug
-        if: matrix.platform == 'ubuntu-latest'
-        run: make linux win
+      - name: Build
+        run: make all clean-bin-os
         env:
           SKIP_FRONT: 1
-          FILE_VER: ${{ needs.build_front.outputs.version }}
-          DEBUG: 1
-
-      - name: Build on mac + debug
-        if: matrix.platform == 'macos-latest'
-        run: make darwin
-        env:
-          SKIP_FRONT: 1
-          FILE_VER: ${{ needs.build_front.outputs.version }}
-          DEBUG: 1
-
-      - name: Clean front map files
-        run: make -C ./frontend clean-map
-
-      - name: Build on linux
-        if: matrix.platform == 'ubuntu-latest'
-        run: make linux win
-        env:
-          SKIP_FRONT: 1
-          FILE_VER: ${{ needs.build_front.outputs.version }}
-
-      - name: Build on mac
-        if: matrix.platform == 'macos-latest'
-        run: make darwin
-        env:
-          SKIP_FRONT: 1
-          FILE_VER: ${{ needs.build_front.outputs.version }}
+          SKIP_FRONT_CLEAN: ""
+          VERSION: ${{ needs.build_front.outputs.version }}
 
       - name: Upload desktop artifact
         uses: actions/upload-artifact@v3
@@ -161,7 +135,7 @@ jobs:
           name: desktop-bin-ubuntu-latest
           path: ./release-files
 
-#      - name: Download app artifacts from max
+#      - name: Download app artifacts from mac
 #        uses: actions/download-artifact@v3
 #        with:
 #          name: desktop-bin-macos-latest
@@ -185,7 +159,11 @@ jobs:
           prerelease: false
           automatic_release_tag: "v${{ needs.build_front.outputs.version }}"
           title: "v${{ needs.build_front.outputs.version }}"
-          files: ./release-files/*
+          files: |
+            ./release-files/*.exe
+            ./release-files/*.deb
+            ./release-files/*.zip
+            ./release-files/*.txt
 
   deploy_web:
     name: Deploy web with GitHub Pages

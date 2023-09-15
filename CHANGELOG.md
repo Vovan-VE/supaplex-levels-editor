@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.16.0 (2023-09-15)
+
+- Add: Compare levels tool.
+
+### Desktop
+
+- Add: Installer for Windows, DEB package for Debian. Standalone portable binary
+  is packed to zip.
+- Fix: Windows: Stable path for WebView data.
+
 ## 0.15.0 (2023-07-22)
 
 - Add: Option to SO Test Page to override number of infotrons needed.

@@ -54,7 +54,7 @@ export const lineInterpolation = (
 const feedDiagonal = (
   length: number,
   offset: number,
-  p: (l: number, o: number) => void,
+  p: (length: number, offset: number) => void,
 ) => {
   const L = length + 1;
   const O = offset + 1;

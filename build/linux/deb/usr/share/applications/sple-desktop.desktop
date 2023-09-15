@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=SpLE Desktop
+Comment=Desktop version of sple.me
+Exec=sple-desktop
+Icon=sple-desktop
+Terminal=false
+Categories=Game;Application;
+Keywords=sple;supaplex;editor;

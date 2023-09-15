@@ -54,7 +54,7 @@
   }
   &._fullscreen {
     max-width: none;
-    height: calc(100% - 1rem);
+    min-height: calc(100% - 1rem);
 
     display: flex;
     flex-direction: column;

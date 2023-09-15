@@ -3,6 +3,7 @@ import { useStore } from "effector-react";
 import { FC, PropsWithChildren } from "react";
 import { SpChipClassic, SpChipWinplex } from "drivers/supaplex/Tile";
 import { $spChip } from "models/settings";
+import { CmpLevelsDialog } from "../level/toolbars/EditToolbar/CmpLevels";
 import * as compact from "./compact";
 import * as full from "./full";
 import { useFinalLayoutIsCompact } from "./useFinalLayoutIsCompact";
@@ -34,6 +35,9 @@ export const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
         </>
       )}
       <main className={cl.main}>{children}</main>
+
+      {/* REFACT: move somewhere */}
+      <CmpLevelsDialog />
     </div>
   );
 };

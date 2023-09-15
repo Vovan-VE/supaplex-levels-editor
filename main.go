@@ -6,11 +6,13 @@ import (
 	"os"
 
 	"github.com/vovan-ve/sple-desktop/internal/backend"
+	"github.com/vovan-ve/sple-desktop/internal/config"
 	"github.com/vovan-ve/sple-desktop/internal/logging"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/linux"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
@@ -40,9 +42,10 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "SpLE",
-		Width:  1024,
-		Height: 768,
+		Title:                    "SpLE",
+		Width:                    1024,
+		Height:                   768,
+		EnableDefaultContextMenu: true,
 		//WindowStartState: options.Maximised,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
@@ -69,8 +72,11 @@ func main() {
 		Windows: &windows.Options{
 			IsZoomControlEnabled: false,
 			Theme:                windows.Dark,
+			WebviewUserDataPath:  config.GetConfigsDir(),
 		},
-		//Linux: &linux.Options{},
+		Linux: &linux.Options{
+			ProgramName: "SpLE",
+		},
 		//Mac: &mac.Options{},
 		Debug: options.Debug{
 			OpenInspectorOnStartup: true,

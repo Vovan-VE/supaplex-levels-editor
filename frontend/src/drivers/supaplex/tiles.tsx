@@ -2,7 +2,13 @@ import {
   CellContextEventSnapshot,
   PenShape,
 } from "models/levels/tools/interface";
-import { IBaseMetaTile, IBaseTileInteraction, InteractionType } from "../types";
+import {
+  BorderTiles,
+  FancyTiles,
+  IBaseMetaTile,
+  IBaseTileInteraction,
+  InteractionType,
+} from "../types";
 import { SpecPortDialog } from "./SpecPortDialog";
 import * as tid from "./tiles-id";
 import * as tsrc from "./tiles-svg/index-src";
@@ -315,3 +321,23 @@ export const tiles: readonly ISupaplexTile[] = [
   },
   { value: tid.TILE_INVIS_WALL, title: "Invisible Wall", src: tsrc.src40 },
 ];
+
+export const borderTiles: BorderTiles = new Set([tid.TILE_HARDWARE]);
+
+export const fancyTiles: FancyTiles = new Map([
+  [tid.TILE_HW_CIRCULAR, tid.TILE_HARDWARE],
+  [tid.TILE_HW_LAMP_G, tid.TILE_HARDWARE],
+  [tid.TILE_HW_LAMP_B, tid.TILE_HARDWARE],
+  [tid.TILE_HW_LAMP_R, tid.TILE_HARDWARE],
+  [tid.TILE_HW_STRIPES, tid.TILE_HARDWARE],
+  [tid.TILE_HW_RES, tid.TILE_HARDWARE],
+  [tid.TILE_HW_CAP, tid.TILE_HARDWARE],
+  [tid.TILE_HW_RES_VAR, tid.TILE_HARDWARE],
+  [tid.TILE_HW_RES_VERT, tid.TILE_HARDWARE],
+  [tid.TILE_HW_RES_HORZ, tid.TILE_HARDWARE],
+
+  [tid.TILE_CHIP_L, tid.TILE_CHIP],
+  [tid.TILE_CHIP_R, tid.TILE_CHIP],
+  [tid.TILE_CHIP_T, tid.TILE_CHIP],
+  [tid.TILE_CHIP_B, tid.TILE_CHIP],
+]);

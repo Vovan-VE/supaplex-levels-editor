@@ -1,38 +1,45 @@
 import { useStore } from "effector-react";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { $coordsDisplayBasis } from "models/settings";
 
-export const enum CoordsFormat {
-  // Vars = 0,
-  Bracket = 1,
-}
-
-type Fmt = (x: number, y: number, b: string) => string;
-const fmt: Record<CoordsFormat, Fmt> = {
-  // [CoordsFormat.Vars]: (x, y, b) => `x${b}=${x}; y${b}=${y}`,
-  [CoordsFormat.Bracket]: (x, y, b) => `[${x}; ${y}]${b}`,
-};
+type Fmt<T> = (x: number, y: number, b: string) => T;
+const fmtDefault: Fmt<string> = (x, y, b) => `[${x}; ${y}]${b}`;
 
 const BASE = ["₀", "₁"];
 
 interface Props {
   x: number;
   y: number;
-  format?: CoordsFormat;
   base?: 0 | 1;
 }
+interface PropsCustom<T> extends Props {
+  format: Fmt<T>;
+}
 
-export const useTileCoordsDisplay = ({
+const useTileCoordsDisplayCustom = <T,>({
   x,
   y,
-  format = CoordsFormat.Bracket,
   base,
-}: Props) => {
+  format,
+}: PropsCustom<T>) => {
   const b = useStore($coordsDisplayBasis);
   base ??= b;
-  return fmt[format](base + x, base + y, BASE[base]);
+  return format(base + x, base + y, BASE[base]);
 };
 
-export const TileCoords: FC<Props> = (props) => (
-  <>{useTileCoordsDisplay(props)}</>
+export const useTileCoordsDisplay = (p: Props) =>
+  useTileCoordsDisplayCustom({ ...p, format: fmtDefault });
+
+interface PropsOpt extends Props {
+  format?: Fmt<ReactNode>;
+}
+const isStrictProps = (p: PropsOpt): p is PropsCustom<ReactNode> =>
+  p.format !== undefined;
+
+export const TileCoords: FC<PropsOpt> = (props) => (
+  <>
+    {useTileCoordsDisplayCustom(
+      isStrictProps(props) ? props : { ...props, format: fmtDefault },
+    )}
+  </>
 );
