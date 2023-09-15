@@ -97,6 +97,9 @@ that.
   - `make` or `make all`: This will build all possible binaries under you OS.
   - `make linux`, `make windows` or `make darwin`: This will try to build
     binaries for the given OS. Not every cross-OS build is possible.
+    - When building NSIS for Windows with "dev" app version, a `VERSION` must be
+      added with simple `X.Y.Z` version, or NSIS will fail otherwise:
+      `make VERSION=0.1.2 windows`
 
   That will build binaries and packages in `./build/bin/` directory. Notice the
   following variables in root `Makefile`:
@@ -110,11 +113,20 @@ that.
   For example `make SKIP_DEBUG=1 SKIP_ZIP=1 SKIP_PKG=1`.
 
   Don't use `DEBUG` variable, since it's internal.
-- To build web SpLE run `make -C frontend web` in project root (or `make web` in
+- To build web SpLE run `make -C frontend` in project root (or `make` in
   `./frontend` subdirectory which is the same). This will build static web in
   `./frontend/build` directory.
 
 See also [frontend/README.md](./frontend/README.md).
+
+### Requirements
+
+- Common:
+  - Node JS >= 18
+  - NPM >= 9
+- Desktop:
+  - Go >= 1.20
+  - Wails v2 ([Installation](https://wails.io/docs/gettingstarted/installation))
 
 [cra]: https://github.com/facebook/create-react-app
 [sple.me]: https://sple.me
