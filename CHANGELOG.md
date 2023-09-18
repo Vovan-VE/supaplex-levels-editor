@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.16.1 (2023-09-18)
+
+### Desktop
+
+- Fix: Test SO iframe collapsed to small size.
+
 ## 0.16.0 (2023-09-15)
 
 - Add: Compare levels tool.
