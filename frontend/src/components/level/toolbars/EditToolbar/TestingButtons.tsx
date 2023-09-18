@@ -144,6 +144,7 @@ const openTestUrl = testInIframe
           cancelText: "Close",
           cancel: { uiColor: ColorType.WARN },
         },
+        bodyClassName: cl.soDialogBody,
       });
       return true;
     }

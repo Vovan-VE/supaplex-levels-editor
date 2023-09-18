@@ -39,6 +39,7 @@ export interface DialogProps {
   wrapForm?: FormProps;
   buttons?: ReactNode;
   onClose?: () => void;
+  bodyClassName?: string;
 }
 
 const HK_ESCAPE: HotKeyShortcuts = [["Escape"], ["Cancel"]];
@@ -54,6 +55,7 @@ export const Dialog: FC<PropsWithChildren<DialogProps>> = ({
   wrapForm,
   buttons,
   onClose,
+  bodyClassName,
   children,
 }) => {
   useHotKey({
@@ -89,7 +91,7 @@ export const Dialog: FC<PropsWithChildren<DialogProps>> = ({
                   <Suspense>{title}</Suspense>
                 </div>
               )}
-              <div className={cl.body}>
+              <div className={cn(cl.body, bodyClassName)}>
                 <Suspense>{children}</Suspense>
               </div>
               {buttons !== undefined && (

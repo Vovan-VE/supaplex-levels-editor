@@ -9,9 +9,15 @@
   }
 }
 
+.soDialogBody {
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
 .soArea {
+  flex: 1 1 100%;
   width: 100%;
-  height: 100%;
+  height: auto;
   border: none;
   box-shadow: 0 0 0.5rem 0.3rem #{sp.$color-orange};
 }
