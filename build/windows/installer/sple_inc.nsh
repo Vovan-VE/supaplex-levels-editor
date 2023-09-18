@@ -14,7 +14,7 @@
     !define INFO_PRODUCTNAME "SpLE"
 !endif
 !ifndef INFO_PRODUCTVERSION
-    !define INFO_PRODUCTVERSION "0.16.0"
+    !define INFO_PRODUCTVERSION "0.0.0"
 !endif
 !ifndef INFO_COPYRIGHT
     !define INFO_COPYRIGHT "Copyright (C) 2021-2023 Vovan-VE"

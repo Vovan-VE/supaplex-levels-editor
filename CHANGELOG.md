@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.16.0 (DEV)
+## 0.17.0 (DEV)
+
+- ...
+
+## 0.16.0 (2023-09-15)
 
 - Add: Compare levels tool.
 
