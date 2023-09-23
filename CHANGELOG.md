@@ -2,7 +2,7 @@
 
 ## 0.17.0 (DEV)
 
-- ...
+- Fix: SP file format loss demo signature on file read.
 
 ## 0.16.1 (2023-09-18)
 
