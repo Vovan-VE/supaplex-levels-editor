@@ -21,9 +21,6 @@
   - Impossible without gameplay simulation. Only if SO will provide a path
     actually walked.
 - Tooltips with interactive content support.
-- Demo handmade
-  - demo to text
-  - text to demo
 
 ### Desktop
 

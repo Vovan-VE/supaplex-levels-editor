@@ -15,7 +15,6 @@ import {
   IBaseLevel,
   LevelConfiguratorProps,
   levelSupportsDemo,
-  levelSupportSignature,
 } from "drivers";
 import { ReactComponent as DiskYellow } from "drivers/supaplex/tiles-svg/18-12-yellow-disk.svg";
 import { ReactComponent as HwLampGreen } from "drivers/supaplex/tiles-svg/29-1d-hw-g-lamp.svg";
@@ -46,7 +45,7 @@ export const TestingButtons: FC = () => {
   const level = undoQueue.current;
   const hasDemo =
     demoSupport && levelSupportsDemo(level) && level.demo !== null;
-  const signatureSupport = demoSupport && levelSupportSignature(level);
+  // const signatureSupport = demoSupport && levelSupportSignature(level);
 
   const handleTest = useCallback(
     () => sendToTest(level, demoSupport),
@@ -82,8 +81,8 @@ export const TestingButtons: FC = () => {
             onClick={openSignatureEdit}
             icon={<svgs.FileBlank />}
             iconStack={SIGNATURE_STACK}
-            title="Edit demo signature"
-            disabled={!signatureSupport}
+            title="Edit demo, signature"
+            // disabled={!signatureSupport}
           />
         </>
       )}

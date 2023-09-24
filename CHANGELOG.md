@@ -2,6 +2,7 @@
 
 ## 0.17.0 (DEV)
 
+- Add: Textual editing for demo keystrokes.
 - Fix: SP file format loss demo signature on file read.
 
 ## 0.16.1 (2023-09-18)
