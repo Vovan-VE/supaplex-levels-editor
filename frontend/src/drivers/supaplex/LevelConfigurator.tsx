@@ -11,23 +11,21 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
   level,
   onChange,
 }: LevelConfiguratorProps<L>) => {
-  const [countInf, countElec] = useMemo(
-    () =>
-      level.body.raw.reduce<[inf: number, elec: number]>(
-        ([inf, elec], v) => {
-          switch (v) {
-            case TILE_INFOTRON:
-              return [inf + 1, elec];
-            case TILE_ELECTRON:
-              return [inf, elec + 1];
-            default:
-              return [inf, elec];
-          }
-        },
-        [0, 0],
-      ),
-    [level.body],
-  );
+  const { i: countInf, e: countElec } = useMemo(() => {
+    let i = 0;
+    let e = 0;
+    for (const v of level.body.raw) {
+      switch (v) {
+        case TILE_INFOTRON:
+          i++;
+          break;
+        case TILE_ELECTRON:
+          e++;
+          break;
+      }
+    }
+    return { i, e };
+  }, [level.body.raw]);
 
   const handlers = useMemo(
     () => ({
