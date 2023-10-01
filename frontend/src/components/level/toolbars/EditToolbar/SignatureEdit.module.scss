@@ -1,5 +1,23 @@
 @use "styles/mixins";
 
+.demoField {
+  display: grid;
+  grid-template-columns: auto min-content;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "label label"
+    "error help";
+
+  label {
+    grid-area: label;
+  }
+  label + * {
+    grid-area: help;
+  }
+  label + * + * {
+    grid-area: error;
+  }
+}
 .demoText {
   height: 15em;
   @extend %font-family-mono;

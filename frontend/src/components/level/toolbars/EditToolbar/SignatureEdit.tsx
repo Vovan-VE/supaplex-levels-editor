@@ -144,6 +144,7 @@ const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
               )
             }
             error={demoTextError?.message}
+            className={cl.demoField}
           >
             <Textarea
               value={demoText}
