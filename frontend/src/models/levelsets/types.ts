@@ -5,9 +5,6 @@ import { IBaseLevel, IBaseLevelset } from "drivers";
 import { strCmp } from "utils/strings";
 import { UndoQueue } from "utils/data";
 
-// REFACT: unalias
-export type LevelsetFileKey = FilesStorageKey;
-
 export type IBaseLevelsList = readonly IBaseLevel[];
 
 /**
@@ -35,7 +32,7 @@ export interface LevelsetFileSource extends LevelsetFileSourceOld {
  * `undefined` for someone.
  */
 export interface LevelsetFileDataOld extends LevelsetFileSourceOld {
-  key: LevelsetFileKey;
+  key: FilesStorageKey;
 }
 export interface LevelsetFileData extends LevelsetFileDataOld {
   driverFormat: string;
@@ -70,12 +67,12 @@ export interface LevelsetBuffers<L> {
 }
 
 export type LevelsetsBuffers = ReadonlyMap<
-  LevelsetFileKey,
+  FilesStorageKey,
   LevelsetBuffers<IBaseLevel>
 >;
 
 export interface LevelsetFlushBuffer {
-  key: LevelsetFileKey;
+  key: FilesStorageKey;
   driverName: string;
   driverFormat: string;
   levels: IBaseLevelsList;
@@ -98,7 +95,7 @@ export const readToBuffers = <L extends IBaseLevel>(
 
 export const updateBufferLevel = (
   map: LevelsetsBuffers,
-  key: LevelsetFileKey,
+  key: FilesStorageKey,
   index: number | undefined,
   updater: (level: LevelBuffer<IBaseLevel>) => LevelBuffer<IBaseLevel>,
 ) =>

@@ -1,13 +1,12 @@
 import { FC, useMemo } from "react";
 import cn from "classnames";
 import { useStore } from "effector-react";
-import { allowManualSave } from "backend";
+import { allowManualSave, FilesStorageKey } from "backend";
 import {
   $currentKey,
   $dirtyKeys,
   $levelsets,
   cmpLevelsetFiles,
-  LevelsetFileKey,
   setCurrentLevelset,
   sortLevelsets,
 } from "models/levelsets";
@@ -28,7 +27,7 @@ export const EditorTabs: FC<Props> = ({ className, ...rest }) => {
 
   const tabs = useMemo(
     () =>
-      levelsets.map<TabItem<LevelsetFileKey>>(({ key, name }) => ({
+      levelsets.map<TabItem<FilesStorageKey>>(({ key, name }) => ({
         key,
         text: name,
         uiColor:
