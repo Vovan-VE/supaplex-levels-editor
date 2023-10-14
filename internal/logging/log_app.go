@@ -1,4 +1,4 @@
-//go:build production
+//go:build production || debug
 
 package logging
 
@@ -57,5 +57,5 @@ func prepareLogFile() (logger.Logger, error) {
 	}
 	f.Close()
 
-	return logger.NewFileLogger(prev), nil
+	return NewMultipleLogger(logger.NewDefaultLogger(), logger.NewFileLogger(prev)), nil
 }

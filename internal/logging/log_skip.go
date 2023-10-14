@@ -1,4 +1,4 @@
-//go:build !production
+//go:build !(production || debug)
 
 package logging
 
@@ -6,4 +6,4 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/logger"
 )
 
-func GetLogger() logger.Logger { return nil }
+func GetLogger() logger.Logger { return logger.NewDefaultLogger() }

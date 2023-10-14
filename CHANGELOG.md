@@ -10,6 +10,7 @@
 - Add: Prevent multiple instances to ran in the same time.
 - Add: "Open file with" like whatever editors do.
 - Fix: Same file now cannot be opened multiple times in same instance.
+- Fix: Debug app didn't write logs.
 
 ## 0.16.1 (2023-09-18)
 
