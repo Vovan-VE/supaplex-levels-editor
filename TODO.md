@@ -24,8 +24,7 @@
 
 ### Desktop
 
-- Prevent multiple instance
-  - Communication: pass opened file
+- Single instance: activate primary instance.
 
 ## Wishes from users (unsorted)
 

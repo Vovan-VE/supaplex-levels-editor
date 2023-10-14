@@ -11,7 +11,12 @@ import (
 	"github.com/vovan-ve/sple-desktop/internal/storage"
 )
 
-func NewFileStorage(path string) (storage.Full[string], error) {
+type Storage interface {
+	storage.Full[string]
+	HasFunc(func(string) (bool, error)) (bool, error)
+}
+
+func NewFileStorage(path string) (Storage, error) {
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return nil, errors.Wrap(err, "open file")
@@ -23,6 +28,15 @@ type fileStorage struct {
 	file *os.File
 	data map[string]string
 	rw   *sync.RWMutex
+}
+
+func (f *fileStorage) HasFunc(match func(v string) (bool, error)) (bool, error) {
+	for _, v := range f.data {
+		if ok, err := match(v); err != nil || ok {
+			return ok, err
+		}
+	}
+	return false, nil
 }
 
 func (f *fileStorage) GetItem(key string) (value string, ok bool, err error) {

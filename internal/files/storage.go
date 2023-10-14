@@ -1,30 +1,51 @@
 package files
 
 import (
+	"context"
+	"os"
+
 	"github.com/pkg/errors"
 	"github.com/vovan-ve/sple-desktop/internal/config"
 	"github.com/vovan-ve/sple-desktop/internal/helpers"
 	"github.com/vovan-ve/sple-desktop/internal/storage"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 var (
 	ErrNoKey = errors.New("no such key")
 )
 
-func NewStorage(path string, chosen ChosenPicker) (storage.Full[*Record], error) {
+type Storage interface {
+	storage.Full[*Record]
+	HasFile(filename string) (bool, error)
+}
+
+func NewStorage(ctx context.Context, path string, chosen ChosenPicker) (Storage, error) {
 	opt, err := config.NewFileStorage(path)
 	if err != nil {
 		return nil, errors.Wrap(err, "options storage")
 	}
 	return &fullStorage{
+		ctx:    ctx,
 		opt:    opt,
 		chosen: chosen,
 	}, nil
 }
 
 type fullStorage struct {
-	opt    storage.Full[string]
+	ctx    context.Context
+	opt    config.Storage
 	chosen ChosenPicker
+}
+
+func (f *fullStorage) HasFile(filename string) (bool, error) {
+	return f.opt.HasFunc(func(s string) (bool, error) {
+		e, err := entryFromString(s)
+		if err != nil {
+			return false, errors.Wrap(err, "entry from string")
+		}
+		return e.File == filename, nil
+	})
 }
 
 func (f *fullStorage) GetItem(key string) (value *Record, ok bool, err error) {

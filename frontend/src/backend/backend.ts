@@ -15,6 +15,7 @@ export type CreateFile = (
   baseName: string,
 ) => Promise<string>;
 export type OpenFile = (options: I.OpenFileOptions) => void;
+export type OnOpenFile = Event<I.OpenFiles>;
 export type SaveFileAs = (data: Blob, filename: string) => void;
 
 export type SetTitle = (title: string) => void;
