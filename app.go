@@ -174,7 +174,7 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 	prevent = a.isDirty
 	if prevent {
 		a.triggerFront(backend.FEExitDirty, nil)
-	} else {
+	} else if !runtime.WindowIsMinimised(ctx) {
 		p := config.WindowPlacement{}
 		p.X, p.Y = runtime.WindowGetPosition(ctx)
 		p.W, p.H = runtime.WindowGetSize(ctx)

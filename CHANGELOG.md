@@ -14,6 +14,7 @@
 - Fix: Files, opened in previous run, if missing on startup didn't prune from
   internal storage, causing the last to grow and keep trying to open the files
   on every program run.
+- Fix: Invisible app window on start if app was exited being minimized (Win10).
 
 ## 0.16.1 (2023-09-18)
 
