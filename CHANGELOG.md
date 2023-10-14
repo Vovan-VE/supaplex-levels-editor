@@ -11,6 +11,9 @@
 - Add: "Open file with" like whatever editors do.
 - Fix: Same file now cannot be opened multiple times in same instance.
 - Fix: Debug app didn't write logs.
+- Fix: Files, opened in previous run, if missing on startup didn't prune from
+  internal storage, causing the last to grow and keep trying to open the files
+  on every program run.
 
 ## 0.16.1 (2023-09-18)
 

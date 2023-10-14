@@ -125,7 +125,14 @@ func (f *fullStorage) GetAll() (map[string]*Record, error) {
 	for k, s := range ms {
 		r, err := recordFromString(k, s)
 		if err != nil {
-			// TODO: log error
+			runtime.LogErrorf(f.ctx, "Cannot read file item: %v", err)
+			var pe *os.PathError
+			if errors.As(err, &pe) {
+				runtime.LogWarningf(f.ctx, "Remove bad item for file %s", pe.Path)
+				if err = f.opt.RemoveItem(k); err != nil {
+					runtime.LogErrorf(f.ctx, "Cannot remove file item from files registry", err)
+				}
+			}
 			continue
 		}
 		mr[k] = r
