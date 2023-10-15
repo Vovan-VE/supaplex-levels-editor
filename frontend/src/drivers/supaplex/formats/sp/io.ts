@@ -8,21 +8,8 @@ export const readLevelset = (file: ArrayBuffer): ISupaplexLevelset => {
     throw new Error("Invalid file size: less then level size");
   }
 
-  let startOfSignature = LEVEL_BYTES_LENGTH;
-  if (file.byteLength > LEVEL_BYTES_LENGTH) {
-    const trailer = new Uint8Array(file, LEVEL_BYTES_LENGTH);
-    const p = trailer.indexOf(0xff, 1);
-    if (p > 0) {
-      startOfSignature += p + 1;
-    }
-  }
-
   return createLevelset([
-    createLevel(
-      LEVEL_WIDTH,
-      LEVEL_HEIGHT,
-      new Uint8Array(file, 0, startOfSignature),
-    ),
+    createLevel(LEVEL_WIDTH, LEVEL_HEIGHT, new Uint8Array(file)),
   ]);
 };
 

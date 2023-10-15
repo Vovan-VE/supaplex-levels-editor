@@ -3,7 +3,7 @@ import * as wails from "./wails";
 import * as web from "./web";
 
 export type {
-  OpenFileDoneItem,
+  OpenFileItem,
   FilesStorageKey,
   FilesStorageItem,
 } from "./internal";
@@ -34,6 +34,9 @@ export const createFile: B.CreateFile | undefined = WAILS
   ? wails.createFile
   : web.createFile;
 export const openFile: B.OpenFile = WAILS ? wails.openFile : web.openFile;
+export const onOpenFile: B.OnOpenFile | undefined = WAILS
+  ? wails.onOpenFile
+  : undefined;
 export const saveFileAs: B.SaveFileAs = WAILS
   ? wails.saveFileAs
   : web.saveFileAs;

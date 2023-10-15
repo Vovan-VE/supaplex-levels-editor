@@ -16,4 +16,5 @@ export const dumpLevel = (level: ISupaplexLevel) => ({
   title: level.title,
   specialPorts: [...level.getSpecPorts()],
   demo: level.demo,
+  signature: level.signature && level.signatureString,
 });

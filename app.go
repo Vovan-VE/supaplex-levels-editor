@@ -7,15 +7,24 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/vovan-ve/sple-desktop/internal/backend"
 	"github.com/vovan-ve/sple-desktop/internal/config"
 	"github.com/vovan-ve/sple-desktop/internal/files"
 	"github.com/vovan-ve/sple-desktop/internal/helpers"
+	"github.com/vovan-ve/sple-desktop/internal/singleton"
 	"github.com/vovan-ve/sple-desktop/internal/storage"
+	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
+
+type AppOptions struct {
+	Logger           logger.Logger
+	StartupOpenFiles []string
+	StartupError     error
+}
 
 // App struct
 type App struct {
@@ -23,13 +32,22 @@ type App struct {
 	appConfig   storage.Full[string]
 	frontConfig storage.Full[string]
 	chosenReg   files.ChosenRegistry
-	files       storage.Full[*files.Record]
+	files       files.Storage
 
 	isDirty bool
+
+	opt *AppOptions
 }
 
 // NewApp creates a new App application struct
-func NewApp() *App { return &App{} }
+func NewApp(opt *AppOptions) *App {
+	if opt == nil {
+		opt = &AppOptions{}
+	}
+	return &App{
+		opt: opt,
+	}
+}
 
 // startup is called at application startup
 func (a *App) startup(ctx context.Context) {
@@ -56,7 +74,7 @@ func (a *App) startup(ctx context.Context) {
 
 	filesRegPath := filepath.Join(configDir, "files.json")
 	chosenReg := files.NewChosenRegistry()
-	fs, err := files.NewStorage(filesRegPath, chosenReg)
+	fs, err := files.NewStorage(ctx, filesRegPath, chosenReg)
 	if err != nil {
 		runtime.LogErrorf(ctx, "files registry: %v", err)
 		return
@@ -66,6 +84,8 @@ func (a *App) startup(ctx context.Context) {
 	a.frontConfig = front
 	a.chosenReg = chosenReg
 	a.files = fs
+
+	go a.singletonServer()
 }
 
 // domReady is called after front-end resources have been loaded
@@ -83,6 +103,17 @@ func (a *App) domReady(ctx context.Context) {
 		runtime.WindowSetPosition(ctx, p.X, p.Y)
 		runtime.WindowSetSize(ctx, p.W, p.H)
 	}
+
+	if len(a.opt.StartupOpenFiles) != 0 {
+		ref, err := a.openFiles(a.opt.StartupOpenFiles)
+		a.opt.StartupOpenFiles = nil
+		a.showError(&err)
+		if len(ref) != 0 {
+			a.triggerFront(backend.FEOpenFiles, ref)
+		}
+	}
+	a.showError(&a.opt.StartupError)
+	a.opt.StartupError = nil
 
 	go a.checkUpdate()
 }
@@ -144,7 +175,7 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 	prevent = a.isDirty
 	if prevent {
 		a.triggerFront(backend.FEExitDirty, nil)
-	} else {
+	} else if !runtime.WindowIsMinimised(ctx) {
 		p := config.WindowPlacement{}
 		p.X, p.Y = runtime.WindowGetPosition(ctx)
 		p.W, p.H = runtime.WindowGetSize(ctx)
@@ -211,7 +242,7 @@ func (a *App) CreateFile(key string, baseFileName string) (actualName string, er
 	return filepath.Base(fPath), nil
 }
 
-func (a *App) OpenFile(multiple bool) []*backend.WebFileRef {
+func (a *App) OpenFile(multiple bool) (ret []*backend.WebFileRef) {
 	defer a.catchPanic()
 	var err error
 	defer a.showError(&err)
@@ -235,19 +266,27 @@ func (a *App) OpenFile(multiple bool) []*backend.WebFileRef {
 		filenames = append(filenames, fn)
 	}
 
-	var (
-		ret    []*backend.WebFileRef
-		failed []string
-	)
+	ret, err = a.openFiles(filenames)
+	return
+}
+
+func (a *App) openFiles(filenames []string) (ret []*backend.WebFileRef, _ error) {
+	var failed []string
 	for _, filename := range filenames {
-		f, err2 := os.Stat(filename)
-		if err2 != nil {
-			failed = append(failed, fmt.Sprintf("- Cannot stat file <%s> - %s", filename, err2.Error()))
+		if has, err := a.files.HasFile(filename); err != nil {
+			runtime.LogErrorf(a.ctx, "check if file already opened: %v", err)
+		} else if has {
 			continue
 		}
-		b, err2 := files.NewFile(filename).Read()
-		if err2 != nil {
-			failed = append(failed, fmt.Sprintf("- Cannot read file <%s> - %s", filename, err2.Error()))
+
+		f, err := os.Stat(filename)
+		if err != nil {
+			failed = append(failed, fmt.Sprintf("- Cannot stat file: %s", err.Error()))
+			continue
+		}
+		b, err := files.NewFile(filename).Read()
+		if err != nil {
+			failed = append(failed, fmt.Sprintf("- Cannot read file: %s", err.Error()))
 			continue
 		}
 		ret = append(ret, &backend.WebFileRef{
@@ -259,10 +298,70 @@ func (a *App) OpenFile(multiple bool) []*backend.WebFileRef {
 		})
 	}
 	if len(failed) > 0 {
-		err = errors.New("Cannot open following files:\n\n" + strings.Join(failed, "\n\n"))
-		return nil
+		return nil, errors.New("Cannot open following files:\n" + strings.Join(failed, "\n"))
 	}
-	return ret
+	return
+}
+
+func (a *App) singletonServer() {
+	defer a.catchPanic()
+	recv := make(chan []byte)
+	go func() {
+		defer a.catchPanic()
+		defer close(recv)
+		err := singleton.RunReceiver(a.ctx, a.opt.Logger, recv)
+		if err != nil {
+			runtime.LogErrorf(a.ctx, "IPC server run: %#v", err)
+		}
+	}()
+	a.readSingletonMessages(recv)
+}
+
+func (a *App) activateWindow() {
+	// TODO: better activate window
+	runtime.LogDebugf(a.ctx, "%v activating window", time.Now())
+	runtime.WindowHide(a.ctx)
+	time.Sleep(10 * time.Millisecond)
+	runtime.WindowShow(a.ctx)
+}
+
+func (a *App) readSingletonMessages(recv <-chan []byte) {
+	activateDuration := 30 * time.Millisecond
+	activate := time.AfterFunc(activateDuration, a.activateWindow)
+	activate.Stop()
+	defer activate.Stop()
+	for {
+		select {
+		case <-a.ctx.Done():
+			return
+		case b := <-recv:
+			if b == nil {
+				return
+			}
+			msg, err := files.MessageFromIpc(b)
+			if err != nil {
+				runtime.LogWarningf(a.ctx, "cannot parse ipc message: %#v", err)
+				continue
+			}
+
+			runtime.LogDebugf(a.ctx, "IPC message: %s", msg)
+			switch msg.Type {
+			case files.IpcMessageOpenFile:
+				s := string(msg.Data)
+				runtime.LogDebugf(a.ctx, "IPC open file: %s", s)
+				ref, err := a.openFiles([]string{s})
+				a.showError(&err)
+				if len(ref) != 0 {
+					a.triggerFront(backend.FEOpenFiles, ref)
+				}
+			case files.IpcMessageActivate:
+				runtime.LogDebugf(a.ctx, "%v will activate window", time.Now())
+				activate.Reset(activateDuration)
+			default:
+				runtime.LogDebugf(a.ctx, "IPC message type unknown: %d", msg.Type)
+			}
+		}
+	}
 }
 
 func (a *App) SaveFileAs(blob64 helpers.Blob64, baseFileName string) {

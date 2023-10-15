@@ -1,8 +1,9 @@
 import { combine, createEvent, createStore, Event, sample } from "effector";
+import { FilesStorageKey } from "backend";
 import { getDriverFormat } from "drivers";
 import { ask } from "ui/feedback";
 import { isOffsetInRange } from "utils/number";
-import { DemoData, LevelsetFileKey } from "./types";
+import { DemoData } from "./types";
 import {
   $currentDriverFormat,
   $currentDriverName,
@@ -66,11 +67,11 @@ if (process.env.NODE_ENV === "development") {
 }
 
 interface _DemoTargetNullable {
-  fileKey: LevelsetFileKey | null;
+  fileKey: FilesStorageKey | null;
   levelIndex: number | null;
 }
 interface _DemoTarget extends _DemoTargetNullable {
-  fileKey: LevelsetFileKey;
+  fileKey: FilesStorageKey;
   levelIndex: number;
 }
 const isDemoTarget = (s: _DemoTargetNullable): s is _DemoTarget =>

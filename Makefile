@@ -46,7 +46,7 @@ INNER_BIN_NAME = $(call INNER_BIN_NAME_2,$(subst /, ,$(1)))
 
 # $(call RESULT_BIN_NAME,<PLATFORM>)
 # $(call RESULT_BIN_NAME,<OS>/<ARCH>)
-RESULT_BIN_NAME = $(BIN_DIR)/$(APP_BASENAME)-$(subst /,-,$(1))$(if $(DEBUG),-debug)-v$(VERSION)
+RESULT_BIN_NAME = $(BIN_DIR)/$(APP_BASENAME)-$(subst /,-,$(1))-v$(VERSION)$(if $(DEBUG),-debug)
 RESULT_BIN_NAME_ZIP = $(call RESULT_BIN_NAME,$(1)).zip
 # $(call RESULT_BIN_NAME_WINDOWS_PKG,<ARCH>)
 RESULT_BIN_NAME_WINDOWS_PKG = $(call RESULT_BIN_NAME,windows/$(1))-installer.exe

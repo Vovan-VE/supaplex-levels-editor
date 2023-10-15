@@ -221,6 +221,11 @@ export interface DiffItem {
   b?: DiffItemValue;
 }
 
+export interface DemoToTextConfigProps<P extends object = object> {
+  options: P;
+  onChange: (options: P) => void;
+}
+
 export interface IBaseDriver<
   L extends IBaseLevel = IBaseLevel,
   S extends IBaseLevelset<L> = IBaseLevelset<L>,
@@ -243,4 +248,8 @@ export interface IBaseDriver<
   detectExportFormat: (level: L) => string;
   tempLevelFromRegion: (region: ILevelRegion) => L;
   cmpLevels?: (a: L, b: L) => DiffItem[];
+  DemoToTextConfig?: FC<DemoToTextConfigProps>;
+  DemoToTextHelp?: FC;
+  demoToText?: (demo: Uint8Array | null, options?: object) => string;
+  demoFromText?: (text: string) => Uint8Array | null;
 }

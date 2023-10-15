@@ -13,6 +13,7 @@ Object {
   "initialFreezeZonks": false,
   "initialGravity": false,
   "maxTitleLength": 23,
+  "signature": null,
   "specialPorts": Array [],
   "title": "                       ",
   "width": 5,
@@ -32,6 +33,7 @@ Object {
   "initialFreezeZonks": false,
   "initialGravity": false,
   "maxTitleLength": 23,
+  "signature": null,
   "specialPorts": Array [],
   "title": "                       ",
   "width": 5,
@@ -51,6 +53,7 @@ Object {
   "initialFreezeZonks": false,
   "initialGravity": false,
   "maxTitleLength": 23,
+  "signature": null,
   "specialPorts": Array [],
   "title": "                       ",
   "width": 5,
@@ -70,6 +73,7 @@ Object {
   "initialFreezeZonks": false,
   "initialGravity": false,
   "maxTitleLength": 23,
+  "signature": null,
   "specialPorts": Array [],
   "title": "                       ",
   "width": 5,
@@ -110,6 +114,7 @@ Object {
   "initialFreezeZonks": false,
   "initialGravity": false,
   "maxTitleLength": 23,
+  "signature": null,
   "specialPorts": Array [],
   "title": "                       ",
   "width": 60,
@@ -129,6 +134,7 @@ Object {
   "initialFreezeZonks": false,
   "initialGravity": false,
   "maxTitleLength": 23,
+  "signature": null,
   "specialPorts": Array [],
   "title": "                       ",
   "width": 5,
@@ -147,6 +153,7 @@ Object {
   "initialFreezeZonks": true,
   "initialGravity": true,
   "maxTitleLength": 23,
+  "signature": null,
   "specialPorts": Array [
     Object {
       "setsFreezeEnemies": true,
@@ -195,6 +202,7 @@ Object {
   "initialFreezeZonks": false,
   "initialGravity": false,
   "maxTitleLength": 23,
+  "signature": null,
   "specialPorts": Array [],
   "title": "                       ",
   "width": 60,
@@ -215,6 +223,7 @@ Object {
   "initialFreezeZonks": true,
   "initialGravity": true,
   "maxTitleLength": 23,
+  "signature": null,
   "specialPorts": Array [
     Object {
       "setsFreezeEnemies": true,
@@ -243,6 +252,7 @@ Object {
   "initialFreezeZonks": true,
   "initialGravity": true,
   "maxTitleLength": 23,
+  "signature": null,
   "specialPorts": Array [
     Object {
       "setsFreezeEnemies": true,

@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`demo text D95S001.sp: +tiles 1`] = `
+"R2.5 -4 U1.3 - R3.5 - D3.4 R2.5 SR S3 SU4 -2 R5.4 -2 U2. - R1.6 - D7
+SD1.1 S -3 U1.5 - R3.6 - U1. - R2.6 SR S3 SD3 S -2 L6.4 - D7 -2 L2.6 U1.
+- L5. D1. - L3.4 U1.2 - L5.7 - D3. L3.7 -2.2 R11.6 - D5 - L1.7 - U6 -
+L1.7 -2 D5 R7.1 L5.2 -2.3 R7.6 -2 L6 -5 D6 -2 L2.5 - U1. SU1. S3 -1.3 R2
+-2.2 L1.7 - U1.5 -1.6 R2 -1.4 S4 SU4 S3 -3.6 R2 -1.6 L2.3 U1.5 -3.4 R
+-3.1 S3 SU3 S2 -2 R1. -2 U1.2 -4 L2.6 - D1.1 SD5 S3 SR R6 -2.2 U5 -2
+L4.2 -2 D5.1 - R2.1 SR4 S2 -5 L1. U2.6 - L2.1 SL6 S -5 U1.1 -2 L3.6 -
+D5. SD2 S SR4 S - L1. - U1.6 -2 L5. SL S1.3 SR4 S2 -3 U3 -2 L2.6 SL S
+SU5 S2 -2 L6 - S3 SU5 -2 L1.4 -2 D1.2 SD1. S -6 U2.5 -2 L1.6 -2."
+`;
+
+exports[`demo text D95S001.sp: default 1`] = `
+"R21 -4 U11 - R29 - D28 R21 SR S3 SU4 -2 R44 -2 U16 - R14 - D7 SD9 S -3
+U13 - R30 - U8 - R22 SR S3 SD3 S -2 L52 - D7 -2 L22 U8 - L40 D8 - L28
+U10 - L47 - D24 L31 -18 R94 - D5 - L15 - U6 - L15 -2 D5 R57 L42 -19 R62
+-2 L6 -5 D6 -2 L21 - U8 SU8 S3 -11 R2 -18 L15 - U13 -14 R2 -12 S4 SU4 S3
+-30 R2 -14 L19 U13 -28 R -25 S3 SU3 S2 -2 R8 -2 U10 -4 L22 - D9 SD5 S3
+SR R6 -18 U5 -2 L34 -2 D41 - R17 SR4 S2 -5 L8 U22 - L17 SL6 S -5 U9 -2
+L30 - D40 SD2 S SR4 S - L8 - U14 -2 L40 SL S11 SR4 S2 -3 U3 -2 L22 SL S
+SU5 S2 -2 L6 - S3 SU5 -2 L12 -2 D10 SD8 S -6 U21 -2 L14 -16"
+`;
+
+exports[`demo text D95S018.sp: +tiles 1`] = `"R7 - D1.7 S2 SL3 SR R1.4 -2. L1.7 -2.4 U2.2 R1.1 - U2.1 - R1.4 -2."`;
+
+exports[`demo text D95S018.sp: default 1`] = `"R7 - D15 S2 SL3 SR R12 -16 L15 -20 U18 R9 - U17 - R12 -16"`;

@@ -18,6 +18,7 @@ import {
   $instanceIsReadOnly,
   allowManualSave,
   configStorage,
+  FilesStorageKey,
   onDeactivate,
   saveFileAs,
   setTitle,
@@ -58,7 +59,6 @@ import {
   IBaseLevelsList,
   isEqualLevels,
   LevelsetFile,
-  LevelsetFileKey,
   LevelsetFlushBuffer,
   LevelsetsBuffers,
   readToBuffer,
@@ -68,8 +68,8 @@ import {
 
 // REFACT: split too long file
 
-type _LevelRef = readonly [LevelsetFileKey, number | null];
-type _LevelRefStrict = readonly [LevelsetFileKey, number];
+type _LevelRef = readonly [FilesStorageKey, number | null];
+type _LevelRefStrict = readonly [FilesStorageKey, number];
 
 const _willSetCurrentLevelFx = createEffect((next: number | null) => {
   const key = $currentKey.getState();
@@ -130,12 +130,12 @@ const _deleteRestLevels = createEvent<_LevelRefStrict>();
  */
 export const updateCurrentLevel = createEvent<IBaseLevel>();
 export const updateLevel = createEvent<{
-  key: LevelsetFileKey;
+  key: FilesStorageKey;
   index: number;
   level: IBaseLevel;
 }>();
 export const internalUpdateLevelDemo = createEvent<{
-  key: LevelsetFileKey;
+  key: FilesStorageKey;
   index: number;
   demoData: DemoData;
 }>();
@@ -151,7 +151,7 @@ export const redoCurrentLevel = createEvent<any>();
 /**
  * Flush changes for the given levelset to blob
  */
-const flushBuffer = createEvent<LevelsetFileKey>();
+const flushBuffer = createEvent<FilesStorageKey>();
 /**
  * Flush changes for all levelset to blob
  */
@@ -203,7 +203,7 @@ interface _OpenedIndicesWakeUp {
   current?: number;
 }
 type _OpenedIndicesWakeUpMap = ReadonlyMap<
-  LevelsetFileKey,
+  FilesStorageKey,
   _OpenedIndicesWakeUp
 >;
 // temporary storage since page load until underlying file activated
@@ -553,7 +553,7 @@ const _$keepOpenedIndices = combine(
 
 // persistent store indices for opened levels
 type _OpenedIndicesSerialized = readonly [
-  key: LevelsetFileKey,
+  key: FilesStorageKey,
   opened: readonly number[],
   current?: number | null,
 ];
@@ -594,7 +594,7 @@ _$wakeUpOpenedIndices.on(
     source: _$wakeUpOpenedIndices,
     fn: (wakeUp, loaded) =>
       new Set([...wakeUp.keys()].filter((key) => loaded.has(key))),
-    target: createEvent<ReadonlySet<LevelsetFileKey>>(),
+    target: createEvent<ReadonlySet<FilesStorageKey>>(),
   }),
   (map, keys) => RoMap.filter(map, (_, k) => !keys.has(k)),
 );
@@ -618,7 +618,7 @@ if (allowManualSave) {
   }).watch(removeCurrentLevelsetFile);
 }
 
-type _SaveAsInnerParams = { key: LevelsetFileKey; options?: SaveAsOptions };
+type _SaveAsInnerParams = { key: FilesStorageKey; options?: SaveAsOptions };
 sample({
   clock: saveAsCurrentFile,
   source: $currentKey,
@@ -655,7 +655,7 @@ sample({
   }
 });
 
-let _$dirtyKeys: Store<ReadonlySet<LevelsetFileKey>>;
+let _$dirtyKeys: Store<ReadonlySet<FilesStorageKey>>;
 {
   const _writeBuffersToFile = ({
     driverName,
@@ -667,7 +667,7 @@ let _$dirtyKeys: Store<ReadonlySet<LevelsetFileKey>>;
   };
 
   // internal intermediate event to actually flush specific buffers
-  type _MapToFlush = ReadonlyMap<LevelsetFileKey, IBaseLevelsList>;
+  type _MapToFlush = ReadonlyMap<FilesStorageKey, IBaseLevelsList>;
   const _flushBuffers = createEvent<_MapToFlush>();
 
   // extract only levels from only actually changed buffers
@@ -684,7 +684,7 @@ let _$dirtyKeys: Store<ReadonlySet<LevelsetFileKey>>;
           !isEqualLevels(levels, files.get(key)!.levelset.getLevels()),
       ),
   );
-  _$dirtyKeys = _$changedLevelsets.map<ReadonlySet<LevelsetFileKey>>(
+  _$dirtyKeys = _$changedLevelsets.map<ReadonlySet<FilesStorageKey>>(
     (map, prev) => {
       const next = new Set(map.keys());
       // REFACT: RoSet.syncFrom()
@@ -722,7 +722,7 @@ let _$dirtyKeys: Store<ReadonlySet<LevelsetFileKey>>;
     clock: flushBuffer,
     source: _$changedLevelsets,
     fn: (changed, key) => {
-      const ret = new Map<LevelsetFileKey, IBaseLevelsList>();
+      const ret = new Map<FilesStorageKey, IBaseLevelsList>();
       if (changed.has(key)) {
         ret.set(key, changed.get(key)!);
       }
@@ -754,7 +754,7 @@ let _$dirtyKeys: Store<ReadonlySet<LevelsetFileKey>>;
     fn: (files, levelsels) =>
       [...levelsels].reduce<
         {
-          key: LevelsetFileKey;
+          key: FilesStorageKey;
           ab: ArrayBuffer;
           levelset: IBaseLevelset<IBaseLevel>;
         }[]

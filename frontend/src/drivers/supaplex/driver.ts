@@ -1,4 +1,7 @@
 import { cmpLevels } from "./cmpLevels";
+import { demoFromText, demoToText } from "./demoText";
+import { DemoToTextConfig } from "./DemoToTextConfig";
+import { DemoToTextHelp } from "./DemoToTextHelp";
 import { detectExportFormat } from "./detectExportFormat";
 import { defaultFormat, formats } from "./formats";
 import { MPX } from "./formats/mpx";
@@ -23,4 +26,8 @@ export const SupaplexDriver: ISupaplexDriver = {
   tempLevelFromRegion: (r) =>
     MPX.createLevel(r.tiles).pasteRegion(0, 0, r as ISupaplexLevelRegion),
   cmpLevels,
+  DemoToTextConfig: DemoToTextConfig,
+  DemoToTextHelp,
+  demoToText,
+  demoFromText,
 };

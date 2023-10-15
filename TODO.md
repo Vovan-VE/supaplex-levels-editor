@@ -21,14 +21,11 @@
   - Impossible without gameplay simulation. Only if SO will provide a path
     actually walked.
 - Tooltips with interactive content support.
-- Demo handmade
-  - demo to text
-  - text to demo
 
 ### Desktop
 
-- Prevent multiple instance
-  - Communication: pass opened file
+- Single instance: activate primary instance in better way.
+- Windows file types association.
 
 ## Wishes from users (unsorted)
 

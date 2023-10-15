@@ -9,6 +9,7 @@ export { filesStorage } from "./filesStorage";
 export const allowManualSave = true;
 export { CreateFile as createFile } from "./go/main/App";
 export { openFile } from "./openFile";
+export { onOpenFile } from "./trigger";
 export { saveFileAs } from "./saveFileAs";
 
 export { WindowSetTitle as setTitle } from "./runtime";

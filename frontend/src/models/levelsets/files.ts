@@ -17,6 +17,7 @@ import {
   exitApp,
   filesStorage,
   FilesStorageItem,
+  FilesStorageKey,
   onExitDirty,
 } from "backend";
 import {
@@ -39,7 +40,6 @@ import {
   LevelsetFile,
   LevelsetFileData,
   LevelsetFileDataOld,
-  LevelsetFileKey,
   LevelsetFileSource,
 } from "./types";
 
@@ -68,7 +68,7 @@ const fulfillFileLevels = async (
 };
 
 interface AddFileParams extends LevelsetFileSource {
-  key?: LevelsetFileKey;
+  key?: FilesStorageKey;
 }
 interface AddFileResult {
   file: LevelsetFile;
@@ -77,7 +77,7 @@ interface AddFileResult {
 const prepareCreateFileAborted = createFile ? new Error() : undefined;
 const prepareCreateFileFx = createFile
   ? createEffect(
-      async ({ key, filename }: { key: LevelsetFileKey; filename: string }) => {
+      async ({ key, filename }: { key: FilesStorageKey; filename: string }) => {
         const actualName = await createFile!(key, filename);
         if (!actualName) {
           throw prepareCreateFileAborted;
@@ -96,7 +96,7 @@ export const addLevelsetFileFx = createEffect(
     ...source
   }: AddFileParams): Promise<AddFileResult | null> => {
     const isNew = !key;
-    key ??= generateKey() as LevelsetFileKey;
+    key ??= generateKey() as FilesStorageKey;
     if (prepareCreateFileFx && isNew) {
       try {
         name = await prepareCreateFileFx({ key, filename: name });
@@ -195,20 +195,20 @@ export const renameCurrentLevelset = createEvent<string>();
 /**
  * Switch currently selected file
  */
-export const setCurrentLevelset = createEvent<LevelsetFileKey>();
+export const setCurrentLevelset = createEvent<FilesStorageKey>();
 
-export const sortLevelsets = createEvent<readonly LevelsetFileKey[]>();
+export const sortLevelsets = createEvent<readonly FilesStorageKey[]>();
 
 export const fileDidOpen = addLevelsetFileDoneData.map(
   ({ file: { key } }) => key,
 );
 
-const _willSetCurrentKeyFx = createEffect((next: LevelsetFileKey | null) => {
+const _willSetCurrentKeyFx = createEffect((next: FilesStorageKey | null) => {
   _unsetCurrentKey();
   _setCurrentKey(next);
 });
 const _unsetCurrentKey = createEvent();
-const _setCurrentKey = createEvent<LevelsetFileKey | null>();
+const _setCurrentKey = createEvent<FilesStorageKey | null>();
 forward({
   from: setCurrentLevelset,
   to: _willSetCurrentKeyFx,
@@ -217,13 +217,13 @@ forward({
  * Key of current selected file within `$levelsets`
  */
 export const $currentKey = withPersistent(
-  createStore<LevelsetFileKey | null>(null),
+  createStore<FilesStorageKey | null>(null),
   configStorage,
   "currentFile",
   $instanceIsReadOnly ? { readOnly: $instanceIsReadOnly } : undefined,
 ).on(_setCurrentKey, (_, c) => c);
 
-export const currentKeyWillGone = createEvent<LevelsetFileKey>();
+export const currentKeyWillGone = createEvent<FilesStorageKey>();
 export const currentKeyBeforeWillGone = sample({
   clock: _unsetCurrentKey,
   source: $currentKey,
@@ -260,7 +260,7 @@ interface _DbLevelsetFile
   fileBuffer: ArrayBuffer;
   _options?: LocalOptionsList;
 }
-type _LevelsetsMap = ReadonlyMap<LevelsetFileKey, LevelsetFile>;
+type _LevelsetsMap = ReadonlyMap<FilesStorageKey, LevelsetFile>;
 const updateOrders = (map: _LevelsetsMap): _LevelsetsMap =>
   new Map(
     Array.from(map)
@@ -272,7 +272,7 @@ const updateOrders = (map: _LevelsetsMap): _LevelsetsMap =>
   );
 export const $levelsets = withPersistentMap(
   createStore<_LevelsetsMap>(new Map()),
-  filesStorage as StoreDriver<LevelsetFileKey, _DbLevelsetFile>,
+  filesStorage as StoreDriver<FilesStorageKey, _DbLevelsetFile>,
   {
     ...flushEvents,
     ...($instanceIsReadOnly ? { readOnly: $instanceIsReadOnly } : null),

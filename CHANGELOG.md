@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.17.0 (2023-10-15)
+
+- Add: Textual editing for demo keystrokes.
+- Fix: SP file format loss demo signature on file read.
+
+### Desktop
+
+- Add: Prevent multiple instances to ran in the same time.
+- Add: "Open file with" like whatever editors do.
+- Fix: Same file now cannot be opened multiple times in same instance.
+- Fix: Debug app didn't write logs.
+- Fix: Files, opened in previous run, if missing on startup didn't prune from
+  internal storage, causing the last to grow and keep trying to open the files
+  on every program run.
+- Fix: Invisible app window on start if app was exited being minimized (Win10).
+
 ## 0.16.1 (2023-09-18)
 
 ### Desktop

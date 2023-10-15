@@ -57,6 +57,11 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
+      "signature": "recorded by Min-Soo Kim, Korea.
+
+Thanks to Herman Perk for SPEED-FIX
+Thanks to Maarten (Elmer) Egmond for SPEDIT
+Thanks to original SUPAPLEX creators",
       "specialPorts": Array [],
       "title": "======= QUICKY! =======",
       "width": 60,
@@ -100,6 +105,7 @@ Object {
   "initialFreezeZonks": false,
   "initialGravity": false,
   "maxTitleLength": 23,
+  "signature": null,
   "specialPorts": Array [],
   "title": "                       ",
   "width": 60,
@@ -140,6 +146,7 @@ Object {
   "initialFreezeZonks": false,
   "initialGravity": false,
   "maxTitleLength": 23,
+  "signature": null,
   "specialPorts": Array [],
   "title": "                       ",
   "width": 60,
@@ -180,6 +187,7 @@ Object {
   "initialFreezeZonks": false,
   "initialGravity": false,
   "maxTitleLength": 23,
+  "signature": null,
   "specialPorts": Array [],
   "title": "                       ",
   "width": 60,
@@ -229,6 +237,7 @@ Object {
       "initialFreezeZonks": false,
       "initialGravity": false,
       "maxTitleLength": 23,
+      "signature": null,
       "specialPorts": Array [],
       "title": "                       ",
       "width": 60,

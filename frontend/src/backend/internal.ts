@@ -10,11 +10,12 @@ export interface FilesStorageItem {
 }
 export type FilesStorage = StoreDriver<string, FilesStorageItem>;
 
-export interface OpenFileDoneItem {
+export interface OpenFileItem {
   file: File;
   key?: FilesStorageKey;
 }
-export type OpenFileDoneCallback = (items: readonly OpenFileDoneItem[]) => void;
+export type OpenFiles = readonly OpenFileItem[];
+export type OpenFileDoneCallback = (items: OpenFiles) => void;
 export interface OpenFileOptions {
   multiple?: boolean;
   done: OpenFileDoneCallback;

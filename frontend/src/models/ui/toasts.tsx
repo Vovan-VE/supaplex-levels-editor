@@ -12,7 +12,7 @@ export interface ToastMessage {
 }
 
 const APPEAR_TIMEOUT = 50;
-const SHOW_TIMEOUT = 5000;
+const SHOW_TIMEOUT = 7000;
 const DISAPPEAR_TIMEOUT = 500;
 
 export const showToast = createEvent<ToastMessage>();

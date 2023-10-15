@@ -1,8 +1,9 @@
-//go:build production
+//go:build production || debug
 
 package logging
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -11,8 +12,8 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/logger"
 )
 
-func GetLogger() logger.Logger {
-	lg, err := prepareLogFile()
+func GetLogger(scope Scope) logger.Logger {
+	lg, err := prepareLogFile(scope)
 	if err != nil {
 		println("Error: get logger:", err)
 		return nil
@@ -20,17 +21,33 @@ func GetLogger() logger.Logger {
 	return lg
 }
 
-var filenames = []string{"app.log", "app.log.1"}
+type rotate struct {
+	name  string
+	count int
+}
 
-func prepareLogFile() (logger.Logger, error) {
+var filenames = map[Scope]rotate{
+	ScopePre:  {"pre.log", 10},
+	ScopeMain: {"app.log", 5},
+}
+
+func getFileName(name string, index int) string {
+	if index > 0 {
+		return fmt.Sprintf("%s.%d", name, index)
+	}
+	return name
+}
+
+func prepareLogFile(scope Scope) (logger.Logger, error) {
 	dir := config.GetLogsDir()
 	if err := config.EnsureDir(dir, "logs dir"); err != nil {
 		return nil, err
 	}
 
+	rot := filenames[scope]
 	var prev string
-	for i := len(filenames) - 1; i >= 0; i-- {
-		cur := filepath.Join(dir, filenames[i])
+	for i := rot.count; i >= 0; i-- {
+		cur := filepath.Join(dir, getFileName(rot.name, i))
 
 		_, err := os.Stat(cur)
 		if os.IsNotExist(err) {
@@ -57,5 +74,5 @@ func prepareLogFile() (logger.Logger, error) {
 	}
 	f.Close()
 
-	return logger.NewFileLogger(prev), nil
+	return NewMultipleLogger(logger.NewDefaultLogger(), logger.NewFileLogger(prev)), nil
 }
