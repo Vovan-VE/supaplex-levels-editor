@@ -6,4 +6,4 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/logger"
 )
 
-func GetLogger() logger.Logger { return logger.NewDefaultLogger() }
+func GetLogger(_ Scope) logger.Logger { return logger.NewDefaultLogger() }

@@ -26,22 +26,14 @@ const appTitle = "SpLE"
 var assets embed.FS
 
 func main() {
-	var lg logger.Logger
+	lg := logging.GetLogger(logging.ScopePre)
 	defer func() {
 		r := recover()
 		if r == nil {
 			return
 		}
-
-		if lg != nil {
-			lg.Fatal(fmt.Sprintf("PANIC recovery: %+v\n", r))
-		} else {
-			println("PANIC recovery:", r)
-			os.Exit(1)
-		}
+		lg.Fatal(fmt.Sprintf("PANIC recovery: %+v\n", r))
 	}()
-
-	lg = logging.GetLogger()
 
 	argFiles, argsErr := files.NormalizeArgs(os.Args[1:])
 	if done, err := sendSingletonArgs(argFiles, lg); err != nil {
@@ -50,6 +42,8 @@ func main() {
 		lg.Info("The primary instance will do the job. Exiting.")
 		os.Exit(0)
 	}
+
+	lg = logging.GetLogger(logging.ScopeMain)
 
 	// Create an instance of the app structure
 	app := NewApp(&AppOptions{
