@@ -2,8 +2,9 @@
 Type=Application
 Name=SpLE Desktop
 Comment=Desktop version of sple.me
-Exec=sple-desktop
+Exec=sple-desktop %F
 Icon=sple-desktop
 Terminal=false
 Categories=Game;Application;
+MimeType=application/octet-stream;
 Keywords=sple;supaplex;editor;

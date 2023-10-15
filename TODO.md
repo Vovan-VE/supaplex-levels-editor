@@ -25,6 +25,7 @@
 ### Desktop
 
 - Single instance: activate primary instance in better way.
+- Windows file types association.
 
 ## Wishes from users (unsorted)
 
