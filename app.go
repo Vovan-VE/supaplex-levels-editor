@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/vovan-ve/sple-desktop/internal/backend"
@@ -280,12 +281,12 @@ func (a *App) openFiles(filenames []string) (ret []*backend.WebFileRef, _ error)
 
 		f, err := os.Stat(filename)
 		if err != nil {
-			failed = append(failed, fmt.Sprintf("- Cannot stat file <%s> - %s", filename, err.Error()))
+			failed = append(failed, fmt.Sprintf("- Cannot stat file: %s", err.Error()))
 			continue
 		}
 		b, err := files.NewFile(filename).Read()
 		if err != nil {
-			failed = append(failed, fmt.Sprintf("- Cannot read file <%s> - %s", filename, err.Error()))
+			failed = append(failed, fmt.Sprintf("- Cannot read file: %s", err.Error()))
 			continue
 		}
 		ret = append(ret, &backend.WebFileRef{
@@ -297,7 +298,7 @@ func (a *App) openFiles(filenames []string) (ret []*backend.WebFileRef, _ error)
 		})
 	}
 	if len(failed) > 0 {
-		return nil, errors.New("Cannot open following files:\n\n" + strings.Join(failed, "\n\n"))
+		return nil, errors.New("Cannot open following files:\n" + strings.Join(failed, "\n"))
 	}
 	return
 }
@@ -316,7 +317,19 @@ func (a *App) singletonServer() {
 	a.readSingletonMessages(recv)
 }
 
+func (a *App) activateWindow() {
+	// TODO: better activate window
+	runtime.LogDebugf(a.ctx, "%v activating window", time.Now())
+	runtime.WindowHide(a.ctx)
+	time.Sleep(10 * time.Millisecond)
+	runtime.WindowShow(a.ctx)
+}
+
 func (a *App) readSingletonMessages(recv <-chan []byte) {
+	activateDuration := 30 * time.Millisecond
+	activate := time.AfterFunc(activateDuration, a.activateWindow)
+	activate.Stop()
+	defer activate.Stop()
 	for {
 		select {
 		case <-a.ctx.Done():
@@ -325,21 +338,27 @@ func (a *App) readSingletonMessages(recv <-chan []byte) {
 			if b == nil {
 				return
 			}
-			s, err := files.ArgFromIpc(b)
+			msg, err := files.MessageFromIpc(b)
 			if err != nil {
 				runtime.LogWarningf(a.ctx, "cannot parse ipc message: %#v", err)
 				continue
 			}
-			runtime.LogDebugf(a.ctx, "IPC file to open: %s", s)
 
-			ref, err := a.openFiles([]string{s})
-			a.showError(&err)
-			if len(ref) != 0 {
-				a.triggerFront(backend.FEOpenFiles, ref)
-				// TODO: debounce activate window
-				//runtime.WindowHide(a.ctx)
-				//time.Sleep(10 * time.Millisecond)
-				//runtime.WindowShow(a.ctx)
+			runtime.LogDebugf(a.ctx, "IPC message: %s", msg)
+			switch msg.Type {
+			case files.IpcMessageOpenFile:
+				s := string(msg.Data)
+				runtime.LogDebugf(a.ctx, "IPC open file: %s", s)
+				ref, err := a.openFiles([]string{s})
+				a.showError(&err)
+				if len(ref) != 0 {
+					a.triggerFront(backend.FEOpenFiles, ref)
+				}
+			case files.IpcMessageActivate:
+				runtime.LogDebugf(a.ctx, "%v will activate window", time.Now())
+				activate.Reset(activateDuration)
+			default:
+				runtime.LogDebugf(a.ctx, "IPC message type unknown: %d", msg.Type)
 			}
 		}
 	}

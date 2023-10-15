@@ -24,7 +24,7 @@
 
 ### Desktop
 
-- Single instance: activate primary instance.
+- Single instance: activate primary instance in better way.
 
 ## Wishes from users (unsorted)
 
