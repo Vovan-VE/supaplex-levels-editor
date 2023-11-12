@@ -67,7 +67,7 @@ export const closeCurrentFileFx = allowManualSave
           </>,
           {
             buttons: {
-              okText: <>Forgot "{filename}"</>,
+              okText: <>Forget "{filename}"</>,
               ok: {
                 uiColor: ColorType.DANGER,
                 autoFocus: false,
@@ -130,7 +130,7 @@ export const closeOtherFilesFx = allowManualSave
           </>,
           {
             buttons: {
-              okText: <>Forgot OTHER BUT "{filename}"</>,
+              okText: <>Forget OTHER BUT "{filename}"</>,
               ok: {
                 uiColor: ColorType.DANGER,
                 autoFocus: false,
