@@ -16,12 +16,21 @@ import {
   TILE_ZONK,
 } from "./tiles-id";
 import {
-  ISupaplexSpecPort,
-  ISupaplexSpecPortProps,
+  FreezeEnemiesStatic,
+  FreezeZonksStatic,
+  GravityStatic,
   LocalOpt,
+  SpecPortAlterMod,
 } from "./internal";
 import { readLevelset } from "./formats/mpx/io";
 import { dumpLevel, readExampleFile } from "./helpers.dev";
+import { newSpecPortRecord } from "./specPortsRecord";
+import {
+  dumpSpecport,
+  dumpSpecports,
+  dumpSpecportsArray,
+} from "./helpers.dev/dumpSpecports";
+import { newSpecPortsDatabase } from "./specPortsDb";
 
 describe("level", () => {
   const testLevelData = Uint8Array.of(
@@ -188,16 +197,21 @@ describe("level", () => {
         .setTile(4, 0, TILE_SP_PORT_R)
         .setTile(0, 2, TILE_ZONK)
         .setTile(0, 3, TILE_SP_PORT_D)
-        .setSpecPort(4, 0, {
-          setsGravity: true,
-          setsFreezeZonks: false,
-          setsFreezeEnemies: true,
-        })
-        .setSpecPort(0, 3, {
-          setsGravity: false,
-          setsFreezeZonks: true,
-          setsFreezeEnemies: true,
-        });
+        .updateSpecports((db) =>
+          db
+            .update(4, 0, (p) =>
+              p
+                .setGravity(GravityStatic.ON)
+                .setFreezeZonks(FreezeZonksStatic.OFF)
+                .setFreezeEnemies(FreezeEnemiesStatic.ON),
+            )
+            .update(0, 3, (p) =>
+              p
+                .setGravity(GravityStatic.OFF)
+                .setFreezeZonks(FreezeZonksStatic.ON)
+                .setFreezeEnemies(FreezeEnemiesStatic.ON),
+            ),
+        );
       expect(dumpLevel(b)).toMatchSnapshot();
 
       const c = b.resize({ width: 3, height: 2 });
@@ -231,60 +245,52 @@ describe("level", () => {
       const level = createLevel(3, 2, testLevelData3x2);
       const copy = level.setTile(2, 0, 7);
       expect(level.getTile(2, 0)).toBe(4);
-      expect(level.specPortsCount).toBe(1);
+      expect(level.specports.count).toBe(1);
       expect(copy.getTile(2, 0)).toBe(7);
-      expect(copy.specPortsCount).toBe(1);
+      expect(copy.specports.count).toBe(1);
     });
 
     it("add spec port", () => {
       const level = createLevel(3, 2, testLevelData3x2);
       const copy = level.setTile(2, 0, TILE_SP_PORT_U);
       expect(level.getTile(2, 0)).toBe(4);
-      expect(level.specPortsCount).toBe(1);
+      expect(level.specports.count).toBe(1);
       expect(copy.getTile(2, 0)).toBe(TILE_SP_PORT_U);
-      expect(copy.specPortsCount).toBe(2);
-      expect([...copy.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
-        {
-          x: 1,
-          y: 0,
-          setsGravity: true,
-          setsFreezeZonks: true,
-          setsFreezeEnemies: true,
-        },
-        {
-          x: 2,
-          y: 0,
-          setsGravity: false,
-          setsFreezeZonks: false,
-          setsFreezeEnemies: false,
-        },
-      ]);
+      expect(copy.specports.count).toBe(2);
+      expect(dumpSpecports(copy.specports)).toEqual(
+        dumpSpecportsArray([
+          newSpecPortRecord(1, 0)
+            .setGravity(GravityStatic.ON)
+            .setFreezeZonks(FreezeZonksStatic.ON)
+            .setFreezeEnemies(FreezeEnemiesStatic.ON),
+          newSpecPortRecord(2, 0),
+        ]),
+      );
     });
 
     it("keep spec port", () => {
       const level = createLevel(3, 2, testLevelData3x2);
       const copy = level.setTile(1, 0, TILE_SP_PORT_R);
       expect(level.getTile(1, 0)).toBe(TILE_SP_PORT_U);
-      expect(level.specPortsCount).toBe(1);
+      expect(level.specports.count).toBe(1);
       expect(copy.getTile(1, 0)).toBe(TILE_SP_PORT_R);
-      expect(copy.specPortsCount).toBe(1);
-      expect([...copy.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
-        {
-          x: 1,
-          y: 0,
-          setsGravity: true,
-          setsFreezeZonks: true,
-          setsFreezeEnemies: true,
-        },
-      ]);
+      expect(copy.specports.count).toBe(1);
+      expect(dumpSpecports(copy.specports)).toEqual(
+        dumpSpecportsArray([
+          newSpecPortRecord(1, 0)
+            .setGravity(GravityStatic.ON)
+            .setFreezeZonks(FreezeZonksStatic.ON)
+            .setFreezeEnemies(FreezeEnemiesStatic.ON),
+        ]),
+      );
     });
 
     it("remove spec port", () => {
       const level = createLevel(3, 2, testLevelData3x2);
       const copy = level.setTile(1, 0, TILE_ZONK);
       expect(copy.getTile(1, 0)).toBe(TILE_ZONK);
-      expect(copy.specPortsCount).toBe(0);
-      expect([...copy.getSpecPorts()]).toEqual([]);
+      expect(copy.specports.count).toBe(0);
+      expect(dumpSpecports(copy.specports)).toEqual([]);
     });
   });
 
@@ -359,29 +365,40 @@ describe("level", () => {
 
   it("findSpecPort", () => {
     const level = createLevel(3, 2, testLevelData3x2);
-    expect(level.findSpecPort(1, 0)).toEqual<ISupaplexSpecPortProps>({
-      setsGravity: true,
-      setsFreezeZonks: true,
-      setsFreezeEnemies: true,
-    });
+    expect(dumpSpecport(level.specports.find(1, 0))).toEqual(
+      dumpSpecport(
+        newSpecPortRecord(1, 0)
+          .setGravity(GravityStatic.ON)
+          .setFreezeZonks(FreezeZonksStatic.ON)
+          .setFreezeEnemies(FreezeEnemiesStatic.ON),
+      ),
+    );
   });
 
   it("setSpecPort", () => {
     const level = createLevel(60, 24, testLevelData);
-    expect(level.setSpecPort(12, 12)).toBe(level);
+    expect(level.updateSpecports((db) => db.update(12, 12, (p) => p))).toBe(
+      level,
+    );
     expect(
-      level.setSpecPort(12, 12, {
-        setsGravity: true,
-        setsFreezeZonks: true,
-        setsFreezeEnemies: true,
-      }),
+      level.updateSpecports((db) =>
+        db.update(12, 12, (p) =>
+          p
+            .setGravity(GravityStatic.ON)
+            .setFreezeZonks(FreezeZonksStatic.ON)
+            .setFreezeEnemies(FreezeEnemiesStatic.ON),
+        ),
+      ),
     ).toBe(level);
     expect(
-      level.setSpecPort(12, 12, {
-        setsGravity: false,
-        setsFreezeZonks: true,
-        setsFreezeEnemies: true,
-      }),
+      level.updateSpecports((db) =>
+        db.update(12, 12, (p) =>
+          p
+            .setGravity(GravityStatic.OFF)
+            .setFreezeZonks(FreezeZonksStatic.ON)
+            .setFreezeEnemies(FreezeEnemiesStatic.ON),
+        ),
+      ),
     ).not.toBe(level);
   });
 
@@ -425,15 +442,14 @@ describe("level", () => {
     expect(region.tiles.getTile(0, 2)).toBe(0);
     expect(region.tiles.getTile(1, 2)).toBe(0);
     expect(region.tiles.getTile(2, 2)).toBe(0xe);
-    expect(region.specPorts).toEqual([
-      {
-        x: 1,
-        y: 1,
-        setsGravity: true,
-        setsFreezeZonks: true,
-        setsFreezeEnemies: true,
-      },
-    ]);
+    expect(dumpSpecportsArray(region.specPorts)).toEqual(
+      dumpSpecportsArray([
+        newSpecPortRecord(1, 1)
+          .setGravity(GravityStatic.ON)
+          .setFreezeZonks(FreezeZonksStatic.ON)
+          .setFreezeEnemies(FreezeEnemiesStatic.ON),
+      ]),
+    );
   });
 
   describe("pasteRegion", () => {
@@ -476,23 +492,16 @@ describe("level", () => {
         [12, 14, 1, 0xe],
         [13, 14, 1, 0],
       ]);
-      expect(next.specPortsCount).toBe(2);
-      expect([...next.getSpecPorts()]).toEqual([
-        {
-          x: 11,
-          y: 13,
-          setsGravity: true,
-          setsFreezeZonks: true,
-          setsFreezeEnemies: true,
-        },
-        {
-          x: 12,
-          y: 14,
-          setsGravity: false,
-          setsFreezeZonks: false,
-          setsFreezeEnemies: false,
-        },
-      ]);
+      expect(next.specports.count).toBe(2);
+      expect(dumpSpecports(next.specports)).toEqual(
+        dumpSpecportsArray([
+          newSpecPortRecord(11, 13)
+            .setGravity(GravityStatic.ON)
+            .setFreezeZonks(FreezeZonksStatic.ON)
+            .setFreezeEnemies(FreezeEnemiesStatic.ON),
+          newSpecPortRecord(12, 14),
+        ]),
+      );
     });
 
     it("outside partial", () => {
@@ -531,23 +540,16 @@ describe("level", () => {
         [1, 3, 2, 0],
         [3, 3, 1, 4],
       ]);
-      expect(next.specPortsCount).toBe(2);
-      expect([...next.getSpecPorts()]).toEqual([
-        {
-          x: 12,
-          y: 12,
-          setsGravity: true,
-          setsFreezeZonks: true,
-          setsFreezeEnemies: true,
-        },
-        {
-          x: 0,
-          y: 3,
-          setsGravity: false,
-          setsFreezeZonks: false,
-          setsFreezeEnemies: false,
-        },
-      ]);
+      expect(next.specports.count).toBe(2);
+      expect(dumpSpecports(next.specports)).toEqual(
+        dumpSpecportsArray([
+          newSpecPortRecord(12, 12)
+            .setGravity(GravityStatic.ON)
+            .setFreezeZonks(FreezeZonksStatic.ON)
+            .setFreezeEnemies(FreezeEnemiesStatic.ON),
+          newSpecPortRecord(0, 3),
+        ]),
+      );
     });
 
     it("outside noop", () => {
@@ -556,85 +558,151 @@ describe("level", () => {
     });
   });
 
-  it("localOptions", () => {
+  describe("localOptions", () => {
     const level = createLevel(60, 24);
 
-    expect(level.localOptions).toEqual(undefined);
-    expect(level.setLocalOptions({})).toBe(level);
-    expect(
-      level.setLocalOptions({
-        [LocalOpt.UsePlasma]: undefined,
-        [LocalOpt.UsePlasmaLimit]: undefined,
-        [LocalOpt.UsePlasmaTime]: undefined,
-        [LocalOpt.UseZonker]: 0,
-        [LocalOpt.UseSerialPorts]: "",
-        [LocalOpt.UseInfotronsNeeded]: undefined,
-      }),
-    ).toBe(level);
-
-    const p = level.setLocalOptions({ [LocalOpt.UsePlasma]: true });
-    expect(p.usePlasma).toBe(true);
-    expect(p.localOptions).toEqual({ [LocalOpt.UsePlasma]: 1 });
-    expect(level.setUsePlasma(true).localOptions).toEqual({
-      [LocalOpt.UsePlasma]: 1,
+    it("empty, noop", () => {
+      expect(level.localOptions).toEqual(undefined);
+      expect(level.setLocalOptions({})).toBe(level);
+      expect(
+        level.setLocalOptions({
+          [LocalOpt.UsePlasma]: undefined,
+          [LocalOpt.UsePlasmaLimit]: undefined,
+          [LocalOpt.UsePlasmaTime]: undefined,
+          [LocalOpt.UseZonker]: 0,
+          [LocalOpt.UseSerialPorts]: "",
+          [LocalOpt.UseInfotronsNeeded]: undefined,
+          [LocalOpt.PortsDatabase]: undefined,
+        }),
+      ).toBe(level);
     });
 
-    const pl = level.setLocalOptions({ [LocalOpt.UsePlasmaLimit]: 42 });
-    expect(pl.usePlasmaLimit).toBe(42);
-    expect(pl.localOptions).toEqual({ [LocalOpt.UsePlasmaLimit]: 42 });
-    expect(level.setUsePlasmaLimit(42).localOptions).toEqual({
-      [LocalOpt.UsePlasmaLimit]: 42,
+    it("plasma", () => {
+      const p = level.setLocalOptions({ [LocalOpt.UsePlasma]: true });
+      expect(p.usePlasma).toBe(true);
+      expect(p.localOptions).toEqual({ [LocalOpt.UsePlasma]: 1 });
+      expect(level.setUsePlasma(true).localOptions).toEqual({
+        [LocalOpt.UsePlasma]: 1,
+      });
     });
 
-    const pt = level.setLocalOptions({ [LocalOpt.UsePlasmaTime]: 37 });
-    expect(pt.usePlasmaTime).toBe(37);
-    expect(pt.localOptions).toEqual({ [LocalOpt.UsePlasmaTime]: 37 });
-    expect(level.setUsePlasmaTime(37).localOptions).toEqual({
-      [LocalOpt.UsePlasmaTime]: 37,
+    it("plasma limit", () => {
+      const pl = level.setLocalOptions({ [LocalOpt.UsePlasmaLimit]: 42 });
+      expect(pl.usePlasmaLimit).toBe(42);
+      expect(pl.localOptions).toEqual({ [LocalOpt.UsePlasmaLimit]: 42 });
+      expect(level.setUsePlasmaLimit(42).localOptions).toEqual({
+        [LocalOpt.UsePlasmaLimit]: 42,
+      });
     });
 
-    const z = level.setLocalOptions({ [LocalOpt.UseZonker]: true });
-    expect(z.useZonker).toBe(true);
-    expect(z.localOptions).toEqual({ [LocalOpt.UseZonker]: 1 });
-    expect(level.setUseZonker(true).localOptions).toEqual({
-      [LocalOpt.UseZonker]: 1,
+    it("plasma time", () => {
+      const pt = level.setLocalOptions({ [LocalOpt.UsePlasmaTime]: 37 });
+      expect(pt.usePlasmaTime).toBe(37);
+      expect(pt.localOptions).toEqual({ [LocalOpt.UsePlasmaTime]: 37 });
+      expect(level.setUsePlasmaTime(37).localOptions).toEqual({
+        [LocalOpt.UsePlasmaTime]: 37,
+      });
     });
 
-    const s = level.setLocalOptions({ [LocalOpt.UseSerialPorts]: true });
-    expect(s.useSerialPorts).toBe(true);
-    expect(s.localOptions).toEqual({ [LocalOpt.UseSerialPorts]: 1 });
-    expect(level.setUseSerialPorts(true).localOptions).toEqual({
-      [LocalOpt.UseSerialPorts]: 1,
+    it("zonker", () => {
+      const z = level.setLocalOptions({ [LocalOpt.UseZonker]: true });
+      expect(z.useZonker).toBe(true);
+      expect(z.localOptions).toEqual({ [LocalOpt.UseZonker]: 1 });
+      expect(level.setUseZonker(true).localOptions).toEqual({
+        [LocalOpt.UseZonker]: 1,
+      });
     });
 
-    const inf = level.setLocalOptions({ [LocalOpt.UseInfotronsNeeded]: 257 });
-    expect(inf.useInfotronsNeeded).toBe(257);
-    expect(inf.localOptions).toEqual({ [LocalOpt.UseInfotronsNeeded]: 257 });
-    expect(level.setUseInfotronsNeeded(257).localOptions).toEqual({
-      [LocalOpt.UseInfotronsNeeded]: 257,
+    it("serial ports", () => {
+      const s = level.setLocalOptions({ [LocalOpt.UseSerialPorts]: true });
+      expect(s.useSerialPorts).toBe(true);
+      expect(s.localOptions).toEqual({ [LocalOpt.UseSerialPorts]: 1 });
+      expect(level.setUseSerialPorts(true).localOptions).toEqual({
+        [LocalOpt.UseSerialPorts]: 1,
+      });
     });
 
-    const all = level.setLocalOptions({
-      [LocalOpt.UsePlasma]: true,
-      [LocalOpt.UsePlasmaLimit]: 42,
-      [LocalOpt.UsePlasmaTime]: 37,
-      [LocalOpt.UseZonker]: 91,
-      [LocalOpt.UseSerialPorts]: "lol",
-      [LocalOpt.UseInfotronsNeeded]: 257,
+    it("infotrons needed", () => {
+      const inf = level.setLocalOptions({ [LocalOpt.UseInfotronsNeeded]: 257 });
+      expect(inf.useInfotronsNeeded).toBe(257);
+      expect(inf.localOptions).toEqual({ [LocalOpt.UseInfotronsNeeded]: 257 });
+      expect(level.setUseInfotronsNeeded(257).localOptions).toEqual({
+        [LocalOpt.UseInfotronsNeeded]: 257,
+      });
     });
-    expect(all.usePlasma).toBe(true);
-    expect(all.usePlasmaLimit).toBe(42);
-    expect(all.usePlasmaTime).toBe(37);
-    expect(all.useZonker).toBe(true);
-    expect(all.useSerialPorts).toBe(true);
-    expect(all.useInfotronsNeeded).toBe(257);
-    expect(all.localOptions).toEqual({
-      [LocalOpt.UsePlasma]: 1,
-      [LocalOpt.UsePlasmaLimit]: 42,
-      [LocalOpt.UsePlasmaTime]: 37,
-      [LocalOpt.UseZonker]: 1,
-      [LocalOpt.UseSerialPorts]: 1,
-      [LocalOpt.UseInfotronsNeeded]: 257,
+
+    it("specports database", () => {
+      const spdb = level.setLocalOptions({
+        [LocalOpt.PortsDatabase]: "x10y20g1z-2e-1,x5y6g0z-1u97",
+      });
+      expect(dumpSpecports(spdb.specports)).toEqual(
+        dumpSpecportsArray([
+          newSpecPortRecord(10, 20)
+            .setGravity(GravityStatic.ON)
+            .setFreezeZonks(SpecPortAlterMod.TOGGLE)
+            .setFreezeEnemies(SpecPortAlterMod.NOTHING),
+          newSpecPortRecord(5, 6)
+            .setGravity(GravityStatic.OFF)
+            .setFreezeZonks(SpecPortAlterMod.NOTHING)
+            .setFreezeEnemies(FreezeEnemiesStatic.OFF)
+            .setUnusedByte(97),
+        ]),
+      );
+
+      expect(
+        level.setSpecports(
+          newSpecPortsDatabase()
+            .set(
+              newSpecPortRecord(10, 20)
+                .setGravity(GravityStatic.ON)
+                .setFreezeZonks(SpecPortAlterMod.TOGGLE)
+                .setFreezeEnemies(SpecPortAlterMod.NOTHING),
+            )
+            .set(
+              newSpecPortRecord(5, 6)
+                .setGravity(GravityStatic.OFF)
+                .setFreezeZonks(SpecPortAlterMod.NOTHING)
+                .setFreezeEnemies(FreezeEnemiesStatic.OFF)
+                .setUnusedByte(97),
+            ),
+        ).localOptions,
+      ).toEqual({
+        [LocalOpt.PortsDatabase]: "x10y20g1z-2e-1,x5y6z-1u97",
+      });
+
+      // std compatible
+      expect(
+        level.setLocalOptions({
+          [LocalOpt.PortsDatabase]: "x10y20g1z2,x5y6g0z7u97",
+        }).localOptions,
+      ).toBeUndefined();
+    });
+
+    it("all together", () => {
+      const all = level.setLocalOptions({
+        [LocalOpt.UsePlasma]: true,
+        [LocalOpt.UsePlasmaLimit]: 42,
+        [LocalOpt.UsePlasmaTime]: 37,
+        [LocalOpt.UseZonker]: 91,
+        [LocalOpt.UseSerialPorts]: "lol",
+        [LocalOpt.UseInfotronsNeeded]: 257,
+        [LocalOpt.PortsDatabase]: "x10y20g1z-2e-1,x5y6g0z-1u97",
+      });
+      expect(all.usePlasma).toBe(true);
+      expect(all.usePlasmaLimit).toBe(42);
+      expect(all.usePlasmaTime).toBe(37);
+      expect(all.useZonker).toBe(true);
+      expect(all.useSerialPorts).toBe(true);
+      expect(all.useInfotronsNeeded).toBe(257);
+      expect(all.localOptions).toEqual({
+        [LocalOpt.UsePlasma]: 1,
+        [LocalOpt.UsePlasmaLimit]: 42,
+        [LocalOpt.UsePlasmaTime]: 37,
+        [LocalOpt.UseZonker]: 1,
+        [LocalOpt.UseSerialPorts]: 1,
+        [LocalOpt.UseInfotronsNeeded]: 257,
+        [LocalOpt.PortsDatabase]: "x10y20g1z-2e-1,x5y6z-1u97",
+      });
     });
   });
 });

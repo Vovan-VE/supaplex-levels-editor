@@ -1,4 +1,4 @@
-import { IBounds, Point2D, Rect } from "utils/rect";
+import { IBounds, Rect } from "utils/rect";
 import {
   IsPlayableResult,
   ITilesRegion,
@@ -30,13 +30,68 @@ export interface ILevelBody extends IBounds {
   findPlayer(): [x: number, y: number] | null;
 }
 
-export interface ISupaplexSpecPortProps {
-  setsGravity: boolean;
-  setsFreezeZonks: boolean;
-  setsFreezeEnemies: boolean;
+export const enum GravityStatic {
+  OFF = 0,
+  ON = 1,
 }
+export const enum FreezeZonksStatic {
+  OFF = 0,
+  ON = 2,
+}
+export const enum FreezeEnemiesStatic {
+  OFF = 0,
+  ON = 1,
+}
+export const enum SpecPortAlterMod {
+  NOTHING = -1,
+  TOGGLE = -2,
+}
+export type SpecPortAlterRaw = number & {};
+export type SpecPortAlter = SpecPortAlterMod | SpecPortAlterRaw;
+export type SpecPortGravity = GravityStatic | SpecPortAlter;
+export type SpecPortFreezeZonks = FreezeZonksStatic | SpecPortAlter;
+export type SpecPortFreezeEnemies = FreezeEnemiesStatic | SpecPortAlter;
 
-export interface ISupaplexSpecPort extends ISupaplexSpecPortProps, Point2D {}
+export interface ISupaplexSpecPortsIO {
+  isStdCompatible(width: number): boolean;
+  toString(): string;
+  toRaw(width: number): Uint8Array;
+}
+export interface ISupaplexSpecPortRecordReadonly {
+  readonly x: number;
+  readonly y: number;
+  //TODO: ? readonly ex: number;
+  //TODO: ? readonly ey: number;
+  readonly gravity: SpecPortGravity;
+  readonly freezeZonks: SpecPortFreezeZonks;
+  readonly freezeEnemies: SpecPortFreezeEnemies;
+  readonly unusedByte: number;
+}
+export interface ISupaplexSpecPortRecord
+  extends ISupaplexSpecPortRecordReadonly,
+    ISupaplexSpecPortsIO {
+  setX(x: number): ISupaplexSpecPortRecord;
+  setY(y: number): ISupaplexSpecPortRecord;
+  setGravity(v: SpecPortGravity): ISupaplexSpecPortRecord;
+  setFreezeZonks(v: SpecPortFreezeZonks): ISupaplexSpecPortRecord;
+  setFreezeEnemies(v: SpecPortFreezeEnemies): ISupaplexSpecPortRecord;
+  setUnusedByte(u: number): ISupaplexSpecPortRecord;
+}
+export interface ISupaplexSpecPortDatabase extends ISupaplexSpecPortsIO {
+  readonly count: number;
+  readonly countStdCompatible: number;
+  getAll(): Iterable<ISupaplexSpecPortRecord>;
+  copySpecPortsInRegion(r: Rect): readonly ISupaplexSpecPortRecord[];
+  clear(): ISupaplexSpecPortDatabase;
+  find(x: number, y: number): ISupaplexSpecPortRecord | null;
+  set(p: ISupaplexSpecPortRecord): ISupaplexSpecPortDatabase;
+  update(
+    x: number,
+    y: number,
+    update: (prev: ISupaplexSpecPortRecord) => ISupaplexSpecPortRecord,
+  ): ISupaplexSpecPortDatabase;
+  delete(x: number, y: number): ISupaplexSpecPortDatabase;
+}
 
 export interface ILevelFooter extends IWithDemo, IWithSignature {
   readonly length: number;
@@ -49,13 +104,6 @@ export interface ILevelFooter extends IWithDemo, IWithSignature {
   setInitialFreezeZonks(on: boolean): this;
   readonly infotronsNeed: number;
   setInfotronsNeed(value: number): this;
-  readonly specPortsCount: number;
-  getSpecPorts(): Iterable<ISupaplexSpecPort>;
-  copySpecPortsInRegion(r: Rect): readonly ISupaplexSpecPort[];
-  clearSpecPorts(): this;
-  findSpecPort(x: number, y: number): ISupaplexSpecPortProps | undefined;
-  setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps): this;
-  deleteSpecPort(x: number, y: number): this;
   readonly usePlasma: boolean;
   readonly usePlasmaLimit: number | undefined;
   readonly usePlasmaTime: number | undefined;
@@ -70,8 +118,6 @@ export interface ILevelFooter extends IWithDemo, IWithSignature {
   setUseInfotronsNeeded(n: number | undefined): this;
 }
 
-export const SPEC_PORT_MAX_COUNT = 10;
-
 export const enum LocalOpt {
   UsePlasma = "usePlasma",
   UsePlasmaLimit = "usePlasmaLimit",
@@ -79,4 +125,5 @@ export const enum LocalOpt {
   UseZonker = "useZonker",
   UseSerialPorts = "useSerialPorts",
   UseInfotronsNeeded = "useInfotronsNeeded",
+  PortsDatabase = "portsDB",
 }

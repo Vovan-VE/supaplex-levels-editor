@@ -1,0 +1,41 @@
+@use "styles/mixins";
+@use "styles/themes";
+
+.error {
+  color: themes.$color-danger;
+}
+//.warn {
+//  color: themes.$color-warn;
+//}
+
+.actions {
+  display: grid;
+  grid-gap: 0.5rem 1rem;
+  grid-template-columns: max-content minmax(0, 1fr) 4rem;
+  align-items: center;
+
+  .label {
+  }
+  .select {
+  }
+  .input {
+  }
+}
+
+.unusedByte {
+  margin-top: 1rem;
+
+  label {
+    display: inline-grid;
+    grid-gap: 1rem;
+    grid-template-columns: max-content 4rem;
+    align-items: center;
+  }
+  .input {
+  }
+}
+
+.input {
+  text-align: center;
+  @extend %font-family-mono;
+}
