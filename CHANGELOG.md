@@ -2,7 +2,17 @@
 
 ## 0.18.0 (DEV)
 
-- ...
+- Add: New SO Special Ports Database support. This brings the following changes:
+  - More than 10 special ports can be defined in a level.
+  - No limit for special port position in big MPX level.
+  - Any Port can now be defined as Special.
+  - Any of environment features controlling by a Special Port can be set to
+    "don't change" and "toggle" in Special Port properties.
+- Add: Editing the unused byte in every Special Port Database Entry. Can be used
+  for customizing the bottom beyond for SP compatible entries.
+- Fix: "Broken" Special Ports (which are Special Port tiles, but without entry
+  in Special Ports Database) in Selection region wasn't render same as in level
+  body.
 
 ## 0.17.0 (2023-10-15)
 

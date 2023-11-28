@@ -63,14 +63,14 @@ class SpecPortsDatabase implements ISupaplexSpecPortDatabase {
     return this.#ports.values();
   }
 
-  copySpecPortsInRegion(r: Rect): readonly ISupaplexSpecPortRecord[] {
+  copySpecPortsInRegion(r: Rect): ISupaplexSpecPortDatabase {
     const result: ISupaplexSpecPortRecord[] = [];
     for (const p of this.#ports.values()) {
       if (inRect(p.x, p.y, r)) {
         result.push(p.setX(p.x - r.x).setY(p.y - r.y));
       }
     }
-    return result;
+    return new SpecPortsDatabase(result);
   }
 
   clear(): SpecPortsDatabase {
@@ -82,6 +82,16 @@ class SpecPortsDatabase implements ISupaplexSpecPortDatabase {
 
   find(x: number, y: number): ISupaplexSpecPortRecord | null {
     return this.#ports.get(keyCoord(x, y)) ?? null;
+  }
+
+  add(x: number, y: number): SpecPortsDatabase {
+    const key = keyCoord(x, y);
+    if (this.#ports.has(key)) {
+      return this;
+    }
+    const result = new SpecPortsDatabase();
+    result.#ports = RoMap.set(this.#ports, key, newSpecPortRecord(x, y));
+    return result;
   }
 
   set(p: ISupaplexSpecPortRecord): SpecPortsDatabase {

@@ -377,9 +377,7 @@ describe("level", () => {
 
   it("setSpecPort", () => {
     const level = createLevel(60, 24, testLevelData);
-    expect(level.updateSpecports((db) => db.update(12, 12, (p) => p))).toBe(
-      level,
-    );
+    expect(level.updateSpecports((db) => db.add(12, 12))).toBe(level);
     expect(
       level.updateSpecports((db) =>
         db.update(12, 12, (p) =>
@@ -431,7 +429,7 @@ describe("level", () => {
       [1, 1, 1, 0xd],
       [2, 1, 1, 0],
       [0, 2, 2, 0],
-      [2, 2, 1, 0xe],
+      [2, 2, 1, 0xe, 1],
     ]);
     expect(region.tiles.getTile(0, 0)).toBe(0xc);
     expect(region.tiles.getTile(1, 0)).toBe(0);
@@ -442,7 +440,7 @@ describe("level", () => {
     expect(region.tiles.getTile(0, 2)).toBe(0);
     expect(region.tiles.getTile(1, 2)).toBe(0);
     expect(region.tiles.getTile(2, 2)).toBe(0xe);
-    expect(dumpSpecportsArray(region.specPorts)).toEqual(
+    expect(dumpSpecports(region.tiles.specports)).toEqual(
       dumpSpecportsArray([
         newSpecPortRecord(1, 1)
           .setGravity(GravityStatic.ON)

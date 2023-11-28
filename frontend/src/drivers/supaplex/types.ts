@@ -7,22 +7,21 @@ import {
   IBaseTile,
   ILevelRegion,
   IResizeLevelOptions,
+  ITilesRegion,
   IWithDemo,
   IWithSignature,
   LocalOptions,
 } from "../types";
-import {
-  ILevelBody,
-  ISupaplexSpecPortDatabase,
-  ISupaplexSpecPortRecord,
-} from "./internal";
+import { ILevelBody, ISupaplexSpecPortDatabase } from "./internal";
 
+export interface ISupaplexTilesRegion extends ITilesRegion {
+  readonly specports: ISupaplexSpecPortDatabase;
+}
 export interface ISupaplexLevelRegion extends ILevelRegion {
-  readonly specPorts: readonly ISupaplexSpecPortRecord[];
+  readonly tiles: ISupaplexTilesRegion;
 }
 export interface ISupaplexLevel extends IBaseLevel, IWithDemo, IWithSignature {
-  copyRegion(r: Rect): ISupaplexLevelRegion;
-  pasteRegion(x: number, y: number, region: ISupaplexLevelRegion): this;
+  copyRegion(rect: Rect): ISupaplexLevelRegion;
   readonly length: number;
   readonly raw: Uint8Array;
   readonly body: ILevelBody;
@@ -50,6 +49,7 @@ export interface ISupaplexLevel extends IBaseLevel, IWithDemo, IWithSignature {
   setUsePlasmaTime(n: number | undefined): this;
   setUseZonker(on: boolean): this;
   setUseSerialPorts(on: boolean): this;
+  // REFACT: merge into common
   setUseInfotronsNeeded(n: number | undefined): this;
 }
 

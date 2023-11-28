@@ -25,12 +25,14 @@ import {
   SpecPortGravity,
 } from "./internal";
 import {
-  isSpecPort,
+  canHaveSpecPortsDB,
+  requiresSpecPortsDB,
   setPortIsSpecial,
   TILE_ELECTRON,
   TILE_MURPHY,
   TILE_SNIK_SNAK,
   TILE_ZONK,
+  toRenderPortVariant,
 } from "./tiles-id";
 import { ISupaplexLevel } from "./types";
 import { newSpecPortRecord } from "./specPortsRecord";
@@ -107,10 +109,12 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
 }: Props<T>) => {
   const { x, y } = cell;
   const tile = level.getTile(x, y);
-  const wasSpecial = isSpecPort(tile);
+  const wasSpecial = requiresSpecPortsDB(tile);
   const hadProps = useMemo(() => level.specports.find(x, y), [x, y, level]);
 
-  const [isSpecial, setIsSpecial] = useState(wasSpecial);
+  const [isSpecial, setIsSpecial] = useState(
+    wasSpecial || (Boolean(hadProps) && canHaveSpecPortsDB(tile)),
+  );
   const [port, setPort] = useState(hadProps);
 
   const [nextLevel, nextLevelError] = useMemo(() => {
@@ -134,8 +138,10 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
   const handleOK = useCallback(() => {
     if (nextLevel) {
       submit(nextLevel);
+    } else {
+      cancel();
     }
-  }, [submit, nextLevel]);
+  }, [submit, cancel, nextLevel]);
 
   const options = useMemo<RadioOptions<boolean>>(
     () => [
@@ -143,7 +149,7 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
         value: false,
         label: (
           <>
-            <InlineTile tile={setPortIsSpecial(tile, false)} /> Regular Port
+            <InlineTile {...toRenderPortVariant(tile, false)} /> Regular Port
           </>
         ),
       },
@@ -151,7 +157,7 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
         value: true,
         label: (
           <>
-            <InlineTile tile={setPortIsSpecial(tile, true)} /> Special Port
+            <InlineTile {...toRenderPortVariant(tile, true)} /> Special Port
           </>
         ),
       },
@@ -200,7 +206,11 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
       size="small"
       buttons={
         <>
-          <Button uiColor={ColorType.SUCCESS} onClick={handleOK}>
+          <Button
+            uiColor={ColorType.SUCCESS}
+            onClick={handleOK}
+            disabled={Boolean(nextLevelError)}
+          >
             OK
           </Button>
           <Button uiColor={ColorType.MUTE} onClick={cancel}>

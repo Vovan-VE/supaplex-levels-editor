@@ -113,11 +113,35 @@ export const TILE_CHIP_B = 0x27;
 export const TILE_INVIS_WALL = 0x28;
 // export const TILE__UNKNOWN = 0x29;
 
-export const isSpecPort = (tile: number) =>
-  tile === TILE_SP_PORT_R ||
-  tile === TILE_SP_PORT_D ||
-  tile === TILE_SP_PORT_L ||
-  tile === TILE_SP_PORT_U;
+const newTilesSet = (...tiles: number[]): ReadonlySet<number> => new Set(tiles);
+
+const portsSpecial = newTilesSet(
+  TILE_SP_PORT_R,
+  TILE_SP_PORT_D,
+  TILE_SP_PORT_L,
+  TILE_SP_PORT_U,
+);
+const portsRegularWithSpecialCounterpart = newTilesSet(
+  TILE_PORT_R,
+  TILE_PORT_D,
+  TILE_PORT_L,
+  TILE_PORT_U,
+);
+const portsRegularOther = newTilesSet(TILE_PORT_V, TILE_PORT_H, TILE_PORT_X);
+
+const supportingSpecPortsDatabase = newTilesSet(
+  ...portsSpecial,
+  ...portsRegularWithSpecialCounterpart,
+  ...portsRegularOther,
+);
+
+export const isSpecPort = (tile: number) => portsSpecial.has(tile);
+// const isRegularPortSure=(tile: number) =>portsRegularWithSpecialCounterpart.has(tile);
+export const isOtherPort = (tile: number) => portsRegularOther.has(tile);
+
+export const requiresSpecPortsDB = isSpecPort;
+export const canHaveSpecPortsDB = (tile: number) =>
+  supportingSpecPortsDatabase.has(tile);
 
 const portSpMap = new Map([
   [TILE_PORT_R, TILE_SP_PORT_R],
@@ -130,10 +154,25 @@ const portSpMap = new Map([
   [TILE_SP_PORT_L, TILE_PORT_L],
   [TILE_SP_PORT_U, TILE_PORT_U],
 ]);
+
 export const togglePortIsSpecial = (tile: number) =>
   portSpMap.get(tile) ?? tile;
+
 export const setPortIsSpecial = (tile: number, setIsSpecial: boolean) =>
   isSpecPort(tile) === setIsSpecial ? tile : togglePortIsSpecial(tile);
+
+export const toRenderPortVariant = (
+  tile: number,
+  setIsSpecial: boolean,
+): { tile: number; variant?: number } => {
+  const outTile = setPortIsSpecial(tile, setIsSpecial);
+  if (isOtherPort(outTile)) {
+    return { tile: outTile, variant: setIsSpecial ? 1 : undefined };
+  }
+  // if (isSpecPort(outTile)||isRegularPortSure(outTile)) {
+  return { tile: outTile };
+  // }
+};
 
 export const isVariants = (a: number, b: number) =>
   a === b || portSpMap.get(a) === b;

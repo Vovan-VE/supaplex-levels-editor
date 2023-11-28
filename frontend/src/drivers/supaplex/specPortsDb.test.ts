@@ -25,14 +25,14 @@ describe("basic", () => {
     testDbCount,
     LEVEL_WIDTH,
   );
-  const textPort1 = newSpecPortRecord(12, 12)
+  const testPort1 = newSpecPortRecord(12, 12)
     .setGravity(GravityStatic.ON)
     .setFreezeZonks(FreezeZonksStatic.ON)
     .setFreezeEnemies(FreezeEnemiesStatic.ON);
 
   afterEach(() => {
     expect(db.count).toBe(testDbCount);
-    expect(dumpSpecports(db)).toEqual(dumpSpecportsArray([textPort1]));
+    expect(dumpSpecports(db)).toEqual(dumpSpecportsArray([testPort1]));
   });
 
   it("io", () => {
@@ -42,13 +42,17 @@ describe("basic", () => {
 
   it("copySpecPortsInRegion", () => {
     expect(
-      db.copySpecPortsInRegion({ x: 0, y: 0, width: 60, height: 12 }),
+      dumpSpecports(
+        db.copySpecPortsInRegion({ x: 0, y: 0, width: 60, height: 12 }),
+      ),
     ).toEqual([]);
     expect(
-      db.copySpecPortsInRegion({ x: 0, y: 0, width: 12, height: 24 }),
+      dumpSpecports(
+        db.copySpecPortsInRegion({ x: 0, y: 0, width: 12, height: 24 }),
+      ),
     ).toEqual([]);
     expect(
-      dumpSpecportsArray(
+      dumpSpecports(
         db.copySpecPortsInRegion({ x: 11, y: 11, width: 3, height: 3 }),
       ),
     ).toEqual(
@@ -69,14 +73,14 @@ describe("basic", () => {
   });
 
   it("find", () => {
-    expect(dumpSpecport(db.find(12, 12))).toEqual(dumpSpecport(textPort1));
+    expect(dumpSpecport(db.find(12, 12))).toEqual(dumpSpecport(testPort1));
     expect(db.find(13, 12)).toBeNull();
   });
 
   describe("set/update", () => {
     it("no op", () => {
-      expect(db.set(textPort1)).toBe(db);
-      expect(db.update(12, 12, (p) => p)).toBe(db);
+      expect(db.set(testPort1)).toBe(db);
+      expect(db.add(12, 12)).toBe(db);
     });
 
     it("update", () => {
@@ -88,7 +92,7 @@ describe("basic", () => {
 
       expect(db.count).toBe(1);
       expect(copy.count).toBe(1);
-      expect(dumpSpecports(db)).toEqual(dumpSpecportsArray([textPort1]));
+      expect(dumpSpecports(db)).toEqual(dumpSpecportsArray([testPort1]));
       expect(dumpSpecports(copy)).toEqual(
         dumpSpecportsArray([
           newSpecPortRecord(12, 12)

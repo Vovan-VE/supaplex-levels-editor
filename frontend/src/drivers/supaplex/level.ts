@@ -2,6 +2,7 @@ import { clipRect, IBounds, inBounds, Point2D, Rect } from "utils/rect";
 import {
   DemoSeed,
   FlipDirection,
+  ILevelRegion,
   INewLevelOptions,
   IResizeLevelOptions,
   ITilesStreamItem,
@@ -29,8 +30,11 @@ import {
   LocalOpt,
 } from "./internal";
 import {
+  canHaveSpecPortsDB,
+  isOtherPort,
   isSpecPort,
   isVariants,
+  requiresSpecPortsDB,
   setPortIsSpecial,
   symmetry,
   TILE_HARDWARE,
@@ -44,7 +48,6 @@ import {
   newSpecPortsDatabaseFromBytes,
   newSpecPortsDatabaseFromString,
 } from "./specPortsDb";
-import { newSpecPortRecord } from "./specPortsRecord";
 
 const sliceFooter = (bodyLength: number, data?: Uint8Array) => {
   if (data) {
@@ -280,7 +283,14 @@ class SupaplexLevel implements ISupaplexLevel {
       if (isVariants(prev, value)) {
         return this;
       }
-      if (isSpecPort(prev) && !isSpecPort(value)) {
+      // when placing regular port (but different form/direction),
+      // in place of specport (either real or de-facto)
+      // and new tile supports specport DB,
+      // then trying to convert regular tile to its special counterpart
+      if (
+        (requiresSpecPortsDB(prev) || this.#specports.find(x, y)) &&
+        canHaveSpecPortsDB(value)
+      ) {
         value = setPortIsSpecial(value, true);
       }
     }
@@ -288,14 +298,10 @@ class SupaplexLevel implements ISupaplexLevel {
       return this;
     }
     let next: this = this.#withBody(this.#body.setTile(x, y, value));
-    if (isSpecPort(prev)) {
-      if (!isSpecPort(value)) {
-        next = next.updateSpecports((db) => db.delete(x, y));
-      }
-    } else {
-      if (isSpecPort(value)) {
-        next = next.updateSpecports((db) => db.set(newSpecPortRecord(x, y)));
-      }
+    if (requiresSpecPortsDB(value)) {
+      next = next.updateSpecports((db) => db.add(x, y));
+    } else if (!canHaveSpecPortsDB(value)) {
+      next = next.updateSpecports((db) => db.delete(x, y));
     }
     return next;
   }
@@ -309,14 +315,13 @@ class SupaplexLevel implements ISupaplexLevel {
     }
     const spA = this.#specports.find(a.x, a.y);
     const spB = this.#specports.find(b.x, b.y);
-    let next = this.setTile(a.x, a.y, prevB).setTile(b.x, b.y, prevA);
-    if (spB) {
-      next = next.updateSpecports((sb) => sb.set(spB.setX(a.x).setY(a.y)));
-    }
-    if (spA) {
-      next = next.updateSpecports((sb) => sb.set(spA.setX(b.x).setY(b.y)));
-    }
-    return next;
+    return this.setTile(a.x, a.y, prevB)
+      .setTile(b.x, b.y, prevA)
+      .updateSpecports((db) => {
+        db = spB ? db.set(spB.setX(a.x).setY(a.y)) : db.delete(a.x, a.y);
+        db = spA ? db.set(spA.setX(b.x).setY(b.y)) : db.delete(b.x, b.y);
+        return db;
+      });
   }
 
   isPlayable() {
@@ -332,10 +337,12 @@ class SupaplexLevel implements ISupaplexLevel {
     for (const chunk of this.#body.tilesRenderStream(x, y, w, h)) {
       const [tx, ty, width, tile] = chunk;
       if (isSpecPort(tile)) {
+        // REFACT: axiom broken:
         // just split chunk in separate tiles - easier and harmless since there
         // are no big chunks of spec ports
-        const altChunks = Array.from({ length: width }).map<ITilesStreamItem>(
-          (_, i) => [
+        const altChunks = Array.from(
+          { length: width },
+          (_, i): ITilesStreamItem => [
             tx + i,
             ty,
             1,
@@ -348,28 +355,47 @@ class SupaplexLevel implements ISupaplexLevel {
           continue;
         }
       }
+      if (isOtherPort(tile)) {
+        // REFACT: axiom broken:
+        // just split chunk in separate tiles - easier and harmless since there
+        // are no big chunks of spec ports
+        const altChunks = Array.from(
+          { length: width },
+          (_, i): ITilesStreamItem => [
+            tx + i,
+            ty,
+            1,
+            tile,
+            this.#specports.find(tx + i, ty) ? 1 : undefined,
+          ],
+        );
+        if (altChunks.some(([, , , , variant]) => variant)) {
+          yield* altChunks;
+          continue;
+        }
+      }
       yield chunk;
     }
   }
 
   copyRegion(r: Rect): ISupaplexLevelRegion {
-    const [x, y, tiles] = this.#body.copyRegion(r);
+    const [x, y, body] = this.#body.copyRegion(r);
     return {
-      tiles,
-      specPorts: this.#specports.copySpecPortsInRegion({
-        x,
-        y,
-        width: tiles.width,
-        height: tiles.height,
-      }),
+      tiles: new SupaplexLevel(
+        new AnyBox(body.width, body.height),
+        body,
+        createLevelFooter(body.width),
+        this.#specports.copySpecPortsInRegion({
+          x,
+          y,
+          width: body.width,
+          height: body.height,
+        }),
+      ),
     };
   }
 
-  pasteRegion(
-    x: number,
-    y: number,
-    { tiles, specPorts }: ISupaplexLevelRegion,
-  ) {
+  pasteRegion(x: number, y: number, { tiles }: ILevelRegion) {
     //         ------------------------ level
     //  ------------------ region
     //         ----------- clip
@@ -389,11 +415,13 @@ class SupaplexLevel implements ISupaplexLevel {
           l = l.setTile(cx, cy, tiles.getTile(cx - x, cy - y));
         }
       }
-      for (const p of specPorts) {
-        const cx = p.x + x;
-        const cy = p.y + y;
-        if (inBounds(cx, cy, b)) {
-          l = l.updateSpecports((db) => db.set(p.setX(cx).setY(cy)));
+      if (tiles instanceof SupaplexLevel) {
+        for (const p of tiles.specports.getAll()) {
+          const cx = p.x + x;
+          const cy = p.y + y;
+          if (inBounds(cx, cy, b)) {
+            l = l.updateSpecports((db) => db.set(p.setX(cx).setY(cy)));
+          }
         }
       }
       return l;

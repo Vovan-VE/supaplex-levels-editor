@@ -2,7 +2,6 @@ import { IBounds, Rect } from "utils/rect";
 import {
   IsPlayableResult,
   ITilesRegion,
-  ITilesStreamItem,
   IWithDemo,
   IWithSignature,
 } from "../types";
@@ -13,20 +12,13 @@ export interface ISupaplexBox extends IBounds {
   validateCoords?(x: number, y: number): void;
 }
 
-export interface ILevelBody extends IBounds {
+export interface ILevelBody extends ITilesRegion {
   readonly length: number;
   readonly raw: Uint8Array;
-  getTile(x: number, y: number): number;
   setTile(x: number, y: number, value: number): ILevelBody;
   batch(update: (b: ILevelBody) => ILevelBody): ILevelBody;
   isPlayable(): IsPlayableResult;
-  tilesRenderStream(
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-  ): Iterable<ITilesStreamItem>;
-  copyRegion(r: Rect): readonly [x: number, y: number, region: ITilesRegion];
+  copyRegion(r: Rect): readonly [x: number, y: number, region: ILevelBody];
   findPlayer(): [x: number, y: number] | null;
 }
 
@@ -81,9 +73,10 @@ export interface ISupaplexSpecPortDatabase extends ISupaplexSpecPortsIO {
   readonly count: number;
   readonly countStdCompatible: number;
   getAll(): Iterable<ISupaplexSpecPortRecord>;
-  copySpecPortsInRegion(r: Rect): readonly ISupaplexSpecPortRecord[];
+  copySpecPortsInRegion(r: Rect): ISupaplexSpecPortDatabase;
   clear(): ISupaplexSpecPortDatabase;
   find(x: number, y: number): ISupaplexSpecPortRecord | null;
+  add(x: number, y: number): ISupaplexSpecPortDatabase;
   set(p: ISupaplexSpecPortRecord): ISupaplexSpecPortDatabase;
   update(
     x: number,

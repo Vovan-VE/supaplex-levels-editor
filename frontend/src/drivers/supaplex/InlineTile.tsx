@@ -5,11 +5,12 @@ import cl from "./InlineTile.module.scss";
 
 interface Props {
   tile: number;
+  variant?: number;
   tileClassName?: string;
 }
 
-export const InlineTile: FC<Props> = ({ tile, tileClassName }) => (
+export const InlineTile: FC<Props> = ({ tile, variant, tileClassName }) => (
   <IconContainer className={cl.root}>
-    <Tile tile={tile} className={tileClassName} />
+    <Tile tile={tile} variant={variant} className={tileClassName} />
   </IconContainer>
 );
