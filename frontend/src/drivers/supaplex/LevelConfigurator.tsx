@@ -44,6 +44,8 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
       gravity: () => onChange(level.setInitialGravity(!level.initialGravity)),
       fz: () =>
         onChange(level.setInitialFreezeZonks(!level.initialFreezeZonks)),
+      fe: () =>
+        onChange(level.setInitialFreezeEnemies(!level.initialFreezeEnemies)),
       inf: (value: number | null) => {
         if (value !== null) {
           if (value >= 0 && value <= 255) {
@@ -103,6 +105,7 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
               [
                 level.initialGravity ? "Gr" : "",
                 level.initialFreezeZonks ? "FZ" : "",
+                level.initialFreezeEnemies ? "FE" : "",
               ]
                 .filter(Boolean)
                 .join(", ")
@@ -126,6 +129,13 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
               >
                 Freeze Zonks
               </TextButton>
+              <TextButton
+                uiColor={ColorType.DEFAULT}
+                icon={level.initialFreezeEnemies ? iconChecked : iconUnchecked}
+                onClick={handlers.fe}
+              >
+                Freeze Enemies
+              </TextButton>
             </Toolbar>
           </ButtonDropdown>
         </>
@@ -136,6 +146,9 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
           </Checkbox>
           <Checkbox checked={level.initialFreezeZonks} onChange={handlers.fz}>
             Freeze Zonks
+          </Checkbox>
+          <Checkbox checked={level.initialFreezeEnemies} onChange={handlers.fe}>
+            Freeze Enemies
           </Checkbox>
         </span>
       )}

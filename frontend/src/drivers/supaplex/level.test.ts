@@ -629,6 +629,17 @@ describe("level", () => {
       });
     });
 
+    it("initialFreezeEnemies", () => {
+      const e = level.setLocalOptions({
+        [LocalOpt.InitialFreezeEnemies]: true,
+      });
+      expect(e.initialFreezeEnemies).toBe(true);
+      expect(e.localOptions).toEqual({ [LocalOpt.InitialFreezeEnemies]: 1 });
+      expect(level.setInitialFreezeEnemies(true).localOptions).toEqual({
+        [LocalOpt.InitialFreezeEnemies]: 1,
+      });
+    });
+
     it("specports database", () => {
       const spdb = level.setLocalOptions({
         [LocalOpt.PortsDatabase]: "x10y20g1z-2e-1,x5y6g0z-1u97",
@@ -684,6 +695,7 @@ describe("level", () => {
         [LocalOpt.UseZonker]: 91,
         [LocalOpt.UseSerialPorts]: "lol",
         [LocalOpt.UseInfotronsNeeded]: 257,
+        [LocalOpt.InitialFreezeEnemies]: 23,
         [LocalOpt.PortsDatabase]: "x10y20g1z-2e-1,x5y6g0z-1u97",
       });
       expect(all.usePlasma).toBe(true);
@@ -692,6 +704,7 @@ describe("level", () => {
       expect(all.useZonker).toBe(true);
       expect(all.useSerialPorts).toBe(true);
       expect(all.useInfotronsNeeded).toBe(257);
+      expect(all.initialFreezeEnemies).toBe(true);
       expect(all.localOptions).toEqual({
         [LocalOpt.UsePlasma]: 1,
         [LocalOpt.UsePlasmaLimit]: 42,
@@ -699,6 +712,7 @@ describe("level", () => {
         [LocalOpt.UseZonker]: 1,
         [LocalOpt.UseSerialPorts]: 1,
         [LocalOpt.UseInfotronsNeeded]: 257,
+        [LocalOpt.InitialFreezeEnemies]: 1,
         [LocalOpt.PortsDatabase]: "x10y20g1z-2e-1,x5y6z-1u97",
       });
     });

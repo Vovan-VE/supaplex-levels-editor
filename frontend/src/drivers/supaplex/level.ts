@@ -515,6 +515,9 @@ class SupaplexLevel implements ISupaplexLevel {
     if (this.useInfotronsNeeded !== undefined) {
       o[LocalOpt.UseInfotronsNeeded] = this.useInfotronsNeeded;
     }
+    if (this.initialFreezeEnemies) {
+      o[LocalOpt.InitialFreezeEnemies] = 1;
+    }
     if (!this.#specports.isStdCompatible(this.width)) {
       o[LocalOpt.PortsDatabase] = this.#specports.toString();
     }
@@ -535,7 +538,8 @@ class SupaplexLevel implements ISupaplexLevel {
         .setUsePlasmaTime(toInt(opt[LocalOpt.UsePlasmaTime]))
         .setUseZonker(Boolean(opt[LocalOpt.UseZonker]))
         .setUseSerialPorts(Boolean(opt[LocalOpt.UseSerialPorts]))
-        .setUseInfotronsNeeded(toInt(opt[LocalOpt.UseInfotronsNeeded]));
+        .setUseInfotronsNeeded(toInt(opt[LocalOpt.UseInfotronsNeeded]))
+        .setInitialFreezeEnemies(Boolean(opt[LocalOpt.InitialFreezeEnemies]));
       const pdStr = opt[LocalOpt.PortsDatabase];
       if (pdStr !== undefined) {
         l = l.setSpecports(newSpecPortsDatabaseFromString(pdStr));
@@ -584,5 +588,12 @@ class SupaplexLevel implements ISupaplexLevel {
   }
   setUseInfotronsNeeded(n: number | undefined): this {
     return this.#withFooter(this.#footer.setUseInfotronsNeeded(n));
+  }
+
+  get initialFreezeEnemies() {
+    return this.#footer.initialFreezeEnemies;
+  }
+  setInitialFreezeEnemies(on: boolean): this {
+    return this.#withFooter(this.#footer.setInitialFreezeEnemies(on));
   }
 }

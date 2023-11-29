@@ -368,4 +368,17 @@ describe("footer", () => {
 
     expect(footer.useInfotronsNeeded).toBe(undefined);
   });
+
+  it("initialFreezeEnemies", () => {
+    const footer = createLevelFooter(LEVEL_WIDTH);
+
+    expect(footer.initialFreezeEnemies).toBe(false);
+    expect(footer.setInitialFreezeEnemies(false)).toBe(footer);
+
+    const next = footer.setInitialFreezeEnemies(true);
+    expect(next.initialFreezeEnemies).toBe(true);
+    expect(next.setInitialFreezeEnemies(true)).toBe(next);
+
+    expect(footer.initialFreezeEnemies).toBe(false);
+  });
 });

@@ -103,12 +103,14 @@ export interface ILevelFooter extends IWithDemo, IWithSignature {
   readonly useZonker: boolean;
   readonly useSerialPorts: boolean;
   readonly useInfotronsNeeded: number | undefined;
+  readonly initialFreezeEnemies: boolean;
   setUsePlasma(on: boolean): this;
   setUsePlasmaLimit(n: number | undefined): this;
   setUsePlasmaTime(n: number | undefined): this;
   setUseZonker(on: boolean): this;
   setUseSerialPorts(on: boolean): this;
   setUseInfotronsNeeded(n: number | undefined): this;
+  setInitialFreezeEnemies(on: boolean): this;
 }
 
 export const enum LocalOpt {
@@ -119,4 +121,5 @@ export const enum LocalOpt {
   UseSerialPorts = "useSerialPorts",
   UseInfotronsNeeded = "useInfotronsNeeded",
   PortsDatabase = "portsDB",
+  InitialFreezeEnemies = "initialFreezeEnemies",
 }

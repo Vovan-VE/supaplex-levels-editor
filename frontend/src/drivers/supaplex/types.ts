@@ -44,6 +44,7 @@ export interface ISupaplexLevel extends IBaseLevel, IWithDemo, IWithSignature {
   readonly useZonker: boolean;
   readonly useSerialPorts: boolean;
   readonly useInfotronsNeeded: number | undefined;
+  readonly initialFreezeEnemies: boolean;
   setUsePlasma(on: boolean): this;
   setUsePlasmaLimit(n: number | undefined): this;
   setUsePlasmaTime(n: number | undefined): this;
@@ -51,6 +52,7 @@ export interface ISupaplexLevel extends IBaseLevel, IWithDemo, IWithSignature {
   setUseSerialPorts(on: boolean): this;
   // REFACT: merge into common
   setUseInfotronsNeeded(n: number | undefined): this;
+  setInitialFreezeEnemies(on: boolean): this;
 }
 
 export interface ISupaplexTile extends IBaseTile<ISupaplexLevel> {}

@@ -113,10 +113,13 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
 // if both params are default then `2a=x` works, but you can then omit the value
 // and just use `2a`
 // `use-infotrons-needed` is `in`
+//
+// `force-all-ports-special`
 const P_PLASMA = "2a";
 const P_ZONKER = "2b";
 const P_SERIAL_PORTS = "ps";
 const P_INFOTRONS_NEEDED = "in";
+const P_FREEZE_ENEMIES = "fe";
 const P_PORTS_DB = "pd";
 export const applyLocalOptions = <L extends ISupaplexLevel>(
   level: L,
@@ -138,6 +141,10 @@ export const applyLocalOptions = <L extends ISupaplexLevel>(
   }
   if (level.useInfotronsNeeded !== undefined) {
     p.set(P_INFOTRONS_NEEDED, String(level.useInfotronsNeeded));
+  }
+  if (level.initialFreezeEnemies) {
+    // TODO: byte
+    p.set(P_FREEZE_ENEMIES, "1");
   }
   if (!level.specports.isStdCompatible(level.width)) {
     p.set(P_PORTS_DB, level.specports.toString());
