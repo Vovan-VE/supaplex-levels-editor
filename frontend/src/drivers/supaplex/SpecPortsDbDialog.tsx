@@ -84,12 +84,12 @@ const Item = forwardRef<
     <span className={cl.xy}>
       <TileCoords x={item.x} y={item.y} />
     </span>
-    {/*<span><InlineTile tile={tile} /></span>*/}
+    {/* TODO: <span><InlineTile tile={tile} /></span>*/}
     <span className={cl.g}>g{item.gravity}</span>
     <span className={cl.z}>z{item.freezeZonks}</span>
     <span className={cl.e}>e{item.freezeEnemies}</span>
     <span className={cl.u}>u{item.unusedByte}</span>
-    {/*<span>{item.isStdCompatible(width) && 'STD'}</span>*/}
+    {/* TODO: <span>{item.isStdCompatible(width) && 'STD'}</span>*/}
     <TextButton icon={<svgs.DragV />} {...handleProps} className={cl.handle} />
   </div>
 ));

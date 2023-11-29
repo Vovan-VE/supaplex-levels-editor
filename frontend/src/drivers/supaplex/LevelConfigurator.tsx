@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { showToastError } from "models/ui/toasts";
 import {
+  Button,
   ButtonDropdown,
   TextButton,
   Toolbar,
@@ -148,17 +149,26 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
           </ButtonDropdown>
         </>
       ) : (
-        <span>
-          <Checkbox checked={level.initialGravity} onChange={handlers.gravity}>
-            Gravity
-          </Checkbox>
-          <Checkbox checked={level.initialFreezeZonks} onChange={handlers.fz}>
-            Freeze Zonks
-          </Checkbox>
-          <Checkbox checked={level.initialFreezeEnemies} onChange={handlers.fe}>
-            Freeze Enemies
-          </Checkbox>
-        </span>
+        <>
+          <span>
+            <Checkbox
+              checked={level.initialGravity}
+              onChange={handlers.gravity}
+            >
+              Gravity
+            </Checkbox>
+            <Checkbox checked={level.initialFreezeZonks} onChange={handlers.fz}>
+              Freeze Zonks
+            </Checkbox>
+            <Checkbox
+              checked={level.initialFreezeEnemies}
+              onChange={handlers.fe}
+            >
+              Freeze Enemies
+            </Checkbox>
+          </span>
+          <Button onClick={handlers.portsDb}>SpecPorts DB...</Button>
+        </>
       )}
     </>
   );
