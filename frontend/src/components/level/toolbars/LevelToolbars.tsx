@@ -19,7 +19,7 @@ export const LevelToolbars: FC<Props> = ({ className, ...rest }) => (
       <LevelConfig />
     </Toolbar>
     <Toolbar className={cl.driver}>
-      <LevelDriverConfig />
+      <LevelDriverConfig compact />
     </Toolbar>
     <EditorToolsSimple className={cl.tools} />
     <TilesToolbar className={cl.tiles} />

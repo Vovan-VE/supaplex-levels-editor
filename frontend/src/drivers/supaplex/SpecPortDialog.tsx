@@ -13,6 +13,7 @@ import {
   useInputDebounce,
 } from "ui/input";
 import { ColorType } from "ui/types";
+import { minmax } from "utils/number";
 import { InteractionDialogProps } from "../types";
 import { InlineTile } from "./InlineTile";
 import {
@@ -37,9 +38,10 @@ import {
 import { ISupaplexLevel } from "./types";
 import { newSpecPortRecord } from "./specPortsRecord";
 import cl from "./SpecPortDialog.module.scss";
-import { minmax } from "../../utils/number";
 
 type Opt = SelectOption<number>;
+
+// REFACT: move labels outside to reuse in cmp, level config
 
 const optCommon: Opt[] = [
   { value: SpecPortAlterMod.NOTHING, label: "don't change" },

@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { Checkbox, IntegerInput } from "ui/input";
-import { LevelConfiguratorProps } from "../types";
+import { LevelLocalOptionsProps } from "../types";
 import { InlineTile } from "./InlineTile";
 import { TILE_HW_LAMP_R, TILE_HW_STRIPES, TILE_INFOTRON } from "./tiles-id";
 import { ISupaplexLevel } from "./types";
@@ -9,7 +9,7 @@ import cl from "./LevelLocalOptions.module.scss";
 export const LevelLocalOptions = <L extends ISupaplexLevel>({
   level,
   onChange,
-}: LevelConfiguratorProps<L>) => {
+}: LevelLocalOptionsProps<L>) => {
   const {
     usePlasma,
     usePlasmaLimit,

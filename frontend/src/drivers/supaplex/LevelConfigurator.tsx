@@ -1,15 +1,27 @@
 import { useMemo } from "react";
 import { showToastError } from "models/ui/toasts";
+import {
+  ButtonDropdown,
+  TextButton,
+  Toolbar,
+  ToolbarSeparator,
+} from "ui/button";
+import { svgs } from "ui/icon";
 import { Checkbox, IntegerInput, useInputDebounce } from "ui/input";
+import { ColorType } from "ui/types";
 import { LevelConfiguratorProps } from "../types";
 import { InlineTile } from "./InlineTile";
 import { ISupaplexLevel } from "./types";
 import { TILE_ELECTRON, TILE_INFOTRON } from "./tiles-id";
 import cl from "./LevelConfigurator.module.scss";
 
+const iconChecked = <svgs.CheckboxChecked />;
+const iconUnchecked = <svgs.CheckboxUnchecked />;
+
 export const LevelConfigurator = <L extends ISupaplexLevel>({
   level,
   onChange,
+  compact = false,
 }: LevelConfiguratorProps<L>) => {
   const { i: countInf, e: countElec } = useMemo(() => {
     let i = 0;
@@ -29,8 +41,9 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
 
   const handlers = useMemo(
     () => ({
-      gravity: (checked: boolean) => onChange(level.setInitialGravity(checked)),
-      fz: (checked: boolean) => onChange(level.setInitialFreezeZonks(checked)),
+      gravity: () => onChange(level.setInitialGravity(!level.initialGravity)),
+      fz: () =>
+        onChange(level.setInitialFreezeZonks(!level.initialFreezeZonks)),
       inf: (value: number | null) => {
         if (value !== null) {
           if (value >= 0 && value <= 255) {
@@ -82,14 +95,50 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
         </span>
       </label>
       <wbr />
-      <span>
-        <Checkbox checked={level.initialGravity} onChange={handlers.gravity}>
-          Gravity
-        </Checkbox>
-        <Checkbox checked={level.initialFreezeZonks} onChange={handlers.fz}>
-          Freeze Zonks
-        </Checkbox>
-      </span>
+      {compact ? (
+        <>
+          <ToolbarSeparator />
+          <ButtonDropdown
+            trigger={
+              [
+                level.initialGravity ? "Gr" : "",
+                level.initialFreezeZonks ? "FZ" : "",
+              ]
+                .filter(Boolean)
+                .join(", ")
+                .trim() || <em>default</em>
+            }
+            buttonClassName={cl.btnEnv}
+            buttonProps={{ title: "Initial conditions" }}
+          >
+            <Toolbar isMenu>
+              <TextButton
+                uiColor={ColorType.DEFAULT}
+                icon={level.initialGravity ? iconChecked : iconUnchecked}
+                onClick={handlers.gravity}
+              >
+                Gravity
+              </TextButton>
+              <TextButton
+                uiColor={ColorType.DEFAULT}
+                icon={level.initialFreezeZonks ? iconChecked : iconUnchecked}
+                onClick={handlers.fz}
+              >
+                Freeze Zonks
+              </TextButton>
+            </Toolbar>
+          </ButtonDropdown>
+        </>
+      ) : (
+        <span>
+          <Checkbox checked={level.initialGravity} onChange={handlers.gravity}>
+            Gravity
+          </Checkbox>
+          <Checkbox checked={level.initialFreezeZonks} onChange={handlers.fz}>
+            Freeze Zonks
+          </Checkbox>
+        </span>
+      )}
     </>
   );
 };
