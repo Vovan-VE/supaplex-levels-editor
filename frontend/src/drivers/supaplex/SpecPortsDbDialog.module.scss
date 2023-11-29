@@ -1,0 +1,49 @@
+@use "styles/themes";
+
+.root {
+}
+
+.list {
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+}
+
+.item {
+  //margin-top: 0.1rem;
+  padding: 0 0.5rem;
+  display: grid;
+  grid-gap: 0.2rem;
+  grid-template-areas: "index xy g z e u handle";
+  grid-template-columns: 2.5rem minmax(5rem, 1fr) repeat(4, 12%) min-content;
+  align-items: center;
+  cursor: auto;
+
+  &:nth-child(even) {
+    background-color: rgba(128, 128, 128, 0.25);
+  }
+
+  .index {
+    grid-area: index;
+  }
+  .xy {
+    grid-area: xy;
+  }
+  //.tile{}
+  .g {
+    grid-area: g;
+  }
+  .z {
+    grid-area: z;
+  }
+  .e {
+    grid-area: e;
+  }
+  .u {
+    grid-area: u;
+  }
+  //.std{}
+  .handle {
+    grid-area: handle;
+    cursor: grab;
+  }
+}

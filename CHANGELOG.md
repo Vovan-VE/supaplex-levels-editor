@@ -11,7 +11,9 @@
 - Add: Editing the unused byte in every Special Port Database Entry. Can be used
   for customizing the bottom beyond for SP compatible entries.
 - Add: "Initial Freeze Enemies" game condition. All three conditions are now
-  compacted into a single dropdown button.
+  compacted into a single dropdown button "Initial conditions".
+- Add: Special Ports Database now can be sorted manually. See new "Initial
+  conditions" button.
 - Fix: "Broken" Special Ports (which are Special Port tiles, but without entry
   in Special Ports Database) in Selection region wasn't render same as in level
   body.

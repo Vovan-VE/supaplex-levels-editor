@@ -1,5 +1,5 @@
 import { ForwardRefExoticComponent, RefAttributes } from "react";
-import { isValidKey, ValidKey } from "./internal";
+import { isValidKey, SortDirection, ValidKey } from "./internal";
 
 export interface SortableListProps<
   T,
@@ -24,6 +24,7 @@ export interface SortableListProps<
    * ```
    */
   itemRenderer: SortableItemComponent<T, E>;
+  direction?: SortDirection;
 }
 
 export type IdGetter<T, ID extends ValidKey> = (item: T) => ID;

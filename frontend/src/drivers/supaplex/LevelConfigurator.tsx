@@ -11,6 +11,7 @@ import { Checkbox, IntegerInput, useInputDebounce } from "ui/input";
 import { ColorType } from "ui/types";
 import { LevelConfiguratorProps } from "../types";
 import { InlineTile } from "./InlineTile";
+import { showSpecPortsDbDialog } from "./SpecPortsDbDialog";
 import { ISupaplexLevel } from "./types";
 import { TILE_ELECTRON, TILE_INFOTRON } from "./tiles-id";
 import cl from "./LevelConfigurator.module.scss";
@@ -55,6 +56,7 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
           }
         }
       },
+      portsDb: () => showSpecPortsDbDialog({ level, onChange }),
     }),
     [level, onChange],
   );
@@ -108,8 +110,7 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
                 level.initialFreezeEnemies ? "FE" : "",
               ]
                 .filter(Boolean)
-                .join(", ")
-                .trim() || <em>default</em>
+                .join(", ") || <em>default</em>
             }
             buttonClassName={cl.btnEnv}
             buttonProps={{ title: "Initial conditions" }}
@@ -135,6 +136,13 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
                 onClick={handlers.fe}
               >
                 Freeze Enemies
+              </TextButton>
+              <ToolbarSeparator />
+              <TextButton
+                uiColor={ColorType.DEFAULT}
+                onClick={handlers.portsDb}
+              >
+                SpecPorts DB...
               </TextButton>
             </Toolbar>
           </ButtonDropdown>

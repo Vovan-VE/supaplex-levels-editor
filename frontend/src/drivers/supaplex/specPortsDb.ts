@@ -135,8 +135,9 @@ class SpecPortsDatabase implements ISupaplexSpecPortDatabase {
   }
 }
 
-export const newSpecPortsDatabase = (): ISupaplexSpecPortDatabase =>
-  new SpecPortsDatabase();
+export const newSpecPortsDatabase = (
+  ports?: readonly ISupaplexSpecPortRecord[],
+): ISupaplexSpecPortDatabase => new SpecPortsDatabase(ports);
 
 export const newSpecPortsDatabaseFromBytes = (
   raw: Uint8Array,
@@ -168,13 +169,25 @@ export const isDbEqual = (
   a: ISupaplexSpecPortDatabase,
   b: ISupaplexSpecPortDatabase,
 ): boolean => {
+  if (a === b) {
+    return true;
+  }
   if (a.count !== b.count) {
     return false;
   }
-  const bs = Array.from(b.getAll());
+  return isDbEqualToArray(a, Array.from(b.getAll()));
+};
+
+export const isDbEqualToArray = (
+  a: ISupaplexSpecPortDatabase,
+  b: readonly ISupaplexSpecPortRecord[],
+): boolean => {
+  if (a.count !== b.length) {
+    return false;
+  }
   let i = 0;
   for (const ap of a.getAll()) {
-    if (!isPortEqual(ap, bs[i])) {
+    if (!isPortEqual(ap, b[i])) {
       return false;
     }
     i++;

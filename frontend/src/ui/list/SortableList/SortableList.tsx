@@ -13,12 +13,19 @@ import {
   arrayMove,
   horizontalListSortingStrategy,
   SortableContext,
+  SortingStrategy,
+  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { ValidKey } from "./internal";
+import { SortDirection, ValidKey } from "./internal";
 import { defaultIdGetter, SortableListProps } from "./types";
 import { SortableItem } from "./SortableItem";
 
 // https://docs.dndkit.com/presets/sortable#drag-overlay
+
+const dir2strategy: Record<SortDirection, SortingStrategy> = {
+  H: horizontalListSortingStrategy,
+  V: verticalListSortingStrategy,
+};
 
 export const SortableList = <
   T,
@@ -29,6 +36,7 @@ export const SortableList = <
   onSort,
   idGetter = defaultIdGetter<ID>,
   itemRenderer: ItemRenderer,
+  direction = "V",
 }: SortableListProps<T, ID, E>): ReturnType<FC> => {
   const [activeId, setActiveId] = useState<ID | null>(null);
   const ids = useMemo(() => items.map(idGetter), [items, idGetter]);
@@ -65,11 +73,7 @@ export const SortableList = <
         [onSort, items, ids],
       )}
     >
-      <SortableContext
-        items={ids}
-        // TODO: enum option for different sorting strategy
-        strategy={horizontalListSortingStrategy}
-      >
+      <SortableContext items={ids} strategy={dir2strategy[direction]}>
         {items.map((item, i) => (
           <SortableItem
             key={ids[i]}

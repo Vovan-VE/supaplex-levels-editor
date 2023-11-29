@@ -97,7 +97,12 @@ export const TabsButtons = <K extends AnyKey = AnyKey>({
   return (
     <Toolbar {...rest} withBG={false} className={cn(cl.root, className)}>
       {onSort ? (
-        <SortableList items={items} onSort={handleSort} itemRenderer={Item} />
+        <SortableList
+          items={items}
+          onSort={handleSort}
+          itemRenderer={Item}
+          direction="H"
+        />
       ) : (
         items.map((item, i) => (
           <Item key={item.key} item={item} itemProps={{}} index={i} />

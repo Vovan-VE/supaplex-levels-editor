@@ -13,6 +13,7 @@ export { ReactComponent as DeleteRest } from "./DeleteRest.svg";
 export { ReactComponent as DeleteRow } from "./DeleteRow.svg";
 export { ReactComponent as DeleteSelection } from "./DeleteSelection.svg";
 export { ReactComponent as DirOpen } from "./DirOpen.svg";
+export { ReactComponent as DragV } from "./DragV.svg";
 export { ReactComponent as EditSelection } from "./EditSelection.svg";
 export { ReactComponent as FileBin } from "./FileBin.svg";
 export { ReactComponent as FileBlank } from "./FileBlank.svg";
