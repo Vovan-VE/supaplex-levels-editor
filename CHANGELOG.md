@@ -15,6 +15,7 @@
 - Fix: "Broken" Special Ports (which are Special Port tiles, but without entry
   in Special Ports Database) in Selection region wasn't render same as in level
   body.
+- Enh: Better colors for special ports.
 
 ## 0.17.0 (2023-10-15)
 
