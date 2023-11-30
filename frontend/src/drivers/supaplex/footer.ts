@@ -203,7 +203,7 @@ class LevelFooter implements ILevelFooter {
   }
 
   get initialGravity() {
-    return this.#src[GRAVITY_OFFSET] === 1;
+    return this.#src[GRAVITY_OFFSET] !== 0;
   }
   setInitialGravity(on: boolean) {
     if (this.initialGravity === on) {

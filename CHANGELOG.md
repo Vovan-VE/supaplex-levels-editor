@@ -17,6 +17,8 @@
 - Fix: "Broken" Special Ports (which are Special Port tiles, but without entry
   in Special Ports Database) in Selection region wasn't render same as in level
   body.
+- Fix: Initial gravity uses `0` to "OFF" and other values to "ON", as it
+  actually works in game, which isn't match with docs.
 - Enh: Better colors for special ports.
 
 ## 0.17.0 (2023-10-15)
