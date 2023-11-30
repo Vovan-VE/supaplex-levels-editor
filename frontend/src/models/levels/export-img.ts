@@ -33,8 +33,8 @@ const copyRegionImageToClipboardFx = createEffect((params: ExportImgParams) =>
 );
 const saveRegionToImageFileFx = createEffect(
   async (params: ExportImgParams) => {
-    const blob = await buildImageBlobFx(params);
-    saveFileAs(blob, blob.name);
+    const file = await buildImageBlobFx(params);
+    saveFileAs(file, file.name);
   },
 );
 copyRegionImageToClipboardFx.done.watch(() =>
@@ -85,7 +85,7 @@ const buildImageBlobFx = createEffect(
     canvas.height = height * TILE_SIZE;
 
     // const blob = (canvas as any).convertToBlob();
-    return new Promise<Blob>(async (resolve, reject) => {
+    return new Promise<File>(async (resolve, reject) => {
       const images = new Map<number, Promise<HTMLImageElement | undefined>>();
       const getTileImage = (tile: number) => {
         let p = images.get(tile);
