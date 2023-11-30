@@ -1,4 +1,5 @@
-import { createLevel, createNewLevel } from "./level";
+import { createLevelFooter } from "./footer";
+import { readLevelset } from "./formats/mpx/io";
 import {
   BODY_LENGTH,
   FOOTER_BYTE_LENGTH,
@@ -7,14 +8,12 @@ import {
   LEVEL_WIDTH,
   TITLE_LENGTH,
 } from "./formats/std";
+import { dumpLevel, readExampleFile } from "./helpers.dev";
 import {
-  TILE_HARDWARE,
-  TILE_INFOTRON,
-  TILE_SP_PORT_D,
-  TILE_SP_PORT_R,
-  TILE_SP_PORT_U,
-  TILE_ZONK,
-} from "./tiles-id";
+  dumpSpecport,
+  dumpSpecports,
+  dumpSpecportsArray,
+} from "./helpers.dev/dumpSpecports";
 import {
   FreezeEnemiesStatic,
   FreezeZonksStatic,
@@ -22,15 +21,19 @@ import {
   LocalOpt,
   SpecPortAlterMod,
 } from "./internal";
-import { readLevelset } from "./formats/mpx/io";
-import { dumpLevel, readExampleFile } from "./helpers.dev";
+import { createLevel, createNewLevel } from "./level";
+import { newSpecPortsDatabase } from "./specPortsDb";
 import { newSpecPortRecord } from "./specPortsRecord";
 import {
-  dumpSpecport,
-  dumpSpecports,
-  dumpSpecportsArray,
-} from "./helpers.dev/dumpSpecports";
-import { newSpecPortsDatabase } from "./specPortsDb";
+  TILE_HARDWARE,
+  TILE_INFOTRON,
+  TILE_PORT_H,
+  TILE_PORT_V,
+  TILE_SP_PORT_D,
+  TILE_SP_PORT_R,
+  TILE_SP_PORT_U,
+  TILE_ZONK,
+} from "./tiles-id";
 
 describe("level", () => {
   const testLevelData = Uint8Array.of(
@@ -410,6 +413,55 @@ describe("level", () => {
       expect(a[0]).toEqual([0, 0, 202, TILE_HARDWARE]);
       expect(a[a.length - 1]).toEqual([0, 201, 202, TILE_HARDWARE]);
     });
+
+    it("specports subchunks", () => {
+      const R = TILE_SP_PORT_R;
+      const D = TILE_SP_PORT_D;
+      const H = TILE_PORT_H;
+      const V = TILE_PORT_V;
+
+      const level = createLevel(
+        10,
+        4,
+        Uint8Array.of(
+          // body
+          ...[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          ...[0, 0, R, R, R, R, D, D, D, 0],
+          ...[0, H, H, H, V, V, V, V, V, 0],
+          ...[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          // footer
+          ...createLevelFooter(10).setTitle("Subchunks").getRaw(),
+        ),
+      ).updateSpecports((db) =>
+        db
+          .add(4, 1)
+          .add(5, 1)
+          .add(6, 1)
+          .add(7, 1)
+          .add(3, 2)
+          .add(4, 2)
+          .add(5, 2)
+          .add(8, 2),
+      );
+
+      expect(Array.from(level.tilesRenderStream(0, 0, 10, 4))).toEqual([
+        [0, 0, 10, 0],
+        [0, 1, 2, 0],
+        [2, 1, 2, R, 1],
+        [4, 1, 2, R, undefined],
+        [6, 1, 2, D, undefined],
+        [8, 1, 1, D, 1],
+        [9, 1, 1, 0],
+        [0, 2, 1, 0],
+        [1, 2, 2, H, undefined],
+        [3, 2, 1, H, 1],
+        [4, 2, 2, V, 1],
+        [6, 2, 2, V, undefined],
+        [8, 2, 1, V, 1],
+        [9, 2, 1, 0],
+        [0, 3, 10, 0],
+      ]);
+    });
   });
 
   it("copyRegion", () => {
@@ -426,7 +478,7 @@ describe("level", () => {
       [0, 0, 1, 0xc],
       [1, 0, 2, 0],
       [0, 1, 1, 0],
-      [1, 1, 1, 0xd],
+      [1, 1, 1, 0xd, undefined],
       [2, 1, 1, 0],
       [0, 2, 2, 0],
       [2, 2, 1, 0xe, 1],
@@ -465,7 +517,7 @@ describe("level", () => {
         [11, 11, 1, 0xc],
         [12, 11, 2, 0],
         [10, 12, 2, 0],
-        [12, 12, 1, 0xd],
+        [12, 12, 1, 0xd, undefined],
         [13, 12, 1, 0],
         [10, 13, 3, 0],
         [13, 13, 1, 0xe, 1],
@@ -483,11 +535,11 @@ describe("level", () => {
         [10, 12, 1, 0xc],
         [11, 12, 3, 0],
         [10, 13, 1, 0],
-        [11, 13, 1, 0xd],
+        [11, 13, 1, 0xd, undefined],
         [12, 13, 1, 0],
         [13, 13, 1, 0xe, 1],
         [10, 14, 2, 0],
-        [12, 14, 1, 0xe],
+        [12, 14, 1, 0xe, undefined],
         [13, 14, 1, 0],
       ]);
       expect(next.specports.count).toBe(2);
@@ -534,7 +586,7 @@ describe("level", () => {
         [0, 2, 2, 0],
         [2, 2, 1, 3],
         [3, 2, 1, 0],
-        [0, 3, 1, 0xe],
+        [0, 3, 1, 0xe, undefined],
         [1, 3, 2, 0],
         [3, 3, 1, 4],
       ]);

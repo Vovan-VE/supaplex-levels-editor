@@ -137,7 +137,7 @@ class LevelBody implements ILevelBody {
           lastItem = [i, j, 1, tile];
         }
       }
-      if (lastItem[2] > 0) {
+      if (lastItem[2]) {
         yield lastItem;
       }
     }

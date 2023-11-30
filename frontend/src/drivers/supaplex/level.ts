@@ -42,6 +42,7 @@ import {
 } from "./tiles-id";
 import { ISupaplexLevel, ISupaplexLevelRegion } from "./types";
 import { isEmptyObject } from "../../utils/object";
+import { restreamChunkVariants } from "./helpers";
 import {
   isDbEqual,
   newSpecPortsDatabase,
@@ -335,44 +336,19 @@ class SupaplexLevel implements ISupaplexLevel {
     h: number,
   ): Iterable<ITilesStreamItem> {
     for (const chunk of this.#body.tilesRenderStream(x, y, w, h)) {
-      const [tx, ty, width, tile] = chunk;
+      const [, , , tile] = chunk;
+      // TODO: have no idea, how variants ID should be defined properly to use in both SCSS and JS
       if (isSpecPort(tile)) {
-        // REFACT: axiom broken:
-        // just split chunk in separate tiles - easier and harmless since there
-        // are no big chunks of spec ports
-        const altChunks = Array.from(
-          { length: width },
-          (_, i): ITilesStreamItem => [
-            tx + i,
-            ty,
-            1,
-            tile,
-            this.#specports.find(tx + i, ty) ? undefined : 1,
-          ],
+        yield* restreamChunkVariants(chunk, (x, y) =>
+          this.#specports.find(x, y) ? undefined : 1,
         );
-        if (altChunks.some(([, , , , variant]) => variant)) {
-          yield* altChunks;
-          continue;
-        }
+        continue;
       }
       if (isOtherPort(tile)) {
-        // REFACT: axiom broken:
-        // just split chunk in separate tiles - easier and harmless since there
-        // are no big chunks of spec ports
-        const altChunks = Array.from(
-          { length: width },
-          (_, i): ITilesStreamItem => [
-            tx + i,
-            ty,
-            1,
-            tile,
-            this.#specports.find(tx + i, ty) ? 1 : undefined,
-          ],
+        yield* restreamChunkVariants(chunk, (x, y) =>
+          this.#specports.find(x, y) ? 1 : undefined,
         );
-        if (altChunks.some(([, , , , variant]) => variant)) {
-          yield* altChunks;
-          continue;
-        }
+        continue;
       }
       yield chunk;
     }
