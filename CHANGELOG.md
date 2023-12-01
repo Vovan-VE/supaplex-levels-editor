@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.18.0 (DEV)
+## 0.19.0 (DEV)
+
+- ...
+
+## 0.18.0 (2023-12-01)
 
 - Add: New SO Special Ports Database support. This brings the following changes:
   - More than 10 special ports can be defined in a level.
