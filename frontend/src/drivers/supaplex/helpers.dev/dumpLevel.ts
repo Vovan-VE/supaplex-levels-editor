@@ -1,5 +1,6 @@
 import { toChar } from "../tiles-id";
 import { ISupaplexLevel } from "../types";
+import { dumpSpecports } from "./dumpSpecports";
 
 export const dumpLevel = (level: ISupaplexLevel) => ({
   width: level.width,
@@ -14,7 +15,7 @@ export const dumpLevel = (level: ISupaplexLevel) => ({
   initialFreezeZonks: level.initialFreezeZonks,
   maxTitleLength: level.maxTitleLength,
   title: level.title,
-  specialPorts: [...level.getSpecPorts()],
+  specialPorts: dumpSpecports(level.specports),
   demo: level.demo,
   signature: level.signature && level.signatureString,
 });

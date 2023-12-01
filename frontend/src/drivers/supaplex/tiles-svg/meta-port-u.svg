@@ -16,6 +16,6 @@
   <path fill="#F39241" d="M4,3h2v1h-2z M4,5h2v1h-2z M4,7h2v1h-2z M4,9h2v1h-2z"/>
   <path fill="#824100" d="M2,2h1v1h-1z M2,4h1v1h-1z M2,6h1v1h-1z M2,8h1v1h-1z"/>
 
-  <path fill="#7192E3" d="M8,2zh6v8h-6z"/>
-  <path fill="#5151D3" d="M10,2h4v1h-4z M10,4h4v1h-4z M10,6h4v1h-4z M10,8h4v1h-4z"/>
+  <path fill="#5151D3" d="M8,2zh6v8h-6z"/>
+  <path fill="#004161" d="M10,2h4v1h-4z M10,4h4v1h-4z M10,6h4v1h-4z M10,8h4v1h-4z"/>
 </svg>

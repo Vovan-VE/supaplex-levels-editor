@@ -1,21 +1,25 @@
 import { FC } from "react";
 import { useStore } from "effector-react";
-import { getDriver } from "drivers";
+import { getDriver, LevelConfiguratorEnvProps } from "drivers";
 import {
   $currentDriverName,
   $currentLevelUndoQueue,
   updateCurrentLevel,
 } from "models/levelsets";
 
-interface Props {}
+interface Props extends LevelConfiguratorEnvProps {}
 
-export const LevelDriverConfig: FC<Props> = () => {
+export const LevelDriverConfig: FC<Props> = (props) => {
   const driverName = useStore($currentDriverName)!;
   const { LevelConfigurator } = getDriver(driverName)!;
   const undoQueue = useStore($currentLevelUndoQueue)!;
   const rawLevel = undoQueue.current;
 
   return LevelConfigurator ? (
-    <LevelConfigurator level={rawLevel} onChange={updateCurrentLevel} />
+    <LevelConfigurator
+      {...props}
+      level={rawLevel}
+      onChange={updateCurrentLevel}
+    />
   ) : null;
 };

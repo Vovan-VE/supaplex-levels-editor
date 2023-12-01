@@ -1,16 +1,10 @@
-import { inRect, Rect } from "utils/rect";
 import { DemoSeed } from "../types";
 import {
   FOOTER_BYTE_LENGTH,
   SIGNATURE_MAX_LENGTH,
   TITLE_LENGTH,
 } from "./formats/std";
-import {
-  ILevelFooter,
-  ISupaplexSpecPort,
-  ISupaplexSpecPortProps,
-  SPEC_PORT_MAX_COUNT,
-} from "./internal";
+import { ILevelFooter } from "./internal";
 
 //      |    |  0  1  2  3   4  5  6  7   8  9  A  B   C  D  E  F |
 // -----|----|----------------------------------------------------|------------------
@@ -38,7 +32,8 @@ const DEMO_SPEED_B_OFFSET = 0x5d; //----------------------'  |  |
 const DEMO_RNG_SEED_LO_OFFSET = 0x5e; //---------------------'  |
 const DEMO_RNG_SEED_HI_OFFSET = 0x5f; //------------------------'
 
-const SPEC_PORT_ITEM_LENGTH = 6;
+export const FOOTER_SPEC_PORT_COUNT_OFFSET = SPEC_PORT_COUNT_OFFSET;
+export const FOOTER_SPEC_PORT_DB_OFFSET = SPEC_PORT_DB_OFFSET;
 
 const validateByte =
   process.env.NODE_ENV === "production"
@@ -48,38 +43,6 @@ const validateByte =
           throw new RangeError(`Invalid byte ${byte}`);
         }
       };
-
-const specPortRawOffset = (index: number) =>
-  SPEC_PORT_DB_OFFSET + index * SPEC_PORT_ITEM_LENGTH;
-
-const getSpecPortProps = (raw: Uint8Array): ISupaplexSpecPortProps => ({
-  setsGravity: raw[2] === 1,
-  setsFreezeZonks: raw[3] === 2,
-  setsFreezeEnemies: raw[4] === 1,
-});
-
-export const specPortOffsetToCoords = (
-  b0: number,
-  b1: number,
-  width: number,
-): [x: number, y: number] => {
-  const offset = ((b0 << 8) | b1) >> 1;
-  return [offset % width, Math.floor(offset / width)];
-};
-
-export const specPortCoordsToOffset = (
-  x: number,
-  y: number,
-  width: number,
-): [b0: number, b1: number] => {
-  const offset = (y * width + x) << 1;
-  if (/*process.env.NODE_ENV !== "production" &&*/ offset > 0xffff) {
-    throw new RangeError(
-      `Spec port at coords (${x}, ${y}) with width ${width} cannot be saved`,
-    );
-  }
-  return [(offset >> 8) & 0xff, offset & 0xff];
-};
 
 export const createLevelFooter = (
   width: number,
@@ -98,6 +61,7 @@ class LevelFooter implements ILevelFooter {
   #useZonker = false;
   #useSerialPorts = false;
   #useInfotronsNeeded: number | undefined;
+  #initialFreezeEnemies = false;
 
   constructor(width: number, data?: Uint8Array) {
     this.#width = width;
@@ -162,6 +126,7 @@ class LevelFooter implements ILevelFooter {
     copy.#useZonker = this.#useZonker;
     copy.#useSerialPorts = this.#useSerialPorts;
     copy.#useInfotronsNeeded = this.#useInfotronsNeeded;
+    copy.#initialFreezeEnemies = this.#initialFreezeEnemies;
     return copy;
   }
 
@@ -208,17 +173,6 @@ class LevelFooter implements ILevelFooter {
       }
     }
     return result;
-
-    // const main = new Uint8Array(this.#src);
-    // if (demo) {
-    //   const result = new Uint8Array(main.length + demo.length + 2);
-    //   result[main.length] = 0;
-    //   result.set(demo, main.length + 1);
-    //   // See the comment for similar `+1` in `constructor`.
-    //   result[main.length + 1 + demo.length] = 0xff;
-    //   return result;
-    // }
-    // return main;
   }
 
   get title() {
@@ -249,7 +203,7 @@ class LevelFooter implements ILevelFooter {
   }
 
   get initialGravity() {
-    return this.#src[GRAVITY_OFFSET] === 1;
+    return this.#src[GRAVITY_OFFSET] !== 0;
   }
   setInitialGravity(on: boolean) {
     if (this.initialGravity === on) {
@@ -282,122 +236,6 @@ class LevelFooter implements ILevelFooter {
     }
     const copy = this.copy();
     copy.#src[INFOTRONS_NEED_OFFSET] = value;
-    return copy;
-  }
-
-  get specPortsCount() {
-    return Math.min(this.#src[SPEC_PORT_COUNT_OFFSET], SPEC_PORT_MAX_COUNT);
-  }
-
-  *getSpecPorts(): Generator<ISupaplexSpecPort, void, void> {
-    for (let i = 0, L = this.specPortsCount; i < L; i++) {
-      const offset = specPortRawOffset(i);
-      const raw = this.#src.slice(offset, offset + SPEC_PORT_ITEM_LENGTH);
-      const [x, y] = specPortOffsetToCoords(raw[0], raw[1], this.width);
-      yield { x, y, ...getSpecPortProps(raw) };
-    }
-  }
-
-  copySpecPortsInRegion(r: Rect) {
-    return [...this.getSpecPorts()].reduce<ISupaplexSpecPort[]>((list, p) => {
-      if (inRect(p.x, p.y, r)) {
-        list.push({
-          ...p,
-          x: p.x - r.x,
-          y: p.y - r.y,
-        });
-      }
-      return list;
-    }, []);
-  }
-
-  clearSpecPorts() {
-    if (!this.specPortsCount) {
-      return this;
-    }
-    const copy = this.copy();
-    copy.#src[SPEC_PORT_COUNT_OFFSET] = 0;
-    const zeroItem = new Uint8Array(SPEC_PORT_ITEM_LENGTH);
-    for (let i = 0; i < SPEC_PORT_MAX_COUNT; i++) {
-      copy.#src.set(zeroItem, specPortRawOffset(i));
-    }
-    return copy;
-  }
-
-  findSpecPort(x: number, y: number) {
-    for (const port of this.getSpecPorts()) {
-      if (port.x === x && port.y === y) {
-        const { x: _1, y: _2, ...props } = port;
-        return props;
-      }
-    }
-  }
-
-  setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps) {
-    const list = [...this.getSpecPorts()];
-    let index = list.findIndex((p) => p.x === x && p.y === y);
-    let newCount = this.specPortsCount;
-    if (index >= 0) {
-      if (!props) {
-        return this;
-      }
-      const prev = list[index];
-      if (
-        props.setsGravity === prev.setsGravity &&
-        props.setsFreezeZonks === prev.setsFreezeZonks &&
-        props.setsFreezeEnemies === prev.setsFreezeEnemies
-      ) {
-        return this;
-      }
-    } else {
-      index = this.specPortsCount;
-      if (index >= SPEC_PORT_MAX_COUNT) {
-        throw new RangeError("Cannot add more spec ports");
-      }
-      newCount++;
-      props ??= {
-        setsGravity: false,
-        setsFreezeZonks: false,
-        setsFreezeEnemies: false,
-      };
-    }
-
-    const result = this.copy();
-    const [b0, b1] = specPortCoordsToOffset(x, y, this.width);
-    result.#src.set(
-      Uint8Array.of(
-        b0,
-        b1,
-        props.setsGravity ? 1 : 0,
-        props.setsFreezeZonks ? 2 : 0,
-        props.setsFreezeEnemies ? 1 : 0,
-      ),
-      specPortRawOffset(index),
-    );
-    result.#src[SPEC_PORT_COUNT_OFFSET] = newCount;
-    return result;
-  }
-
-  deleteSpecPort(x: number, y: number) {
-    const list = [...this.getSpecPorts()];
-    const index = list.findIndex((p) => p.x === x && p.y === y);
-    if (index < 0) {
-      return this;
-    }
-    const last = this.specPortsCount - 1;
-    const copy = this.copy();
-    for (let i = index; i < last; i++) {
-      const from = specPortRawOffset(i + 1);
-      copy.#src.set(
-        this.#src.slice(from, from + SPEC_PORT_ITEM_LENGTH),
-        specPortRawOffset(i),
-      );
-    }
-    copy.#src.set(
-      new Uint8Array(SPEC_PORT_ITEM_LENGTH),
-      specPortRawOffset(last),
-    );
-    copy.#src[SPEC_PORT_COUNT_OFFSET] = this.specPortsCount - 1;
     return copy;
   }
 
@@ -562,6 +400,18 @@ class LevelFooter implements ILevelFooter {
     }
     const next = this.copy();
     next.#useInfotronsNeeded = n;
+    return next;
+  }
+
+  get initialFreezeEnemies() {
+    return this.#initialFreezeEnemies;
+  }
+  setInitialFreezeEnemies(on: boolean): this {
+    if (on === this.#initialFreezeEnemies) {
+      return this;
+    }
+    const next = this.copy();
+    next.#initialFreezeEnemies = on;
     return next;
   }
 }

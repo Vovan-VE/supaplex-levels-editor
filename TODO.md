@@ -21,6 +21,9 @@
   - Impossible without gameplay simulation. Only if SO will provide a path
     actually walked.
 - Tooltips with interactive content support.
+- specports
+  - H/V/X ports on toolbar should be halved
+- footer info: is std, why not
 
 ### Desktop
 

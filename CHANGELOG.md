@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.18.0 (2023-12-01)
+
+- Add: New SO Special Ports Database support. This brings the following changes:
+  - More than 10 special ports can be defined in a level.
+  - No limit for special port position in big MPX level.
+  - Any Port can now be defined as Special.
+  - Any of environment features controlling by a Special Port can be set to
+    "don't change" and "toggle" in Special Port properties.
+- Add: Editing the unused byte in every Special Port Database Entry. Can be used
+  for customizing the bottom beyond for SP compatible entries.
+- Add: "Initial Freeze Enemies" game condition. All three conditions are now
+  compacted into a single dropdown button "Initial conditions".
+- Add: Special Ports Database now can be sorted manually. See new "Initial
+  conditions" button.
+- Fix: "Broken" Special Ports (which are Special Port tiles, but without entry
+  in Special Ports Database) in Selection region wasn't render same as in level
+  body.
+- Fix: Initial gravity uses `0` to "OFF" and other values to "ON", as it
+  actually works in game, which isn't match with docs.
+- Enh: Better colors for special ports.
+
 ## 0.17.0 (2023-10-15)
 
 - Add: Textual editing for demo keystrokes.

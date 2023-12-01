@@ -13,7 +13,7 @@ import { TEST_DEMO_URL, TEST_LEVEL_TITLE, TEST_LEVEL_URL } from "configs";
 import {
   getDriver,
   IBaseLevel,
-  LevelConfiguratorProps,
+  LevelEditProps,
   levelSupportsDemo,
 } from "drivers";
 import { ReactComponent as DiskYellow } from "drivers/supaplex/tiles-svg/18-12-yellow-disk.svg";
@@ -151,7 +151,7 @@ const openTestUrl = testInIframe
       return Boolean(window.open(url, target));
     };
 
-type ConfirmFC = FC<PropsWithChildren<LevelConfiguratorProps<IBaseLevel>>>;
+type ConfirmFC = FC<PropsWithChildren<LevelEditProps<IBaseLevel>>>;
 
 const sendLevelTo = async ({
   level,
@@ -236,7 +236,7 @@ const sendLevelTo = async ({
 
 const ConfirmSO: FC<
   PropsWithChildren<
-    { toDoWhat: ReactNode } & Partial<LevelConfiguratorProps<IBaseLevel>>
+    { toDoWhat: ReactNode } & Partial<LevelEditProps<IBaseLevel>>
   >
 > = ({ toDoWhat, level, onChange, children }) => {
   // const confirmed = useStore($prefConfirmedTestSO);

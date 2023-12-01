@@ -7,22 +7,21 @@ import {
   IBaseTile,
   ILevelRegion,
   IResizeLevelOptions,
+  ITilesRegion,
   IWithDemo,
   IWithSignature,
   LocalOptions,
 } from "../types";
-import {
-  ILevelBody,
-  ISupaplexSpecPort,
-  ISupaplexSpecPortProps,
-} from "./internal";
+import { ILevelBody, ISupaplexSpecPortDatabase } from "./internal";
 
+export interface ISupaplexTilesRegion extends ITilesRegion {
+  readonly specports: ISupaplexSpecPortDatabase;
+}
 export interface ISupaplexLevelRegion extends ILevelRegion {
-  readonly specPorts: readonly ISupaplexSpecPort[];
+  readonly tiles: ISupaplexTilesRegion;
 }
 export interface ISupaplexLevel extends IBaseLevel, IWithDemo, IWithSignature {
-  copyRegion(r: Rect): ISupaplexLevelRegion;
-  pasteRegion(x: number, y: number, region: ISupaplexLevelRegion): this;
+  copyRegion(rect: Rect): ISupaplexLevelRegion;
   readonly length: number;
   readonly raw: Uint8Array;
   readonly body: ILevelBody;
@@ -33,10 +32,11 @@ export interface ISupaplexLevel extends IBaseLevel, IWithDemo, IWithSignature {
   setInitialFreezeZonks(on: boolean): this;
   readonly infotronsNeed: number;
   setInfotronsNeed(value: number): this;
-  readonly specPortsCount: number;
-  getSpecPorts(): Iterable<ISupaplexSpecPort>;
-  findSpecPort(x: number, y: number): ISupaplexSpecPortProps | undefined;
-  setSpecPort(x: number, y: number, props?: ISupaplexSpecPortProps): this;
+  readonly specports: ISupaplexSpecPortDatabase;
+  setSpecports(spdb: ISupaplexSpecPortDatabase): this;
+  updateSpecports(
+    update: (spdb: ISupaplexSpecPortDatabase) => ISupaplexSpecPortDatabase,
+  ): this;
   setLocalOptions(opt: LocalOptions | undefined): this;
   readonly usePlasma: boolean;
   readonly usePlasmaLimit: number | undefined;
@@ -44,12 +44,15 @@ export interface ISupaplexLevel extends IBaseLevel, IWithDemo, IWithSignature {
   readonly useZonker: boolean;
   readonly useSerialPorts: boolean;
   readonly useInfotronsNeeded: number | undefined;
+  readonly initialFreezeEnemies: boolean;
   setUsePlasma(on: boolean): this;
   setUsePlasmaLimit(n: number | undefined): this;
   setUsePlasmaTime(n: number | undefined): this;
   setUseZonker(on: boolean): this;
   setUseSerialPorts(on: boolean): this;
+  // REFACT: merge into common
   setUseInfotronsNeeded(n: number | undefined): this;
+  setInitialFreezeEnemies(on: boolean): this;
 }
 
 export interface ISupaplexTile extends IBaseTile<ISupaplexLevel> {}

@@ -122,7 +122,7 @@ const DrawLayerTilesRegion: FC<
   //     0
   // => -lx + vx
   const nodes: ReactElement[] = [];
-  for (const [x, y, n, tile] of tiles.tilesRenderStream(
+  for (const [x, y, n, tile, variant] of tiles.tilesRenderStream(
     visibleRect.x - LX,
     visibleRect.y - LY,
     visibleRect.width,
@@ -132,6 +132,7 @@ const DrawLayerTilesRegion: FC<
       <TileRender
         key={`${x}:${y}`}
         tile={tile}
+        variant={variant}
         style={
           {
             "--x": x + LX,

@@ -209,10 +209,18 @@ export interface TileRenderProps {
   style?: CSSProperties;
 }
 
-export interface LevelConfiguratorProps<L extends IBaseLevel> {
+export interface LevelEditProps<L extends IBaseLevel> {
   level: L;
   onChange: (level: L) => void;
 }
+export interface LevelConfiguratorEnvProps {
+  compact?: boolean;
+}
+export interface LevelConfiguratorProps<L extends IBaseLevel>
+  extends LevelEditProps<L>,
+    LevelConfiguratorEnvProps {}
+export interface LevelLocalOptionsProps<L extends IBaseLevel>
+  extends LevelEditProps<L> {}
 
 export type DiffItemValue = null | boolean | number | string | ReactElement;
 export interface DiffItem {
@@ -236,7 +244,7 @@ export interface IBaseDriver<
   borderTiles?: BorderTiles;
   TileRender: FC<TileRenderProps>;
   LevelConfigurator?: FC<LevelConfiguratorProps<L>>;
-  LevelLocalOptions?: FC<LevelConfiguratorProps<L>>;
+  LevelLocalOptions?: FC<LevelLocalOptionsProps<L>>;
   applyLocalOptions?: (level: L, url: URL) => void;
   /**
    * Available formats in "detect" order.

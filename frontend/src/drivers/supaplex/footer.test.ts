@@ -1,31 +1,5 @@
 import { FOOTER_BYTE_LENGTH, LEVEL_WIDTH, TITLE_LENGTH } from "./formats/std";
-import {
-  createLevelFooter,
-  specPortCoordsToOffset,
-  specPortOffsetToCoords,
-} from "./footer";
-import { ISupaplexSpecPort, ISupaplexSpecPortProps } from "./internal";
-
-it("spec port coords", () => {
-  expect(specPortCoordsToOffset(0, 0, 60)).toEqual([0, 0]);
-  expect(specPortOffsetToCoords(0, 0, 60)).toEqual([0, 0]);
-
-  expect(
-    specPortOffsetToCoords(...specPortCoordsToOffset(0, 59, 60), 60),
-  ).toEqual([0, 59]);
-  expect(
-    specPortOffsetToCoords(...specPortCoordsToOffset(23, 59, 60), 60),
-  ).toEqual([23, 59]);
-  expect(
-    specPortOffsetToCoords(...specPortCoordsToOffset(23, 0, 60), 60),
-  ).toEqual([23, 0]);
-
-  expect(() => specPortCoordsToOffset(254, 128, 255)).toThrow(
-    new RangeError(
-      `Spec port at coords (254, 128) with width 255 cannot be saved`,
-    ),
-  );
-});
+import { createLevelFooter } from "./footer";
 
 describe("footer", () => {
   const testFooterData = Uint8Array.of(
@@ -63,16 +37,6 @@ describe("footer", () => {
       expect(footer.title).toBe("-- Lorem ipsum --      ");
       expect(footer.initialFreezeZonks).toBe(true);
       expect(footer.infotronsNeed).toBe(42);
-      expect(footer.specPortsCount).toBe(1);
-      expect([...footer.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
-        {
-          x: 12,
-          y: 12,
-          setsGravity: true,
-          setsFreezeZonks: true,
-          setsFreezeEnemies: true,
-        },
-      ]);
     });
 
     it("wrong size", () => {
@@ -168,156 +132,6 @@ describe("footer", () => {
 
     expect(() => footer.setInfotronsNeed(256)).toThrow(/^Invalid byte -?\d+$/);
     expect(() => footer.setInfotronsNeed(-2)).toThrow(/^Invalid byte -?\d+$/);
-  });
-
-  it("copySpecPortsInRegion", () => {
-    const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
-    expect(
-      footer.copySpecPortsInRegion({ x: 0, y: 0, width: 60, height: 12 }),
-    ).toEqual([]);
-    expect(
-      footer.copySpecPortsInRegion({ x: 0, y: 0, width: 12, height: 24 }),
-    ).toEqual([]);
-    expect(
-      footer.copySpecPortsInRegion({ x: 11, y: 11, width: 3, height: 3 }),
-    ).toEqual([
-      {
-        x: 1,
-        y: 1,
-        setsGravity: true,
-        setsFreezeZonks: true,
-        setsFreezeEnemies: true,
-      },
-    ]);
-  });
-
-  it("clearSpecPorts", () => {
-    const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
-
-    const next = footer.clearSpecPorts();
-    expect(next.specPortsCount).toBe(0);
-    expect(next.clearSpecPorts()).toBe(next);
-    expect(footer.specPortsCount).toBe(1);
-  });
-
-  it("findSpecPort", () => {
-    const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
-
-    expect(footer.findSpecPort(12, 12)).toEqual<ISupaplexSpecPortProps>({
-      setsGravity: true,
-      setsFreezeZonks: true,
-      setsFreezeEnemies: true,
-    });
-    expect(footer.findSpecPort(13, 12)).toBeUndefined();
-  });
-
-  describe("setSpecPort", () => {
-    it("overflow", () => {
-      const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
-
-      const copy = footer
-        .setSpecPort(2, 1)
-        .setSpecPort(3, 1)
-        .setSpecPort(4, 1)
-        .setSpecPort(5, 1)
-        .setSpecPort(6, 1)
-        .setSpecPort(7, 1)
-        .setSpecPort(8, 1)
-        .setSpecPort(9, 1)
-        .setSpecPort(10, 1);
-
-      expect(footer.specPortsCount).toBe(1);
-      expect(copy.specPortsCount).toBe(10);
-      expect(() => copy.setSpecPort(11, 1)).toThrow(
-        new RangeError("Cannot add more spec ports"),
-      );
-    });
-
-    it("no op", () => {
-      const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
-
-      expect(footer.setSpecPort(12, 12)).toBe(footer);
-      expect(
-        footer.setSpecPort(12, 12, {
-          setsGravity: true,
-          setsFreezeZonks: true,
-          setsFreezeEnemies: true,
-        }),
-      ).toBe(footer);
-    });
-
-    it("update", () => {
-      const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
-
-      const copy = footer.setSpecPort(12, 12, {
-        setsGravity: false,
-        setsFreezeZonks: true,
-        setsFreezeEnemies: false,
-      });
-
-      expect(footer.specPortsCount).toBe(1);
-      expect(copy.specPortsCount).toBe(1);
-      expect([...footer.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
-        {
-          x: 12,
-          y: 12,
-          setsGravity: true,
-          setsFreezeZonks: true,
-          setsFreezeEnemies: true,
-        },
-      ]);
-      expect([...copy.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
-        {
-          x: 12,
-          y: 12,
-          setsGravity: false,
-          setsFreezeZonks: true,
-          setsFreezeEnemies: false,
-        },
-      ]);
-    });
-  });
-
-  describe("deleteSpecPort", () => {
-    it("no op", () => {
-      const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
-
-      expect(footer.deleteSpecPort(10, 1)).toBe(footer);
-
-      expect(footer.specPortsCount).toBe(1);
-      expect([...footer.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
-        {
-          x: 12,
-          y: 12,
-          setsGravity: true,
-          setsFreezeZonks: true,
-          setsFreezeEnemies: true,
-        },
-      ]);
-    });
-
-    it("mid", () => {
-      const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
-
-      const copy = footer
-        .setSpecPort(10, 1, {
-          setsGravity: true,
-          setsFreezeZonks: false,
-          setsFreezeEnemies: true,
-        })
-        .deleteSpecPort(12, 12);
-
-      expect(copy.specPortsCount).toBe(1);
-      expect([...copy.getSpecPorts()]).toEqual<ISupaplexSpecPort[]>([
-        {
-          x: 10,
-          y: 1,
-          setsGravity: true,
-          setsFreezeZonks: false,
-          setsFreezeEnemies: true,
-        },
-      ]);
-    });
   });
 
   it("demo seed", () => {
@@ -553,5 +367,18 @@ describe("footer", () => {
     expect(next.setUseInfotronsNeeded(42)).toBe(next);
 
     expect(footer.useInfotronsNeeded).toBe(undefined);
+  });
+
+  it("initialFreezeEnemies", () => {
+    const footer = createLevelFooter(LEVEL_WIDTH);
+
+    expect(footer.initialFreezeEnemies).toBe(false);
+    expect(footer.setInitialFreezeEnemies(false)).toBe(footer);
+
+    const next = footer.setInitialFreezeEnemies(true);
+    expect(next.initialFreezeEnemies).toBe(true);
+    expect(next.setInitialFreezeEnemies(true)).toBe(next);
+
+    expect(footer.initialFreezeEnemies).toBe(false);
   });
 });

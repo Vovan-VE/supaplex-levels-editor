@@ -3,7 +3,10 @@ import { FC } from "react";
 import { TileCoords } from "components/settings/display";
 import { DiffValue } from "ui/feedback";
 import { DiffItem } from "../types";
-import { ISupaplexSpecPort } from "./internal";
+import {
+  ISupaplexSpecPortRecord,
+  ISupaplexSpecPortRecordReadonly,
+} from "./internal";
 import { ISupaplexLevel } from "./types";
 
 export const cmpLevels = (a: ISupaplexLevel, b: ISupaplexLevel) => {
@@ -37,26 +40,27 @@ export const cmpLevels = (a: ISupaplexLevel, b: ISupaplexLevel) => {
       b: b.useInfotronsNeeded,
     });
   }
-  if (a.specPortsCount !== b.specPortsCount) {
+  if (a.specports.count !== b.specports.count) {
     diff.push({
       label: "Special Ports",
-      a: a.specPortsCount,
-      b: b.specPortsCount,
+      a: a.specports.count,
+      b: b.specports.count,
     });
   }
   {
     const aPorts = specPortsArray(a);
     const bPorts = specPortsArray(b);
     for (let i = 0, L = Math.max(aPorts.length, bPorts.length); i < L; i++) {
-      const ap: ISupaplexSpecPort | undefined = aPorts[i];
-      const bp: ISupaplexSpecPort | undefined = bPorts[i];
+      const ap: ISupaplexSpecPortRecord | undefined = aPorts[i];
+      const bp: ISupaplexSpecPortRecord | undefined = bPorts[i];
       if (!equal(ap, bp)) {
         const which: SpecPortWhichProps = {
           x: ap?.x !== bp?.x,
           y: ap?.y !== bp?.y,
-          setsGravity: ap?.setsGravity !== bp?.setsGravity,
-          setsFreezeZonks: ap?.setsFreezeZonks !== bp?.setsFreezeZonks,
-          setsFreezeEnemies: ap?.setsFreezeEnemies !== bp?.setsFreezeEnemies,
+          gravity: ap?.gravity !== bp?.gravity,
+          freezeZonks: ap?.freezeZonks !== bp?.freezeZonks,
+          freezeEnemies: ap?.freezeEnemies !== bp?.freezeEnemies,
+          unusedByte: ap?.unusedByte !== bp?.unusedByte,
         };
         diff.push({
           label: `Spec port #${i + 1}`,
@@ -107,19 +111,22 @@ export const cmpLevels = (a: ISupaplexLevel, b: ISupaplexLevel) => {
   return diff;
 };
 
-const cmpSpecPorts = (a: ISupaplexSpecPort, b: ISupaplexSpecPort) =>
+const cmpSpecPorts = (a: ISupaplexSpecPortRecord, b: ISupaplexSpecPortRecord) =>
   a.y - b.y || a.x - b.x;
 
 const specPortsArray = (level: ISupaplexLevel) =>
-  Array.from(level.getSpecPorts()).sort(cmpSpecPorts);
+  Array.from(level.specports.getAll()).sort(cmpSpecPorts);
 
-type SpecPortWhichProps = Record<keyof ISupaplexSpecPort, boolean>;
+type SpecPortWhichProps = Record<
+  keyof ISupaplexSpecPortRecordReadonly,
+  boolean
+>;
 const DiffSpecPort: FC<{
-  port: ISupaplexSpecPort;
+  port: ISupaplexSpecPortRecordReadonly;
   side: 0 | 1;
   which: SpecPortWhichProps;
 }> = ({
-  port: { x, y, setsGravity, setsFreezeZonks, setsFreezeEnemies },
+  port: { x, y, gravity, freezeZonks, freezeEnemies, unusedByte },
   side,
   which,
 }) => (
@@ -152,22 +159,29 @@ const DiffSpecPort: FC<{
     <br />
     <span>
       Gravity:{" "}
-      <DiffValue side={side} different={which.setsGravity}>
-        <b>{String(setsGravity)}</b>
+      <DiffValue side={side} different={which.gravity}>
+        <b>{String(gravity)}</b>
       </DiffValue>
     </span>
     <br />
     <span>
       Freeze Zonks:{" "}
-      <DiffValue side={side} different={which.setsFreezeZonks}>
-        <b>{String(setsFreezeZonks)}</b>
+      <DiffValue side={side} different={which.freezeZonks}>
+        <b>{String(freezeZonks)}</b>
       </DiffValue>
     </span>
     <br />
     <span>
       Freeze Enemies:{" "}
-      <DiffValue side={side} different={which.setsFreezeEnemies}>
-        <b>{String(setsFreezeEnemies)}</b>
+      <DiffValue side={side} different={which.freezeEnemies}>
+        <b>{String(freezeEnemies)}</b>
+      </DiffValue>
+    </span>
+    <br />
+    <span>
+      Unused Byte:{" "}
+      <DiffValue side={side} different={which.unusedByte}>
+        <b>{unusedByte}</b>
       </DiffValue>
     </span>
   </div>

@@ -16,6 +16,9 @@ import { ReactComponent as SvgMetaPortD } from "./tiles-svg/meta-port-d.svg";
 import { ReactComponent as SvgMetaPortL } from "./tiles-svg/meta-port-l.svg";
 import { ReactComponent as SvgMetaPortR } from "./tiles-svg/meta-port-r.svg";
 import { ReactComponent as SvgMetaPortU } from "./tiles-svg/meta-port-u.svg";
+import { ReactComponent as SvgPortV } from "./tiles-svg/21-15-port-vertical.svg";
+import { ReactComponent as SvgPortH } from "./tiles-svg/22-16-port-horizontal.svg";
+import { ReactComponent as SvgPortX } from "./tiles-svg/23-17-port-cross.svg";
 import { ISupaplexLevel, ISupaplexTile } from "./types";
 
 const specPInt: IBaseTileInteraction<ISupaplexLevel> = {
@@ -42,28 +45,42 @@ const enum TBOrder {
 
 const metaPortTitle = (direction: string) =>
   `Regular/Special Port ${direction}\nRight Click on it in level body to see properties`;
-const [metaPortR, metaPortD, metaPortL, metaPortU]: IBaseMetaTile[] = [
-  {
-    primaryValue: tid.TILE_PORT_R,
-    icon: <SvgMetaPortR />,
-    title: metaPortTitle("Right"),
-  },
-  {
-    primaryValue: tid.TILE_PORT_D,
-    icon: <SvgMetaPortD />,
-    title: metaPortTitle("Down"),
-  },
-  {
-    primaryValue: tid.TILE_PORT_L,
-    icon: <SvgMetaPortL />,
-    title: metaPortTitle("Left"),
-  },
-  {
-    primaryValue: tid.TILE_PORT_U,
-    icon: <SvgMetaPortU />,
-    title: metaPortTitle("Up"),
-  },
-];
+
+const metaPortR: IBaseMetaTile = {
+  primaryValue: tid.TILE_PORT_R,
+  icon: <SvgMetaPortR />,
+  title: metaPortTitle("Right"),
+};
+const metaPortD: IBaseMetaTile = {
+  primaryValue: tid.TILE_PORT_D,
+  icon: <SvgMetaPortD />,
+  title: metaPortTitle("Down"),
+};
+const metaPortL: IBaseMetaTile = {
+  primaryValue: tid.TILE_PORT_L,
+  icon: <SvgMetaPortL />,
+  title: metaPortTitle("Left"),
+};
+const metaPortU: IBaseMetaTile = {
+  primaryValue: tid.TILE_PORT_U,
+  icon: <SvgMetaPortU />,
+  title: metaPortTitle("Up"),
+};
+const metaPortV: IBaseMetaTile = {
+  primaryValue: tid.TILE_PORT_V,
+  icon: <SvgPortV />,
+  title: metaPortTitle("Vertical"),
+};
+const metaPortH: IBaseMetaTile = {
+  primaryValue: tid.TILE_PORT_H,
+  icon: <SvgPortH />,
+  title: metaPortTitle("Horizontal"),
+};
+const metaPortX: IBaseMetaTile = {
+  primaryValue: tid.TILE_PORT_X,
+  icon: <SvgPortX />,
+  title: metaPortTitle("Cross"),
+};
 
 export const tiles: readonly ISupaplexTile[] = [
   { value: tid.TILE_SPACE, title: "Space", toolbarOrder: TBOrder.Core },
@@ -207,18 +224,24 @@ export const tiles: readonly ISupaplexTile[] = [
     value: tid.TILE_PORT_V,
     title: "Port Vertical",
     src: tsrc.src21,
+    metaTile: metaPortV,
+    interaction: specPInt,
     toolbarOrder: TBOrder.Port,
   },
   {
     value: tid.TILE_PORT_H,
     title: "Port Horizontal",
     src: tsrc.src22,
+    metaTile: metaPortH,
+    interaction: specPInt,
     toolbarOrder: TBOrder.Port,
   },
   {
     value: tid.TILE_PORT_X,
     title: "Port Cross",
     src: tsrc.src23,
+    metaTile: metaPortX,
+    interaction: specPInt,
     toolbarOrder: TBOrder.Port,
   },
   {
