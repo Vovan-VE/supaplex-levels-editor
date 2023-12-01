@@ -25,5 +25,17 @@
         }
       }
     }
+  },
+  "files": {
+    "buttons": {
+      "Remove": "Remove file from memory",
+      "RemoveOthers": "Remove others files from memory",
+      "Rename": "Rename file",
+      "Save": "Save file from memory"
+    },
+    "rename": {
+      "NewFileName": "New filename",
+      "Prompt": "Rename file \"<b>{filename}</b>\" in memory"
+    }
   }
 }

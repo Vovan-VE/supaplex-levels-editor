@@ -1,7 +1,7 @@
 {
   "about": {
     "content": {
-      "B010": "<strong>{APP_TITLE}</strong> is <strong>Supaplex Levels Editor</strong>. Inspired by <linkSo>Supaplex.Online</linkSo> and its community."
+      "B010": "<b>{APP_TITLE}</b> is <b>Supaplex Levels Editor</b>. Inspired by <linkSo>Supaplex.Online</linkSo> and its community."
     }
   },
   "app": {
@@ -10,17 +10,34 @@
   "common": {
     "buttons": {
       "Cancel": "Cancel",
+      "Close": "Close",
+      "Create": "Create",
+      "GitHubRepo": "GitHub repo",
       "Info": "Info",
       "OK": "OK",
       "Settings": "Settings",
-      "ZoomIn": "Zoom In\n{hotkey}",
-      "ZoomOut": "Zoom Out\n{hotkey}"
+      "ZoomIn": "Zoom In",
+      "ZoomOut": "Zoom Out"
+    },
+    "labels": {
+      "Filter": "Filter",
+      "HotkeyCycledMarker": "[cycled]"
     }
   },
   "files": {
     "buttons": {
+      "ConvertFormat": "Convert format...",
       "New": "Create new levelset...",
-      "Open": "Open files..."
+      "Open": "Open files...",
+      "SaveZipWithOptions": "Save file ZIP with Options"
+    },
+    "convert": {
+      "DialogTitle": "Convert file format",
+      "FileFormat": "File type",
+      "HintNewFileWill": "A new levelset will be created, so it's nothing to loose.",
+      "LevelIndex": "<b>level {index}</b>:",
+      "SummaryErrors": "Conversion impossible due to the following errors:",
+      "SummaryWarnings": "Conversion will cause the following changes:"
     },
     "messages": {
       "CannotCreateNew": "Cannot create levelset: {reason}",
@@ -49,9 +66,55 @@
     }
   },
   "levels": {
+    "LevelsIsFile": "Levels in \"<b>{filename}</b>\"",
     "notActivated": {
       "SelectCompact": "Select a level in <levelsMenu>Levels menu</levelsMenu>.",
       "SelectFull": "Select a level in Dropdown list."
+    }
+  },
+  "selectionEditors": {
+    "chess": {
+      "FirstTile": "First tile",
+      "MinSizeRequire": "at least 2 tiles",
+      "SecondTile": "Second tile",
+      "Title": "Chess"
+    },
+    "common": {
+      "KeepOld": "keep old"
+    },
+    "flip": {
+      "HTitle": "Flip Horizontal",
+      "VTitle": "Flip Vertical"
+    },
+    "gradient": {
+      "FromTile": "From tile",
+      "Horizontal": "Horizontal →",
+      "Title": "Gradient",
+      "ToTile": "To tile",
+      "Vertical": "Vertical ↓"
+    },
+    "maze": {
+      "BranchLength": "Branch length",
+      "BranchLengthHelp": "It's technical option which could be called \"Difficulty\".<br/>The higher value, the longer \"ways\" could be generated in theory. However, in practice all large values behaves the same after some threshold, because every branch generated just randomly.",
+      "HintMazeSizeWillBe": "Maze size is <b>{width}</b>x<b>{height}</b> of \"way\" columns/rows.",
+      "HintOuterWallNotIncluded": "<b>NOTICE:</b> The <i>Outer Wall</i> is not included (compared to WpColEd), so the top left cell in the selection is a \"way\" cell. You can first create a \"room\" border of any tiles, and then fill its \"content\" with a maze.",
+      "MinSizeRequire": "at least 3x3",
+      "Title": "Maze",
+      "WallTile": "Wall tile",
+      "WayTile": "Way tile"
+    },
+    "replace": {
+      "KeepTileVariants": "Keep tile variants",
+      "ReplaceWith": "Replace with",
+      "SearchWhat": "Search what",
+      "Title": "Replace"
+    },
+    "rnd": {
+      "HintMinCount": "Check above 2 or more tile to use.",
+      "Keep": "keep",
+      "Probabilities": "Probabilities, relative to each other",
+      "Title": "Random",
+      "WhichTiles": "Which tiles"
     }
   },
   "validate": {

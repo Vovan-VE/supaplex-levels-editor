@@ -1,8 +1,10 @@
 import { createEvent, restore } from "effector";
 import { useStore } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { TileSelect } from "components/driver/TileSelect";
 import { getDriver } from "drivers";
+import { Trans } from "i18n/Trans";
 import { $currentDriverName } from "models/levelsets";
 import { HK_EDIT_MAZE } from "models/ui/hotkeys-defined";
 import { Button } from "ui/button";
@@ -10,10 +12,9 @@ import { svgs } from "ui/icon";
 import { Field, Range } from "ui/input";
 import { ColorType } from "ui/types";
 import * as MZ from "utils/maze";
+import { elKeepOld } from "./_common";
 import { SelectionEditor, SelectionEditorProps } from "./_types";
 import clC from "./common.module.scss";
-
-const KEEP = <i>keep old</i>;
 
 // The underlying low-level maze has zero-width walls:
 //
@@ -44,6 +45,7 @@ const MazeEditor: FC<SelectionEditorProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const { t } = useTranslation();
   const driverName = useStore($currentDriverName)!;
   const { tempLevelFromRegion } = getDriver(driverName)!;
   const tempLevel = useMemo(
@@ -109,42 +111,36 @@ const MazeEditor: FC<SelectionEditorProps> = ({
   return (
     <div>
       <p>
-        Maze size is <strong>{mazeWidth}</strong>x<strong>{mazeHeight}</strong>{" "}
-        of "way" columns/rows.
+        <Trans
+          i18nKey="main:selectionEditors.maze.HintMazeSizeWillBe"
+          values={{ width: mazeWidth, height: mazeHeight }}
+        />
       </p>
 
       <div className={clC.row2}>
-        <Field label="Wall tile">
+        <Field label={t("main:selectionEditors.maze.WallTile")}>
           <TileSelect
             driverName={driverName as any}
             tile={wallTile}
             onChange={setWallTile}
             canClear
-            placeholder={KEEP}
+            placeholder={elKeepOld}
           />
         </Field>
-        <Field label="Way tile">
+        <Field label={t("main:selectionEditors.maze.WayTile")}>
           <TileSelect
             driverName={driverName as any}
             tile={wayTile}
             onChange={setWayTile}
             canClear
-            placeholder={KEEP}
+            placeholder={elKeepOld}
           />
         </Field>
       </div>
       <Field
-        label="Branch length"
+        label={t("main:selectionEditors.maze.BranchLength")}
         labelElement="div"
-        help={
-          <>
-            It's technical option which could be called "Difficulty".
-            <br />
-            The higher value, the longer "ways" could be generated in theory.
-            However, in practice all large values behaves the same after some
-            threshold, because every branch generated just randomly.
-          </>
-        }
+        help={<Trans i18nKey="main:selectionEditors.maze.BranchLengthHelp" />}
       >
         <Range
           min={1}
@@ -155,10 +151,7 @@ const MazeEditor: FC<SelectionEditorProps> = ({
       </Field>
 
       <p>
-        <strong>NOTICE:</strong> The <em>Outer Wall</em> is not included
-        (compared to WpColEd), so the top left cell in the selection is a "way"
-        cell. You can first create a "room" border of any tiles, and then fill
-        its "content" with a maze.
+        <Trans i18nKey="main:selectionEditors.maze.HintOuterWallNotIncluded" />
       </p>
 
       <div className={clC.buttons}>
@@ -171,19 +164,21 @@ const MazeEditor: FC<SelectionEditorProps> = ({
             branchLength <= 0
           }
         >
-          OK
+          {t("main:common.buttons.OK")}
         </Button>
-        <Button onClick={onCancel}>Cancel</Button>
+        <Button onClick={onCancel}>{t("main:common.buttons.Cancel")}</Button>
       </div>
     </div>
   );
 };
 
 export const maze: SelectionEditor = {
-  title: "Maze",
+  title: <Trans i18nKey="main:selectionEditors.maze.Title" />,
   icon: <svgs.Maze />,
   cannotWorkWhy: (s) =>
-    s.width < 3 || s.height < 3 ? <>at least 3x3</> : null,
+    s.width < 3 || s.height < 3 ? (
+      <Trans i18nKey="main:selectionEditors.maze.MinSizeRequire" />
+    ) : null,
   Component: MazeEditor,
   hotkeys: HK_EDIT_MAZE,
 };

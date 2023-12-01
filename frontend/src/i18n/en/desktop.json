@@ -9,5 +9,13 @@
   },
   "app": {
     "NewVersionAvailable": "New version available"
+  },
+  "files": {
+    "buttons": {
+      "Close": "Close file",
+      "CloseOthers": "Close all others files",
+      "Save": "Save changes",
+      "SaveAs": "Save As..."
+    }
   }
 }

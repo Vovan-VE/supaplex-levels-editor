@@ -8,7 +8,9 @@ import {
   useRef,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { fmtLevelFull } from "components/levelset";
+import { Trans } from "i18n/Trans";
 import {
   $currentBuffer,
   $currentFileName,
@@ -28,6 +30,7 @@ interface Props {
 }
 
 const LevelsListDialog: FC<Props> = ({ show, onSubmit }) => {
+  const { t } = useTranslation();
   const key = useStore($currentKey);
   // close dialog when current file switched somehow
   useEffect(() => {
@@ -86,10 +89,10 @@ const LevelsListDialog: FC<Props> = ({ show, onSubmit }) => {
     <Dialog
       open={show}
       onClose={onSubmit}
-      title={`Levels in "${filename}"`}
+      title={<Trans i18nKey="main:levels.LevelsIsFile" values={{ filename }} />}
       size="small"
     >
-      <Field label="Filter">
+      <Field label={t("main:common.labels.Filter")}>
         <Input
           type="text"
           value={filter}

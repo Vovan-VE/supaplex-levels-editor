@@ -34,17 +34,20 @@ export const displayHotKey = (hk: HotKeyShortcuts) => {
   const [key, mask = 0] = _isSingle(hk) ? hk : hk[0];
   let s = "";
   if (mask & HotKeyMask.CTRL) {
-    s += "Ctrl+";
+    s += "Ctrl ";
   }
   if (mask & HotKeyMask.ALT) {
-    s += "Alt+";
+    s += "Alt ";
   }
   if (mask & HotKeyMask.SHIFT) {
-    s += "Shift+";
+    s += "Shift ";
   }
   s += key === " " ? "Space" : key;
   return s;
 };
+export const hintWithHotkey = (hint: string, hk: HotKeyShortcuts) =>
+  `${hint}\n<${displayHotKey(hk)}>`;
+
 const eventKeyString = (eventKey: string) =>
   /^[A-Z]$/i.test(eventKey) ? eventKey.toUpperCase() : eventKey;
 export const shortcutToString = ([key, mask = 0]: HotKeyShortcut) =>

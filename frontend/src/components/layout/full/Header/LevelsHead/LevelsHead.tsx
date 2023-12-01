@@ -39,10 +39,6 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
     }
   }, []);
 
-  if (!levelset) {
-    throw new Error("Logic error");
-  }
-
   return (
     <div {...rest} className={cn(cl.root, className)}>
       <Toolbar className={cl.start}>

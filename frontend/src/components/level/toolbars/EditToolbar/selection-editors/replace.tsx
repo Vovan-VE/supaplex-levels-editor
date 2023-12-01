@@ -1,8 +1,10 @@
 import { createEvent, restore } from "effector";
 import { useStore } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { TileSelect } from "components/driver/TileSelect";
 import { getDriver, getTilesVariantsMap } from "drivers";
+import { Trans } from "i18n/Trans";
 import { $currentDriverName } from "models/levelsets";
 import { HK_EDIT_REPLACE } from "models/ui/hotkeys-defined";
 import { Button } from "ui/button";
@@ -24,6 +26,7 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const { t } = useTranslation();
   const driverName = useStore($currentDriverName)!;
   const { tempLevelFromRegion, tiles } = getDriver(driverName)!;
   const tempLevel = useMemo(
@@ -68,14 +71,14 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
   return (
     <div>
       <div className={clC.row2}>
-        <Field label="Search what">
+        <Field label={t("main:selectionEditors.replace.SearchWhat")}>
           <TileSelect
             driverName={driverName as any}
             tile={searchTile}
             onChange={setSearchTile}
           />
         </Field>
-        <Field label="Replace with">
+        <Field label={t("main:selectionEditors.replace.ReplaceWith")}>
           <TileSelect
             driverName={driverName as any}
             tile={replaceTile}
@@ -86,7 +89,7 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
       {(tileVariants.has(searchTile) || tileVariants.has(replaceTile)) && (
         <div>
           <Checkbox checked={keepVariants} onChange={setKeepVariants}>
-            Keep tile variants
+            {t("main:selectionEditors.replace.KeepTileVariants")}
           </Checkbox>
         </div>
       )}
@@ -97,16 +100,16 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
           onClick={handleSubmit}
           disabled={searchTile < 0 || replaceTile < 0}
         >
-          OK
+          {t("main:common.buttons.OK")}
         </Button>
-        <Button onClick={onCancel}>Cancel</Button>
+        <Button onClick={onCancel}>{t("main:common.buttons.Cancel")}</Button>
       </div>
     </div>
   );
 };
 
 export const replace: SelectionEditor = {
-  title: "Replace",
+  title: <Trans i18nKey="main:selectionEditors.replace.Title" />,
   icon: <svgs.Replace />,
   Component: ReplaceEditor,
   hotkeys: HK_EDIT_REPLACE,

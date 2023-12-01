@@ -1,5 +1,6 @@
 import { allowManualSave } from "backend";
 import { SupportReportType } from "drivers";
+import { Trans } from "i18n/Trans";
 import {
   $currentFileName,
   convertLevelsetTryFx,
@@ -17,11 +18,9 @@ export const handleRename = allowManualSave
       if (filename) {
         const newName = await promptString({
           title: (
-            <>
-              Rename file "<b>{filename}</b>" in memory
-            </>
+            <Trans i18nKey="web:files.rename.Prompt" values={{ filename }} />
           ),
-          label: "New filename",
+          label: <Trans i18nKey="web:files.rename.NewFileName" />,
           defaultValue: filename,
           required: true,
         });
@@ -38,13 +37,16 @@ export const handleConvert = async () => {
     if (report) {
       if (report.type === SupportReportType.ERR) {
         return msgBox(<SupportReport report={report} />, {
-          button: { uiColor: ColorType.MUTE, text: "Close" },
+          button: {
+            uiColor: ColorType.MUTE,
+            text: <Trans i18nKey="main:common.buttons.Close" />,
+          },
         });
       }
       if (
         await ask(<SupportReport report={report} />, {
           buttons: {
-            okText: "Create",
+            okText: <Trans i18nKey="main:common.buttons.Create" />,
             ok: {
               uiColor: ColorType.SUCCESS,
               autoFocus: false,

@@ -1,5 +1,6 @@
 import { FC, ReactElement, ReactNode } from "react";
 import { ISupportReport, SupportReportType } from "drivers";
+import { Trans } from "i18n/Trans";
 import { IconContainer, svgs } from "ui/icon";
 import cl from "./SupportReport.module.scss";
 
@@ -16,10 +17,10 @@ const ICON: Record<SupportReportType, ReactElement> = {
   ),
 };
 const SUMMARY: Record<SupportReportType, ReactNode> = {
-  [SupportReportType.ERR]: (
-    <>Conversion impossible due to the following errors.</>
+  [SupportReportType.ERR]: <Trans i18nKey="main:files.convert.SummaryErrors" />,
+  [SupportReportType.WARN]: (
+    <Trans i18nKey="main:files.convert.SummaryWarnings" />
   ),
-  [SupportReportType.WARN]: <>Conversion will cause the following changes.</>,
 };
 
 interface Props {
@@ -38,7 +39,10 @@ export const SupportReport: FC<Props> = ({ report: { type, messages } }) => (
             {ICON[type]}{" "}
             {levelIndex !== null && (
               <>
-                <b>level {levelIndex + 1}</b>:{" "}
+                <Trans
+                  i18nKey="main:files.convert.LevelIndex"
+                  values={{ index: levelIndex + 1 }}
+                />{" "}
               </>
             )}
             {message}
@@ -48,7 +52,7 @@ export const SupportReport: FC<Props> = ({ report: { type, messages } }) => (
     </div>
     {type !== SupportReportType.ERR && (
       <div className={cl.foot}>
-        A new levelset will be created, so it's nothing to loose.
+        <Trans i18nKey="main:files.convert.HintNewFileWill" />
       </div>
     )}
   </div>

@@ -1,5 +1,7 @@
 import { useStore } from "effector-react";
+import { TFunction } from "i18next";
 import { FC, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import {
   $toolIndex,
   $toolVariant,
@@ -47,12 +49,14 @@ const { TOOLS_HOTKEYS, IS_CYCLED } = (() => {
   return { TOOLS_HOTKEYS, IS_CYCLED };
 })();
 
-const _displayHK = (hk: HotKeyShortcuts | undefined) => {
+const _displayHK = (t: TFunction, hk: HotKeyShortcuts | undefined) => {
   if (!hk) {
     return "";
   }
   const s = displayHotKey(hk);
-  return ` (${s}${IS_CYCLED.has(s) ? " [cycled]" : ""})`;
+  return `\n<${s}>${
+    IS_CYCLED.has(s) ? " " + t("main:common.labels.HotkeyCycledMarker") : ""
+  }`;
 };
 
 const handleClicks = TOOLS.map(({ variants }, ti) =>
@@ -63,6 +67,7 @@ const handleClicks = TOOLS.map(({ variants }, ti) =>
 );
 
 export const EditorToolsSimple: FC<ContainerProps> = (props) => {
+  const { t } = useTranslation();
   const toolIndex = useStore($toolIndex);
   const variantIndex = useStore($toolVariant);
   return (
@@ -72,7 +77,7 @@ export const EditorToolsSimple: FC<ContainerProps> = (props) => {
           <Button
             key={`${ti}:${vi}`}
             icon={<Icon />}
-            title={title + _displayHK(hotkey)}
+            title={title + _displayHK(t, hotkey)}
             uiColor={
               ti === toolIndex && vi === variantIndex
                 ? ColorType.WARN

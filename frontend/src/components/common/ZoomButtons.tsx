@@ -7,7 +7,7 @@ import {
   decBodyScale,
   incBodyScale,
 } from "models/levels";
-import { displayHotKey, useHotKey } from "models/ui/hotkeys";
+import { hintWithHotkey, useHotKey } from "models/ui/hotkeys";
 import { HK_ZOOM_IN, HK_ZOOM_OUT } from "models/ui/hotkeys-defined";
 import { TextButton } from "ui/button";
 import { svgs } from "ui/icon";
@@ -51,9 +51,7 @@ export const ZoomButtons: FC<Props> = ({ btnClassName, space }) => {
         className={btnClassName}
         onClick={incBodyScale}
         disabled={!canZoomIn}
-        title={t("main:common.buttons.ZoomIn", {
-          hotkey: displayHotKey(HK_ZOOM_IN),
-        })}
+        title={hintWithHotkey(t("main:common.buttons.ZoomIn"), HK_ZOOM_IN)}
       />
       {space}
       <TextButton
@@ -61,9 +59,7 @@ export const ZoomButtons: FC<Props> = ({ btnClassName, space }) => {
         className={btnClassName}
         onClick={decBodyScale}
         disabled={!canZoomOut}
-        title={t("main:common.buttons.ZoomOut", {
-          hotkey: displayHotKey(HK_ZOOM_OUT),
-        })}
+        title={hintWithHotkey(t("main:common.buttons.ZoomOut"), HK_ZOOM_OUT)}
       />
     </>
   );

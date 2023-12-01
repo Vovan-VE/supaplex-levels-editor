@@ -1,4 +1,5 @@
 import { FlipDirection, getDriver } from "drivers";
+import { Trans } from "i18n/Trans";
 import { $currentDriverName } from "models/levelsets";
 import { HK_EDIT_FLIP_H, HK_EDIT_FLIP_V } from "models/ui/hotkeys-defined";
 import { svgs } from "ui/icon";
@@ -30,7 +31,7 @@ const buildFlip =
   };
 
 export const flipH: SelectionEditor = {
-  title: "Flip Horizontal",
+  title: <Trans i18nKey="main:selectionEditors.flip.HTitle" />,
   icon: <svgs.FlipH />,
   instant: buildFlip(
     (r) => [r.width, r.height],
@@ -40,7 +41,7 @@ export const flipH: SelectionEditor = {
   hotkeys: HK_EDIT_FLIP_H,
 };
 export const flipV: SelectionEditor = {
-  title: "Flip Vertical",
+  title: <Trans i18nKey="main:selectionEditors.flip.VTitle" />,
   icon: <svgs.FlipV />,
   instant: buildFlip(
     (r) => [r.height, r.width],
