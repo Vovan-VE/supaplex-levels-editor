@@ -1,6 +1,8 @@
 import { createEffect, restore, sample } from "effector";
 import { createGate, useStore } from "effector-react";
 import { FC } from "react";
+import { APP_TITLE } from "configs";
+import { Trans } from "i18n/Trans";
 import { GetAppInfo } from "./go/main/App";
 
 const fetchFx = createEffect(GetAppInfo);
@@ -14,28 +16,32 @@ sample({
 
 export const InfoDetails: FC = () => (
   <>
-    <h3>Desktop SpLE</h3>
+    <h3>
+      <Trans i18nKey="desktop:about.content.A000" />
+    </h3>
     <p>
-      Desktop version of <strong>SpLE</strong> built using{" "}
-      <a
-        href="https://github.com/wailsapp/wails"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Wails
-      </a>
-      . It uses the same source code as web app{" "}
-      <a href="https://sple.me">sple.me</a> to render frontend, but with some
-      different backend bindings to work with its host binary in desktop
-      environment.
+      <Trans
+        i18nKey="desktop:about.content.B010"
+        values={{ APP_TITLE }}
+        components={{
+          linkWails: (
+            // eslint-disable-next-line jsx-a11y/anchor-has-content
+            <a
+              href="https://github.com/wailsapp/wails"
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          ),
+        }}
+      />
     </p>
     <p>
-      <strong>Desktop SpLE</strong> compared to{" "}
-      <a href="https://sple.me">sple.me</a> <strong>DOES</strong> work with
-      regular files on your device, like other whatever desktop editors do.
+      <Trans i18nKey="desktop:about.content.B020" />
     </p>
 
-    <h3>App Info</h3>
+    <h3>
+      <Trans i18nKey="desktop:about.content.C000" />
+    </h3>
     <FetchGate />
     <pre>{useStore($appInfo)}</pre>
   </>

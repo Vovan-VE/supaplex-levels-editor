@@ -1,0 +1,29 @@
+{
+  "about": {
+    "content": {
+      "A000": "<spleMe/> Important notes",
+      "B010": "<spleMe/> is completely frontend (client side) application (web page). It works only with pseudo-files in browser memory.<br />See also <spleDesktop/> at <linkVer>GutHub repo</linkVer>.",
+      "B020": {
+        "I010": "After you opened existing file, it becomes in-memory copy of the original file. Technically you are uploading your local file to a web page.",
+        "I020": "In-memory files you opened or created from scratch are <strong>NOT</strong> related to regular files out of browser.",
+        "I030": "To get your modified file back as regular file technically you need to download file from web page (with appropriate UI button in <spleMe/>)."
+      },
+      "B030": "Also:",
+      "B040": {
+        "I010": {
+          "B010": "<spleMe/> application uses <code>indexedDB</code> and <code>localStorage</code> for better user experience. These things are similar to well known <i>Cookies</i> in terms of privacy.",
+          "B020": "<spleMe/> will try to remember your modified in-memory files and some preferences in browser storage for better user experience."
+        },
+        "I020": {
+          "B010": "There are no intention to send any kind of your data to somewhere without your confirmation.",
+          "B020": "<spleMe/> when completely loaded is operating locally in your browser. Neither external storages, nor cross-device sync are implied, nor planned.",
+          "B030": "<spleMe/> uses <linkSoTest>{SO} test page</linkSoTest> to test your level when you request that."
+        },
+        "I030": {
+          "B010": "<strong>DON'T</strong> rely much on browser storage to remember your modified in-memory files forever. <strong>DO SAVE BACKUPS</strong>. Browser can clean its storage.",
+          "B020": "Also, <spleMe/> storage in browser can be accidentally reset in case of some errors in <strong>{APP_TITLE}</strong> itself. Because, you know: <em>Every program has at least one bug</em>."
+        }
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ import { SettingsDialog } from "components/settings";
 import { HotkeysManagerGate } from "models/ui/hotkeys";
 import { PromptContainer, Toaster } from "ui/feedback";
 import { PopupContainer } from "utils/react";
+import "./i18n/init";
 
 init();
 

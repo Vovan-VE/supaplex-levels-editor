@@ -1,0 +1,61 @@
+{
+  "about": {
+    "content": {
+      "B010": "<strong>{APP_TITLE}</strong> is <strong>Supaplex Levels Editor</strong>. Inspired by <linkSo>Supaplex.Online</linkSo> and its community."
+    }
+  },
+  "app": {
+    "DesktopName": "Desktop {APP_TITLE}"
+  },
+  "common": {
+    "buttons": {
+      "Cancel": "Cancel",
+      "Info": "Info",
+      "OK": "OK",
+      "Settings": "Settings",
+      "ZoomIn": "Zoom In\n{hotkey}",
+      "ZoomOut": "Zoom Out\n{hotkey}"
+    }
+  },
+  "files": {
+    "buttons": {
+      "New": "Create new levelset...",
+      "Open": "Open files..."
+    },
+    "messages": {
+      "CannotCreateNew": "Cannot create levelset: {reason}",
+      "CannotReadFile": "\"{file}\": Cannot read file: {reason}.",
+      "UnsupportedFormat": "\"{file}\": Unsupported file format."
+    },
+    "new": {
+      "Border": "Border",
+      "DefaultFileExt": "Default extension <code>{ext}</code> will be appended.",
+      "DialogTitle": "New file",
+      "Driver": "Driver",
+      "FileFormat": "File type",
+      "FileName": "File name",
+      "FillBody": "Fill body",
+      "InvalidFileExt": "Invalid file extension.",
+      "LevelHeight": "Levels Height",
+      "LevelsCount": "Levels count",
+      "LevelTitle": "Title for every level",
+      "LevelWidth": "Levels Width"
+    },
+    "notActivated": {
+      "OpenCompact": "Open or Create a file in <filesMenu>Files menu</filesMenu>.",
+      "OpenFull": "Open or Create a file in Files Tabs.",
+      "SelectCompact": "Select a file in <filesMenu>Files menu</filesMenu>.",
+      "SelectFull": "Select a file in Files Tabs."
+    }
+  },
+  "levels": {
+    "notActivated": {
+      "SelectCompact": "Select a level in <levelsMenu>Levels menu</levelsMenu>.",
+      "SelectFull": "Select a level in Dropdown list."
+    }
+  },
+  "validate": {
+    "InvalidValue": "Invalid value: {error}",
+    "StrMaxLen": "Up to {max} characters"
+  }
+}

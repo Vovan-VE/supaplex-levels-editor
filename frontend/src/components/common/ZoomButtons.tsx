@@ -1,5 +1,6 @@
 import { useStore } from "effector-react";
 import { FC, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import {
   $bodyScaleCanDec,
   $bodyScaleCanInc,
@@ -29,6 +30,8 @@ interface Props {
 }
 
 export const ZoomButtons: FC<Props> = ({ btnClassName, space }) => {
+  const { t } = useTranslation();
+
   const canZoomIn = useStore($bodyScaleCanInc);
   const canZoomOut = useStore($bodyScaleCanDec);
 
@@ -48,7 +51,9 @@ export const ZoomButtons: FC<Props> = ({ btnClassName, space }) => {
         className={btnClassName}
         onClick={incBodyScale}
         disabled={!canZoomIn}
-        title={`Zoom In (${displayHotKey(HK_ZOOM_IN)})`}
+        title={t("main:common.buttons.ZoomIn", {
+          hotkey: displayHotKey(HK_ZOOM_IN),
+        })}
       />
       {space}
       <TextButton
@@ -56,7 +61,9 @@ export const ZoomButtons: FC<Props> = ({ btnClassName, space }) => {
         className={btnClassName}
         onClick={decBodyScale}
         disabled={!canZoomOut}
-        title={`Zoom Out (${displayHotKey(HK_ZOOM_OUT)})`}
+        title={t("main:common.buttons.ZoomOut", {
+          hotkey: displayHotKey(HK_ZOOM_OUT),
+        })}
       />
     </>
   );

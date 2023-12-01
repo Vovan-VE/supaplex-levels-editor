@@ -7,6 +7,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { NoticeSizeLags } from "components/level/toolbars/LevelConfig";
 import { TileSelect } from "components/driver/TileSelect";
 import {
@@ -20,6 +21,7 @@ import {
   parseFormatFilename,
 } from "drivers";
 import { TILE_HARDWARE } from "drivers/supaplex/tiles-id";
+import { Trans } from "i18n/Trans";
 import { addLevelsetFileFx } from "models/levelsets";
 import { Button } from "ui/button";
 import {
@@ -69,6 +71,8 @@ const getDefaultFormat = (o: readonly FormatOption[]) =>
 interface Props extends RenderPromptProps<true> {}
 
 const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
+  const { t } = useTranslation();
+
   const [driverName, setDriverName] = useState<DriverName>(DISPLAY_ORDER[0]);
   const curFormatsOptions = formatOptions.get(driverName)!;
   const [driverFormat, setDriverFormat] = useState(
@@ -196,10 +200,10 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
       onSubmit(true);
     } catch (e) {
       msgBox(
-        <>
-          Could not create levelset:{" "}
-          {e instanceof Error ? e.message : "unknown error"}
-        </>,
+        <Trans
+          i18nKey="main:files.messages.CannotCreateNew"
+          values={{ reason: e instanceof Error ? e.message : "unknown error" }}
+        />,
       );
     }
   }, [
@@ -222,7 +226,7 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
 
   return (
     <Dialog
-      title="New file"
+      title={t("main:files.new.DialogTitle")}
       size="small"
       open={show}
       wrapForm={{
@@ -234,24 +238,24 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
       buttons={
         <>
           <Button uiColor={ColorType.SUCCESS} type="submit">
-            OK
+            {t("main:common.buttons.OK")}
           </Button>
           <Button type="button" onClick={onCancel}>
-            Cancel
+            {t("main:common.buttons.Cancel")}
           </Button>
         </>
       }
       onClose={onCancel}
     >
       <div className={cl.root}>
-        <Field label="Driver">
+        <Field label={t("main:files.new.Driver")}>
           <Select
             options={driversOptions}
             value={driversOptions.find((o) => o.value === driverName) ?? null}
             onChange={handleDriverChange}
           />
         </Field>
-        <Field label="File type">
+        <Field label={t("main:files.new.FileFormat")}>
           <Select
             options={curFormatsOptions}
             value={
@@ -261,23 +265,25 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
           />
         </Field>
         <Field
-          label="File name"
+          label={t("main:files.new.FileName")}
           help={
-            !fileExt.hasExt && (
-              <>
-                Default extension <code>{format.fileExtensionDefault}</code>{" "}
-                will be appended.
-              </>
+            fileExt.hasExt ? null : (
+              <Trans
+                i18nKey="main:files.new.DefaultFileExt"
+                values={{ ext: format.fileExtensionDefault }}
+              />
             )
           }
           error={
-            fileExt.hasExt && !fileExt.isExtValid && "Invalid file extension."
+            fileExt.hasExt &&
+            !fileExt.isExtValid &&
+            t("main:files.new.InvalidFileExt")
           }
         >
           <Input value={filename} onChange={handleFilenameChange} />
         </Field>
         <Field
-          label="Levels count"
+          label={t("main:files.new.LevelsCount")}
           error={intRangeError(levelsCount, minLevelsCount, maxLevelsCount)}
         >
           <IntegerInput
@@ -287,11 +293,12 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
           />
         </Field>
         <Field
-          label="Title for every level"
+          label={t("main:files.new.LevelTitle")}
           error={
             title.length > maxTitleLength
-              ? `Up to ${maxTitleLength} characters`
-              : titleError && `Invalid value: ${titleError}`
+              ? t("main:validate.StrMaxLen", { max: maxTitleLength })
+              : titleError &&
+                t("main:validate.InvalidValue", { error: titleError })
           }
           className={cl.long}
         >
@@ -306,7 +313,7 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
         {(isResizableW || isResizableH) && (
           <>
             <Field
-              label="Levels Width"
+              label={t("main:files.new.LevelWidth")}
               error={
                 isResizableW &&
                 width !== null &&
@@ -328,7 +335,7 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
               )}
             </Field>
             <Field
-              label="Levels Height"
+              label={t("main:files.new.LevelHeight")}
               error={
                 isResizableH &&
                 height !== null &&
@@ -356,14 +363,14 @@ const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
           </>
         )}
 
-        <Field label="Border">
+        <Field label={t("main:files.new.Border")}>
           <TileSelect
             driverName={driverName}
             tile={borderTile}
             onChange={setBorderTile}
           />
         </Field>
-        <Field label="Fill body">
+        <Field label={t("main:files.new.FillBody")}>
           <TileSelect
             driverName={driverName}
             tile={fillTile}
