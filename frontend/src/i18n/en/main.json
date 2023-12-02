@@ -7,12 +7,33 @@
   "app": {
     "DesktopName": "Desktop {APP_TITLE}"
   },
+  "cmpLevels": {
+    "Calculating": "Calculating...",
+    "DialogTitle": "Compare levels",
+    "IgnoreFancy": "Ignore Fancy",
+    "prop": {
+      "Driver": "Driver",
+      "Height": "Height",
+      "Title": "Title",
+      "Width": "Width"
+    },
+    "Property": "Property",
+    "Reverse": "Reverse",
+    "shape": {
+      "Diagonal": "Diagonal",
+      "Fade": "Fade",
+      "Horizontal": "Horizontal",
+      "Vertical": "Vertical"
+    },
+    "Shape": "Shape"
+  },
   "common": {
     "buttons": {
       "Cancel": "Cancel",
       "Close": "Close",
       "Create": "Create",
       "GitHubRepo": "GitHub repo",
+      "Help": "Help",
       "Info": "Info",
       "OK": "OK",
       "Settings": "Settings",
@@ -21,8 +42,27 @@
     },
     "labels": {
       "Filter": "Filter",
-      "HotkeyCycledMarker": "[cycled]"
+      "HotkeyCycledMarker": "[cycled]",
+      "Loading": "Loading..."
+    },
+    "toasts": {
+      "Copied": "Copied"
     }
+  },
+  "demoEdit": {
+    "DemoText": "Demo text representation",
+    "DialogTitle": "Edit demo",
+    "Signature": "Signature"
+  },
+  "edit": {
+    "Copy": "Copy selection",
+    "Cut": "Cut selection",
+    "Delete": "Delete selection",
+    "EditDemoAndSignature": "Edit demo, signature",
+    "Paste": "Paste selection {size}",
+    "PlayerPosAt": "At {pos}",
+    "Redo": "Redo",
+    "Undo": "Undo"
   },
   "files": {
     "buttons": {
@@ -41,7 +81,10 @@
     },
     "messages": {
       "CannotCreateNew": "Cannot create levelset: {reason}",
+      "CannotFlushToStorage": "Could not flush data to storage",
       "CannotReadFile": "\"{file}\": Cannot read file: {reason}.",
+      "FailedFlushToStorage": "Failed to flush data to storage:",
+      "FlushingToStorage": "Flushing data to storage...",
       "UnsupportedFormat": "\"{file}\": Unsupported file format."
     },
     "new": {
@@ -65,12 +108,87 @@
       "SelectFull": "Select a file in Files Tabs."
     }
   },
+  "level": {
+    "buttons": {
+      "Resize": "Resize"
+    },
+    "config": {
+      "DialogTitle": "Level settings"
+    },
+    "export": {
+      "CopyLevelAsDemoLink": "Copy level as Demo Link",
+      "CopyLevelAsDemoLinkNone": "Copy level as Demo Link (no demo)",
+      "CopyLevelAsTestUrl": "Copy level as Test Link",
+      "CopySelectionAsImage": "Copy level/selection as Image",
+      "SaveLevelAsFile": "Save level as File",
+      "SaveSelectionAsImage": "Save level/selection as Image"
+    },
+    "manage": {
+      "Append": "Append new level {number}",
+      "CannotLessThenMin": "Cannot remove level because it's already minimum {min}",
+      "CloseOtherTabs": "Close other levels tabs",
+      "CloseTab": "Close level tab ({level})",
+      "Delete": "Delete level {level}",
+      "DeleteRestLevels": "Delete rest {n} levels",
+      "ExportLevel": "Export level",
+      "ImportLevelFromFileReplace": "Import a level from file into current level",
+      "Insert": "Insert a new level at {number} and move the current forward"
+    },
+    "resize": {
+      "DialogTitle": "Resize level",
+      "labels": {
+        "Border": "Border",
+        "CurrentSize": "Current size:",
+        "FillBody": "Fill body",
+        "FillNewEmptySpace": "When it is necessary to fill new empty space:",
+        "NewHeight": "New Height",
+        "NewWidth": "New Width"
+      },
+      "NoticeLargeSizeLags": "<b>NOTICE:</b> Large level may cause some lags while editing.",
+      "ResizeNotSupported": "Cannot change size for this level."
+    }
+  },
   "levels": {
-    "LevelsIsFile": "Levels in \"<b>{filename}</b>\"",
+    "closeOther": {
+      "Button": "Close OTHER BUT \"{level}\"",
+      "Confirm": "Are you sure you want to close ALL OTHER levels BUT \"<b>{level}</b>\"?"
+    },
+    "deleteCurrent": {
+      "Button": "Delete <code>\"{level}\"</code>",
+      "Confirm": "Are you sure you want to delete the level \"<code>{level}</code>\" from this level set?<br />This will cause all the levels following to shift backward.<br /><b>This action can not be undone.</b>"
+    },
+    "deleteRest": {
+      "Button": "Delete <b>{restCount}</b> rest levels",
+      "Confirm": "Are you sure you want to delete all the rest <b>{restCount}</b> levels <b>after</b> current one (that is starting from <code>{nextIndex}</code> inclusive) from this levelset?<br />The levelset then will have only <b>{leftCount}</b> levels.<br /><b>This action can not be undone.</b>"
+    },
+    "LevelsInFile": "Levels in \"<b>{filename}</b>\"",
     "notActivated": {
       "SelectCompact": "Select a level in <levelsMenu>Levels menu</levelsMenu>.",
       "SelectFull": "Select a level in Dropdown list."
     }
+  },
+  "levelStats": {
+    "DialogTitle": "Tiles stats",
+    "sort": {
+      "ByCount": "By Count",
+      "ByValue": "By Value"
+    }
+  },
+  "levelTest": {
+    "buttons": {
+      "DemoPlayback": "Play embedded demo with {SO}",
+      "GoToSO": "Go to {SO} test",
+      "TestLevel": "Test level at {SO}",
+      "TestLevelRecordDemo": "Test level at {SO} (+record a demo)"
+    },
+    "CannotCopyHereCode": "Could not copy. Here is the code:",
+    "CopyOptionsAsCode": "Copy code to clipboard to use in level upload request:",
+    "LevelUnplayableDueTo": "The level is unplayable due to the following:",
+    "NoticeNoDemoSupport": "This file format does not support embedded demos, so a created demo will be silently discarded.",
+    "NoticeToSaveDemo": "In order <b>to save demo</b> for this level, please <b>don't test another</b> level until you finish with this one. You will be asked to save new demo.",
+    "ToDoWhateverItWillBeSent": "{toDoWhat}, it <b>will be sent to</b> <linkSoTest>{SO} test page</linkSoTest>. It will be opened in new tab/window, so you will not loss undo history in current editing session.",
+    "ToReplayDemo": "To replay embedded demo in level",
+    "ToTestLevel": "To test a level"
   },
   "selectionEditors": {
     "chess": {
@@ -115,6 +233,25 @@
       "Probabilities": "Probabilities, relative to each other",
       "Title": "Random",
       "WhichTiles": "Which tiles"
+    }
+  },
+  "settings": {
+    "coords": {
+      "Label": "Coordinates display",
+      "OneBased": "1-based",
+      "ZeroBased": "0-based"
+    },
+    "DialogTitle": "Settings",
+    "doubleChip": {
+      "Classic": "Classic",
+      "Label": "Double Chips",
+      "WinPlex": "WinPlex"
+    },
+    "layout": {
+      "Auto": "Auto responsive",
+      "Compact": "Force Compact",
+      "Full": "Force Full",
+      "Label": "Layout"
     }
   },
   "validate": {

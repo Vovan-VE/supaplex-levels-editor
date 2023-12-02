@@ -89,7 +89,7 @@ const LevelsListDialog: FC<Props> = ({ show, onSubmit }) => {
     <Dialog
       open={show}
       onClose={onSubmit}
-      title={<Trans i18nKey="main:levels.LevelsIsFile" values={{ filename }} />}
+      title={<Trans i18nKey="main:levels.LevelsInFile" values={{ filename }} />}
       size="small"
     >
       <Field label={t("main:common.labels.Filter")}>

@@ -1,6 +1,8 @@
 import { createEvent, restore } from "effector";
 import { useStore } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Trans } from "i18n/Trans";
 import { $drvTileRender } from "models/levels";
 import { $currentLevelUndoQueue } from "models/levelsets";
 import { Button } from "ui/button";
@@ -14,8 +16,14 @@ const enum SortBy {
   Count,
 }
 const options: RadioOptions<SortBy> = [
-  { value: SortBy.Definition, label: "By Value" },
-  { value: SortBy.Count, label: "By Count" },
+  {
+    value: SortBy.Definition,
+    label: <Trans i18nKey="main:levelStats.sort.ByValue" />,
+  },
+  {
+    value: SortBy.Count,
+    label: <Trans i18nKey="main:levelStats.sort.ByCount" />,
+  },
 ];
 const setSort = createEvent<SortBy>();
 const $sort = restore(setSort, SortBy.Definition);
@@ -65,9 +73,15 @@ const Stats: FC = () => {
   );
 };
 
-export const StatsButton: FC = () => (
-  <Button
-    icon={<svgs.ChartBar />}
-    onClick={useCallback(() => msgBox(<Stats />, { title: "Tiles stats" }), [])}
-  />
-);
+export const StatsButton: FC = () => {
+  const { t } = useTranslation();
+  return (
+    <Button
+      icon={<svgs.ChartBar />}
+      onClick={useCallback(
+        () => msgBox(<Stats />, { title: t("main:levelStats.DialogTitle") }),
+        [t],
+      )}
+    />
+  );
+};

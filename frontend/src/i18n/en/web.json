@@ -5,7 +5,7 @@
       "B010": "<spleMe/> is completely frontend (client side) application (web page). It works only with pseudo-files in browser memory.<br />See also <spleDesktop/> at <linkVer>GutHub repo</linkVer>.",
       "B020": {
         "I010": "After you opened existing file, it becomes in-memory copy of the original file. Technically you are uploading your local file to a web page.",
-        "I020": "In-memory files you opened or created from scratch are <strong>NOT</strong> related to regular files out of browser.",
+        "I020": "In-memory files you opened or created from scratch are <b>NOT</b> related to regular files out of browser.",
         "I030": "To get your modified file back as regular file technically you need to download file from web page (with appropriate UI button in <spleMe/>)."
       },
       "B030": "Also:",
@@ -20,10 +20,18 @@
           "B030": "<spleMe/> uses <linkSoTest>{SO} test page</linkSoTest> to test your level when you request that."
         },
         "I030": {
-          "B010": "<strong>DON'T</strong> rely much on browser storage to remember your modified in-memory files forever. <strong>DO SAVE BACKUPS</strong>. Browser can clean its storage.",
-          "B020": "Also, <spleMe/> storage in browser can be accidentally reset in case of some errors in <strong>{APP_TITLE}</strong> itself. Because, you know: <em>Every program has at least one bug</em>."
+          "B010": "<b>DON'T</b> rely much on browser storage to remember your modified in-memory files forever. <b>DO SAVE BACKUPS</b>. Browser can clean its storage.",
+          "B020": "Also, <spleMe/> storage in browser can be accidentally reset in case of some errors in <b>{APP_TITLE}</b> itself. Because, you know: <em>Every program has at least one bug</em>."
         }
       }
+    }
+  },
+  "app": {
+    "readOnly": {
+      "B010": "This <sple/> instance now is in <b>Read Only</b> mode because a different \"main\" instance was detected in the past.",
+      "B020": "Check other opened tabs in current browser session. Either close unnecessary this tab to continue in another opened, or close another tabs and then reload this tab.",
+      "B030": "In <b>Read Only</b> mode <sple/> WILL NOT WRITE anything INTO BROWSER STORAGE. This means it WILL NOT remember any changes you made in <b>Read Only</b> mode.",
+      "ButtonHint": "This instance is in Read Only mode"
     }
   },
   "files": {

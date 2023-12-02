@@ -22,8 +22,12 @@
     actually walked.
 - Tooltips with interactive content support.
 - specports
+  - H/V/X port variants in Copy as Image 
   - H/V/X ports on toolbar should be halved
+  - edit whole DB as text
+  - limit dialog height, add scroll to sortable list
 - footer info: is std, why not
+- new file: format description: common and per format
 
 ### Desktop
 
