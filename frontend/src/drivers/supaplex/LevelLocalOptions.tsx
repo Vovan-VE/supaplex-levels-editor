@@ -1,15 +1,29 @@
 import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { Trans } from "i18n/Trans";
 import { Checkbox, IntegerInput } from "ui/input";
+import { constElement } from "utils/react";
 import { LevelLocalOptionsProps } from "../types";
 import { InlineTile } from "./InlineTile";
 import { TILE_HW_LAMP_R, TILE_HW_STRIPES, TILE_INFOTRON } from "./tiles-id";
 import { ISupaplexLevel } from "./types";
 import cl from "./LevelLocalOptions.module.scss";
 
+const compUsePlasma = {
+  tile: constElement(<InlineTile tile={TILE_HW_STRIPES} />),
+};
+const compUseZonker = {
+  tile: constElement(<InlineTile tile={TILE_HW_LAMP_R} />),
+};
+const compUseInfotrons = {
+  tile: constElement(<InlineTile tile={TILE_INFOTRON} />),
+};
+
 export const LevelLocalOptions = <L extends ISupaplexLevel>({
   level,
   onChange,
 }: LevelLocalOptionsProps<L>) => {
+  const { t } = useTranslation();
   const {
     usePlasma,
     usePlasmaLimit,
@@ -48,12 +62,15 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
     <>
       <div>
         <Checkbox checked={usePlasma} onChange={handlePlasmaChange}>
-          Replace <InlineTile tile={TILE_HW_STRIPES} /> with Plasma
+          <Trans
+            i18nKey="main:supaplex.localOptions.UsePlasma"
+            components={compUsePlasma}
+          />
         </Checkbox>
       </div>
       <div className={cl.nested}>
         <div>
-          Growth limit{" "}
+          {t("main:supaplex.localOptions.PlasmaLimitLabel")}{" "}
           <IntegerInput
             value={usePlasmaLimit ?? null}
             onChange={handlePlasmaLimitChange}
@@ -61,10 +78,10 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
             className={cl.shortInt}
             placeholder="200"
           />{" "}
-          tiles
+          {t("main:supaplex.localOptions.PlasmaLimitUnits")}
         </div>
         <div>
-          Fast growth phase starts after{" "}
+          {t("main:supaplex.localOptions.PlasmaTimeLabel")}{" "}
           <IntegerInput
             value={usePlasmaTime ?? null}
             onChange={handlePlasmaTimeChange}
@@ -72,27 +89,33 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
             className={cl.shortInt}
             placeholder="2400"
           />{" "}
-          frames
+          {t("main:supaplex.localOptions.PlasmaTimeUnits")}
         </div>
       </div>
       <div>
         <Checkbox checked={useZonker} onChange={handleZonkerChange}>
-          Replace <InlineTile tile={TILE_HW_LAMP_R} /> 2x2 with Zonker
+          <Trans
+            i18nKey="main:supaplex.localOptions.UseZonker"
+            components={compUseZonker}
+          />
         </Checkbox>
       </div>
       <div>
         <Checkbox checked={useSerialPorts} onChange={handleSerialPortsChange}>
-          Allow serial ports
+          {t("main:supaplex.localOptions.UseSerialPorts")}
         </Checkbox>
       </div>
       <div className={cl.notCheckbox}>
-        Override <InlineTile tile={TILE_INFOTRON} /> Needed{" "}
+        <Trans
+          i18nKey="main:supaplex.localOptions.UseInfotronsNeed"
+          components={compUseInfotrons}
+        />{" "}
         <IntegerInput
           value={useInfotronsNeeded ?? null}
           onChange={handleInfotronsNeededChange}
           className={cl.shortInt}
         />{" "}
-        (can be &gt; <code>255</code> or exactly <code>0</code>)
+        <Trans i18nKey="main:supaplex.localOptions.UseInfotronsNeedHint" />
       </div>
     </>
   );

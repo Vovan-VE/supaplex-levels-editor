@@ -105,7 +105,7 @@ const RndEditor: FC<SelectionEditorProps> = ({
             key={value}
             uiColor={ColorType.WARN}
             icon={<TileRender tile={value} className={cl.tile} />}
-            title={metaTile?.title ?? title}
+            title={(metaTile?.title ?? title)(t)}
             onClick={onClick}
             className={cn(cl.btn, prob.has(value) && cl._checked)}
           />

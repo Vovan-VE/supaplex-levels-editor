@@ -1,3 +1,4 @@
+import "./i18n/init";
 import { FC } from "react";
 import { init } from "backend";
 import { LevelsetEditor } from "components/levelset";
@@ -7,7 +8,6 @@ import { SettingsDialog } from "components/settings";
 import { HotkeysManagerGate } from "models/ui/hotkeys";
 import { PromptContainer, Toaster } from "ui/feedback";
 import { PopupContainer } from "utils/react";
-import "./i18n/init";
 
 init();
 

@@ -1,3 +1,4 @@
+import { Trans } from "i18n/Trans";
 import { ISupportReportMessage, SupportReportType } from "../../../types";
 import { createLevel } from "../../level";
 import { createLevelset } from "../../levelset";
@@ -21,7 +22,12 @@ describe("levelReporter", () => {
     expect(m).toEqual<ISupportReportMessage[]>([
       {
         type: SupportReportType.WARN,
-        message: <>Demo ({6} bytes) will be removed.</>,
+        message: (
+          <Trans
+            i18nKey="main:supaplex.convert.DemoWillBeRemoved"
+            values={{ n: 6 }}
+          />
+        ),
       },
     ]);
   });

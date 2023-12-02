@@ -1,4 +1,5 @@
 import { FC, Fragment, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import cn from "classnames";
 import { useStore } from "effector-react";
 import { getTilesForToolbar } from "drivers";
@@ -10,6 +11,7 @@ import cl from "./TilesToolbar.module.scss";
 interface Props extends ContainerProps {}
 
 export const TilesToolbar: FC<Props> = ({ className, ...rest }) => {
+  const { t } = useTranslation();
   const TileRender = useStore($drvTileRender)!;
   const tiles = useStore($drvTiles)!;
   const tilesSorted = useMemo(
@@ -36,7 +38,7 @@ export const TilesToolbar: FC<Props> = ({ className, ...rest }) => {
         <Fragment key={value}>
           {i > 0 && <wbr />}
           <TextButton
-            title={metaTile?.title ?? title}
+            title={(metaTile?.title ?? title)(t)}
             icon={metaTile?.icon ?? <TileRender tile={value} />}
             className={cn(cl.btn, i === tileIndex && cl._current)}
             uiColor={ColorType.WARN}

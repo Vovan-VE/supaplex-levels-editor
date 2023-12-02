@@ -37,6 +37,7 @@ const components = {
   br: <br />,
   code: <code />,
   i: <em />,
+  kbd: <kbd />,
 };
 
 // https://github.com/i18next/i18next-parser#jsx
