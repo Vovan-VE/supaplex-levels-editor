@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "ui/button";
 import { Field, Input } from "ui/input";
 import { ColorType } from "ui/types";
@@ -64,6 +65,7 @@ export const PromptString: FC<Props> = ({
 
   ...rest
 }) => {
+  const { t } = useTranslation();
   const { required = false } = rest;
 
   const [value, setValue] = useState(defaultValue);
@@ -90,7 +92,7 @@ export const PromptString: FC<Props> = ({
     const actualValue = realFilter(value);
     setValue(actualValue);
     if (required && isEmpty(actualValue)) {
-      setError("This field is required.");
+      setError(t("main:validate.RequiredField"));
       return;
     }
     const err = validate?.(actualValue);
@@ -100,7 +102,7 @@ export const PromptString: FC<Props> = ({
     }
     setError(undefined);
     onSubmit(actualValue);
-  }, [value, realFilter, required, isEmpty, validate, onSubmit]);
+  }, [value, realFilter, required, isEmpty, validate, onSubmit, t]);
 
   return (
     <Dialog
@@ -118,10 +120,10 @@ export const PromptString: FC<Props> = ({
       buttons={
         <>
           <Button uiColor={ColorType.SUCCESS} type="submit">
-            OK
+            {t("main:common.buttons.OK")}
           </Button>
           <Button type="button" onClick={onCancel}>
-            Cancel
+            {t("main:common.buttons.Cancel")}
           </Button>
         </>
       }

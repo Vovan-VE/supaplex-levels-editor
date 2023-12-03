@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Trans } from "i18n/Trans";
 import { Button } from "ui/button";
 import { ColorType } from "ui/types";
 import { Dialog } from "../../Dialog";
@@ -12,29 +13,28 @@ import {
 
 const createDefaultButtonsRenderer =
   (onOk: () => void, onCancel: () => void) =>
-  ({ ok, okText, cancel, cancelText }: AskButtonsDefaultProps = {}) =>
-    (
-      <>
-        <Button
-          autoFocus
-          uiColor={ColorType.SUCCESS}
-          {...ok}
-          onClick={
-            ok?.onClick
-              ? (e) => {
-                  ok.onClick!(e);
-                  onOk();
-                }
-              : onOk
-          }
-        >
-          {okText ?? "OK"}
-        </Button>
-        <Button {...cancel} onClick={onCancel}>
-          {cancelText ?? "Cancel"}
-        </Button>
-      </>
-    );
+  ({ ok, okText, cancel, cancelText }: AskButtonsDefaultProps = {}) => (
+    <>
+      <Button
+        autoFocus
+        uiColor={ColorType.SUCCESS}
+        {...ok}
+        onClick={
+          ok?.onClick
+            ? (e) => {
+                ok.onClick!(e);
+                onOk();
+              }
+            : onOk
+        }
+      >
+        {okText ?? <Trans i18nKey="main:common.buttons.OK" />}
+      </Button>
+      <Button {...cancel} onClick={onCancel}>
+        {cancelText ?? <Trans i18nKey="main:common.buttons.Cancel" />}
+      </Button>
+    </>
+  );
 
 function ask_<V = true, P = {}>(
   content: ReactNode,

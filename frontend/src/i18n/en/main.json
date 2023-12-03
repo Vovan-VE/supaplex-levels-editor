@@ -40,8 +40,10 @@
       "GitHubRepo": "GitHub repo",
       "Help": "Help",
       "Info": "Info",
+      "No": "No",
       "OK": "OK",
       "Settings": "Settings",
+      "Yes": "Yes",
       "ZoomIn": "Zoom In",
       "ZoomOut": "Zoom Out"
     },
@@ -426,7 +428,11 @@
     }
   },
   "validate": {
+    "IntMax": "Must be up to <code>{max}</code>.",
+    "IntMin": "Must be at least <code>{min}</code>.",
     "InvalidValue": "Invalid value: {error}",
+    "Required": "Required",
+    "RequiredField": "This field is required.",
     "StrMaxLen": "Up to {max} characters"
   }
 }

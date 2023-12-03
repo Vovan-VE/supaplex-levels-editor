@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Trans } from "i18n/Trans";
 import { Button, ButtonProps } from "ui/button";
 import { ColorType } from "ui/types";
 import { AskButtonsRender } from "./types";
@@ -36,7 +37,7 @@ export const YesNoCancel: AskButtonsRender<boolean, YesNoOptions> = ({
           : () => onSubmit(true)
       }
     >
-      {yesText ?? "Yes"}
+      {yesText ?? <Trans i18nKey="main:common.buttons.Yes" />}
     </Button>
     <Button
       autoFocus
@@ -51,10 +52,10 @@ export const YesNoCancel: AskButtonsRender<boolean, YesNoOptions> = ({
           : () => onSubmit(false)
       }
     >
-      {noText ?? "No"}
+      {noText ?? <Trans i18nKey="main:common.buttons.No" />}
     </Button>
     <Button uiColor={ColorType.MUTE} {...cancel} onClick={onCancel}>
-      {cancelText ?? "Cancel"}
+      {cancelText ?? <Trans i18nKey="main:common.buttons.Cancel" />}
     </Button>
   </>
 );

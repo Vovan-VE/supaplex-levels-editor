@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Trans } from "i18n/Trans";
 
 export const intRangeError = (
   value: number | null,
@@ -6,20 +7,12 @@ export const intRangeError = (
   max?: number | null,
 ): ReactNode => {
   if (value === null) {
-    return "Required";
+    return <Trans i18nKey="main:validate.Required" />;
   }
   if (min !== undefined && min !== null && value < min) {
-    return (
-      <>
-        Must be at least <code>{min}</code>.
-      </>
-    );
+    return <Trans i18nKey="main:validate.IntMin" values={{ min }} />;
   }
   if (max !== undefined && max !== null && value > max) {
-    return (
-      <>
-        Must be up to <code>{max}</code>.
-      </>
-    );
+    return <Trans i18nKey="main:validate.IntMax" values={{ max }} />;
   }
 };
