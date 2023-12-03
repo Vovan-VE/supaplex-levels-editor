@@ -1,5 +1,6 @@
 import { useStore } from "effector-react";
 import { FC, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { allowManualSave } from "backend";
 import {
   $currentFileHasLocalOptions,
@@ -25,19 +26,21 @@ interface Props {
 }
 
 const SaveFlushButton: FC = () => {
+  const { t } = useTranslation();
   const isDirty = useStore($currentFileIsDirty);
   return (
     <Button
       uiColor={ColorType.SUCCESS}
       icon={<svgs.Save />}
       disabled={!isDirty}
-      title={"Save changes"}
+      title={t("desktop:files.buttons.Save")}
       onClick={flushCurrentFile}
     />
   );
 };
 
 export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
+  const { t } = useTranslation();
   const hasLocalOptions = useStore($currentFileHasLocalOptions);
   const hasOtherFiles = useStore($hasOtherFiles);
   const isFileOpened = useStore($isFileOpened);
@@ -50,15 +53,15 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
       title={
         isFileOpened
           ? allowManualSave
-            ? "Save As..."
-            : "Save file from memory"
+            ? t("desktop:files.buttons.SaveAs")
+            : t("web:files.buttons.Save")
           : undefined
       }
       onClick={useCallback(() => saveAsCurrentFile(), [])}
     />
   );
   const saveWithOptionsTitle = isFileOpened
-    ? "Save file ZIP with Options"
+    ? t("main:files.buttons.SaveZipWithOptions")
     : undefined;
   const handleSaveWithOptions = useCallback(
     () => saveAsCurrentFile({ withLocalOptions: true }),
@@ -73,16 +76,16 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
       title={
         isFileOpened
           ? allowManualSave
-            ? "Close file"
-            : "Remove file from memory"
+            ? t("desktop:files.buttons.Close")
+            : t("web:files.buttons.Remove")
           : undefined
       }
       onClick={closeCurrentFileFx}
     />
   );
   const removeOthersTitle = allowManualSave
-    ? "Close all others files"
-    : "Remove others files from memory";
+    ? t("desktop:files.buttons.CloseOthers")
+    : t("web:files.buttons.RemoveOthers");
 
   return (
     <>
@@ -121,14 +124,14 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
         uiColor={ColorType.SUCCESS}
         icon={<svgs.FileConvert />}
         disabled={!isFileOpened}
-        title="Convert format..."
+        title={t("main:files.buttons.ConvertFormat")}
         onClick={handleConvert}
       />
       {handleRename && (
         <Button
           icon={<svgs.Rename />}
           disabled={!isFileOpened}
-          title="Rename file"
+          title={t("web:files.buttons.Rename")}
           onClick={handleRename}
         />
       )}

@@ -1,6 +1,7 @@
 import { createEffect, createEvent, sample } from "effector";
 import { saveFileAs } from "backend";
 import { getDriver, IBaseLevel } from "drivers";
+import { Trans } from "i18n/Trans";
 import { ColorType } from "ui/types";
 import { UndoQueue } from "utils/data";
 import { getImage } from "utils/image";
@@ -38,7 +39,10 @@ const saveRegionToImageFileFx = createEffect(
   },
 );
 copyRegionImageToClipboardFx.done.watch(() =>
-  showToast({ message: "Image copied", color: ColorType.SUCCESS }),
+  showToast({
+    message: <Trans i18nKey="main:common.toasts.ImageCopied" />,
+    color: ColorType.SUCCESS,
+  }),
 );
 for (const [clock, target] of [
   [exportAsImageToClipboard, copyRegionImageToClipboardFx],

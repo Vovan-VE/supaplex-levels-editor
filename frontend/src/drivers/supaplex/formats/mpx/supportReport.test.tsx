@@ -1,3 +1,4 @@
+import { Trans } from "i18n/Trans";
 import { ISupportReportMessage, SupportReportType } from "../../../types";
 import { createLevel } from "../../level";
 import { createLevelset } from "../../levelset";
@@ -20,17 +21,17 @@ describe("levelsetReporter", () => {
     const level = createLevel(2, 2);
     const m = [
       ...levelsetReporter(
-        createLevelset(Array.from({ length: 0x8002 }).map(() => level)),
+        createLevelset(Array.from({ length: 0x8002 }, () => level)),
       ),
     ];
     expect(m).toEqual<ISupportReportMessage[]>([
       {
         type: SupportReportType.WARN,
         message: (
-          <>
-            Only {0x7fff} levels will be used, and all the rest (<b>{3}</b>)
-            will be removed.
-          </>
+          <Trans
+            i18nKey="main:supaplex.convert.MaxLevelsTruncate"
+            values={{ max: 0x7fff, rest: 3 }}
+          />
         ),
       },
     ]);
@@ -45,13 +46,7 @@ describe("levelsetReporter", () => {
       {
         type: SupportReportType.ERR,
         message: (
-          <>
-            Impossible to save all the rest levels starting from this one due to
-            MPX file format limitations: <code>offset+1</code> exceeds{" "}
-            <code>signed int32</code>. This is because all previous levels{" "}
-            {false}
-            together are too large being written into a MPX file.
-          </>
+          <Trans i18nKey="main:supaplex.convert.MpxSpecPortOffsetExceed" />
         ),
         levelIndex: 3,
       },
@@ -75,17 +70,15 @@ describe("levelReporter", () => {
       {
         type: SupportReportType.ERR,
         message: (
-          <>
-            Level size{" "}
-            <b>
-              {35000}x{10}
-            </b>{" "}
-            don't fit into{" "}
-            <b>
-              {0x7fff}x{0x7fff}
-            </b>
-            .
-          </>
+          <Trans
+            i18nKey="main:supaplex.convert.BodySizeExceed"
+            values={{
+              width: 35000,
+              height: 10,
+              maxWidth: 0x7fff,
+              maxHeight: 0x7fff,
+            }}
+          />
         ),
       },
     ]);
@@ -97,17 +90,15 @@ describe("levelReporter", () => {
       {
         type: SupportReportType.ERR,
         message: (
-          <>
-            Level size{" "}
-            <b>
-              {10}x{36000}
-            </b>{" "}
-            don't fit into{" "}
-            <b>
-              {0x7fff}x{0x7fff}
-            </b>
-            .
-          </>
+          <Trans
+            i18nKey="main:supaplex.convert.BodySizeExceed"
+            values={{
+              width: 10,
+              height: 36000,
+              maxWidth: 0x7fff,
+              maxHeight: 0x7fff,
+            }}
+          />
         ),
       },
     ]);
@@ -119,17 +110,15 @@ describe("levelReporter", () => {
       {
         type: SupportReportType.ERR,
         message: (
-          <>
-            Level size{" "}
-            <b>
-              {35000}x{36000}
-            </b>{" "}
-            don't fit into{" "}
-            <b>
-              {0x7fff}x{0x7fff}
-            </b>
-            .
-          </>
+          <Trans
+            i18nKey="main:supaplex.convert.BodySizeExceed"
+            values={{
+              width: 35000,
+              height: 36000,
+              maxWidth: 0x7fff,
+              maxHeight: 0x7fff,
+            }}
+          />
         ),
       },
     ]);

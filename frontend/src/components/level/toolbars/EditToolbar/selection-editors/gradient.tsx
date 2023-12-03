@@ -1,21 +1,29 @@
 import { createEvent, restore } from "effector";
 import { useStore } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { TileSelect } from "components/driver/TileSelect";
 import { FlipDirection, getDriver } from "drivers";
+import { Trans } from "i18n/Trans";
 import { $currentDriverName } from "models/levelsets";
 import { HK_EDIT_GRADIENT } from "models/ui/hotkeys-defined";
 import { Button } from "ui/button";
 import { svgs } from "ui/icon";
 import { Field, RadioGroup, RadioOptions } from "ui/input";
 import { ColorType } from "ui/types";
+import { elKeepOld } from "./_common";
 import { SelectionEditor, SelectionEditorProps } from "./_types";
 import clC from "./common.module.scss";
 
-const KEEP = <i>keep old</i>;
 const directionOptions: RadioOptions<FlipDirection> = [
-  { value: FlipDirection.H, label: "Horizontal →" },
-  { value: FlipDirection.V, label: "Vertical ↓" },
+  {
+    value: FlipDirection.H,
+    label: <Trans i18nKey="main:selectionEditors.gradient.Horizontal" />,
+  },
+  {
+    value: FlipDirection.V,
+    label: <Trans i18nKey="main:selectionEditors.gradient.Vertical" />,
+  },
 ];
 
 const getChoice = (
@@ -47,6 +55,7 @@ const GradientEditor: FC<SelectionEditorProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const { t } = useTranslation();
   const driverName = useStore($currentDriverName)!;
   const { tempLevelFromRegion } = getDriver(driverName)!;
   const tempLevel = useMemo(
@@ -82,22 +91,22 @@ const GradientEditor: FC<SelectionEditorProps> = ({
   return (
     <div>
       <div className={clC.row2}>
-        <Field label="From tile">
+        <Field label={t("main:selectionEditors.gradient.FromTile")}>
           <TileSelect
             driverName={driverName as any}
             tile={fromTile}
             onChange={setFromTile}
             canClear
-            placeholder={KEEP}
+            placeholder={elKeepOld}
           />
         </Field>
-        <Field label="To tile">
+        <Field label={t("main:selectionEditors.gradient.ToTile")}>
           <TileSelect
             driverName={driverName as any}
             tile={toTile}
             onChange={setToTile}
             canClear
-            placeholder={KEEP}
+            placeholder={elKeepOld}
           />
         </Field>
       </div>
@@ -113,16 +122,16 @@ const GradientEditor: FC<SelectionEditorProps> = ({
           onClick={handleSubmit}
           disabled={fromTile < 0 && toTile < 0}
         >
-          OK
+          {t("main:common.buttons.OK")}
         </Button>
-        <Button onClick={onCancel}>Cancel</Button>
+        <Button onClick={onCancel}>{t("main:common.buttons.Cancel")}</Button>
       </div>
     </div>
   );
 };
 
 export const gradient: SelectionEditor = {
-  title: "Gradient",
+  title: <Trans i18nKey="main:selectionEditors.gradient.Title" />,
   icon: <svgs.Gradient />,
   Component: GradientEditor,
   hotkeys: HK_EDIT_GRADIENT,

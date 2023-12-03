@@ -1,6 +1,7 @@
 import cn from "classnames";
 import { useStore } from "effector-react";
 import { FC, Fragment } from "react";
+import { useTranslation } from "react-i18next";
 import { ReactComponent as GitHubLogo } from "assets/img/github.svg";
 import { showInfoDialog, ZoomButtons } from "components/common";
 import { EditorTabs, FilesToolbar, FileToolbar } from "components/files";
@@ -39,6 +40,7 @@ const MUTE = ColorType.MUTE;
 interface Props extends ContainerProps {}
 
 export const Header: FC<Props> = (props) => {
+  const { t } = useTranslation();
   const key = useStore($currentKey);
   const levelsetReady = useStore($currentBufferSelected);
   const levelsetLevelsCount = useStore($currentBufferLevelsCount);
@@ -100,7 +102,7 @@ export const Header: FC<Props> = (props) => {
               icon={<svgs.Wrench />}
               onClick={openSettings}
             >
-              Settings
+              {t("main:common.buttons.Settings")}
             </TextButton>
             <TextButton
               href={REPO_URL}
@@ -109,14 +111,15 @@ export const Header: FC<Props> = (props) => {
               uiColor={MUTE}
               icon={<GitHubLogo />}
             >
-              GitHub repo
+              {t("main:common.buttons.GitHubRepo")}
             </TextButton>
             <TextButton
               uiColor={MUTE}
               icon={<svgs.Info />}
               onClick={showInfoDialog}
             >
-              Info <span className={cl.ver}>v{APP_VERSION}</span>
+              {t("main:common.buttons.Info")}{" "}
+              <span className={cl.ver}>v{APP_VERSION}</span>
             </TextButton>
           </Toolbar>
         </ButtonDropdown>

@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 import { onOpenFile, openFile, OpenFileItem } from "backend";
 import { detectDriverFormat } from "drivers";
+import { Trans } from "i18n/Trans";
 import { addLevelsetFileFx } from "models/levelsets";
-import { showToastErrorWrap } from "models/ui/toasts";
 import { msgBox } from "ui/feedback";
 
 const openFiles = async (items: readonly OpenFileItem[]) => {
@@ -17,32 +17,40 @@ const openFiles = async (items: readonly OpenFileItem[]) => {
   );
   const errors: ReactNode[] = [];
   for (const [i, item] of detected.entries()) {
-    if (item.status === "fulfilled") {
-      const [{ file, key }, d] = item.value;
-      if (d) {
-        const [driverName, driverFormat] = d;
-        addLevelsetFileFx({
-          file,
-          driverName,
-          driverFormat,
-          name: file.name,
-          key,
-        });
-      } else {
-        errors.push(<>"{file.name}": Unsupported file format.</>);
-      }
-    } else {
+    if (item.status !== "fulfilled") {
       errors.push(
-        <>
-          "{items[i].file.name}": Couldn't read file:{" "}
-          {item.reason instanceof Error
-            ? item.reason.message
-            : "unknown reason"}
-          .
-        </>,
+        <Trans
+          i18nKey="main:files.messages.CannotReadFile"
+          values={{
+            file: items[i].file.name,
+            reason:
+              item.reason instanceof Error
+                ? item.reason.message
+                : "unknown reason",
+          }}
+        />,
       );
-      showToastErrorWrap("Cannot read file", item.reason);
+      // showToastErrorWrap("Cannot read file", item.reason);
+      continue;
     }
+    const [{ file, key }, d] = item.value;
+    if (!d) {
+      errors.push(
+        <Trans
+          i18nKey="main:files.messages.UnsupportedFormat"
+          values={{ file: file.name }}
+        />,
+      );
+      continue;
+    }
+    const [driverName, driverFormat] = d;
+    addLevelsetFileFx({
+      file,
+      driverName,
+      driverFormat,
+      name: file.name,
+      key,
+    });
   }
   if (errors.length) {
     // TODO: typography component to add intro text with apply uiColor

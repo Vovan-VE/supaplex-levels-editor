@@ -34,6 +34,7 @@ const CONFIRMS: _Confirm[] = [
 ];
 
 export const Confirmations: FC = () => (
+  // TODO: i18n
   <Field label="Ask confirmation">
     {CONFIRMS.map((c, i) => (
       <ConfirmCheckbox key={i} {...c} />

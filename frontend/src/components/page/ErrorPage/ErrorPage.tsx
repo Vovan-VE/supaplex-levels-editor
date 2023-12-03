@@ -1,6 +1,8 @@
 import { FC, useCallback } from "react";
 import { BUGS_URL } from "configs";
 
+// REFACT: move to backend
+
 const handleClearLocalStorage = () => {
   if (
     window.confirm(

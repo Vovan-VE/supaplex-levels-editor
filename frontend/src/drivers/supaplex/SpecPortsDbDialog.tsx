@@ -1,4 +1,5 @@
 import { forwardRef, useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { TileCoords } from "components/settings/display";
 import { Button, TextButton } from "ui/button";
 import { Dialog, renderPrompt, RenderPromptProps } from "ui/feedback";
@@ -28,6 +29,7 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
   level,
   onChange,
 }: Props<L>) => {
+  const { t } = useTranslation();
   const [ports, setPorts] = useState<readonly ISupaplexSpecPortRecord[]>(
     Array.from(level.specports.getAll()),
   );
@@ -45,7 +47,10 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
     <Dialog
       open={show}
       onClose={onCancel}
-      title="Special Ports Database"
+      title={t(
+        "main:supaplex.specportsDB.DialogTitle",
+        "Special Ports Database",
+      )}
       buttons={
         <>
           <Button
@@ -53,14 +58,19 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
             onClick={handleSave}
             disabled={!isChanged}
           >
-            Save
+            {t("main:common.buttons.OK")}
           </Button>
-          <Button onClick={onCancel}>Cancel</Button>
+          <Button onClick={onCancel}>{t("main:common.buttons.Cancel")}</Button>
         </>
       }
       bodyClassName={cl.root}
     >
-      <p>All special ports in the level. Drag to sort.</p>
+      <p>
+        {t(
+          "main:supaplex.specportsDB.DialogIntro",
+          "All special ports in the level. Drag to sort.",
+        )}
+      </p>
       <div className={cl.list}>
         <SortableList
           items={ports}

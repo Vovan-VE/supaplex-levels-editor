@@ -1,5 +1,6 @@
 import { useStore } from "effector-react";
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import {
   $autoSave,
   $autoSaveDelay,
@@ -19,12 +20,13 @@ const format = (n: number) => {
 };
 
 export const AutoSave: FC = () => {
+  const { t } = useTranslation();
   const delay = useStore($autoSaveDelay);
 
   return (
     <Field label="Save files">
       <Checkbox checked={useStore($autoSave)} onChange={setAutoSave}>
-        Auto Save changed files every
+        {t("desktop:settings.AutoSaveChangesEvery")}
       </Checkbox>
       <Range
         value={delay}

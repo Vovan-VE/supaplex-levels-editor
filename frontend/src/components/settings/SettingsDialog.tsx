@@ -1,5 +1,6 @@
 import { useStore } from "effector-react";
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { allowManualSave } from "backend";
 import { $opened, closeSettings } from "models/settings";
 import { Button } from "ui/button";
@@ -11,17 +12,18 @@ import { LayoutChoice } from "./LayoutChoice";
 import { SpChips } from "./SpChips";
 
 export const SettingsDialog: FC = () => {
+  const { t } = useTranslation();
   const opened = useStore($opened);
 
   return (
     <Dialog
       open={opened}
-      title="Settings"
+      title={t("main:settings.DialogTitle")}
       onClose={closeSettings}
       size="small"
       buttons={
         <Button uiColor={ColorType.MUTE} onClick={closeSettings}>
-          Close
+          {t("main:common.buttons.Close")}
         </Button>
       }
     >

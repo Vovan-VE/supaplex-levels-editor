@@ -36,6 +36,8 @@ import {
 } from "drivers";
 import { SupportReport } from "components/files/FileToolbar/SupportReport";
 import { fmtLevelNumber, fmtLevelShort } from "components/levelset/fmt";
+import { Trans } from "i18n/Trans";
+import { TranslationGetter } from "i18n/types";
 import { msgBox } from "ui/feedback";
 import { ColorType } from "ui/types";
 import { isNotNull } from "utils/fn";
@@ -274,8 +276,8 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
       index === null
         ? { ...buf, currentIndex: index ?? undefined }
         : index >= 0 && index < buf.levels.length
-        ? { ...buf, currentIndex: index }
-        : buf,
+          ? { ...buf, currentIndex: index }
+          : buf,
     ),
   )
   // insert new level at current level index into current levelset
@@ -1010,21 +1012,35 @@ sample({
     msgBox(
       <>
         <p>
-          {report.type === SupportReportType.ERR
-            ? "Cannot import level due to the following compatibility errors:"
-            : "Level was imported applying the following compatibility changes:"}
+          {report.type === SupportReportType.ERR ? (
+            <Trans i18nKey="main:level.import.CannotImportDueTo" />
+          ) : (
+            <Trans i18nKey="main:level.import.ImportWithChanges" />
+          )}
         </p>
         <SupportReport report={report} />
       </>,
       {
-        button: { uiColor: ColorType.MUTE, text: "Close" },
+        button: {
+          uiColor: ColorType.MUTE,
+          text: <Trans i18nKey="main:common.buttons.Close" />,
+        },
       },
     ),
   );
   importCurrentLevelFx.failData.watch((e) =>
-    msgBox(<>Cannot import level file file: {e.message}</>, {
-      button: { uiColor: ColorType.MUTE, text: "Close" },
-    }),
+    msgBox(
+      <Trans
+        i18nKey="main:level.import.ImportFailed"
+        values={{ reason: e.message }}
+      />,
+      {
+        button: {
+          uiColor: ColorType.MUTE,
+          text: <Trans i18nKey="main:common.buttons.Close" />,
+        },
+      },
+    ),
   );
 }
 
@@ -1109,25 +1125,30 @@ export const $cmpLevelFirstTitle = combine(
   $levelsets,
   $currentKey,
   _$buffersMap,
-  (ref, levelsets, currentKey, files) => {
+  (ref, levelsets, currentKey, files): TranslationGetter | null => {
     if (!ref) {
-      return "Compare levels: set current as first";
+      return (t) => t("main:cmpLevels.button.SetCurrentAsFirst");
     }
     const [key, index] = ref;
     const buffer = files.get(key);
     if (currentKey && key === currentKey && buffer?.currentIndex === index) {
-      return "Compare levels: select another level to compare with and click again";
+      return (t) => t("main:cmpLevels.button.SelectAnotherLevel");
     }
     const levelset = levelsets.get(key);
     const level = buffer?.levels[index]?.undoQueue.current;
     if (levelset && level) {
-      return `Compare "${levelset.name}" level "${fmtLevelShort(
-        index,
-        String(levelset.levelset.levelsCount).length,
-        level.title,
-      )}" (${level.width}x${level.height}) with current level`;
+      const values = {
+        file: levelset.name,
+        level: fmtLevelShort(
+          index,
+          String(levelset.levelset.levelsCount).length,
+          level.title,
+        ),
+        size: `${level.width}x${level.height}`,
+      };
+      return (t) => t("main:cmpLevels.button.CompareWithCurrent", values);
     }
-    return undefined;
+    return null;
   },
 );
 sample({

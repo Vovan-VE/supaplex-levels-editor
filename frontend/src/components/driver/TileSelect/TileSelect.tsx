@@ -1,10 +1,13 @@
-import { FC, ReactNode, useCallback } from "react";
+import { FC, ReactNode, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { AnyKey } from "@cubux/types";
 import {
   DISPLAY_ORDER,
   DriverName,
   getDriver,
   getTilesForToolbar,
 } from "drivers";
+import { TranslationGetter } from "i18n/types";
 import { Select, SelectOption } from "ui/input";
 import cl from "./TileSelect.module.scss";
 
@@ -17,6 +20,11 @@ interface Props {
   placeholder?: ReactNode;
 }
 
+type TrSelectOption<V extends AnyKey> = Omit<
+  SelectOption<V>,
+  "labelSelected"
+> & { labelSelected: TranslationGetter };
+
 const OPTIONS = new Map(
   DISPLAY_ORDER.map((name) => {
     const { tiles, TileRender } = getDriver(name);
@@ -27,7 +35,7 @@ const OPTIONS = new Map(
           ([, { value, metaTile }]) =>
             !metaTile || metaTile.primaryValue === value,
         )
-        .map<SelectOption<number>>(([, { value, title }]) => ({
+        .map<TrSelectOption<number>>(([, { value, title }]) => ({
           value,
           labelSelected: title,
           icon: <TileRender tile={value} />,
@@ -43,7 +51,15 @@ export const TileSelect: FC<Props> = ({
   canClear = false,
   ...rest
 }) => {
-  const options = OPTIONS.get(driverName);
+  const { t } = useTranslation();
+  const options = useMemo(
+    () =>
+      OPTIONS.get(driverName)!.map((o) => ({
+        ...o,
+        labelSelected: o.labelSelected(t),
+      })),
+    [t, driverName],
+  );
   const handleChange = useCallback(
     (o: SelectOption<number> | null) => {
       onChange(o?.value ?? -1);

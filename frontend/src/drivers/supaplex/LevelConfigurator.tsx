@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { showToastError } from "models/ui/toasts";
 import {
   Button,
@@ -25,6 +26,7 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
   onChange,
   compact = false,
 }: LevelConfiguratorProps<L>) => {
+  const { t } = useTranslation();
   const { i: countInf, e: countElec } = useMemo(() => {
     let i = 0;
     let e = 0;
@@ -53,6 +55,7 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
           if (value >= 0 && value <= 255) {
             onChange(level.setInfotronsNeed(value));
           } else {
+            // TODO: validation i18n
             showToastError("From 0 to 255");
           }
         }
@@ -76,22 +79,20 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
         <span>
           {level.infotronsNeed === 0 && countInf > 0 ? (
             countInf < 256 ? (
-              `= all ${countInf}`
+              t("main:supaplex.infotronsNeed.All", { n: countInf })
             ) : (
               <span
-                title={
-                  `Actual number of Infotrons is ${countInf},\n` +
-                  `but SP counts it in a single byte,\n` +
-                  `so the result is a module of 256:\n` +
-                  `${countInf} & 0xFF = ${countInf} % 256 = ${countInf % 256}`
-                }
+                title={t("main:supaplex.infotronsNeed.Mod256", {
+                  total: countInf,
+                  mod: countInf % 256,
+                })}
                 className={cl.infModNotice}
               >
-                = {countInf % 256}
+                {t("main:supaplex.infotronsNeed.Actual", { n: countInf % 256 })}
               </span>
             )
           ) : (
-            `of ${countInf}`
+            t("main:supaplex.infotronsNeed.OfTotal", { n: countInf })
           )}
           {", "}
           <InlineTile tile={TILE_ELECTRON} />
@@ -106,15 +107,21 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
           <ButtonDropdown
             trigger={
               [
-                level.initialGravity ? "Gr" : "",
-                level.initialFreezeZonks ? "FZ" : "",
-                level.initialFreezeEnemies ? "FE" : "",
+                level.initialGravity ? t("main:supaplex.initial.Gravity") : "",
+                level.initialFreezeZonks
+                  ? t("main:supaplex.initial.FreezeZonks")
+                  : "",
+                level.initialFreezeEnemies
+                  ? t("main:supaplex.initial.FreezeEnemies")
+                  : "",
               ]
                 .filter(Boolean)
-                .join(", ") || <em>default</em>
+                .join(", ") || <em>{t("main:supaplex.initial.None")}</em>
             }
             buttonClassName={cl.btnEnv}
-            buttonProps={{ title: "Initial conditions" }}
+            buttonProps={{
+              title: t("main:supaplex.config.InitialEnv"),
+            }}
           >
             <Toolbar isMenu>
               <TextButton
@@ -122,28 +129,28 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
                 icon={level.initialGravity ? iconChecked : iconUnchecked}
                 onClick={handlers.gravity}
               >
-                Gravity
+                {t("main:supaplex.features.Gravity")}
               </TextButton>
               <TextButton
                 uiColor={ColorType.DEFAULT}
                 icon={level.initialFreezeZonks ? iconChecked : iconUnchecked}
                 onClick={handlers.fz}
               >
-                Freeze Zonks
+                {t("main:supaplex.features.FreezeZonks")}
               </TextButton>
               <TextButton
                 uiColor={ColorType.DEFAULT}
                 icon={level.initialFreezeEnemies ? iconChecked : iconUnchecked}
                 onClick={handlers.fe}
               >
-                Freeze Enemies
+                {t("main:supaplex.features.FreezeEnemies")}
               </TextButton>
               <ToolbarSeparator />
               <TextButton
                 uiColor={ColorType.DEFAULT}
                 onClick={handlers.portsDb}
               >
-                SpecPorts DB...
+                {t("main:supaplex.config.SpecPortsDB")}
               </TextButton>
             </Toolbar>
           </ButtonDropdown>
@@ -155,19 +162,21 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
               checked={level.initialGravity}
               onChange={handlers.gravity}
             >
-              Gravity
+              {t("main:supaplex.features.Gravity")}
             </Checkbox>
             <Checkbox checked={level.initialFreezeZonks} onChange={handlers.fz}>
-              Freeze Zonks
+              {t("main:supaplex.features.FreezeZonks")}
             </Checkbox>
             <Checkbox
               checked={level.initialFreezeEnemies}
               onChange={handlers.fe}
             >
-              Freeze Enemies
+              {t("main:supaplex.features.FreezeEnemies")}
             </Checkbox>
           </span>
-          <Button onClick={handlers.portsDb}>SpecPorts DB...</Button>
+          <Button onClick={handlers.portsDb}>
+            {t("main:supaplex.config.SpecPortsDB")}
+          </Button>
         </>
       )}
     </>

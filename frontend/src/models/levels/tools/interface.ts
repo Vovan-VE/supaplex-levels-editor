@@ -1,6 +1,7 @@
 import { Event, Store } from "effector";
 import { CSSProperties, FC, PointerEvent } from "react";
 import { ITilesRegion } from "drivers";
+import { TranslationGetter } from "i18n/types";
 import { HotKeyShortcuts } from "models/ui/hotkeys";
 import { IBounds, Point2D, Rect } from "utils/rect";
 
@@ -159,7 +160,7 @@ export interface ToolUI {
 }
 
 export interface ToolVariantUI {
-  title: string;
+  title: TranslationGetter;
   internalName: string;
   Icon: FC;
   hotkey?: HotKeyShortcuts;

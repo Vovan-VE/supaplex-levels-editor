@@ -1,4 +1,5 @@
 import { FC, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { useStore } from "effector-react";
 import { canResize, getDriverFormat } from "drivers";
 import {
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export const LevelConfig: FC<Props> = ({ onDidResize }) => {
+  const { t } = useTranslation();
   const driverName = useStore($currentDriverName)!;
   const { resizable } = getDriverFormat(
     driverName,
@@ -36,7 +38,11 @@ export const LevelConfig: FC<Props> = ({ onDidResize }) => {
 
   return (
     <>
-      <Button disabled={!canResize(resizable)} onClick={handleResizeClick}>
+      <Button
+        disabled={!canResize(resizable)}
+        onClick={handleResizeClick}
+        title={t("main:level.buttons.Resize")}
+      >
         {rawLevel.width}x{rawLevel.height}
       </Button>
       <ValueInput

@@ -1,12 +1,6 @@
 import { useStore } from "effector-react";
-import {
-  FC,
-  FormEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { FC, FormEventHandler, useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { TileSelect } from "components/driver/TileSelect";
 import { canResize, getDriverFormat } from "drivers";
 import { TILE_HARDWARE } from "drivers/supaplex/tiles-id";
@@ -31,6 +25,7 @@ import cl from "./ResizeLevel.module.scss";
 interface Props extends RenderPromptProps<true> {}
 
 const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
+  const { t } = useTranslation();
   const driverName = useStore($currentDriverName);
   const { resizable } = getDriverFormat(
     driverName!,
@@ -46,58 +41,54 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const [borderTile, setBorderTile] = useState(TILE_HARDWARE);
   const [fillTile, setFillTile] = useState(0);
 
-  const handleOk = useCallback(() => {
-    if (
-      !canResize(resizable) ||
-      !rawLevel.resize ||
-      width === null ||
-      height === null
-    ) {
-      return;
-    }
-    const { minWidth = 1, minHeight = 1, maxWidth, maxHeight } = resizable;
-    if (width < minWidth || height < minHeight) {
-      return;
-    }
-    if (maxWidth !== undefined && width > maxWidth) {
-      return;
-    }
-    if (maxHeight !== undefined && height > maxHeight) {
-      return;
-    }
+  const handleOk = useCallback<FormEventHandler>(
+    (e) => {
+      e.preventDefault();
+      if (
+        !canResize(resizable) ||
+        !rawLevel.resize ||
+        width === null ||
+        height === null
+      ) {
+        return;
+      }
+      const { minWidth = 1, minHeight = 1, maxWidth, maxHeight } = resizable;
+      if (width < minWidth || height < minHeight) {
+        return;
+      }
+      if (maxWidth !== undefined && width > maxWidth) {
+        return;
+      }
+      if (maxHeight !== undefined && height > maxHeight) {
+        return;
+      }
 
-    // TODO: option: x & y offset
-    updateCurrentLevel(
-      rawLevel.resize({ width, height, borderTile, fillTile }),
-    );
-    onSubmit(true);
-  }, [onSubmit, width, height, borderTile, fillTile, resizable, rawLevel]);
+      // TODO: option: x & y offset
+      updateCurrentLevel(
+        rawLevel.resize({ width, height, borderTile, fillTile }),
+      );
+      onSubmit(true);
+    },
+    [onSubmit, width, height, borderTile, fillTile, resizable, rawLevel],
+  );
 
   const isResizable = canResize(resizable);
 
   return (
     <Dialog
-      title="Resize level"
+      title={t("main:level.resize.DialogTitle")}
       size="small"
       open={show}
-      wrapForm={useMemo(
-        () => ({
-          onSubmit: (e: FormEvent) => {
-            e.preventDefault();
-            handleOk();
-          },
-        }),
-        [handleOk],
-      )}
+      wrapForm={{ onSubmit: handleOk }}
       buttons={
         <>
           {isResizable && (
             <Button uiColor={ColorType.SUCCESS} type="submit">
-              OK
+              {t("main:common.buttons.OK")}
             </Button>
           )}
           <Button type="button" onClick={onCancel}>
-            Cancel
+            {t("main:common.buttons.Cancel")}
           </Button>
         </>
       }
@@ -107,14 +98,14 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
         {isResizable ? (
           <>
             <p>
-              Current size:{" "}
+              {t("main:level.resize.labels.CurrentSize")}{" "}
               <b>
                 {rawLevel.width}x{rawLevel.height}
               </b>
             </p>
             <div className={cl.row}>
               <Field
-                label="New Width"
+                label={t("main:level.resize.labels.NewWidth")}
                 error={intRangeError(
                   width,
                   resizable.minWidth ?? 1,
@@ -124,7 +115,7 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
                 <IntegerInput value={width} onChange={setWidth} required />
               </Field>
               <Field
-                label="New Height"
+                label={t("main:level.resize.labels.NewHeight")}
                 error={intRangeError(
                   height,
                   resizable.minHeight ?? 1,
@@ -139,16 +130,16 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
               <NoticeSizeLags totalTiles={width * height} />
             )}
 
-            <p>When it is necessary to fill new empty space:</p>
+            <p>{t("main:level.resize.labels.FillNewEmptySpace")}</p>
             <div className={cl.row}>
-              <Field label="Border">
+              <Field label={t("main:level.resize.labels.Border")}>
                 <TileSelect
                   driverName={driverName as any}
                   tile={borderTile}
                   onChange={setBorderTile}
                 />
               </Field>
-              <Field label="Fill body">
+              <Field label={t("main:level.resize.labels.FillBody")}>
                 <TileSelect
                   driverName={driverName as any}
                   tile={fillTile}
@@ -158,7 +149,7 @@ const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
             </div>
           </>
         ) : (
-          <p>Cannot change size for this level.</p>
+          <p>{t("main:level.resize.ResizeNotSupported")}</p>
         )}
       </div>
     </Dialog>

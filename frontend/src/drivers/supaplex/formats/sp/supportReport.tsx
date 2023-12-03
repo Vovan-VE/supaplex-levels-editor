@@ -1,3 +1,4 @@
+import { Trans } from "i18n/Trans";
 import { ISupportReportMessage } from "../../../types";
 import { ISupaplexLevel, ISupaplexLevelset } from "../../types";
 import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../std";
@@ -15,10 +16,10 @@ export function* levelsetReporter(
 ): Iterable<ISupportReportMessage> {
   if (levelset.levelsCount > 1) {
     yield warn(
-      <>
-        Only first level will be used, and all the rest (
-        <b>{levelset.levelsCount - 1}</b>) will be removed.
-      </>,
+      <Trans
+        i18nKey="main:supaplex.convert.OnlyFirstLevelWillLeft"
+        values={{ rest: levelset.levelsCount - 1 }}
+      />,
     );
   }
 }
@@ -29,31 +30,27 @@ export function* levelReporter(
   const { width, height } = level;
   if (width > LEVEL_WIDTH || height > LEVEL_HEIGHT) {
     yield err(
-      <>
-        Level size{" "}
-        <b>
-          {width}x{height}
-        </b>{" "}
-        don't fit into{" "}
-        <b>
-          {LEVEL_WIDTH}x{LEVEL_HEIGHT}
-        </b>
-        .
-      </>,
+      <Trans
+        i18nKey="main:supaplex.convert.BodySizeExceed"
+        values={{
+          width,
+          height,
+          maxWidth: LEVEL_WIDTH,
+          maxHeight: LEVEL_HEIGHT,
+        }}
+      />,
     );
   } else if (width < LEVEL_WIDTH || height < LEVEL_HEIGHT) {
     yield warn(
-      <>
-        Level size{" "}
-        <b>
-          {width}x{height}
-        </b>{" "}
-        will be extended to{" "}
-        <b>
-          {LEVEL_WIDTH}x{LEVEL_HEIGHT}
-        </b>
-        .
-      </>,
+      <Trans
+        i18nKey="main:supaplex.convert.BodySizeWillExtend"
+        values={{
+          width,
+          height,
+          maxWidth: LEVEL_WIDTH,
+          maxHeight: LEVEL_HEIGHT,
+        }}
+      />,
     );
   }
 }

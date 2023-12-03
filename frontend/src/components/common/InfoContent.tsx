@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { InfoDetails, VersionTag } from "backend";
 import { APP_TITLE, APP_VERSION } from "configs";
+import { Trans } from "i18n/Trans";
 import { msgBox } from "ui/feedback";
 import { UpgradeLink } from "./UpgradeLink";
 import cl from "./InfoContent.module.scss";
@@ -41,16 +42,7 @@ const InfoContent: FC = () => (
       </span>
     </h1>
     <p>
-      <strong>{APP_TITLE}</strong> is <strong>Supaplex Levels Editor</strong>.
-      Inspired by{" "}
-      <a
-        href="https://www.supaplex.online/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Supaplex.Online
-      </a>{" "}
-      and its community.
+      <Trans i18nKey="main:about.content.B010" values={{ APP_TITLE }} />
     </p>
 
     <InfoDetails />

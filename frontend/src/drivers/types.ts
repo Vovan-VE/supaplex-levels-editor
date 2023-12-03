@@ -1,4 +1,5 @@
 import { CSSProperties, FC, ReactElement, ReactNode } from "react";
+import { TranslationGetter } from "i18n/types";
 import {
   CellContextEventSnapshot,
   PenShapeStructures,
@@ -151,13 +152,13 @@ export interface IBaseTileInteraction<L extends IBaseLevel> {
 }
 
 export interface IBaseMetaTile {
-  title: string;
+  title: TranslationGetter;
   icon: ReactElement;
   primaryValue: number;
 }
 export interface IBaseTile<L extends IBaseLevel> {
   value: number;
-  title: string;
+  title: TranslationGetter;
   src?: string;
   metaTile?: IBaseMetaTile;
   toolbarOrder?: number;

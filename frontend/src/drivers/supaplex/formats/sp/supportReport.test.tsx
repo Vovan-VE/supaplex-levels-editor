@@ -1,3 +1,4 @@
+import { Trans } from "i18n/Trans";
 import { ISupportReportMessage, SupportReportType } from "../../../types";
 import { createLevel } from "../../level";
 import { createLevelset } from "../../levelset";
@@ -23,10 +24,10 @@ describe("supportReport", () => {
       {
         type: SupportReportType.WARN,
         message: (
-          <>
-            Only first level will be used, and all the rest (<b>{1}</b>) will be
-            removed.
-          </>
+          <Trans
+            i18nKey="main:supaplex.convert.OnlyFirstLevelWillLeft"
+            values={{ rest: 1 }}
+          />
         ),
       },
     ]);
@@ -40,10 +41,10 @@ describe("levelsetReporter", () => {
       {
         type: SupportReportType.WARN,
         message: (
-          <>
-            Only first level will be used, and all the rest (<b>{2}</b>) will be
-            removed.
-          </>
+          <Trans
+            i18nKey="main:supaplex.convert.OnlyFirstLevelWillLeft"
+            values={{ rest: 2 }}
+          />
         ),
       },
     ]);
@@ -62,17 +63,15 @@ describe("levelReporter", () => {
       {
         type: SupportReportType.ERR,
         message: (
-          <>
-            Level size{" "}
-            <b>
-              {62}x{40}
-            </b>{" "}
-            don't fit into{" "}
-            <b>
-              {LEVEL_WIDTH}x{LEVEL_HEIGHT}
-            </b>
-            .
-          </>
+          <Trans
+            i18nKey="main:supaplex.convert.BodySizeExceed"
+            values={{
+              width: 62,
+              height: 40,
+              maxWidth: LEVEL_WIDTH,
+              maxHeight: LEVEL_HEIGHT,
+            }}
+          />
         ),
       },
     ]);
@@ -84,17 +83,15 @@ describe("levelReporter", () => {
       {
         type: SupportReportType.ERR,
         message: (
-          <>
-            Level size{" "}
-            <b>
-              {50}x{30}
-            </b>{" "}
-            don't fit into{" "}
-            <b>
-              {LEVEL_WIDTH}x{LEVEL_HEIGHT}
-            </b>
-            .
-          </>
+          <Trans
+            i18nKey="main:supaplex.convert.BodySizeExceed"
+            values={{
+              width: 50,
+              height: 30,
+              maxWidth: LEVEL_WIDTH,
+              maxHeight: LEVEL_HEIGHT,
+            }}
+          />
         ),
       },
     ]);
@@ -106,17 +103,15 @@ describe("levelReporter", () => {
       {
         type: SupportReportType.ERR,
         message: (
-          <>
-            Level size{" "}
-            <b>
-              {62}x{50}
-            </b>{" "}
-            don't fit into{" "}
-            <b>
-              {LEVEL_WIDTH}x{LEVEL_HEIGHT}
-            </b>
-            .
-          </>
+          <Trans
+            i18nKey="main:supaplex.convert.BodySizeExceed"
+            values={{
+              width: 62,
+              height: 50,
+              maxWidth: LEVEL_WIDTH,
+              maxHeight: LEVEL_HEIGHT,
+            }}
+          />
         ),
       },
     ]);
@@ -128,17 +123,15 @@ describe("levelReporter", () => {
       {
         type: SupportReportType.WARN,
         message: (
-          <>
-            Level size{" "}
-            <b>
-              {50}x{LEVEL_HEIGHT}
-            </b>{" "}
-            will be extended to{" "}
-            <b>
-              {LEVEL_WIDTH}x{LEVEL_HEIGHT}
-            </b>
-            .
-          </>
+          <Trans
+            i18nKey="main:supaplex.convert.BodySizeWillExtend"
+            values={{
+              width: 50,
+              height: LEVEL_HEIGHT,
+              maxWidth: LEVEL_WIDTH,
+              maxHeight: LEVEL_HEIGHT,
+            }}
+          />
         ),
       },
     ]);
@@ -150,17 +143,15 @@ describe("levelReporter", () => {
       {
         type: SupportReportType.WARN,
         message: (
-          <>
-            Level size{" "}
-            <b>
-              {LEVEL_WIDTH}x{20}
-            </b>{" "}
-            will be extended to{" "}
-            <b>
-              {LEVEL_WIDTH}x{LEVEL_HEIGHT}
-            </b>
-            .
-          </>
+          <Trans
+            i18nKey="main:supaplex.convert.BodySizeWillExtend"
+            values={{
+              width: LEVEL_WIDTH,
+              height: 20,
+              maxWidth: LEVEL_WIDTH,
+              maxHeight: LEVEL_HEIGHT,
+            }}
+          />
         ),
       },
     ]);
@@ -172,17 +163,15 @@ describe("levelReporter", () => {
       {
         type: SupportReportType.WARN,
         message: (
-          <>
-            Level size{" "}
-            <b>
-              {50}x{20}
-            </b>{" "}
-            will be extended to{" "}
-            <b>
-              {LEVEL_WIDTH}x{LEVEL_HEIGHT}
-            </b>
-            .
-          </>
+          <Trans
+            i18nKey="main:supaplex.convert.BodySizeWillExtend"
+            values={{
+              width: 50,
+              height: 20,
+              maxWidth: LEVEL_WIDTH,
+              maxHeight: LEVEL_HEIGHT,
+            }}
+          />
         ),
       },
     ]);
