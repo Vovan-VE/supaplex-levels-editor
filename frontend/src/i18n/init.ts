@@ -1,10 +1,14 @@
 import i18n from "i18next";
 import { ResourceLanguage } from "i18next/typescript/options";
 import { initReactI18next } from "react-i18next";
-import { desktop, main, web } from "./en";
+import { IS_WAILS } from "configs";
+import desktop from "./en/desktop.json";
+import main from "./en/main.json";
+import web from "./en/web.json";
 
-const WAILS = Boolean(process.env.REACT_APP_WAILS);
-const envNS: ResourceLanguage = WAILS ? { desktop } : { web };
+// FIXME: unused json are still presented in build as `JSON.parse('...')` in void context
+
+const envNS: ResourceLanguage = IS_WAILS ? { desktop } : { web };
 
 i18n.use(initReactI18next).init({
   lng: "en",

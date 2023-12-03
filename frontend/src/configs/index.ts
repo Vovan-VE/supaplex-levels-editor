@@ -9,8 +9,6 @@ const {
     TEST_LEVEL_URL = "https://www.supaplex.online/test/",
   REACT_APP_TEST_DEMO_URL:
     TEST_DEMO_URL = "https://www.supaplex.online/test/?demo",
-  REACT_APP_TEST_MESSAGE_ORIGIN: TEST_MESSAGE_ORIGIN = new URL(TEST_LEVEL_URL)
-    .origin,
 } = process.env;
 
 export {
@@ -22,7 +20,8 @@ export {
   TEST_LEVEL_TITLE,
   TEST_LEVEL_URL,
   TEST_DEMO_URL,
-  TEST_MESSAGE_ORIGIN,
 };
 
 export const APP_TITLE = "SpLE";
+export const IS_WAILS = (process.env.REACT_APP_WAILS || "") !== "";
+export const TEST_MESSAGE_ORIGIN = new URL(TEST_LEVEL_URL).origin;

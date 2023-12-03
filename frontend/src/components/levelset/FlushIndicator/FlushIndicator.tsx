@@ -11,7 +11,7 @@ import { svgs } from "ui/icon";
 import { ColorType, ContainerProps } from "ui/types";
 import cl from "./FlushIndicator.module.scss";
 
-const displayReadOnly = Boolean($displayReadOnly);
+const displayReadOnly = !!$displayReadOnly;
 const useDisplayRO = displayReadOnly
   ? () => useStore($displayReadOnly!)
   : () => false;
