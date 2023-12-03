@@ -45,14 +45,17 @@ import { clipRect, IBounds, Rect } from "utils/rect";
 import { rectDiff, RectDiffResult } from "utils/rect-diff/rectDiff";
 import cl from "./CmpLevels.module.scss";
 
-export const CmpLevelsButton: FC = () => (
-  <Button
-    icon={<svgs.Cmp />}
-    uiColor={useStore($cmpLevelHasFirst) ? ColorType.SUCCESS : undefined}
-    title={useStore($cmpLevelFirstTitle)}
-    onClick={cmpLevelToggle}
-  />
-);
+export const CmpLevelsButton: FC = () => {
+  const { t } = useTranslation();
+  return (
+    <Button
+      icon={<svgs.Cmp />}
+      uiColor={useStore($cmpLevelHasFirst) ? ColorType.SUCCESS : undefined}
+      title={useStore($cmpLevelFirstTitle)?.(t)}
+      onClick={cmpLevelToggle}
+    />
+  );
+};
 
 export const CmpLevelsDialog: FC = () => {
   const { t } = useTranslation();

@@ -14,8 +14,17 @@
     "buttons": {
       "Close": "Close file",
       "CloseOthers": "Close all others files",
+      "DontSave": "Don't save",
       "Save": "Save changes",
+      "SaveAll": "Save All",
       "SaveAs": "Save As..."
+    },
+    "confirm": {
+      "CloseFileSave": "File <b>{filename}</b> has some changes. Save changes?",
+      "CloseOthersSave": "There are some changes in files to be closed. Save all closing files?",
+      "DontSave": "Don't save",
+      "ExitSave": "There are some changes in files. Save all changed files?",
+      "Save": "Save"
     }
   },
   "levelTest": {

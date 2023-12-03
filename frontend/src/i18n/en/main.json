@@ -8,6 +8,11 @@
     "DesktopName": "Desktop {APP_TITLE}"
   },
   "cmpLevels": {
+    "button": {
+      "CompareWithCurrent": "Compare \"{file}\" level \"{level}\" ({size}) with current level",
+      "SelectAnotherLevel": "Compare levels: select another level to compare with and click again",
+      "SetCurrentAsFirst": "Compare levels: set current as first"
+    },
     "Calculating": "Calculating...",
     "DialogTitle": "Compare levels",
     "IgnoreFancy": "Ignore Fancy",
@@ -46,13 +51,26 @@
       "Loading": "Loading..."
     },
     "toasts": {
-      "Copied": "Copied"
+      "Copied": "Copied",
+      "ImageCopied": "Image copied",
+      "LinkCopied": "Link copied"
     }
   },
   "demoEdit": {
     "DemoText": "Demo text representation",
     "DialogTitle": "Edit demo",
     "Signature": "Signature"
+  },
+  "drawing": {
+    "FloodFill": "Flood Fill",
+    "Frame": "Frame",
+    "Line": "Straight line",
+    "Pencil": "Pencil",
+    "Pencil1x2": "Pencil 1x2",
+    "Pencil2x1": "Pencil 2x1",
+    "Pencil3x3": "Pencil 3x3",
+    "RectFilled": "Filled Rect",
+    "Selection": "Selection"
   },
   "edit": {
     "Copy": "Copy selection",
@@ -115,6 +133,7 @@
     "config": {
       "DialogTitle": "Level settings"
     },
+    "demoReceived": "A new demo ({demoSize} bytes) received for level <code>{levelNum}</code> (<code>{levelName}</code>) in file \"<code>{filename}</code>\".<br />Save new demo?",
     "export": {
       "CopyLevelAsDemoLink": "Copy level as Demo Link",
       "CopyLevelAsDemoLinkNone": "Copy level as Demo Link (no demo)",
@@ -122,6 +141,11 @@
       "CopySelectionAsImage": "Copy level/selection as Image",
       "SaveLevelAsFile": "Save level as File",
       "SaveSelectionAsImage": "Save level/selection as Image"
+    },
+    "import": {
+      "CannotImportDueTo": "Cannot import level due to the following compatibility errors:",
+      "ImportFailed": "Cannot import level file: {reason}",
+      "ImportWithChanges": "Level was imported applying the following compatibility changes:"
     },
     "manage": {
       "Append": "Append new level {number}",

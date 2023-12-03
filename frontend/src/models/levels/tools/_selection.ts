@@ -78,7 +78,7 @@ const {
   VARIANTS: [
     {
       internalName: "d",
-      title: "Selection",
+      title: (t) => t("main:drawing.Selection"),
       Icon: svgs.Selection,
       hotkey: HK_TOOL_SELECTION,
       drawProps: undefined,

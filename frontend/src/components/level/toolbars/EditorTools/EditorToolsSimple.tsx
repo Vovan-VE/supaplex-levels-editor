@@ -77,7 +77,7 @@ export const EditorToolsSimple: FC<ContainerProps> = (props) => {
           <Button
             key={`${ti}:${vi}`}
             icon={<Icon />}
-            title={title + _displayHK(t, hotkey)}
+            title={title(t) + _displayHK(t, hotkey)}
             uiColor={
               ti === toolIndex && vi === variantIndex
                 ? ColorType.WARN

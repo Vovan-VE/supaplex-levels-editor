@@ -1,5 +1,6 @@
 import { combine, createEffect } from "effector";
 import { allowManualSave, exitApp, onExitDirty, setIsDirty } from "backend";
+import { Trans } from "i18n/Trans";
 import { ask, YesNoCancel } from "ui/feedback";
 import { ColorType } from "ui/types";
 import { $autoSave } from "../settings";
@@ -31,14 +32,15 @@ export const closeCurrentFileFx = allowManualSave
       const filename = $currentFileName.getState();
       switch (
         await ask(
-          <>
-            File <b>{filename}</b> has some changes. Save changes?
-          </>,
+          <Trans
+            i18nKey="desktop:files.confirm.CloseFileSave"
+            values={{ filename }}
+          />,
           {
             buttons: YesNoCancel,
             buttonsProps: {
-              yesText: "Save",
-              noText: "Don't save",
+              yesText: <Trans i18nKey="desktop:files.confirm.Save" />,
+              noText: <Trans i18nKey="desktop:files.confirm.DontSave" />,
               no: { uiColor: ColorType.DANGER },
             },
           },
@@ -54,20 +56,15 @@ export const closeCurrentFileFx = allowManualSave
     })
   : createEffect(async (_: any) => {
       const filename = $currentFileName.getState();
+      const values = { filename };
       if (
         await ask(
-          <>
-            Are you sure you want to remove file "<b>{filename}</b>" from
-            memory?
-            <br />
-            You will loss all changes in the file. Consider download it first to
-            backup.
-            <br />
-            <b>This action can not be undone.</b>
-          </>,
+          <Trans i18nKey="web:files.closeFileSave.Confirm" values={values} />,
           {
             buttons: {
-              okText: <>Forget "{filename}"</>,
+              okText: (
+                <Trans i18nKey="web:files.closeFileSave.OK" values={values} />
+              ),
               ok: {
                 uiColor: ColorType.DANGER,
                 autoFocus: false,
@@ -94,17 +91,14 @@ export const closeOtherFilesFx = allowManualSave
         return;
       }
       switch (
-        await ask(
-          "There are some changes in files to be closed. Save all closing files?",
-          {
-            buttons: YesNoCancel,
-            buttonsProps: {
-              yesText: "Save All",
-              noText: "Don't save",
-              no: { uiColor: ColorType.DANGER },
-            },
+        await ask(<Trans i18nKey="desktop:files.confirm.CloseOthersSave" />, {
+          buttons: YesNoCancel,
+          buttonsProps: {
+            yesText: <Trans i18nKey="desktop:files.buttons.SaveAll" />,
+            noText: <Trans i18nKey="desktop:files.buttons.DontSave" />,
+            no: { uiColor: ColorType.DANGER },
           },
-        )
+        })
       ) {
         case true:
           saveOthersAndClose();
@@ -116,21 +110,15 @@ export const closeOtherFilesFx = allowManualSave
     })
   : createEffect(async (_: any) => {
       const filename = $currentFileName.getState();
+      const values = { filename };
       if (
         await ask(
-          <>
-            Are you sure you want to remove ALL OTHER FILES BUT "
-            <b>{filename}</b>
-            " from memory?
-            <br />
-            You will loss all changes in that files. Consider download them
-            first to backup.
-            <br />
-            <b>This action can not be undone.</b>
-          </>,
+          <Trans i18nKey="web:files.closeOthersSave.Confirm" values={values} />,
           {
             buttons: {
-              okText: <>Forget OTHER BUT "{filename}"</>,
+              okText: (
+                <Trans i18nKey="web:files.closeOthersSave.OK" values={values} />
+              ),
               ok: {
                 uiColor: ColorType.DANGER,
                 autoFocus: false,
@@ -153,7 +141,7 @@ if (allowManualSave) {
     );
   }
   if (onExitDirty) {
-    const message = "There are some changes in files. Save all changed files?";
+    const message = <Trans i18nKey="desktop:files.confirm.ExitSave" />;
 
     onExitDirty.watch(
       exitApp
@@ -162,9 +150,9 @@ if (allowManualSave) {
               await ask(message, {
                 buttons: YesNoCancel,
                 buttonsProps: {
-                  yesText: "Save All",
+                  yesText: <Trans i18nKey="desktop:files.buttons.SaveAll" />,
                   yes: { uiColor: ColorType.SUCCESS },
-                  noText: "Don't save",
+                  noText: <Trans i18nKey="desktop:files.buttons.DontSave" />,
                   no: { uiColor: ColorType.DANGER },
                 },
               })
@@ -182,7 +170,7 @@ if (allowManualSave) {
             if (
               await ask(message, {
                 buttons: {
-                  okText: "Save All",
+                  okText: <Trans i18nKey="desktop:files.buttons.SaveAll" />,
                   ok: { uiColor: ColorType.SUCCESS },
                 },
               })

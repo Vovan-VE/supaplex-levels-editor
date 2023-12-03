@@ -41,6 +41,14 @@
       "Rename": "Rename file",
       "Save": "Save file from memory"
     },
+    "closeFileSave": {
+      "Confirm": "Are you sure you want to remove file \"<b>{filename}</b>\" from memory?<br />You will loss all changes in the file. Consider download it first to backup.<br /><b>This action can not be undone.</b>",
+      "OK": "Forget \"{filename}\""
+    },
+    "closeOthersSave": {
+      "Confirm": "Are you sure you want to remove ALL OTHER FILES BUT \"<b>{filename}</b>\" from memory?<br />You will loss all changes in that files. Consider download them first to backup.<br /><b>This action can not be undone.</b>",
+      "OK": "Forget OTHER BUT \"{filename}\""
+    },
     "rename": {
       "NewFileName": "New filename",
       "Prompt": "Rename file \"<b>{filename}</b>\" in memory"

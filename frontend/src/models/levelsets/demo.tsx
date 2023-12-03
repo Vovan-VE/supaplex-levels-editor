@@ -1,6 +1,7 @@
 import { combine, createEvent, createStore, Event, sample } from "effector";
 import { FilesStorageKey } from "backend";
 import { getDriverFormat } from "drivers";
+import { Trans } from "i18n/Trans";
 import { ask } from "ui/feedback";
 import { isOffsetInRange } from "utils/number";
 import { DemoData } from "./types";
@@ -133,23 +134,25 @@ sample({
   filter: Boolean,
   fn: (ref, demoData) => ({ ...ref, demoData }),
 }).watch(async ({ fileKey, levelIndex, demoData }) => {
-  let fileName = "";
+  let filename = "";
   let levelName = "";
   const file = $levelsets.getState().get(fileKey);
   if (file) {
-    fileName = file.name;
+    filename = file.name;
     levelName = file.levelset.getLevel(levelIndex)?.title ?? "";
   }
 
   if (
     await ask(
-      <>
-        A new demo ({demoData.data.length} bytes) received for level{" "}
-        <code>#{levelIndex + 1}</code> (<code>{levelName}</code>) in file "
-        <code>{fileName}</code>".
-        <br />
-        Save new demo?
-      </>,
+      <Trans
+        i18nKey="main:level.demoReceived"
+        values={{
+          filename,
+          levelNum: levelIndex + 1,
+          levelName,
+          demoSize: demoData.data.length,
+        }}
+      />,
     )
   ) {
     internalUpdateLevelDemo({
