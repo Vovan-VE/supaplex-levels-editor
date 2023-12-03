@@ -25,13 +25,13 @@ jobs:
     name: Build frontend with NPM
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.extract_version.outputs.version }}
+      version: ${{ steps.extract_version.outputs.current-version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v3.5.0
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
           cache: npm
@@ -39,7 +39,7 @@ jobs:
 
       - name: Extract version
         id: extract_version
-        uses: Saionaro/extract-package-version@v1.2.1
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
         with:
           path: ./frontend
 
@@ -53,7 +53,7 @@ jobs:
           CI: true
 
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v3
 
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
@@ -62,7 +62,7 @@ jobs:
           destination: ./frontend/build/docs
 
       - name: Upload web artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           path: ./frontend/build
 
@@ -84,7 +84,7 @@ jobs:
     needs: build_front
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: actions/setup-go@v4
         with:
@@ -112,7 +112,7 @@ jobs:
         env:
           SKIP_FRONT: 1
           SKIP_FRONT_CLEAN: ""
-          VERSION: ${{ needs.build_front.outputs.version }}
+          VERSION: ${{ needs.build_front.outputs.current-version }}
 
       - name: Upload desktop artifact
         uses: actions/upload-artifact@v3
@@ -151,14 +151,19 @@ jobs:
           done
           cat *.txt
 
+      - name: Get release changelog
+        run: |
+          ./frontend/scripts/get-release-notes.sh < ./CHANGELOG.md > ./THIS-CHANGELOG.md
+
       - name: Draft release
-        uses: marvinpinto/action-automatic-releases@latest
+        uses: softprops/action-gh-release@v0.1.15
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          token: "${{ secrets.GITHUB_TOKEN }}"
           draft: true
           prerelease: false
-          automatic_release_tag: "v${{ needs.build_front.outputs.version }}"
-          title: "v${{ needs.build_front.outputs.version }}"
+          tag_name: "v${{ needs.build_front.outputs.current-version }}"
+          name: "v${{ needs.build_front.outputs.current-version }}"
+          body_path: ./THIS-CHANGELOG.md
           files: |
             ./release-files/*.exe
             ./release-files/*.deb
@@ -177,4 +182,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2
