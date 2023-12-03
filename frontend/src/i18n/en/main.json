@@ -135,7 +135,7 @@
     "config": {
       "DialogTitle": "Level settings"
     },
-    "demoReceived": "A new demo ({demoSize} bytes) received for level <code>{levelNum}</code> (<code>{levelName}</code>) in file \"<code>{filename}</code>\".<br />Save new demo?",
+    "demoReceived": "A new demo ({demoSize} bytes) received for level <code>{levelNum}</code> (<code>{levelName}</code>) in file \"<code>{filename}</code>\".<br/>Save new demo?",
     "export": {
       "CopyLevelAsDemoLink": "Copy level as Demo Link",
       "CopyLevelAsDemoLinkNone": "Copy level as Demo Link (no demo)",
@@ -181,11 +181,11 @@
     },
     "deleteCurrent": {
       "Button": "Delete <code>\"{level}\"</code>",
-      "Confirm": "Are you sure you want to delete the level \"<code>{level}</code>\" from this level set?<br />This will cause all the levels following to shift backward.<br /><b>This action can not be undone.</b>"
+      "Confirm": "Are you sure you want to delete the level \"<code>{level}</code>\" from this level set?<br/>This will cause all the levels following to shift backward.<br/><b>This action can not be undone.</b>"
     },
     "deleteRest": {
       "Button": "Delete <b>{restCount}</b> rest levels",
-      "Confirm": "Are you sure you want to delete all the rest <b>{restCount}</b> levels <b>after</b> current one (that is starting from <code>{nextIndex}</code> inclusive) from this levelset?<br />The levelset then will have only <b>{leftCount}</b> levels.<br /><b>This action can not be undone.</b>"
+      "Confirm": "Are you sure you want to delete all the rest <b>{restCount}</b> levels <b>after</b> current one (that is starting from <code>{nextIndex}</code> inclusive) from this levelset?<br/>The levelset then will have only <b>{leftCount}</b> levels.<br/><b>This action can not be undone.</b>"
     },
     "LevelsInFile": "Levels in \"<b>{filename}</b>\"",
     "notActivated": {
@@ -296,7 +296,7 @@
     "demoEditAsText": {
       "help": {
         "B010": "Every keystroke from binary demo converted to text representation. Keystrokes can be separated with any space characters.",
-        "B020": "Every keystroke has form:<br /><code>KEY</code> optionally followed by <i>duration</i>.",
+        "B020": "Every keystroke has form:<br/><code>KEY</code> optionally followed by <i>duration</i>.",
         "B030": "where <code>KEY</code> can be one of the following (can be lowercase too):",
         "C010": "The <i>duration</i> can be:",
         "D010": "<i>omitted</i> ⇒ 1 frame",
@@ -315,7 +315,7 @@
         "NoKeyPressed": "no key pressed"
       },
       "UseTiles": "Use \"tiles\" duration",
-      "UseTilesHelp": "When enabled, <code>42</code> frames becomes 5 tiles + 2 frames and writes as <code>5.2</code><br /><code>40</code> frames becomes exactly 5 tiles as <code>5.</code><br /><code>2</code> frames kept as <code>2</code>"
+      "UseTilesHelp": "When enabled, <code>42</code> frames becomes 5 tiles + 2 frames and writes as <code>5.2</code><br/><code>40</code> frames becomes exactly 5 tiles as <code>5.</code><br/><code>2</code> frames kept as <code>2</code>"
     },
     "features": {
       "FreezeEnemies": "Freeze Enemies",

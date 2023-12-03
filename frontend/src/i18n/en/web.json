@@ -2,7 +2,7 @@
   "about": {
     "content": {
       "A000": "<spleMe/> Important notes",
-      "B010": "<spleMe/> is completely frontend (client side) application (web page). It works only with pseudo-files in browser memory.<br />See also <spleDesktop/> at <linkVer>GutHub repo</linkVer>.",
+      "B010": "<spleMe/> is completely frontend (client side) application (web page). It works only with pseudo-files in browser memory.<br/>See also <spleDesktop/> at <linkVer>GutHub repo</linkVer>.",
       "B020": {
         "I010": "After you opened existing file, it becomes in-memory copy of the original file. Technically you are uploading your local file to a web page.",
         "I020": "In-memory files you opened or created from scratch are <b>NOT</b> related to regular files out of browser.",
@@ -42,11 +42,11 @@
       "Save": "Save file from memory"
     },
     "closeFileSave": {
-      "Confirm": "Are you sure you want to remove file \"<b>{filename}</b>\" from memory?<br />You will loss all changes in the file. Consider download it first to backup.<br /><b>This action can not be undone.</b>",
+      "Confirm": "Are you sure you want to remove file \"<b>{filename}</b>\" from memory?<br/>You will loss all changes in the file. Consider download it first to backup.<br/><b>This action can not be undone.</b>",
       "OK": "Forget \"{filename}\""
     },
     "closeOthersSave": {
-      "Confirm": "Are you sure you want to remove ALL OTHER FILES BUT \"<b>{filename}</b>\" from memory?<br />You will loss all changes in that files. Consider download them first to backup.<br /><b>This action can not be undone.</b>",
+      "Confirm": "Are you sure you want to remove ALL OTHER FILES BUT \"<b>{filename}</b>\" from memory?<br/>You will loss all changes in that files. Consider download them first to backup.<br/><b>This action can not be undone.</b>",
       "OK": "Forget OTHER BUT \"{filename}\""
     },
     "rename": {

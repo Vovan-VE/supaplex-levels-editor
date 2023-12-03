@@ -2,6 +2,7 @@ import { createEvent, createStore } from "effector";
 import { generateKey } from "utils/strings";
 
 // REFACT: the following effector stuff still present in non-web build
+// FIXME: hot reload in dev cause it to switch to SECONDARY
 
 const enum InstanceMode {
   INIT,
