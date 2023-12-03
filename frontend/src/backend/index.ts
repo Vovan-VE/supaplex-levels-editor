@@ -9,8 +9,6 @@ export type {
   FilesStorageItem,
 } from "./internal";
 
-// REFACT: convert to `() => IBackend`
-
 export const init: B.Init = IS_WAILS ? wails.init : web.init;
 
 export const configStorage: B.ConfigStorage = IS_WAILS
