@@ -20,7 +20,7 @@
     "url": "https://github.com/Vovan-VE/supaplex-levels-editor/issues"
   },
   "scripts": {
-    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "analyze": "npm exec --yes -- source-map-explorer@^2 'build/static/js/*.js'",
     "i18n:ci": "npm exec --yes -- i18next-parser@^8 -s --fail-on-update",
     "i18n:extract": "npm exec --yes -- i18next-parser@^8",
     "prepare": "npm ls husky > /dev/null && cd .. && husky install || exit 0",
@@ -71,8 +71,7 @@
   "devDependencies": {
     "husky": "^8.0.3",
     "lint-staged": "^15.1.0",
-    "prettier": "3.1.0",
-    "source-map-explorer": "^2.5.3"
+    "prettier": "3.1.0"
   },
   "engines": {
     "node": ">=18"
