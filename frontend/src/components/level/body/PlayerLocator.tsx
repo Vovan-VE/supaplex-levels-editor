@@ -1,10 +1,10 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { $playerPos, scrollToPlayer } from "models/levelsets";
 import cl from "./PlayerLocator.module.scss";
 
 export const PlayerLocator: FC = () => {
-  const pos = useStore($playerPos);
+  const pos = useUnit($playerPos);
   const anchor = useRef<HTMLDivElement | null>(null);
   const [id, setId] = useState(0);
   useEffect(() => scrollToPlayer.watch(() => setId((n) => n + 1)), []);

@@ -1,5 +1,5 @@
 import { FC, useEffect } from "react";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { NoFileSelected, NoLevelSelected } from "components/common";
 import { LevelBody } from "components/level/body";
 import { Loading } from "components/page";
@@ -27,9 +27,9 @@ export const LevelsetEditor: FC = () => {
     };
   }, []);
 
-  const key = useStore($currentKey);
-  const levelsetReady = useStore($currentBufferSelected);
-  const levelIndex = useStore($currentLevelIndex);
+  const key = useUnit($currentKey);
+  const levelsetReady = useUnit($currentBufferSelected);
+  const levelIndex = useUnit($currentLevelIndex);
 
   if (!key) {
     return <NoFileSelected className={cl.root} />;

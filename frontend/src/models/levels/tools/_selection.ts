@@ -3,8 +3,7 @@ import {
   createEffect,
   createEvent,
   createStore,
-  Event,
-  forward,
+  EventCallable,
   sample,
 } from "effector";
 import { IBaseLevel, ILevelRegion } from "drivers";
@@ -224,7 +223,7 @@ const selectFrame = (d: DrawState, level: IBounds): DrawLayerSelectRange => {
   };
 };
 
-const commitOnEnd = (target: Event<any>) => {
+const commitOnEnd = (target: EventCallable<any>) => {
   const willEndWork = createEvent<any>();
   const doEndWork = sample({
     clock: willEndWork,
@@ -244,17 +243,14 @@ const commitOnEnd = (target: Event<any>) => {
     filter: Boolean,
     target: updateLevel,
   });
-  forward({
-    from: doEndWork,
-    to: target,
-  });
+  sample({ source: doEndWork, target });
   return willEndWork;
 };
 
 const externalFree = createEvent<any>();
 const externalRollback = createEvent<any>();
-forward({ from: externalFree, to: commitOnEnd(free) });
-forward({ from: externalRollback, to: commitOnEnd(rollback) });
+sample({ source: externalFree, target: commitOnEnd(free) });
+sample({ source: externalRollback, target: commitOnEnd(rollback) });
 
 export const SELECTION: Tool = {
   internalName: "selection",
@@ -302,16 +298,13 @@ export const SELECTION: Tool = {
 };
 
 const _setState = createEvent<DrawState>();
-forward({ from: _setState, to: $drawState });
+sample({ source: _setState, target: $drawState });
 $isDragging.reset(_setState);
 
 export const $hasSelection = $drawState.map((d) => d?.op === Op.STABLE);
-export const $selectionSize = $drawState.map<IBounds | null>((d, prev) => {
+export const $selectionSize = $drawState.map<IBounds | null>((d) => {
   if (d?.op !== Op.STABLE) {
     return null;
-  }
-  if (prev?.width === d.width && prev.height === d.height) {
-    return prev;
   }
   return { width: d.width, height: d.height };
 });
@@ -319,18 +312,12 @@ const $selectionSizeHash = $selectionSize.map(
   (s) => s && (`${s.width}x${s.height}` as const),
 );
 
-export const $selectionRect = $drawState.map<Rect | null>((d, prev) => {
+export const $selectionRect = $drawState.map<Rect | null>((d) => {
   if (!d || d.op !== Op.STABLE) {
     return null;
   }
   const { x, y, width, height } = d;
-  return prev &&
-    prev.x === x &&
-    prev.y === y &&
-    prev.width === width &&
-    prev.height === height
-    ? prev
-    : { x, y, width, height };
+  return { x, y, width, height };
 });
 
 export const deleteSelectionFx = createEffect(async () => {

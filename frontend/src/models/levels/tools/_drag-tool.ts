@@ -2,7 +2,6 @@ import {
   createEvent,
   createStore,
   Event,
-  forward,
   merge,
   sample,
   split,
@@ -77,16 +76,17 @@ export const createDragTool = <DrawProps, DrawState>({
 
   const free = createEvent<any>();
   const rollback = createEvent<any>();
-  forward({ from: free, to: rollback });
+  sample({ source: free, target: rollback });
   const doCommit = createEvent<DrawEndCommit>();
   const didCommit = createEvent<any>();
   const doContinue = createEvent<DrawEndContinue<DrawState>>();
 
   const setVariant = createEvent<number>();
-  const $variant = createStore<number>(0).on(setVariant, (_, n) => {
+  const $variant = createStore<number>(0).on(setVariant, (prev, n) => {
     if (n >= 0 && n < VARIANTS.length) {
       return n;
     }
+    return prev;
   });
 
   const doStart = createEvent<IStart>();
@@ -214,7 +214,7 @@ export const createDragTool = <DrawProps, DrawState>({
     fn: (r) => r.level,
     target: updateCurrentLevel,
   });
-  forward({ from: doCommit, to: didCommit });
+  sample({ source: doCommit, target: didCommit });
 
   const eventsIdle: GridEventsProps = {
     onPointerDown: (e, cell) => {

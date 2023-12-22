@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Trans } from "i18n/Trans";
@@ -26,7 +26,7 @@ export const LayoutChoice: FC = () => {
     <Field labelElement="div" label={t("main:settings.layout.Label")}>
       <RadioGroup
         options={OPTIONS}
-        value={useStore($layoutType)}
+        value={useUnit($layoutType)}
         onChange={setLayoutType}
         flowInline
       />

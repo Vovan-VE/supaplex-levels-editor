@@ -1,5 +1,5 @@
 import { createStore } from "effector";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { onUpgradeAvailable } from "backend";
@@ -42,12 +42,13 @@ if (onUpgradeAvailable) {
       if (cmpVer(prev || (APP_VERSION ?? ""), next) < 0) {
         return next;
       }
+      return prev;
     },
   );
 
   UpgradeLink = (props) => {
     const { t } = useTranslation();
-    const upgradeAvailable = useStore($upgradeAvailable);
+    const upgradeAvailable = useUnit($upgradeAvailable);
     return upgradeAvailable ? (
       <TextButton
         {...props}

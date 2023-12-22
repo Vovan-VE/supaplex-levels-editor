@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { allowManualSave } from "backend";
@@ -27,7 +27,7 @@ interface Props {
 
 const SaveFlushButton: FC = () => {
   const { t } = useTranslation();
-  const isDirty = useStore($currentFileIsDirty);
+  const isDirty = useUnit($currentFileIsDirty);
   return (
     <Button
       uiColor={ColorType.SUCCESS}
@@ -41,9 +41,9 @@ const SaveFlushButton: FC = () => {
 
 export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
   const { t } = useTranslation();
-  const hasLocalOptions = useStore($currentFileHasLocalOptions);
-  const hasOtherFiles = useStore($hasOtherFiles);
-  const isFileOpened = useStore($isFileOpened);
+  const hasLocalOptions = useUnit($currentFileHasLocalOptions);
+  const hasOtherFiles = useUnit($hasOtherFiles);
+  const isFileOpened = useUnit($isFileOpened);
 
   const saveAsButton = (
     <Button

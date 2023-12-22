@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { useTranslation } from "react-i18next";
 import { ReactComponent as MurphySad } from "assets/img/murphy-sad.svg";
 import { useTileCoordsDisplay } from "components/settings/display";
@@ -9,7 +9,7 @@ import { TextButton } from "ui/button";
 
 export const FindPlayerButton = () => {
   const { t } = useTranslation();
-  const playerPos = useStore($playerPos);
+  const playerPos = useUnit($playerPos);
   const posStr = useTileCoordsDisplay(
     playerPos ? { x: playerPos[0], y: playerPos[1] } : { x: 0, y: 0 },
   );

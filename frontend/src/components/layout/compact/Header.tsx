@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { ReactComponent as GitHubLogo } from "assets/img/github.svg";
@@ -41,10 +41,10 @@ interface Props extends ContainerProps {}
 
 export const Header: FC<Props> = (props) => {
   const { t } = useTranslation();
-  const key = useStore($currentKey);
-  const levelsetReady = useStore($currentBufferSelected);
-  const levelsetLevelsCount = useStore($currentBufferLevelsCount);
-  const levelIndex = useStore($currentLevelIndex);
+  const key = useUnit($currentKey);
+  const levelsetReady = useUnit($currentBufferSelected);
+  const levelsetLevelsCount = useUnit($currentBufferLevelsCount);
+  const levelIndex = useUnit($currentLevelIndex);
 
   return (
     <header {...props}>

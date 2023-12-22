@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { $displayReadOnly } from "backend";
@@ -13,7 +13,7 @@ import cl from "./FlushIndicator.module.scss";
 
 const displayReadOnly = !!$displayReadOnly;
 const useDisplayRO = displayReadOnly
-  ? () => useStore($displayReadOnly!)
+  ? () => useUnit($displayReadOnly!)
   : () => false;
 
 interface Props extends ContainerProps {}
@@ -21,8 +21,8 @@ interface Props extends ContainerProps {}
 export const FlushIndicator: FC<Props> = ({ className, ...rest }) => {
   const { t } = useTranslation();
   const readOnly = useDisplayRO();
-  const isPending = useStore($isFlushPending);
-  const error = useStore($flushError);
+  const isPending = useUnit($isFlushPending);
+  const error = useUnit($flushError);
 
   const handleErrorClick = useMemo(
     () =>

@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { InlineTile } from "drivers/supaplex/InlineTile";
@@ -37,7 +37,7 @@ export const SpChips: FC = () => {
     <Field label={t("main:settings.doubleChip.Label")}>
       <RadioGroup
         options={OPTIONS}
-        value={useStore($spChip)}
+        value={useUnit($spChip)}
         onChange={setSpChip}
       />
     </Field>

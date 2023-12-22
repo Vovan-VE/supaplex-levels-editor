@@ -1,5 +1,5 @@
 import { FC, useCallback } from "react";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import {
   IBaseLevel,
   Interaction,
@@ -10,7 +10,7 @@ import { $interactions, removeInteraction } from "models/levels";
 import { $currentLevelUndoQueue, updateCurrentLevel } from "models/levelsets";
 
 export const DriverInteractions: FC = () => {
-  const interactions = useStore($interactions);
+  const interactions = useUnit($interactions);
 
   return (
     <>
@@ -40,7 +40,7 @@ const IDialog: FC<IProps<InteractionDialog<IBaseLevel>>> = ({
   interaction,
 }) => {
   const { Component, cell } = interaction;
-  const level = useStore($currentLevelUndoQueue)!.current;
+  const level = useUnit($currentLevelUndoQueue)!.current;
 
   const onCancel = useCallback(
     () => removeInteraction(interaction),

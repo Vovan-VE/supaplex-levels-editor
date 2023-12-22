@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC } from "react";
 import { Trans } from "i18n/Trans";
 import { $hasFiles } from "models/levelsets";
@@ -21,7 +21,7 @@ const components = {
 };
 
 export const NoFileSelected: FC<ContainerProps> = ({ className, ...rest }) => {
-  const hasFiles = useStore($hasFiles);
+  const hasFiles = useUnit($hasFiles);
   const isCompact = useFinalLayoutIsCompact();
 
   return (

@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC } from "react";
 import { TilesToolbar } from "components/level/toolbars/TilesToolbar";
 import { getDriver } from "drivers";
@@ -8,10 +8,10 @@ import { ButtonDropdown } from "ui/button";
 import cl from "./TilesButton.module.scss";
 
 export const TilesButton: FC = () => {
-  const driverName = useStore($currentDriverName)!;
+  const driverName = useUnit($currentDriverName)!;
   const { TileRender } = getDriver(driverName)!;
 
-  const tileIndex = useStore($tileIndex);
+  const tileIndex = useUnit($tileIndex);
 
   return (
     <ButtonDropdown

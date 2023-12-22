@@ -1,5 +1,5 @@
-import { Event, Store } from "effector";
-import { useStore } from "effector-react";
+import { EventCallable, Store } from "effector";
+import { useUnit } from "effector-react";
 import { FC, ReactNode } from "react";
 import { TEST_LEVEL_TITLE } from "configs";
 import { $prefConfirmedTestSO, setPrefAskTestSO } from "models/settings";
@@ -7,7 +7,7 @@ import { Checkbox, Field } from "ui/input";
 
 interface _Confirm {
   state: Store<boolean>;
-  update: Event<boolean>;
+  update: EventCallable<boolean>;
   title: ReactNode;
 }
 
@@ -20,7 +20,7 @@ const invert = ({ state, update, ...rest }: _Confirm): _Confirm => ({
 });
 
 const ConfirmCheckbox: FC<_Confirm> = ({ state, update, title }) => (
-  <Checkbox checked={useStore(state)} onChange={update}>
+  <Checkbox checked={useUnit(state)} onChange={update}>
     {title}
   </Checkbox>
 );

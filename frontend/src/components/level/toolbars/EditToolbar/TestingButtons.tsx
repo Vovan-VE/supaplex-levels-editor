@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ReactComponent as MurphyRuns } from "assets/img/murphy-run-right.svg";
@@ -37,8 +37,8 @@ const VALUES = { SO: TEST_LEVEL_TITLE };
 
 export const TestingButtons: FC = () => {
   const { t } = useTranslation();
-  const undoQueue = useStore($currentLevelUndoQueue)!;
-  const demoSupport = useStore($fileSupportsDemo);
+  const undoQueue = useUnit($currentLevelUndoQueue)!;
+  const demoSupport = useUnit($fileSupportsDemo);
 
   const level = undoQueue.current;
   const hasDemo =
@@ -234,10 +234,10 @@ const ConfirmSO: FC<
   PropsWithChildren<{ toDoWhat: string } & Partial<LevelEditProps<IBaseLevel>>>
 > = ({ toDoWhat, level, onChange, children }) => {
   const { t } = useTranslation();
-  // const confirmed = useStore($prefConfirmedTestSO);
+  // const confirmed = useUnit($prefConfirmedTestSO);
 
   const { LevelLocalOptions, applyLocalOptions } = getDriver(
-    useStore($currentDriverName)!,
+    useUnit($currentDriverName)!,
   )!;
 
   const optionsAsCode = useMemo(() => {
@@ -311,7 +311,7 @@ const ConfirmSO: FC<
 
 const ConfirmTestSO: ConfirmFC = ({ level, onChange }) => {
   const { t } = useTranslation();
-  const demoSupport = useStore($fileSupportsDemo);
+  const demoSupport = useUnit($fileSupportsDemo);
 
   // REFACT: remove this when resolved outside
   const [_level, _setLevel] = useState(level);

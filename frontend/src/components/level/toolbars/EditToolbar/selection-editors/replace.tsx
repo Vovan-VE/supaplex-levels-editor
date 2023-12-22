@@ -1,5 +1,5 @@
 import { createEvent, restore } from "effector";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { TileSelect } from "components/driver/TileSelect";
@@ -27,7 +27,7 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
-  const driverName = useStore($currentDriverName)!;
+  const driverName = useUnit($currentDriverName)!;
   const { tempLevelFromRegion, tiles } = getDriver(driverName)!;
   const tempLevel = useMemo(
     () => tempLevelFromRegion(region),
@@ -35,9 +35,9 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
   );
   const tileVariants = useMemo(() => getTilesVariantsMap(tiles), [tiles]);
 
-  const searchTile = useStore($searchTile);
-  const replaceTile = useStore($replaceTile);
-  const keepVariants = useStore($keepVariants);
+  const searchTile = useUnit($searchTile);
+  const replaceTile = useUnit($replaceTile);
+  const keepVariants = useUnit($keepVariants);
 
   const handleSubmit = useCallback(() => {
     const { width, height } = tempLevel;

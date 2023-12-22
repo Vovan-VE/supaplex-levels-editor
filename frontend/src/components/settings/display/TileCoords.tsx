@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, ReactNode } from "react";
 import { $coordsDisplayBasis } from "models/settings";
 
@@ -22,7 +22,7 @@ const useTileCoordsDisplayCustom = <T,>({
   base,
   format,
 }: PropsCustom<T>) => {
-  const b = useStore($coordsDisplayBasis);
+  const b = useUnit($coordsDisplayBasis);
   base ??= b;
   return format(base + x, base + y, BASE[base]);
 };

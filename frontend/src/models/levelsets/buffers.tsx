@@ -4,7 +4,6 @@ import {
   createEvent,
   createStore,
   Event,
-  forward,
   restore,
   sample,
   Store,
@@ -101,7 +100,10 @@ const _closeOtherLevels = createEvent<_LevelRefStrict>();
  * Set current level with the given index (open it if not yet)
  */
 export const setCurrentLevel = createEvent<number>();
-forward({ from: setCurrentLevel, to: [openLevel, _willSetCurrentLevelFx] });
+sample({
+  source: setCurrentLevel,
+  target: [openLevel, _willSetCurrentLevelFx],
+});
 // open first level after file created/opened
 fileDidOpen.watch((key) => {
   setCurrentLevelset(key);
@@ -240,6 +242,7 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
           currentIndex: opened?.current,
         });
       }
+      return map;
     },
   )
   // switch per-level "is opened" state
@@ -687,19 +690,7 @@ let _$dirtyKeys: Store<ReadonlySet<FilesStorageKey>>;
       ),
   );
   _$dirtyKeys = _$changedLevelsets.map<ReadonlySet<FilesStorageKey>>(
-    (map, prev) => {
-      const next = new Set(map.keys());
-      // REFACT: RoSet.syncFrom()
-      if (
-        prev &&
-        prev !== next &&
-        prev.size === next.size &&
-        Array.from(prev).every((v) => next.has(v))
-      ) {
-        return prev;
-      }
-      return next;
-    },
+    (map) => new Set(map.keys()),
   );
 
   // auto trigger flush for all after buffers changed
@@ -1086,6 +1077,7 @@ const $cmpFirstLevelRef = restore(setCmpFirstLevelRef, null)
         return null;
       }
     }
+    return ref;
   })
   .on(_deleteLevel, (ref, del) => {
     if (ref) {
@@ -1100,6 +1092,7 @@ const $cmpFirstLevelRef = restore(setCmpFirstLevelRef, null)
         }
       }
     }
+    return ref;
   })
   .on(_deleteRestLevels, (ref, del) => {
     if (ref) {
@@ -1109,6 +1102,7 @@ const $cmpFirstLevelRef = restore(setCmpFirstLevelRef, null)
         return null;
       }
     }
+    return ref;
   })
   .on(_insertAtCurrentLevel, (ref, ins) => {
     if (ref) {
@@ -1118,6 +1112,7 @@ const $cmpFirstLevelRef = restore(setCmpFirstLevelRef, null)
         return [key, index + 1];
       }
     }
+    return ref;
   });
 export const $cmpLevelHasFirst = $cmpFirstLevelRef.map(Boolean);
 export const $cmpLevelFirstTitle = combine(

@@ -1,5 +1,5 @@
 import { createEffect, restore, sample } from "effector";
-import { createGate, useStore } from "effector-react";
+import { createGate, useUnit } from "effector-react";
 import { FC } from "react";
 import { APP_TITLE } from "configs";
 import { Trans } from "i18n/Trans";
@@ -43,6 +43,6 @@ export const InfoDetails: FC = () => (
       <Trans i18nKey="desktop:about.content.C000" />
     </h3>
     <FetchGate />
-    <pre>{useStore($appInfo)}</pre>
+    <pre>{useUnit($appInfo)}</pre>
   </>
 );

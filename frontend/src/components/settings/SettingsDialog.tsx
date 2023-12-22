@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { allowManualSave } from "backend";
@@ -13,7 +13,7 @@ import { SpChips } from "./SpChips";
 
 export const SettingsDialog: FC = () => {
   const { t } = useTranslation();
-  const opened = useStore($opened);
+  const opened = useUnit($opened);
 
   return (
     <Dialog

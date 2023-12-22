@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, FormEventHandler, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TileSelect } from "components/driver/TileSelect";
@@ -26,12 +26,12 @@ interface Props extends RenderPromptProps<true> {}
 
 const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const { t } = useTranslation();
-  const driverName = useStore($currentDriverName);
+  const driverName = useUnit($currentDriverName);
   const { resizable } = getDriverFormat(
     driverName!,
-    useStore($currentDriverFormat)!,
+    useUnit($currentDriverFormat)!,
   )!;
-  const undoQueue = useStore($currentLevelUndoQueue)!;
+  const undoQueue = useUnit($currentLevelUndoQueue)!;
   const rawLevel = undoQueue.current;
   useEffect(() => onCancel, [rawLevel, onCancel]);
 

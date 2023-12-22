@@ -1,6 +1,6 @@
 import cn from "classnames";
 import { createEvent, createStore } from "effector";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import * as RoMap from "@cubux/readonly-map";
@@ -50,15 +50,15 @@ const RndEditor: FC<SelectionEditorProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
-  const driverName = useStore($currentDriverName)!;
+  const driverName = useUnit($currentDriverName)!;
   const { tempLevelFromRegion, tiles, TileRender } = getDriver(driverName)!;
   const tempLevel = useMemo(
     () => tempLevelFromRegion(region),
     [region, tempLevelFromRegion],
   );
 
-  const prob = useStore($probabilities);
-  const total = useStore($total);
+  const prob = useUnit($probabilities);
+  const total = useUnit($total);
 
   const tilesSorted = useMemo(
     () =>

@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, PropsWithChildren } from "react";
 import { SpChipClassic, SpChipWinplex } from "drivers/supaplex/Tile";
 import { $spChip } from "models/settings";
@@ -13,7 +13,7 @@ const CL_SP_CHIP = [SpChipClassic, SpChipWinplex];
 
 export const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
   const isCompact = useFinalLayoutIsCompact();
-  const spChip = useStore($spChip);
+  const spChip = useUnit($spChip);
 
   return (
     <div

@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import {
   FC,
   FormEventHandler,
@@ -24,7 +24,7 @@ interface Props extends RenderPromptProps<string> {}
 
 const SelectFormat: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const { t } = useTranslation();
-  const file = useStore($currentLevelsetFile);
+  const file = useUnit($currentLevelsetFile);
   useEffect(() => {
     if (!file) {
       onCancel();

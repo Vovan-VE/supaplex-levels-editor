@@ -1,5 +1,5 @@
 import { createEvent, restore } from "effector";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Trans } from "i18n/Trans";
@@ -29,9 +29,9 @@ const setSort = createEvent<SortBy>();
 const $sort = restore(setSort, SortBy.Definition);
 
 const Stats: FC = () => {
-  // const tiles = useStore($drvTiles)!;
-  const TileRender = useStore($drvTileRender)!;
-  const level = useStore($currentLevelUndoQueue)!.current;
+  // const tiles = useUnit($drvTiles)!;
+  const TileRender = useUnit($drvTileRender)!;
+  const level = useUnit($currentLevelUndoQueue)!.current;
 
   const [byDefinition, byCount] = useMemo(() => {
     const counts = new Map<number, number>();
@@ -48,7 +48,7 @@ const Stats: FC = () => {
     ];
   }, [level]);
 
-  const sort = useStore($sort);
+  const sort = useUnit($sort);
   const nf = new Intl.NumberFormat();
 
   return (

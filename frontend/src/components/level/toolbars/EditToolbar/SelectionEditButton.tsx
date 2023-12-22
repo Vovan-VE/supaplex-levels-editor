@@ -1,5 +1,5 @@
 import { combine } from "effector";
-import { useList, useStore } from "effector-react";
+import { useList, useUnit } from "effector-react";
 import { FC, Fragment, ReactElement } from "react";
 import * as RoMap from "@cubux/readonly-map";
 import { ILevelRegion } from "drivers";
@@ -162,10 +162,10 @@ export const SelectionEditHotKeys: FC = () => (
 );
 
 export const SelectionEditMenu: FC = () => {
-  const hasSelection = useStore($hasSelection);
+  const hasSelection = useUnit($hasSelection);
 
-  const cannotWork = useStore($cannotWork);
-  const run = useStore($run);
+  const cannotWork = useUnit($cannotWork);
+  const run = useUnit($run);
 
   return (
     <Toolbar isMenu>
@@ -206,7 +206,7 @@ export const SelectionEditButton: FC = () => (
     <SelectionEditHotKeys />
     <ButtonDropdown
       triggerIcon={<svgs.EditSelection />}
-      buttonProps={{ disabled: !useStore($hasSelection) }}
+      buttonProps={{ disabled: !useUnit($hasSelection) }}
     >
       <SelectionEditMenu />
     </ButtonDropdown>

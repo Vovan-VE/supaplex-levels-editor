@@ -107,6 +107,7 @@ const $demoTarget = createStore<_DemoTarget | null>(null)
         levelIndex: cur.levelIndex + 1,
       };
     }
+    return cur;
   })
   // delete current level
   .on(takeLevelRef(deleteCurrentLevel), (cur, o) => {
@@ -126,6 +127,7 @@ const $demoTarget = createStore<_DemoTarget | null>(null)
         };
       }
     }
+    return cur;
   });
 
 sample({

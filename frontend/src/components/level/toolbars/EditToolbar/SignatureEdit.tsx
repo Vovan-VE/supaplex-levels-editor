@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import {
   ChangeEventHandler,
   FC,
@@ -34,14 +34,14 @@ type _TC = ChangeEventHandler<HTMLTextAreaElement>;
 
 const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const { t } = useTranslation();
-  const driverName = useStore($currentDriverName)!;
+  const driverName = useUnit($currentDriverName)!;
   const { DemoToTextConfig, DemoToTextHelp, demoToText, demoFromText } =
     getDriver(driverName)!;
   const { signatureMaxLength } = getDriverFormat(
     driverName,
-    useStore($currentDriverFormat)!,
+    useUnit($currentDriverFormat)!,
   )!;
-  const level = useStore($currentLevelUndoQueue)!.current;
+  const level = useUnit($currentLevelUndoQueue)!.current;
   const [demo, setDemo] = useState(() =>
     levelSupportsDemo(level) ? level.demo : null,
   );

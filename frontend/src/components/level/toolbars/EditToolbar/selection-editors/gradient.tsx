@@ -1,5 +1,5 @@
 import { createEvent, restore } from "effector";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { TileSelect } from "components/driver/TileSelect";
@@ -56,16 +56,16 @@ const GradientEditor: FC<SelectionEditorProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
-  const driverName = useStore($currentDriverName)!;
+  const driverName = useUnit($currentDriverName)!;
   const { tempLevelFromRegion } = getDriver(driverName)!;
   const tempLevel = useMemo(
     () => tempLevelFromRegion(region),
     [region, tempLevelFromRegion],
   );
 
-  const fromTile = useStore($fromTile);
-  const toTile = useStore($toTile);
-  const direction = useStore($direction);
+  const fromTile = useUnit($fromTile);
+  const toTile = useUnit($toTile);
+  const direction = useUnit($direction);
 
   const handleSubmit = useCallback(() => {
     const { width, height } = tempLevel;

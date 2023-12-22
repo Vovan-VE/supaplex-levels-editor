@@ -1,7 +1,7 @@
 import { FC, Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { getTilesForToolbar } from "drivers";
 import { $drvTileRender, $drvTiles, $tileIndex, setTile } from "models/levels";
 import { TextButton, Toolbar } from "ui/button";
@@ -12,8 +12,8 @@ interface Props extends ContainerProps {}
 
 export const TilesToolbar: FC<Props> = ({ className, ...rest }) => {
   const { t } = useTranslation();
-  const TileRender = useStore($drvTileRender)!;
-  const tiles = useStore($drvTiles)!;
+  const TileRender = useUnit($drvTileRender)!;
+  const tiles = useUnit($drvTiles)!;
   const tilesSorted = useMemo(
     () =>
       getTilesForToolbar(tiles).filter(
@@ -23,7 +23,7 @@ export const TilesToolbar: FC<Props> = ({ className, ...rest }) => {
     [tiles],
   );
 
-  const tileIndex = useStore($tileIndex);
+  const tileIndex = useUnit($tileIndex);
   const handleTile = useMemo(
     () =>
       Array.from({ length: tiles.length }).map((_, n) => () => {

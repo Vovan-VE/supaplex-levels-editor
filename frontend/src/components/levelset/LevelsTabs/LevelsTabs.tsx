@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useMemo } from "react";
 import {
   $currentBuffer,
@@ -10,8 +10,8 @@ import { ContainerProps } from "ui/types";
 import { fmtLevelShort } from "../fmt";
 
 export const LevelsTabs: FC<ContainerProps> = (props) => {
-  const levelset = useStore($currentBuffer)!;
-  const openedIndices = useStore($currentOpenedIndices);
+  const levelset = useUnit($currentBuffer)!;
+  const openedIndices = useUnit($currentOpenedIndices);
 
   const levelsCount = levelset.levels.length;
   const levelsCountDigits = String(levelsCount).length;

@@ -3,7 +3,6 @@ import {
   createEffect,
   createEvent,
   createStore,
-  forward,
   sample,
 } from "effector";
 import { withPersistent, withPersistentMap } from "@cubux/effector-persistent";
@@ -209,10 +208,7 @@ const _willSetCurrentKeyFx = createEffect((next: FilesStorageKey | null) => {
 });
 const _unsetCurrentKey = createEvent();
 const _setCurrentKey = createEvent<FilesStorageKey | null>();
-forward({
-  from: setCurrentLevelset,
-  to: _willSetCurrentKeyFx,
-});
+sample({ source: setCurrentLevelset, target: _willSetCurrentKeyFx });
 /**
  * Key of current selected file within `$levelsets`
  */
@@ -341,6 +337,7 @@ export const $levelsets = withPersistentMap(
         return new Map([[key, v]]);
       }
     }
+    return map;
   })
   .on(sortLevelsets, (map, keys) =>
     updateOrders(

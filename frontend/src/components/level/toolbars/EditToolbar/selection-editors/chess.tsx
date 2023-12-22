@@ -1,5 +1,5 @@
 import { createEvent, restore } from "effector";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { TileSelect } from "components/driver/TileSelect";
@@ -26,15 +26,15 @@ const ChessEditor: FC<SelectionEditorProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
-  const driverName = useStore($currentDriverName)!;
+  const driverName = useUnit($currentDriverName)!;
   const { tempLevelFromRegion } = getDriver(driverName)!;
   const tempLevel = useMemo(
     () => tempLevelFromRegion(region),
     [region, tempLevelFromRegion],
   );
 
-  const firstTile = useStore($firstTile);
-  const secondTile = useStore($secondTile);
+  const firstTile = useUnit($firstTile);
+  const secondTile = useUnit($secondTile);
 
   const handleSubmit = useCallback(() => {
     const { width, height } = tempLevel;

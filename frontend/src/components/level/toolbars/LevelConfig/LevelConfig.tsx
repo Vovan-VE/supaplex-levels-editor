@@ -1,6 +1,6 @@
 import { FC, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { canResize, getDriverFormat } from "drivers";
 import {
   $currentDriverFormat,
@@ -22,12 +22,12 @@ interface Props {
 
 export const LevelConfig: FC<Props> = ({ onDidResize }) => {
   const { t } = useTranslation();
-  const driverName = useStore($currentDriverName)!;
+  const driverName = useUnit($currentDriverName)!;
   const { resizable } = getDriverFormat(
     driverName,
-    useStore($currentDriverFormat)!,
+    useUnit($currentDriverFormat)!,
   )!;
-  const undoQueue = useStore($currentLevelUndoQueue)!;
+  const undoQueue = useUnit($currentLevelUndoQueue)!;
   const rawLevel = undoQueue.current;
 
   const handleResizeClick = useCallback(async () => {

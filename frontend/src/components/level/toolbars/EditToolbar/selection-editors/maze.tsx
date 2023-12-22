@@ -1,5 +1,5 @@
 import { createEvent, restore } from "effector";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { TileSelect } from "components/driver/TileSelect";
@@ -46,7 +46,7 @@ const MazeEditor: FC<SelectionEditorProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
-  const driverName = useStore($currentDriverName)!;
+  const driverName = useUnit($currentDriverName)!;
   const { tempLevelFromRegion } = getDriver(driverName)!;
   const tempLevel = useMemo(
     () => tempLevelFromRegion(region),
@@ -56,9 +56,9 @@ const MazeEditor: FC<SelectionEditorProps> = ({
   const mazeWidth = Math.floor((tempLevel.width + 1) / 2);
   const mazeHeight = Math.floor((tempLevel.height + 1) / 2);
 
-  const wallTile = useStore($wallTile);
-  const wayTile = useStore($wayTile);
-  const branchLength = useStore($branchLength);
+  const wallTile = useUnit($wallTile);
+  const wayTile = useUnit($wayTile);
+  const branchLength = useUnit($branchLength);
 
   const handleSubmit = useCallback(() => {
     const { width, height } = tempLevel;

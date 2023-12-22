@@ -1,6 +1,6 @@
 import { FC, useMemo } from "react";
 import cn from "classnames";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { allowManualSave, FilesStorageKey } from "backend";
 import {
   $currentKey,
@@ -21,9 +21,9 @@ const $files = $levelsets.map((m) =>
 );
 
 export const EditorTabs: FC<Props> = ({ className, ...rest }) => {
-  const levelsets = useStore($files);
-  const currentKey = useStore($currentKey);
-  const dirtyKeys = useStore($dirtyKeys);
+  const levelsets = useUnit($files);
+  const currentKey = useUnit($currentKey);
+  const dirtyKeys = useUnit($dirtyKeys);
 
   const tabs = useMemo(
     () =>

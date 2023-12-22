@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { TFunction } from "i18next";
 import { FC, useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -68,8 +68,8 @@ const handleClicks = TOOLS.map(({ variants }, ti) =>
 
 export const EditorToolsSimple: FC<ContainerProps> = (props) => {
   const { t } = useTranslation();
-  const toolIndex = useStore($toolIndex);
-  const variantIndex = useStore($toolVariant);
+  const toolIndex = useUnit($toolIndex);
+  const variantIndex = useUnit($toolVariant);
   return (
     <Toolbar {...props}>
       {TOOLS.map(({ variants }, ti) =>

@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { $currentLevelUndoQueue, redoCurrentLevel } from "models/levelsets";
@@ -67,9 +67,9 @@ interface Props {
 
 export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
   const { t } = useTranslation();
-  const undoQueue = useStore($currentLevelUndoQueue)!;
-  const noSelection = !useStore($hasSelection);
-  const clipboardSize = useStore($clipboardRegionSizeStr);
+  const undoQueue = useUnit($currentLevelUndoQueue)!;
+  const noSelection = !useUnit($hasSelection);
+  const clipboardSize = useUnit($clipboardRegionSizeStr);
 
   useHotKey({
     shortcut: HK_REDO,

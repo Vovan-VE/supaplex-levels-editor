@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -32,8 +32,8 @@ interface Props {
 export const ZoomButtons: FC<Props> = ({ btnClassName, space }) => {
   const { t } = useTranslation();
 
-  const canZoomIn = useStore($bodyScaleCanInc);
-  const canZoomOut = useStore($bodyScaleCanDec);
+  const canZoomIn = useUnit($bodyScaleCanInc);
+  const canZoomOut = useUnit($bodyScaleCanDec);
 
   useHotKey({
     shortcut: HK_ZOOM_IN,

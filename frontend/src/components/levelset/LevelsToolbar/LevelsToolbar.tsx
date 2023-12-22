@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { openFile } from "backend";
@@ -94,16 +94,16 @@ const handleImportLevelClick = () =>
 export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
   const { t } = useTranslation();
   const format = getDriverFormat(
-    useStore($currentDriverName)!,
-    useStore($currentDriverFormat)!,
+    useUnit($currentDriverName)!,
+    useUnit($currentDriverFormat)!,
   );
   const {
     minLevelsCount = 1,
     maxLevelsCount = null,
     demoSupport = false,
   } = format || {};
-  const levelset = useStore($currentBuffer)!;
-  const level = useStore($currentLevel);
+  const levelset = useUnit($currentBuffer)!;
+  const level = useUnit($currentLevel);
   const hasDemo = Boolean(
     level &&
       ((lvl = level.level.undoQueue.current) =>
@@ -113,7 +113,7 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
   const levelsCount = levelset.levels.length;
   const levelsCountDigits = String(levelsCount).length;
 
-  const hasOtherOpened = useStore($currentBufferHasOtherOpened);
+  const hasOtherOpened = useUnit($currentBufferHasOtherOpened);
 
   const levelFullReference =
     level &&

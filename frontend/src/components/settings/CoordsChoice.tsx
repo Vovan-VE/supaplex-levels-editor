@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Trans } from "i18n/Trans";
@@ -39,7 +39,7 @@ export const CoordsChoice: FC = () => {
     <Field labelElement="div" label={t("main:settings.coords.Label")}>
       <RadioGroup
         options={OPTIONS}
-        value={useStore($coordsDisplayBasis)}
+        value={useUnit($coordsDisplayBasis)}
         onChange={setCoordsDisplayBasis}
       />
     </Field>

@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import {
   ChangeEventHandler,
   FC,
@@ -31,7 +31,7 @@ interface Props {
 
 const LevelsListDialog: FC<Props> = ({ show, onSubmit }) => {
   const { t } = useTranslation();
-  const key = useStore($currentKey);
+  const key = useUnit($currentKey);
   // close dialog when current file switched somehow
   useEffect(() => {
     if (key) {
@@ -40,8 +40,8 @@ const LevelsListDialog: FC<Props> = ({ show, onSubmit }) => {
     onSubmit();
   }, [key, onSubmit]);
 
-  const filename = useStore($currentFileName);
-  const levelset = useStore($currentBuffer);
+  const filename = useUnit($currentFileName);
+  const levelset = useUnit($currentBuffer);
   const index = levelset?.currentIndex;
   const levels = levelset?.levels;
   const allTitles = useMemo(

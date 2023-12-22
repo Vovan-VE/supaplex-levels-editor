@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, memo, ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { fmtLevelNumber } from "components/levelset";
@@ -50,8 +50,8 @@ export const CmpLevelsButton: FC = () => {
   return (
     <Button
       icon={<svgs.Cmp />}
-      uiColor={useStore($cmpLevelHasFirst) ? ColorType.SUCCESS : undefined}
-      title={useStore($cmpLevelFirstTitle)?.(t)}
+      uiColor={useUnit($cmpLevelHasFirst) ? ColorType.SUCCESS : undefined}
+      title={useUnit($cmpLevelFirstTitle)?.(t)}
       onClick={cmpLevelToggle}
     />
   );
@@ -61,7 +61,7 @@ export const CmpLevelsDialog: FC = () => {
   const { t } = useTranslation();
   return (
     <Dialog
-      open={useStore($hasCmpLevelsRefs)}
+      open={useUnit($hasCmpLevelsRefs)}
       onClose={closeCmpLevels}
       title={t("main:cmpLevels.DialogTitle")}
       size="fullscreen"
@@ -72,7 +72,7 @@ export const CmpLevelsDialog: FC = () => {
 };
 
 const CmpLevels: FC = () => {
-  const [first, second] = useStore($cmpLevels)!;
+  const [first, second] = useUnit($cmpLevels)!;
   return (
     <div className={cl.root}>
       <CmpHeading first={first} second={second} />
@@ -110,11 +110,11 @@ const SHAPES = [
 const formatPercent = (n: number) => `${n}%`;
 const CmpHeading: FC<_P> = ({ first, second }) => {
   const { t } = useTranslation();
-  const canZoomOut = useStore($diffCanZoomOut);
-  const canZoomIn = useStore($diffCanZoomIn);
-  const fancyIgnore = useStore($diffFancyIgnore);
-  const tileShape = useStore($diffTileShape);
-  const side = useStore($diffSide);
+  const canZoomOut = useUnit($diffCanZoomOut);
+  const canZoomIn = useUnit($diffCanZoomIn);
+  const fancyIgnore = useUnit($diffFancyIgnore);
+  const tileShape = useUnit($diffTileShape);
+  const side = useUnit($diffSide);
   return (
     <div className={cl.headers}>
       <div className={cl.refs}>
@@ -231,10 +231,10 @@ const CmpBodies: FC<_P> = ({ first, second }) => {
     };
   }, [first, second]);
 
-  const zoom = useStore($diffZoom);
-  const fancyIgnore = useStore($diffFancyIgnore);
-  const tileShape = useStore($diffTileShape);
-  const side = useStore($diffSide);
+  const zoom = useUnit($diffZoom);
+  const fancyIgnore = useUnit($diffFancyIgnore);
+  const tileShape = useUnit($diffTileShape);
+  const side = useUnit($diffSide);
 
   return (
     <div className={cl.bodies}>

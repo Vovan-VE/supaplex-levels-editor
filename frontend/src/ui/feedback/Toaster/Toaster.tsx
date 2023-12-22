@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useEffect, useRef, useState } from "react";
 import {
   $toasts,
@@ -13,7 +13,7 @@ import cl from "./Toaster.module.scss";
 
 export const Toaster: FC = () => (
   <div className={cl.root}>
-    {Array.from(useStore($toasts).values()).map((toast) => (
+    {Array.from(useUnit($toasts).values(), (toast) => (
       <Toast key={toast.id} {...toast} />
     ))}
   </div>

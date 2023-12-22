@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, Fragment } from "react";
 import { EditorTabs, FilesToolbar, FileToolbar } from "components/files";
 import { LevelsHead } from "components/layout/full/Header/LevelsHead";
@@ -16,9 +16,9 @@ import cl from "./Header.module.scss";
 interface Props extends ContainerProps {}
 
 export const Header: FC<Props> = (props) => {
-  const key = useStore($currentKey);
-  const levelsetReady = useStore($currentBufferSelected);
-  const levelIndex = useStore($currentLevelIndex);
+  const key = useUnit($currentKey);
+  const levelsetReady = useUnit($currentBufferSelected);
+  const levelIndex = useUnit($currentLevelIndex);
 
   return (
     <header {...props}>

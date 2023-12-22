@@ -1,4 +1,4 @@
-import { Event, Store } from "effector";
+import { Event, EventCallable, Store } from "effector";
 import { CSSProperties, FC, PointerEvent } from "react";
 import { ITilesRegion } from "drivers";
 import { TranslationGetter } from "i18n/types";
@@ -168,10 +168,10 @@ export interface ToolVariantUI {
 
 export interface Tool {
   internalName: string;
-  init?: Event<any>;
-  free?: Event<any>;
+  init?: EventCallable<any>;
+  free?: EventCallable<any>;
   variants: readonly ToolVariantUI[];
-  setVariant?: Event<number>;
+  setVariant?: EventCallable<number>;
   $variant?: Store<number>;
   $ui: Store<ToolUI>;
 }
