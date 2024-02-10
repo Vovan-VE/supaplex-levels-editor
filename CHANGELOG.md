@@ -2,7 +2,7 @@
 
 ## 0.19.0 (DEV)
 
-- ...
+- Fix: Some UI texts correction in progress. Thanks to Lana Snik-Snak!
 
 ## 0.18.0 (2023-12-01)
 
