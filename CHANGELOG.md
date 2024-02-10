@@ -4,6 +4,10 @@
 
 - Fix: Some UI texts correction in progress. Thanks to Lana Snik-Snak!
 
+### Desktop
+
+- Enh: Wails >= 2.7: A page in WebView now loads faster.
+
 ## 0.18.0 (2023-12-01)
 
 - Add: New SO Special Ports Database support. This brings the following changes:

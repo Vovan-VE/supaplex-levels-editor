@@ -22,12 +22,14 @@
     actually walked.
 - Tooltips with interactive content support.
 - specports
-  - H/V/X port variants in Copy as Image 
+  - H/V/X port variants in Copy as Image
   - H/V/X ports on toolbar should be halved
   - edit whole DB as text
   - limit dialog height, add scroll to sortable list
 - footer info: is std, why not
 - new file: format description: common and per format
+
+- `class UserError extends Error {}`, `new UserError(t => t(...))`
 
 ### Desktop
 
@@ -48,6 +50,14 @@
     to work more intuitive.
 - Clickable "electron" icon to include/exclude n\*9 infotrons needed.
 - BIN demo export/import?
+- Reorder levels in file
+- Replace enh:
+  - multiple "find"
+  - random "replacement"
+- Random: limit 30 is not enough - try use number input
+- Lock for a file - make an opened file read-only
+- 100% offline with level testing and demo replay?
+  - Need run game engine and own offline renderer
 
 ### Desktop
 
