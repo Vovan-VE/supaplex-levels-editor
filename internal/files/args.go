@@ -1,7 +1,6 @@
 package files
 
 import (
-	"encoding/json"
 	"fmt"
 	"path/filepath"
 
@@ -24,61 +23,12 @@ func NormalizeArgs(args []string) (abs []string, err error) {
 	return
 }
 
-const (
-	IpcMessageOpenFile = iota
-	IpcMessageActivate
-)
-
-type IpcMessage struct {
-	Type byte
-	Data []byte
-}
-
-func (i *IpcMessage) String() string {
-	switch i.Type {
-	case IpcMessageOpenFile:
-		return fmt.Sprintf("{OpenFile<%s>}", string(i.Data))
-	case IpcMessageActivate:
-		return "{Activate}"
-	}
-	b, err := json.Marshal(i)
-	if err != nil {
-		return fmt.Sprintf("E<cannot marshal %T: %v>", i, err)
-	}
-	return string(b)
-}
-
-func ArgsToIpc(args []string) (r [][]byte, err error) {
-	var b []byte
+func ResolveArgs(wd string, args []string) (abs []string, err error) {
 	for _, arg := range args {
-		b, err = ArgToIpc(&IpcMessage{
-			Type: IpcMessageOpenFile,
-			Data: []byte(arg),
-		})
-		if err != nil {
-			return
+		if !filepath.IsAbs(arg) {
+			arg = filepath.Join(wd, arg)
 		}
-		r = append(r, b)
+		abs = append(abs, arg)
 	}
-
-	b, err = ArgToIpc(&IpcMessage{
-		Type: IpcMessageActivate,
-	})
-	if err != nil {
-		return
-	}
-	r = append(r, b)
-
 	return
-}
-func ArgToIpc(msg *IpcMessage) ([]byte, error) {
-	return json.Marshal(msg)
-}
-
-func MessageFromIpc(data []byte) (*IpcMessage, error) {
-	var m IpcMessage
-	if err := json.Unmarshal(data, &m); err != nil {
-		return nil, errors.Wrap(err, "Unmarshal")
-	}
-	return &m, nil
 }

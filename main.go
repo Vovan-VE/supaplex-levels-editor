@@ -1,17 +1,12 @@
 package main
 
 import (
-	"context"
 	"embed"
 	"fmt"
-	"os"
 
-	"github.com/pkg/errors"
 	"github.com/vovan-ve/sple-desktop/internal/backend"
 	"github.com/vovan-ve/sple-desktop/internal/config"
-	"github.com/vovan-ve/sple-desktop/internal/files"
 	"github.com/vovan-ve/sple-desktop/internal/logging"
-	"github.com/vovan-ve/sple-desktop/internal/singleton"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -35,21 +30,11 @@ func main() {
 		lg.Fatal(fmt.Sprintf("PANIC recovery: %+v\n", r))
 	}()
 
-	argFiles, argsErr := files.NormalizeArgs(os.Args[1:])
-	if done, err := sendSingletonArgs(argFiles, lg); err != nil {
-		lg.Fatal(fmt.Sprintf("singleton: %v", err))
-	} else if done {
-		lg.Info("The primary instance will do the job. Exiting.")
-		os.Exit(0)
-	}
-
 	lg = logging.GetLogger(logging.ScopeMain)
 
 	// Create an instance of the app structure
 	app := NewApp(&AppOptions{
-		Logger:           lg,
-		StartupOpenFiles: argFiles,
-		StartupError:     argsErr,
+		Logger: lg,
 	})
 
 	// Create application with options
@@ -66,9 +51,13 @@ func main() {
 		Logger:             lg,
 		LogLevel:           logger.DEBUG,
 		LogLevelProduction: logger.WARNING,
-		OnStartup:          app.startup,
-		OnDomReady:         app.domReady,
-		OnBeforeClose:      app.beforeClose,
+		SingleInstanceLock: &options.SingleInstanceLock{
+			UniqueId:               "e692d42c-1713-46ba-b48e-85a34829d654",
+			OnSecondInstanceLaunch: app.secondInstance,
+		},
+		OnStartup:     app.startup,
+		OnDomReady:    app.domReady,
+		OnBeforeClose: app.beforeClose,
 		//OnShutdown:       app.shutdown,
 		Bind: []interface{}{
 			app,
@@ -85,6 +74,7 @@ func main() {
 			IsZoomControlEnabled: false,
 			Theme:                windows.Dark,
 			WebviewUserDataPath:  config.GetConfigsDir(),
+			// TODO: needed? EnableSwipeGestures: true,
 		},
 		Linux: &linux.Options{
 			ProgramName: appTitle,
@@ -97,17 +87,4 @@ func main() {
 	if err != nil {
 		lg.Fatal(err.Error())
 	}
-}
-
-func sendSingletonArgs(args []string, l logger.Logger) (done bool, err error) {
-	l.Debug(fmt.Sprintf("IPC args: %#v", args))
-	messages, err := files.ArgsToIpc(args)
-	if err != nil {
-		return false, errors.Wrap(err, "ArgsToIpc")
-	}
-	done, err = singleton.TrySend(context.TODO(), l, messages)
-	if err != nil {
-		return false, errors.Wrap(err, "TrySend")
-	}
-	return done, nil
 }
