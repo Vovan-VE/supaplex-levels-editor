@@ -17,9 +17,9 @@ import { ReactComponent as SvgMetaPortD } from "./tiles-svg/meta-port-d.svg";
 import { ReactComponent as SvgMetaPortL } from "./tiles-svg/meta-port-l.svg";
 import { ReactComponent as SvgMetaPortR } from "./tiles-svg/meta-port-r.svg";
 import { ReactComponent as SvgMetaPortU } from "./tiles-svg/meta-port-u.svg";
-import { ReactComponent as SvgPortV } from "./tiles-svg/21-15-port-vertical.svg";
-import { ReactComponent as SvgPortH } from "./tiles-svg/22-16-port-horizontal.svg";
-import { ReactComponent as SvgPortX } from "./tiles-svg/23-17-port-cross.svg";
+import { ReactComponent as SvgMetaPortV } from "./tiles-svg/meta-port-v.svg";
+import { ReactComponent as SvgMetaPortH } from "./tiles-svg/meta-port-h.svg";
+import { ReactComponent as SvgMetaPortX } from "./tiles-svg/meta-port-x.svg";
 import { ISupaplexLevel, ISupaplexTile } from "./types";
 
 const specPInt: IBaseTileInteraction<ISupaplexLevel> = {
@@ -71,17 +71,17 @@ const metaPortU: IBaseMetaTile = {
 };
 const metaPortV: IBaseMetaTile = {
   primaryValue: tid.TILE_PORT_V,
-  icon: <SvgPortV />,
+  icon: <SvgMetaPortV />,
   title: metaPortTitle((t) => t("main:supaplex.tiles.PortV")),
 };
 const metaPortH: IBaseMetaTile = {
   primaryValue: tid.TILE_PORT_H,
-  icon: <SvgPortH />,
+  icon: <SvgMetaPortH />,
   title: metaPortTitle((t) => t("main:supaplex.tiles.PortH")),
 };
 const metaPortX: IBaseMetaTile = {
   primaryValue: tid.TILE_PORT_X,
-  icon: <SvgPortX />,
+  icon: <SvgMetaPortX />,
   title: metaPortTitle((t) => t("main:supaplex.tiles.PortX")),
 };
 

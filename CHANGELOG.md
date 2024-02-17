@@ -4,6 +4,7 @@
 
 - Fix: Some UI texts correction in progress. Thanks to Lana Snik-Snak!
 - Fix: H/V/X Ports when set as Special wasn't marked Special in "Copy as Image".
+- Enh: H/V/X Ports in Toolbar are halved too.
 
 ### Desktop
 
