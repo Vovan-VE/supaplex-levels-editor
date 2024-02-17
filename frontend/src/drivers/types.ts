@@ -160,6 +160,7 @@ export interface IBaseTile<L extends IBaseLevel> {
   value: number;
   title: TranslationGetter;
   src?: string;
+  srcVariant?: ReadonlyMap<number, string>;
   metaTile?: IBaseMetaTile;
   toolbarOrder?: number;
   interaction?: IBaseTileInteraction<L>;
