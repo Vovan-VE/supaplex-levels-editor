@@ -23,7 +23,6 @@
 - Tooltips with interactive content support.
 - specports
   - edit whole DB as text
-  - limit dialog height, add scroll to sortable list
 - footer info: is std, why not
 - new file: format description: common and per format
 

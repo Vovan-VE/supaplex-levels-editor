@@ -1,11 +1,21 @@
 @use "styles/themes";
 
+.dialog {
+  max-height: max(510px, calc(100% - 2 * 0.5em));
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
 .root {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
 .list {
   margin-left: -0.5rem;
   margin-right: -0.5rem;
+  overflow-y: auto;
 }
 
 .item {
@@ -13,8 +23,10 @@
   padding: 0 0.5rem;
   display: grid;
   grid-gap: 0.2rem;
-  grid-template-areas: "index xy g z e u handle";
-  grid-template-columns: 2.5rem minmax(5rem, 1fr) repeat(4, 12%) min-content;
+  grid-template-areas: "index tile xy g z e u handle";
+  grid-template-columns:
+    calc(1ch * (var(--idx-chars, 2) + 0.75)) 1.75rem minmax(5rem, 1fr)
+    repeat(4, 12%) min-content;
   align-items: center;
   cursor: auto;
 
@@ -25,10 +37,12 @@
   .index {
     grid-area: index;
   }
+  .tile {
+    grid-area: tile;
+  }
   .xy {
     grid-area: xy;
   }
-  //.tile{}
   .g {
     grid-area: g;
   }

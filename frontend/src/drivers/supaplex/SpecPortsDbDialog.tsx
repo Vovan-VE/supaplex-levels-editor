@@ -1,4 +1,11 @@
-import { forwardRef, useCallback, useMemo, useState } from "react";
+import {
+  createContext,
+  forwardRef,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { TileCoords } from "components/settings/display";
 import { Button, TextButton } from "ui/button";
@@ -6,7 +13,8 @@ import { Dialog, renderPrompt, RenderPromptProps } from "ui/feedback";
 import { svgs } from "ui/icon";
 import { SortableItemProps, SortableList } from "ui/list";
 import { ColorType } from "ui/types";
-import { LevelEditProps } from "../types";
+import { ITilesRegion, LevelEditProps } from "../types";
+import { InlineTile } from "./InlineTile";
 import { ISupaplexSpecPortRecord } from "./internal";
 import { isDbEqualToArray, newSpecPortsDatabase } from "./specPortsDb";
 import { ISupaplexLevel } from "./types";
@@ -63,6 +71,7 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
           <Button onClick={onCancel}>{t("main:common.buttons.Cancel")}</Button>
         </>
       }
+      className={cl.dialog}
       bodyClassName={cl.root}
     >
       <p>
@@ -71,14 +80,22 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
           "All special ports in the level. Drag to sort.",
         )}
       </p>
-      <div className={cl.list}>
-        <SortableList
-          items={ports}
-          onSort={setPorts}
-          idGetter={portKey}
-          itemRenderer={Item}
-        />
-      </div>
+      <CLevel.Provider value={level}>
+        <div
+          className={cl.list}
+          style={useMemo(
+            () => ({ "--idx-chars": String(ports.length).length }) as {},
+            [ports.length],
+          )}
+        >
+          <SortableList
+            items={ports}
+            onSort={setPorts}
+            idGetter={portKey}
+            itemRenderer={Item}
+          />
+        </div>
+      </CLevel.Provider>
     </Dialog>
   );
 };
@@ -88,18 +105,31 @@ const portKey = (p: ISupaplexSpecPortRecord) => `${p.x};${p.y}`;
 const Item = forwardRef<
   HTMLDivElement,
   SortableItemProps<ISupaplexSpecPortRecord>
->(({ item, itemProps, handleProps, index }, ref) => (
-  <div ref={ref} {...itemProps} className={cl.item}>
-    <span className={cl.index}>{index + 1}.</span>
-    <span className={cl.xy}>
-      <TileCoords x={item.x} y={item.y} />
-    </span>
-    {/* TODO: <span><InlineTile tile={tile} /></span>*/}
-    <span className={cl.g}>g{item.gravity}</span>
-    <span className={cl.z}>z{item.freezeZonks}</span>
-    <span className={cl.e}>e{item.freezeEnemies}</span>
-    <span className={cl.u}>u{item.unusedByte}</span>
-    {/* TODO: <span>{item.isStdCompatible(width) && 'STD'}</span>*/}
-    <TextButton icon={<svgs.DragV />} {...handleProps} className={cl.handle} />
-  </div>
-));
+>(({ item, itemProps, handleProps, index }, ref) => {
+  const level = useContext(CLevel)!;
+  // TODO: level.getTileVariant()
+  const [[, , , tile, variant]] = level.tilesRenderStream(item.x, item.y, 1, 1);
+  return (
+    <div ref={ref} {...itemProps} className={cl.item}>
+      <span className={cl.index}>{index + 1}.</span>
+      <span className={cl.tile}>
+        <InlineTile tile={tile} variant={variant} />
+      </span>
+      <span className={cl.xy}>
+        <TileCoords x={item.x} y={item.y} />
+      </span>
+      <span className={cl.g}>g{item.gravity}</span>
+      <span className={cl.z}>z{item.freezeZonks}</span>
+      <span className={cl.e}>e{item.freezeEnemies}</span>
+      <span className={cl.u}>u{item.unusedByte}</span>
+      {/* TODO: <span>{item.isStdCompatible(width) && 'STD'}</span>*/}
+      <TextButton
+        icon={<svgs.DragV />}
+        {...handleProps}
+        className={cl.handle}
+      />
+    </div>
+  );
+});
+
+const CLevel = createContext<ITilesRegion | null>(null);

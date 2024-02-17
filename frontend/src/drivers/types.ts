@@ -59,6 +59,7 @@ export const levelSupportSignature = (level: any): level is IWithSignature =>
 
 export interface ITilesRegion extends IBounds {
   getTile(x: number, y: number): number;
+  // TODO: getTileVariant(x: number, y: number): number | undefined;
   tilesRenderStream(
     x: number,
     y: number,
