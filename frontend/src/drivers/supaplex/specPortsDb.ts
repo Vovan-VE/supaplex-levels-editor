@@ -5,7 +5,11 @@ import {
   SPEC_PORT_MAX_COUNT,
   SPEC_PORTS_DB_SIZE,
 } from "./formats/std";
-import { ISupaplexSpecPortDatabase, ISupaplexSpecPortRecord } from "./internal";
+import {
+  ISupaplexSpecPortDatabase,
+  ISupaplexSpecPortRecord,
+  ISupaplexSpecPortStringOptions,
+} from "./internal";
 import {
   isPortEqual,
   newSpecPortRecord,
@@ -48,8 +52,8 @@ class SpecPortsDatabase implements ISupaplexSpecPortDatabase {
     }
     return raw;
   }
-  toString(): string {
-    return Array.from(this.#ports.values(), (p) => p.toString()).join(",");
+  toString(o?: ISupaplexSpecPortStringOptions): string {
+    return Array.from(this.#ports.values(), (p) => p.toString(o)).join(",");
   }
 
   get count(): number {

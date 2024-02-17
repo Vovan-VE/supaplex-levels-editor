@@ -44,9 +44,12 @@ export type SpecPortGravity = GravityStatic | SpecPortAlter;
 export type SpecPortFreezeZonks = FreezeZonksStatic | SpecPortAlter;
 export type SpecPortFreezeEnemies = FreezeEnemiesStatic | SpecPortAlter;
 
+export interface ISupaplexSpecPortStringOptions {
+  withZeros?: boolean;
+}
 export interface ISupaplexSpecPortsIO {
   isStdCompatible(width: number): boolean;
-  toString(): string;
+  toString(o?: ISupaplexSpecPortStringOptions): string;
   toRaw(width: number): Uint8Array;
 }
 export interface ISupaplexSpecPortRecordReadonly {

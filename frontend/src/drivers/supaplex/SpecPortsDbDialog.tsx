@@ -1,6 +1,9 @@
 import {
+  ChangeEventHandler,
   createContext,
   forwardRef,
+  ReactNode,
+  startTransition,
   useCallback,
   useContext,
   useMemo,
@@ -8,15 +11,18 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { TileCoords } from "components/settings/display";
+import { Trans } from "i18n/Trans";
 import { Button, TextButton } from "ui/button";
 import { Dialog, renderPrompt, RenderPromptProps } from "ui/feedback";
 import { svgs } from "ui/icon";
+import { Textarea } from "ui/input";
 import { SortableItemProps, SortableList } from "ui/list";
 import { ColorType } from "ui/types";
 import { ITilesRegion, LevelEditProps } from "../types";
 import { InlineTile } from "./InlineTile";
 import { ISupaplexSpecPortRecord } from "./internal";
 import { isDbEqualToArray, newSpecPortsDatabase } from "./specPortsDb";
+import { newSpecPortRecordFromString } from "./specPortsRecord";
 import { ISupaplexLevel } from "./types";
 import cl from "./SpecPortsDbDialog.module.scss";
 
@@ -46,6 +52,36 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
     [ports, level.specports],
   );
 
+  const [isText, setIsText] = useState(false);
+  const [text, setText] = useState("");
+  const [textError, setTextError] = useState<ReactNode>();
+  const hasError = textError !== undefined;
+  const handleToggleText = useCallback(
+    () =>
+      startTransition(() => {
+        setIsText((b) => !b);
+        setText(isText ? "" : portsToText(ports));
+        setTextError(undefined);
+      }),
+    [isText, ports],
+  );
+  const handleTextChange = useCallback<ChangeEventHandler<HTMLTextAreaElement>>(
+    (e) => {
+      const text = e.target.value;
+      setText(text);
+      const r = portsFromText(text);
+      startTransition(() => {
+        if (r[0]) {
+          setPorts(r[1]);
+          setTextError(undefined);
+        } else {
+          setTextError(r[1]);
+        }
+      });
+    },
+    [],
+  );
+
   const handleSave = useCallback(() => {
     onChange(level.setSpecports(newSpecPortsDatabase(ports)));
     onSubmit();
@@ -55,16 +91,13 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
     <Dialog
       open={show}
       onClose={onCancel}
-      title={t(
-        "main:supaplex.specportsDB.DialogTitle",
-        "Special Ports Database",
-      )}
+      title={t("main:supaplex.specportsDB.DialogTitle")}
       buttons={
         <>
           <Button
             uiColor={ColorType.SUCCESS}
             onClick={handleSave}
-            disabled={!isChanged}
+            disabled={!isChanged || hasError}
           >
             {t("main:common.buttons.OK")}
           </Button>
@@ -74,27 +107,49 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
       className={cl.dialog}
       bodyClassName={cl.root}
     >
-      <p>
-        {t(
-          "main:supaplex.specportsDB.DialogIntro",
-          "All special ports in the level. Drag to sort.",
+      <p className={cl.info}>
+        {isText ? (
+          <span>
+            <Trans
+              i18nKey="main:supaplex.specportsDB.DialogIntroText"
+              defaults='All special ports in the level. Both "new line" and <code>&</code> can be used to separate records.'
+            />
+            <br />
+            {textError ? (
+              <span className={cl.error}>{textError}</span>
+            ) : (
+              <span>&nbsp;</span>
+            )}
+          </span>
+        ) : (
+          <span>{t("main:supaplex.specportsDB.DialogIntro")}</span>
         )}
+        <Button onClick={handleToggleText} disabled={hasError}>
+          {isText
+            ? t("main:supaplex.specportsDB.BtnToList", "Back to list")
+            : t("main:supaplex.specportsDB.BtnToText", "Edit as text")}
+        </Button>
       </p>
       <CLevel.Provider value={level}>
-        <div
-          className={cl.list}
-          style={useMemo(
-            () => ({ "--idx-chars": String(ports.length).length }) as {},
-            [ports.length],
-          )}
-        >
-          <SortableList
-            items={ports}
-            onSort={setPorts}
-            idGetter={portKey}
-            itemRenderer={Item}
+        {isText ? (
+          <Textarea
+            value={text}
+            onChange={handleTextChange}
+            className={cl.textarea}
           />
-        </div>
+        ) : (
+          <div
+            className={cl.list}
+            style={{ "--idx-chars": String(ports.length).length } as {}}
+          >
+            <SortableList
+              items={ports}
+              onSort={setPorts}
+              idGetter={portKey}
+              itemRenderer={Item}
+            />
+          </div>
+        )}
       </CLevel.Provider>
     </Dialog>
   );
@@ -133,3 +188,23 @@ const Item = forwardRef<
 });
 
 const CLevel = createContext<ITilesRegion | null>(null);
+
+// ----------------------
+
+const portsToText = (ports: readonly ISupaplexSpecPortRecord[]): string =>
+  ports.map((p) => p.toString({ withZeros: true }) + "\n").join("");
+
+type PortsFromTextResult =
+  | readonly [valid: true, ports: readonly ISupaplexSpecPortRecord[]]
+  | readonly [valid: false, error: ReactNode];
+
+const portsFromText = (text: string): PortsFromTextResult => {
+  const ports: ISupaplexSpecPortRecord[] = [];
+  for (let line of text.split(/[\n\r&]+/)) {
+    line = line.trim();
+    if (line) {
+      ports.push(newSpecPortRecordFromString(line.trim()));
+    }
+  }
+  return [true, ports];
+};

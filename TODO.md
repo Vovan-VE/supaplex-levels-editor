@@ -21,10 +21,9 @@
   - Impossible without gameplay simulation. Only if SO will provide a path
     actually walked.
 - Tooltips with interactive content support.
-- specports
-  - edit whole DB as text
 - footer info: is std, why not
 - new file: format description: common and per format
+- tooltip for a tile/coords (in dialogs) to display part of level as context
 
 - `class UserError extends Error {}`, `new UserError(t => t(...))`
 
