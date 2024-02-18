@@ -24,8 +24,9 @@ const iconUnchecked = <svgs.CheckboxUnchecked />;
 export const LevelConfigurator = <L extends ISupaplexLevel>({
   level,
   onChange,
-  compact = false,
+  compact,
 }: LevelConfiguratorProps<L>) => {
+  const isRO = !onChange;
   const { t } = useTranslation();
   const { i: countInf, e: countElec } = useMemo(() => {
     let i = 0;
@@ -45,21 +46,27 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
 
   const handlers = useMemo(
     () => ({
-      gravity: () => onChange(level.setInitialGravity(!level.initialGravity)),
+      gravity:
+        onChange &&
+        (() => onChange(level.setInitialGravity(!level.initialGravity))),
       fz: () =>
+        onChange &&
         onChange(level.setInitialFreezeZonks(!level.initialFreezeZonks)),
       fe: () =>
+        onChange &&
         onChange(level.setInitialFreezeEnemies(!level.initialFreezeEnemies)),
-      inf: (value: number | null) => {
-        if (value !== null) {
-          if (value >= 0 && value <= 255) {
-            onChange(level.setInfotronsNeed(value));
-          } else {
-            // TODO: validation i18n
-            showToastError("From 0 to 255");
+      inf:
+        onChange &&
+        ((value: number | null) => {
+          if (value !== null) {
+            if (value >= 0 && value <= 255) {
+              onChange(level.setInfotronsNeed(value));
+            } else {
+              // TODO: validation i18n
+              showToastError("From 0 to 255");
+            }
           }
-        }
-      },
+        }),
       portsDb: () => showSpecPortsDbDialog({ level, onChange }),
     }),
     [level, onChange],
@@ -75,6 +82,7 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
             onChangeEnd: handlers.inf,
           })}
           className={cl.inf}
+          readOnly={isRO}
         />
         <span>
           {level.infotronsNeed === 0 && countInf > 0 ? (
@@ -128,6 +136,7 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
                 uiColor={ColorType.DEFAULT}
                 icon={level.initialGravity ? iconChecked : iconUnchecked}
                 onClick={handlers.gravity}
+                disabled={isRO}
               >
                 {t("main:supaplex.features.Gravity")}
               </TextButton>
@@ -135,6 +144,7 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
                 uiColor={ColorType.DEFAULT}
                 icon={level.initialFreezeZonks ? iconChecked : iconUnchecked}
                 onClick={handlers.fz}
+                disabled={isRO}
               >
                 {t("main:supaplex.features.FreezeZonks")}
               </TextButton>
@@ -142,6 +152,7 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
                 uiColor={ColorType.DEFAULT}
                 icon={level.initialFreezeEnemies ? iconChecked : iconUnchecked}
                 onClick={handlers.fe}
+                disabled={isRO}
               >
                 {t("main:supaplex.features.FreezeEnemies")}
               </TextButton>
@@ -161,15 +172,21 @@ export const LevelConfigurator = <L extends ISupaplexLevel>({
             <Checkbox
               checked={level.initialGravity}
               onChange={handlers.gravity}
+              disabled={isRO}
             >
               {t("main:supaplex.features.Gravity")}
             </Checkbox>
-            <Checkbox checked={level.initialFreezeZonks} onChange={handlers.fz}>
+            <Checkbox
+              checked={level.initialFreezeZonks}
+              onChange={handlers.fz}
+              disabled={isRO}
+            >
               {t("main:supaplex.features.FreezeZonks")}
             </Checkbox>
             <Checkbox
               checked={level.initialFreezeEnemies}
               onChange={handlers.fe}
+              disabled={isRO}
             >
               {t("main:supaplex.features.FreezeEnemies")}
             </Checkbox>

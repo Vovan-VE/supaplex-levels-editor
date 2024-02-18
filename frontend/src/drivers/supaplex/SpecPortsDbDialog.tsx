@@ -44,6 +44,7 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
   onChange,
 }: Props<L>) => {
   const { t } = useTranslation();
+  const isRO = !onChange;
   const [ports, setPorts] = useState<readonly ISupaplexSpecPortRecord[]>(
     Array.from(level.specports.getAll()),
   );
@@ -82,10 +83,15 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
     [],
   );
 
-  const handleSave = useCallback(() => {
-    onChange(level.setSpecports(newSpecPortsDatabase(ports)));
-    onSubmit();
-  }, [ports, level, onChange, onSubmit]);
+  const handleSave = useMemo(
+    () =>
+      onChange &&
+      (() => {
+        onChange(level.setSpecports(newSpecPortsDatabase(ports)));
+        onSubmit();
+      }),
+    [ports, level, onChange, onSubmit],
+  );
 
   return (
     <Dialog
@@ -94,13 +100,15 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
       title={t("main:supaplex.specportsDB.DialogTitle")}
       buttons={
         <>
-          <Button
-            uiColor={ColorType.SUCCESS}
-            onClick={handleSave}
-            disabled={!isChanged || hasError}
-          >
-            {t("main:common.buttons.OK")}
-          </Button>
+          {isRO || (
+            <Button
+              uiColor={ColorType.SUCCESS}
+              onClick={handleSave}
+              disabled={!isChanged || hasError}
+            >
+              {t("main:common.buttons.OK")}
+            </Button>
+          )}
           <Button onClick={onCancel}>{t("main:common.buttons.Cancel")}</Button>
         </>
       }
@@ -136,6 +144,7 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
             value={text}
             onChange={handleTextChange}
             className={cl.textarea}
+            readOnly={isRO}
           />
         ) : (
           <div

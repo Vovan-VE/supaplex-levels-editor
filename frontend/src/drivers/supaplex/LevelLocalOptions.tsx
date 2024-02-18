@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Trans } from "i18n/Trans";
 import { Checkbox, IntegerInput } from "ui/input";
@@ -24,6 +24,7 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
   onChange,
 }: LevelLocalOptionsProps<L>) => {
   const { t } = useTranslation();
+  const isRo = !onChange;
   const {
     usePlasma,
     usePlasmaLimit,
@@ -33,35 +34,50 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
     useInfotronsNeeded,
   } = level;
 
-  const handlePlasmaChange = useCallback(
-    (checked: boolean) => onChange(level.setUsePlasma(checked)),
+  const handlePlasmaChange = useMemo(
+    () =>
+      onChange && ((checked: boolean) => onChange(level.setUsePlasma(checked))),
     [level, onChange],
   );
-  const handlePlasmaLimitChange = useCallback(
-    (v: number | null) => onChange(level.setUsePlasmaLimit(v ?? undefined)),
+  const handlePlasmaLimitChange = useMemo(
+    () =>
+      onChange &&
+      ((v: number | null) => onChange(level.setUsePlasmaLimit(v ?? undefined))),
     [level, onChange],
   );
-  const handlePlasmaTimeChange = useCallback(
-    (v: number | null) => onChange(level.setUsePlasmaTime(v ?? undefined)),
+  const handlePlasmaTimeChange = useMemo(
+    () =>
+      onChange &&
+      ((v: number | null) => onChange(level.setUsePlasmaTime(v ?? undefined))),
     [level, onChange],
   );
-  const handleZonkerChange = useCallback(
-    (checked: boolean) => onChange(level.setUseZonker(checked)),
+  const handleZonkerChange = useMemo(
+    () =>
+      onChange && ((checked: boolean) => onChange(level.setUseZonker(checked))),
     [level, onChange],
   );
-  const handleSerialPortsChange = useCallback(
-    (checked: boolean) => onChange(level.setUseSerialPorts(checked)),
+  const handleSerialPortsChange = useMemo(
+    () =>
+      onChange &&
+      ((checked: boolean) => onChange(level.setUseSerialPorts(checked))),
     [level, onChange],
   );
-  const handleInfotronsNeededChange = useCallback(
-    (v: number | null) => onChange(level.setUseInfotronsNeeded(v ?? undefined)),
+  const handleInfotronsNeededChange = useMemo(
+    () =>
+      onChange &&
+      ((v: number | null) =>
+        onChange(level.setUseInfotronsNeeded(v ?? undefined))),
     [level, onChange],
   );
 
   return (
     <>
       <div>
-        <Checkbox checked={usePlasma} onChange={handlePlasmaChange}>
+        <Checkbox
+          checked={usePlasma}
+          onChange={handlePlasmaChange}
+          disabled={isRo}
+        >
           <Trans
             i18nKey="main:supaplex.localOptions.UsePlasma"
             components={compUsePlasma}
@@ -74,7 +90,7 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
           <IntegerInput
             value={usePlasmaLimit ?? null}
             onChange={handlePlasmaLimitChange}
-            disabled={!usePlasma}
+            disabled={!usePlasma || isRo}
             className={cl.shortInt}
             placeholder="200"
           />{" "}
@@ -85,7 +101,7 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
           <IntegerInput
             value={usePlasmaTime ?? null}
             onChange={handlePlasmaTimeChange}
-            disabled={!usePlasma}
+            disabled={!usePlasma || isRo}
             className={cl.shortInt}
             placeholder="2400"
           />{" "}
@@ -93,7 +109,11 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
         </div>
       </div>
       <div>
-        <Checkbox checked={useZonker} onChange={handleZonkerChange}>
+        <Checkbox
+          checked={useZonker}
+          onChange={handleZonkerChange}
+          disabled={isRo}
+        >
           <Trans
             i18nKey="main:supaplex.localOptions.UseZonker"
             components={compUseZonker}
@@ -101,7 +121,11 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
         </Checkbox>
       </div>
       <div>
-        <Checkbox checked={useSerialPorts} onChange={handleSerialPortsChange}>
+        <Checkbox
+          checked={useSerialPorts}
+          onChange={handleSerialPortsChange}
+          disabled={isRo}
+        >
           {t("main:supaplex.localOptions.UseSerialPorts")}
         </Checkbox>
       </div>
@@ -114,6 +138,7 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
           value={useInfotronsNeeded ?? null}
           onChange={handleInfotronsNeededChange}
           className={cl.shortInt}
+          disabled={isRo}
         />{" "}
         <Trans i18nKey="main:supaplex.localOptions.UseInfotronsNeedHint" />
       </div>

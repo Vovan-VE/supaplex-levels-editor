@@ -17,6 +17,7 @@ import {
   $currentBufferHasOtherOpened,
   $currentDriverFormat,
   $currentDriverName,
+  $currentFileRo,
   $currentLevel,
   appendLevel,
   closeCurrentLevel,
@@ -93,6 +94,7 @@ const handleImportLevelClick = () =>
 
 export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
   const { t } = useTranslation();
+  const isRo = useUnit($currentFileRo);
   const format = getDriverFormat(
     useUnit($currentDriverName)!,
     useUnit($currentDriverFormat)!,
@@ -147,9 +149,9 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
   );
 
   const cannotAddLevel =
-    maxLevelsCount !== null && levelsCount >= maxLevelsCount;
+    isRo || (maxLevelsCount !== null && levelsCount >= maxLevelsCount);
 
-  const cannotRemoveLevel = levelsCount <= minLevelsCount;
+  const cannotRemoveLevel = isRo || levelsCount <= minLevelsCount;
   const cannotRemoveLevelMessage = cannotRemoveLevel
     ? t("main:level.manage.CannotLessThenMin", { min: minLevelsCount })
     : undefined;
@@ -280,13 +282,15 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
           )}
         </Toolbar>
       </ButtonDropdown>
-      <Button
-        icon={<svgs.DirOpen />}
-        iconStack={[[IconStackType.Index, <svgs.FileBlank />]]}
-        title={t("main:level.manage.ImportLevelFromFileReplace")}
-        onClick={handleImportLevelClick}
-        disabled={!level}
-      />
+      {isRo || (
+        <Button
+          icon={<svgs.DirOpen />}
+          iconStack={[[IconStackType.Index, <svgs.FileBlank />]]}
+          title={t("main:level.manage.ImportLevelFromFileReplace")}
+          onClick={handleImportLevelClick}
+          disabled={!level}
+        />
+      )}
       {cannotAddLevel ||
         (isCompact ? (
           <>

@@ -12,6 +12,7 @@ import {
   openSelectionEdit,
   submitSelectionEdit,
 } from "models/levels/tools/_selection";
+import { $currentFileRo } from "models/levelsets";
 import { displayHotKey, HotKey, HotKeyShortcuts } from "models/ui/hotkeys";
 import {
   ButtonDropdown,
@@ -201,14 +202,17 @@ export const SelectionEditMenu: FC = () => {
 const Reason: FC<{ reason: ReactElement | null }> = ({ reason }) =>
   reason && <span className={cl.reason}>({reason})</span>;
 
-export const SelectionEditButton: FC = () => (
-  <>
-    <SelectionEditHotKeys />
-    <ButtonDropdown
-      triggerIcon={<svgs.EditSelection />}
-      buttonProps={{ disabled: !useUnit($hasSelection) }}
-    >
-      <SelectionEditMenu />
-    </ButtonDropdown>
-  </>
-);
+export const SelectionEditButton: FC = () => {
+  const isRo = useUnit($currentFileRo);
+  return (
+    <>
+      {isRo || <SelectionEditHotKeys />}
+      <ButtonDropdown
+        triggerIcon={<svgs.EditSelection />}
+        buttonProps={{ disabled: !useUnit($hasSelection) || isRo }}
+      >
+        {isRo || <SelectionEditMenu />}
+      </ButtonDropdown>
+    </>
+  );
+};

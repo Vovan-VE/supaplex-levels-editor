@@ -9,6 +9,7 @@ import {
   setToolVariant,
   TOOLS,
 } from "models/levels/tools";
+import { $currentFileRo } from "models/levelsets";
 import {
   displayHotKey,
   HotKeyShortcuts,
@@ -21,18 +22,20 @@ import { ColorType, ContainerProps } from "ui/types";
 
 interface ToolHK {
   hotkey: HotKeyShortcuts;
+  canRo?: boolean;
   tvs: [tIndex: number, vIndex: number][];
 }
 const { TOOLS_HOTKEYS, IS_CYCLED } = (() => {
   const map = new Map<string, ToolHK>();
   for (const [ti, tool] of TOOLS.entries()) {
-    for (const [vi, { hotkey }] of tool.variants.entries()) {
+    const { variants, canRo } = tool;
+    for (const [vi, { hotkey }] of variants.entries()) {
       if (hotkey) {
         for (const hk of hotkeysList(hotkey)) {
           const k = shortcutToString(hk);
           let thk = map.get(k);
           if (!thk) {
-            thk = { hotkey, tvs: [] };
+            thk = { hotkey, tvs: [], canRo };
             map.set(k, thk);
           }
           thk.tvs.push([ti, vi]);
@@ -70,9 +73,10 @@ export const EditorToolsSimple: FC<ContainerProps> = (props) => {
   const { t } = useTranslation();
   const toolIndex = useUnit($toolIndex);
   const variantIndex = useUnit($toolVariant);
+  const isRo = useUnit($currentFileRo);
   return (
     <Toolbar {...props}>
-      {TOOLS.map(({ variants }, ti) =>
+      {TOOLS.map(({ variants, canRo }, ti) =>
         variants.map(({ title, Icon, hotkey }, vi) => (
           <Button
             key={`${ti}:${vi}`}
@@ -84,11 +88,12 @@ export const EditorToolsSimple: FC<ContainerProps> = (props) => {
                 : undefined
             }
             onClick={handleClicks[ti][vi]}
+            disabled={isRo && !canRo}
           />
         )),
       )}
 
-      {TOOLS_HOTKEYS.map(({ hotkey, tvs }, i) => {
+      {TOOLS_HOTKEYS.map(({ hotkey, tvs, canRo }, i) => {
         const curIndex = tvs.findIndex(
           ([ti, vi]) => ti === toolIndex && vi === variantIndex,
         );
@@ -98,7 +103,7 @@ export const EditorToolsSimple: FC<ContainerProps> = (props) => {
             key={i}
             hotkey={hotkey}
             tv={tvs[activeIndex]}
-            disabled={activeIndex === curIndex}
+            disabled={activeIndex === curIndex || (isRo && !canRo)}
           />
         );
       })}

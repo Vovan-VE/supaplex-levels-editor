@@ -8,6 +8,7 @@ import {
 } from "effector";
 import { IBaseLevel } from "drivers";
 import {
+  $currentFileRo,
   $currentLevelIsSelected,
   $currentLevelUndoQueue,
   updateCurrentLevel,
@@ -29,6 +30,7 @@ interface IDrawStart<P> {
   tile: number;
   drvStructs: PenShapeStructures | undefined;
   drawProps: P;
+  isRo: boolean;
 }
 interface IDrawData<P> extends IDrawStart<P> {}
 
@@ -59,6 +61,7 @@ export const createDragTool = <DrawProps, DrawState>({
   drawStartReducer,
   drawReducer,
   drawEndReducer,
+  canRo = false,
 }: {
   VARIANTS: readonly Variant<DrawProps>[];
   idleState: DrawState;
@@ -70,6 +73,7 @@ export const createDragTool = <DrawProps, DrawState>({
   drawEndReducer: (
     params: DrawEndParams<DrawState>,
   ) => DrawEndResult<DrawState>;
+  canRo?: boolean;
 }) => {
   type IStart = IDrawStart<DrawProps>;
   type IContinue = IDrawData<DrawProps>;
@@ -146,13 +150,15 @@ export const createDragTool = <DrawProps, DrawState>({
       tile: $tileIndex,
       tiles: $drvTiles,
       variant: $variant,
+      isRo: $currentFileRo,
     },
     filter: ({ isDragging, isLevelSelected }) => !isDragging && isLevelSelected,
-    fn: ({ tile, tiles, variant }, event): IStart => ({
+    fn: ({ tile, tiles, variant, isRo }, event): IStart => ({
       event,
       tile,
       drvStructs: tiles!.find((o) => o.value === tile)?.drawStruct,
       drawProps: VARIANTS[variant].drawProps,
+      isRo,
     }),
     target: doStart,
   });
@@ -169,13 +175,15 @@ export const createDragTool = <DrawProps, DrawState>({
       tile: $tileIndex,
       tiles: $drvTiles,
       variant: $variant,
+      isRo: $currentFileRo,
     },
     filter: ({ isDragging, isLevelSelected }) => isDragging && isLevelSelected,
-    fn: ({ tile, tiles, variant }, event): IContinue => ({
+    fn: ({ tile, tiles, variant, isRo }, event): IContinue => ({
       event,
       tile,
       drvStructs: tiles!.find((o) => o.value === tile)?.drawStruct,
       drawProps: VARIANTS[variant].drawProps,
+      isRo,
     }),
     target: doDraw,
   });
@@ -216,9 +224,11 @@ export const createDragTool = <DrawProps, DrawState>({
   });
   sample({ source: doCommit, target: didCommit });
 
+  const enabled = () => canRo || !$currentFileRo.getState();
+
   const eventsIdle: GridEventsProps = {
     onPointerDown: (e, cell) => {
-      if (e.button === 0 && e.buttons === 1 && cell.inBounds) {
+      if (e.button === 0 && e.buttons === 1 && cell.inBounds && enabled()) {
         tryDrawStart(cell);
         // not sure if it can be covered in `CoverGrid` touch hacks
         if (e.pointerType === "mouse") {
@@ -230,16 +240,20 @@ export const createDragTool = <DrawProps, DrawState>({
 
   const eventsDragging: GridEventsProps = {
     onPointerMove: (e, cell) => {
-      if (e.buttons === 1) {
+      if (e.buttons === 1 && enabled()) {
         tryDrawMove(cell);
       }
     },
     onPointerDown: (e, cell) => {
-      tryDrawEnd(cell);
+      if (enabled()) {
+        tryDrawEnd(cell);
+      }
     },
     onPointerUp: (e, cell) => {
-      tryDrawMove(cell);
-      tryDrawEnd(cell);
+      if (enabled()) {
+        tryDrawMove(cell);
+        tryDrawEnd(cell);
+      }
     },
     onPointerCancel: rollback,
   };

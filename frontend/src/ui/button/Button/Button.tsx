@@ -11,6 +11,7 @@ const CL_COLOR: Partial<Record<ColorType, string>> = {
   [ColorType.SUCCESS]: cl._success,
   [ColorType.WARN]: cl._warn,
   [ColorType.DANGER]: cl._danger,
+  [ColorType.MUTE]: cl._mute,
 };
 
 type RefElement = HTMLAnchorElement | HTMLButtonElement;

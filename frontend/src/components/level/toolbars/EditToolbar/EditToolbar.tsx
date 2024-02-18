@@ -1,7 +1,11 @@
 import { useUnit } from "effector-react";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
-import { $currentLevelUndoQueue, redoCurrentLevel } from "models/levelsets";
+import {
+  $currentFileRo,
+  $currentLevelUndoQueue,
+  redoCurrentLevel,
+} from "models/levelsets";
 import { setToolO } from "models/levels/tools";
 import {
   $clipboardRegionSizeStr,
@@ -69,14 +73,19 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
   const { t } = useTranslation();
   const undoQueue = useUnit($currentLevelUndoQueue)!;
   const noSelection = !useUnit($hasSelection);
+  const isRo = useUnit($currentFileRo);
   const clipboardSize = useUnit($clipboardRegionSizeStr);
 
   useHotKey({
     shortcut: HK_REDO,
-    handler: undoQueue.canRedo ? handleHotRedo : noopHandler,
+    handler: undoQueue.canRedo && !isRo ? handleHotRedo : noopHandler,
   });
 
-  useHotKey({ shortcut: HK_CUT, handler: handleHotCut, disabled: noSelection });
+  useHotKey({
+    shortcut: HK_CUT,
+    handler: handleHotCut,
+    disabled: noSelection || isRo,
+  });
   useHotKey({
     shortcut: HK_COPY,
     handler: handleHotCopy,
@@ -85,12 +94,12 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
   useHotKey({
     shortcut: HK_DEL,
     handler: handleHotDelete,
-    disabled: noSelection,
+    disabled: noSelection || isRo,
   });
   useHotKey({
     shortcut: HK_PASTE,
     handler: handleHotPaste,
-    disabled: !clipboardSize,
+    disabled: !clipboardSize || isRo,
   });
 
   return (
@@ -98,14 +107,14 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
       {isCompact || <UndoButton />}
       <Button
         icon={<svgs.Redo />}
-        disabled={!undoQueue.canRedo}
+        disabled={!undoQueue.canRedo || isRo}
         onClick={redoCurrentLevel}
         title={hintWithHotkey(t("main:edit.Redo"), HK_REDO)}
       />
       {isCompact || <ToolbarSeparator />}
       <Button
         icon={<svgs.Cut />}
-        disabled={noSelection}
+        disabled={noSelection || isRo}
         onClick={handleCut}
         title={hintWithHotkey(t("main:edit.Cut"), HK_CUT)}
       />
@@ -117,7 +126,7 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
       />
       <Button
         icon={<svgs.Paste />}
-        disabled={!clipboardSize}
+        disabled={!clipboardSize || isRo}
         onClick={handlePaste}
         title={
           clipboardSize
@@ -130,7 +139,7 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
       />
       <Button
         icon={<svgs.DeleteSelection />}
-        disabled={noSelection}
+        disabled={noSelection || isRo}
         onClick={handleDelete}
         title={hintWithHotkey(t("main:edit.Delete"), HK_DEL)}
       />

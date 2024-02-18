@@ -21,6 +21,7 @@ $_dark-primary-bg: color.adjust(sp.$color-blue-dark, $lightness: -18%);
 $_dark-success-bg: color.adjust(sp.$color-green-dark, $lightness: -10%);
 $_dark-warn-bg: sp.$color-brown;
 $_dark-danger-bg: color.adjust(sp.$color-red-dark, $lightness: -10%);
+$_dark-mute-bg: color.adjust(sp.$color-grey-xdark, $lightness: -10%);
 
 $theme-dark: (
   #{vars.$color-default}: sp.$color-grey-xlight,
@@ -28,7 +29,14 @@ $theme-dark: (
   #{vars.$color-default-focus}: _focus(sp.$color-grey-xlight),
   #{vars.$color-mute}: sp.$color-grey,
   #{vars.$color-mute-bg}: sp.$color-grey-xdark,
-  #{vars.$color-panel-bg}: color.adjust(sp.$color-grey-xdark, $lightness: -10%),
+  #{vars.$color-mute-btn}: sp.$color-grey,
+  #{vars.$color-mute-btn-bg}: $_dark-mute-bg,
+  #{vars.$color-mute-hover}: _hover(sp.$color-grey-light),
+  #{vars.$color-mute-hover-bg}: _hover($_dark-mute-bg, $hover-lighter-bg),
+  #{vars.$color-mute-active}: _active(sp.$color-grey-light),
+  #{vars.$color-mute-active-bg}: _active($_dark-mute-bg, $active-lighter-bg),
+  #{vars.$color-mute-focus}: _focus(sp.$color-grey-light),
+  #{vars.$color-panel-bg}: $_dark-mute-bg,
   #{vars.$color-shadow}: sp.$color-white,
   #{vars.$color-primary}: sp.$color-blue-light,
   #{vars.$color-primary-bg}: $_dark-primary-bg,

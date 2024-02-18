@@ -156,6 +156,21 @@
   );
 }
 
+%button-mute {
+  @include button-variant(
+    $bg: themes.$color-mute-btn-bg,
+    $border: themes.$color-mute-btn-bg,
+    $color: themes.$color-mute,
+    $hover-bg: themes.$color-mute-hover-bg,
+    $hover-border: themes.$color-mute-hover-bg,
+    $hover-color: themes.$color-mute-hover,
+    $active-bg: themes.$color-mute-active-bg,
+    $active-border: themes.$color-mute-active-bg,
+    $active-color: themes.$color-mute-active,
+    $focus-color: themes.$color-mute-focus
+  );
+}
+
 %button-link {
   --btn-bg: transparent;
   --btn-border-color: transparent;

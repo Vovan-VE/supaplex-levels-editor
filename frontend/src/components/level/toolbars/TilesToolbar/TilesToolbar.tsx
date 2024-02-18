@@ -4,6 +4,7 @@ import cn from "classnames";
 import { useUnit } from "effector-react";
 import { getTilesForToolbar } from "drivers";
 import { $drvTileRender, $drvTiles, $tileIndex, setTile } from "models/levels";
+import { $currentFileRo } from "models/levelsets";
 import { TextButton, Toolbar } from "ui/button";
 import { ColorType, ContainerProps } from "ui/types";
 import cl from "./TilesToolbar.module.scss";
@@ -12,6 +13,7 @@ interface Props extends ContainerProps {}
 
 export const TilesToolbar: FC<Props> = ({ className, ...rest }) => {
   const { t } = useTranslation();
+  const isRo = useUnit($currentFileRo);
   const TileRender = useUnit($drvTileRender)!;
   const tiles = useUnit($drvTiles)!;
   const tilesSorted = useMemo(
@@ -26,10 +28,12 @@ export const TilesToolbar: FC<Props> = ({ className, ...rest }) => {
   const tileIndex = useUnit($tileIndex);
   const handleTile = useMemo(
     () =>
-      Array.from({ length: tiles.length }).map((_, n) => () => {
-        setTile(n);
-      }),
-    [tiles.length],
+      isRo
+        ? []
+        : Array.from({ length: tiles.length }).map((_, n) => () => {
+            setTile(n);
+          }),
+    [tiles.length, isRo],
   );
 
   return (
@@ -43,6 +47,7 @@ export const TilesToolbar: FC<Props> = ({ className, ...rest }) => {
             className={cn(cl.btn, i === tileIndex && cl._current)}
             uiColor={ColorType.WARN}
             onClick={handleTile[i]}
+            disabled={isRo}
           />
         </Fragment>
       ))}

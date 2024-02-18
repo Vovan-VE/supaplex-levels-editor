@@ -74,6 +74,7 @@ const {
   eventsIdle,
   eventsDragging,
 } = createDragTool<undefined, DrawState | null>({
+  canRo: true,
   VARIANTS: [
     {
       internalName: "d",
@@ -84,13 +85,17 @@ const {
     },
   ],
   idleState: null,
-  drawStartReducer: ({ drawState, level }, { event: { x, y }, tile }) => {
+  drawStartReducer: (prev, { event: { x, y }, tile, isRo }) => {
+    let { drawState, level } = prev;
     // already have previous selection
     if (drawState?.op === Op.STABLE) {
       let { x: cx, y: cy } = drawState;
       // starting with pointer inside previous selection
       if (inRect(x, y, drawState)) {
         // it means "drag" selected region
+        if (isRo) {
+          return prev;
+        }
         drawState = {
           ...drawState,
           dragPoint: {
@@ -109,7 +114,7 @@ const {
       } else {
         // starting outside previous selection
         // means to put previous selection and forgot about that
-        if (drawState.content) {
+        if (drawState.content && !isRo) {
           // if it has cut region (if was dragged), put it to level
           level = level.pasteRegion(cx, cy, drawState.content);
         }
@@ -130,8 +135,11 @@ const {
 
     return { drawState, level };
   },
-  drawReducer: (prev, { event: { x, y, width, height } }) => {
+  drawReducer: (prev, { event: { x, y, width, height }, isRo }) => {
     if (prev?.op === Op.STABLE) {
+      if (isRo) {
+        return prev;
+      }
       if (prev.dragPoint) {
         // drag selection
         return {
@@ -255,6 +263,7 @@ sample({ source: externalRollback, target: commitOnEnd(rollback) });
 export const SELECTION: Tool = {
   internalName: "selection",
   free: externalFree,
+  canRo: true,
   variants,
   setVariant,
   $variant,

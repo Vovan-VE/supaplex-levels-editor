@@ -27,11 +27,14 @@ export const EditorTabs: FC<Props> = ({ className, ...rest }) => {
 
   const tabs = useMemo(
     () =>
-      levelsets.map<TabItem<FilesStorageKey>>(({ key, name }) => ({
+      levelsets.map<TabItem<FilesStorageKey>>(({ key, name, ro }) => ({
         key,
         text: name,
-        uiColor:
-          allowManualSave && dirtyKeys.has(key) ? ColorType.WARN : undefined,
+        uiColor: ro
+          ? ColorType.MUTE
+          : allowManualSave && dirtyKeys.has(key)
+            ? ColorType.WARN
+            : undefined,
       })),
     [levelsets, dirtyKeys],
   );

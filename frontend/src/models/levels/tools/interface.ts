@@ -170,6 +170,7 @@ export interface Tool {
   internalName: string;
   init?: EventCallable<any>;
   free?: EventCallable<any>;
+  canRo?: boolean;
   variants: readonly ToolVariantUI[];
   setVariant?: EventCallable<number>;
   $variant?: Store<number>;

@@ -36,6 +36,8 @@ export { ReactComponent as Paste } from "./Paste.svg";
 export { ReactComponent as Pencil } from "./Pencil.svg";
 export { ReactComponent as PlusSquare } from "./PlusSquare.svg";
 export { ReactComponent as Random } from "./Random.svg";
+export { ReactComponent as ReadOnly } from "./ReadOnly.svg";
+export { ReactComponent as ReadWrite } from "./ReadWrite.svg";
 export { ReactComponent as RectFill } from "./RectFill.svg";
 export { ReactComponent as RectFrame } from "./RectFrame.svg";
 export { ReactComponent as Redo } from "./Redo.svg";

@@ -16,6 +16,7 @@ import { Trans } from "i18n/Trans";
 import { exportLevelAsLink } from "models/levels/export-url";
 import {
   $currentDriverName,
+  $currentFileRo,
   $currentLevelUndoQueue,
   updateCurrentLevel,
 } from "models/levelsets";
@@ -207,32 +208,46 @@ const sendLevelTo = async ({
 
   // REFACT: adequate components with state
 
-  await ask(<Confirm level={level} onChange={(l) => (level = l)} />, {
-    buttons: {
-      okText: <Trans i18nKey="main:levelTest.buttons.GoToSO" values={VALUES} />,
-      ok: {
-        uiColor: ColorType.SUCCESS,
-        onClick: async () => {
-          updateCurrentLevel(level);
-          onConfirmed?.();
+  await ask(
+    <Confirm
+      level={level}
+      onChange={$currentFileRo.getState() ? undefined : (l) => (level = l)}
+    />,
+    {
+      buttons: {
+        okText: (
+          <Trans i18nKey="main:levelTest.buttons.GoToSO" values={VALUES} />
+        ),
+        ok: {
+          uiColor: ColorType.SUCCESS,
+          onClick: async () => {
+            if (!$currentFileRo.getState()) {
+              updateCurrentLevel(level);
+            }
+            onConfirmed?.();
 
-          const url = await exportLevelAsLink(level, baseUrl, withDemo);
-          const driverName = $currentDriverName.getState()!;
-          const { applyLocalOptions } = getDriver(driverName)!;
-          applyLocalOptions?.(level, url);
+            const url = await exportLevelAsLink(level, baseUrl, withDemo);
+            const driverName = $currentDriverName.getState()!;
+            const { applyLocalOptions } = getDriver(driverName)!;
+            applyLocalOptions?.(level, url);
 
-          if (openTestUrl(url, targetOrBlank)) {
-            // e.preventDefault();
-          }
+            if (openTestUrl(url, targetOrBlank)) {
+              // e.preventDefault();
+            }
+          },
         },
       },
     },
-  });
+  );
 };
 
 const ConfirmSO: FC<
-  PropsWithChildren<{ toDoWhat: string } & Partial<LevelEditProps<IBaseLevel>>>
-> = ({ toDoWhat, level, onChange, children }) => {
+  PropsWithChildren<
+    { toDoWhat: string; showOptions?: boolean } & Partial<
+      LevelEditProps<IBaseLevel>
+    >
+  >
+> = ({ toDoWhat, showOptions, level, onChange, children }) => {
   const { t } = useTranslation();
   // const confirmed = useUnit($prefConfirmedTestSO);
 
@@ -292,7 +307,7 @@ const ConfirmSO: FC<
       {/*    Don't show this confirmation again*/}
       {/*  </Checkbox>*/}
       {/*</div>*/}
-      {level && onChange && LevelLocalOptions && (
+      {level && showOptions && LevelLocalOptions && (
         <div className={cl.options}>
           <div>
             <LevelLocalOptions level={level} onChange={onChange} />
@@ -315,17 +330,20 @@ const ConfirmTestSO: ConfirmFC = ({ level, onChange }) => {
 
   // REFACT: remove this when resolved outside
   const [_level, _setLevel] = useState(level);
-  const handleLevelChange = useCallback(
-    (level: IBaseLevel) => {
-      _setLevel(level);
-      onChange(level);
-    },
+  const handleLevelChange = useMemo(
+    () =>
+      onChange &&
+      ((level: IBaseLevel) => {
+        _setLevel(level);
+        onChange(level);
+      }),
     [onChange],
   );
 
   return (
     <ConfirmSO
       toDoWhat={t("main:levelTest.ToTestLevel")}
+      showOptions
       level={_level}
       onChange={handleLevelChange}
     >

@@ -3,6 +3,7 @@
 ## 0.19.0 (DEV)
 
 - Add: Spec Ports DB dialog now allows to edit entire DB as text.
+- Add: Read Only mode can be toggled in a file. See new button near "Rename".
 - Fix: Some UI texts correction in progress. Thanks to Lana Snik-Snak!
 - Fix: H/V/X Ports when set as Special wasn't marked Special in "Copy as Image".
 - Enh: H/V/X Ports in Toolbar are halved too.

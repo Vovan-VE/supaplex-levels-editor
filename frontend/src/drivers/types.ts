@@ -130,7 +130,7 @@ export const enum InteractionType {
 export interface InteractionDialogProps<L extends IBaseLevel> {
   cell: CellContextEventSnapshot;
   level: L;
-  submit: (next: L) => void;
+  submit?: (next: L) => void;
   cancel: () => void;
 }
 interface InteractionBase {
@@ -214,7 +214,7 @@ export interface TileRenderProps {
 
 export interface LevelEditProps<L extends IBaseLevel> {
   level: L;
-  onChange: (level: L) => void;
+  onChange?: (level: L) => void;
 }
 export interface LevelConfiguratorEnvProps {
   compact?: boolean;

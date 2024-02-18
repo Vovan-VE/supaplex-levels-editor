@@ -1,10 +1,11 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useUnit } from "effector-react";
 import { canResize, getDriverFormat } from "drivers";
 import {
   $currentDriverFormat,
   $currentDriverName,
+  $currentFileRo,
   $currentLevelUndoQueue,
   updateCurrentLevel,
 } from "models/levelsets";
@@ -22,6 +23,7 @@ interface Props {
 
 export const LevelConfig: FC<Props> = ({ onDidResize }) => {
   const { t } = useTranslation();
+  const isRo = useUnit($currentFileRo);
   const driverName = useUnit($currentDriverName)!;
   const { resizable } = getDriverFormat(
     driverName,
@@ -39,8 +41,8 @@ export const LevelConfig: FC<Props> = ({ onDidResize }) => {
   return (
     <>
       <Button
-        disabled={!canResize(resizable)}
-        onClick={handleResizeClick}
+        disabled={isRo || !canResize(resizable)}
+        onClick={isRo ? undefined : handleResizeClick}
         title={t("main:level.buttons.Resize")}
       >
         {rawLevel.width}x{rawLevel.height}
@@ -61,20 +63,24 @@ export const LevelConfig: FC<Props> = ({ onDidResize }) => {
         emptyValue=""
         {...useInputDebounce({
           value: rawLevel.title,
-          onChangeEnd: useCallback(
-            (title: string) => {
-              try {
-                updateCurrentLevel(rawLevel.setTitle(title));
-              } catch (e) {
-                showToastError(e);
-              }
-            },
-            [rawLevel],
+          onChangeEnd: useMemo(
+            () =>
+              isRo
+                ? undefined
+                : (title: string) => {
+                    try {
+                      updateCurrentLevel(rawLevel.setTitle(title));
+                    } catch (e) {
+                      showToastError(e);
+                    }
+                  },
+            [rawLevel, isRo],
           ),
           debounceTimeout: 60 * 1000,
         })}
         maxLength={rawLevel.maxTitleLength}
         className={cl.title}
+        readOnly={isRo}
       />
     </>
   );

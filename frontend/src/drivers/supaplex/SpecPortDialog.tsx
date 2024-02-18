@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TileCoords } from "components/settings/display";
 import { Trans } from "i18n/Trans";
@@ -46,8 +46,9 @@ type Opt = SelectOption<number>;
 const ActionSelect: FC<{
   options: readonly Opt[];
   value: number;
-  onChange: (n: number) => void;
-}> = ({ options, value, onChange }) => {
+  onChange?: (n: number) => void;
+  disabled?: boolean;
+}> = ({ options, value, onChange, disabled }) => {
   const { t } = useTranslation();
 
   const allOptions = useMemo<Opt[]>(
@@ -64,16 +65,18 @@ const ActionSelect: FC<{
     ],
     [options, t],
   );
-  const handleSelect = useCallback(
-    (o: Opt | null) => o && onChange(o.value),
+  const handleSelect = useMemo(
+    () => onChange && ((o: Opt | null) => o && onChange(o.value)),
     [onChange],
   );
-  const handleInput = useCallback(
-    (n: number | null) => {
-      if (n !== null) {
-        onChange(n < -2 ? SpecPortAlterMod.NOTHING : n <= 255 ? n : 255);
-      }
-    },
+  const handleInput = useMemo(
+    () =>
+      onChange &&
+      ((n: number | null) => {
+        if (n !== null) {
+          onChange(n < -2 ? SpecPortAlterMod.NOTHING : n <= 255 ? n : 255);
+        }
+      }),
     [onChange],
   );
 
@@ -85,6 +88,7 @@ const ActionSelect: FC<{
         onChange={handleSelect}
         placeholder="Raw"
         className={cl.select}
+        isDisabled={disabled}
       />
       <IntegerInput
         {...useInputDebounce<number | null>({
@@ -92,6 +96,7 @@ const ActionSelect: FC<{
           onChangeEnd: handleInput,
         })}
         className={cl.input}
+        readOnly={disabled}
       />
     </>
   );
@@ -108,6 +113,7 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
   cancel,
 }: Props<T>) => {
   const { t } = useTranslation();
+  const isRo = !submit;
 
   const { optGravity, optFreezeZonks, optFreezeEnemies } = useMemo(() => {
     const optGravity: Opt[] = [
@@ -172,13 +178,18 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
     }
   }, [level, port, isSpecial, x, y]);
 
-  const handleOK = useCallback(() => {
-    if (nextLevel) {
-      submit(nextLevel);
-    } else {
-      cancel();
-    }
-  }, [submit, cancel, nextLevel]);
+  const handleOK = useMemo(
+    () =>
+      submit &&
+      (() => {
+        if (nextLevel) {
+          submit(nextLevel);
+        } else {
+          cancel();
+        }
+      }),
+    [submit, cancel, nextLevel],
+  );
 
   const options = useMemo<RadioOptions<boolean>>(
     () => [
@@ -204,20 +215,33 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
     [tile, t],
   );
 
-  const handleGravity = useCallback(
-    (g: SpecPortGravity) =>
-      setPort((port) => (port ?? newSpecPortRecord(x, y)).setGravity(g)),
-    [x, y],
+  const handleGravity = useMemo(
+    () =>
+      isRo
+        ? undefined
+        : (g: SpecPortGravity) =>
+            setPort((port) => (port ?? newSpecPortRecord(x, y)).setGravity(g)),
+    [x, y, isRo],
   );
-  const handleZonks = useCallback(
-    (z: SpecPortFreezeZonks) =>
-      setPort((port) => (port ?? newSpecPortRecord(x, y)).setFreezeZonks(z)),
-    [x, y],
+  const handleZonks = useMemo(
+    () =>
+      isRo
+        ? undefined
+        : (z: SpecPortFreezeZonks) =>
+            setPort((port) =>
+              (port ?? newSpecPortRecord(x, y)).setFreezeZonks(z),
+            ),
+    [x, y, isRo],
   );
-  const handleEnemies = useCallback(
-    (e: SpecPortFreezeEnemies) =>
-      setPort((port) => (port ?? newSpecPortRecord(x, y)).setFreezeEnemies(e)),
-    [x, y],
+  const handleEnemies = useMemo(
+    () =>
+      isRo
+        ? undefined
+        : (e: SpecPortFreezeEnemies) =>
+            setPort((port) =>
+              (port ?? newSpecPortRecord(x, y)).setFreezeEnemies(e),
+            ),
+    [x, y, isRo],
   );
   const {
     gravity = GravityStatic.OFF,
@@ -228,13 +252,18 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
 
   const propsUnusedByteInput = useInputDebounce<number | null>({
     value: unusedByte,
-    onChangeEnd: useCallback(
-      (n: number | null) =>
-        n === null ||
-        setPort((port) =>
-          (port ?? newSpecPortRecord(x, y)).setUnusedByte(minmax(n, 0, 255)),
-        ),
-      [x, y],
+    onChangeEnd: useMemo(
+      () =>
+        isRo
+          ? undefined
+          : (n: number | null) =>
+              n === null ||
+              setPort((port) =>
+                (port ?? newSpecPortRecord(x, y)).setUnusedByte(
+                  minmax(n, 0, 255),
+                ),
+              ),
+      [x, y, isRo],
     ),
   });
 
@@ -245,13 +274,15 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
       size="small"
       buttons={
         <>
-          <Button
-            uiColor={ColorType.SUCCESS}
-            onClick={handleOK}
-            disabled={Boolean(nextLevelError)}
-          >
-            {t("main:common.buttons.OK")}
-          </Button>
+          {isRo || (
+            <Button
+              uiColor={ColorType.SUCCESS}
+              onClick={handleOK}
+              disabled={Boolean(nextLevelError)}
+            >
+              {t("main:common.buttons.OK")}
+            </Button>
+          )}
           <Button uiColor={ColorType.MUTE} onClick={cancel}>
             {t("main:common.buttons.Cancel")}
           </Button>
@@ -263,7 +294,12 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
         <TileCoords x={x} y={y} /> <InlineTile tile={tile} />
       </p>
 
-      <RadioGroup options={options} value={isSpecial} onChange={setIsSpecial} />
+      <RadioGroup
+        options={options}
+        value={isSpecial}
+        onChange={setIsSpecial}
+        disabled={isRo}
+      />
 
       {isSpecial && (
         <>
@@ -284,6 +320,7 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
               options={optGravity}
               value={gravity}
               onChange={handleGravity}
+              disabled={isRo}
             />
 
             <div className={cl.label}>
@@ -294,6 +331,7 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
               options={optFreezeZonks}
               value={freezeZonks}
               onChange={handleZonks}
+              disabled={isRo}
             />
 
             <div className={cl.label}>
@@ -305,6 +343,7 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
               options={optFreezeEnemies}
               value={freezeEnemies}
               onChange={handleEnemies}
+              disabled={isRo}
             />
           </div>
 
@@ -312,7 +351,11 @@ export const SpecPortDialog = <T extends ISupaplexLevel>({
             label={t("main:supaplex.features.UnusedByte")}
             className={cl.unusedByte}
           >
-            <IntegerInput {...propsUnusedByteInput} className={cl.input} />
+            <IntegerInput
+              {...propsUnusedByteInput}
+              className={cl.input}
+              readOnly={isRo}
+            />
           </Field>
         </>
       )}

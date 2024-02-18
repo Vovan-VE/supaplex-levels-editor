@@ -5,12 +5,14 @@ import { allowManualSave } from "backend";
 import {
   $currentFileHasLocalOptions,
   $currentFileIsDirty,
+  $currentFileRo,
   $hasOtherFiles,
   $isFileOpened,
   closeCurrentFileFx,
   closeOtherFilesFx,
   flushCurrentFile,
   saveAsCurrentFile,
+  setCurrentLevelsetRo,
 } from "models/levelsets";
 import { Button, ButtonDropdown, Toolbar } from "ui/button";
 import { ColorType } from "ui/types";
@@ -42,6 +44,7 @@ const SaveFlushButton: FC = () => {
 export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
   const { t } = useTranslation();
   const hasLocalOptions = useUnit($currentFileHasLocalOptions);
+  const isRo = useUnit($currentFileRo);
   const hasOtherFiles = useUnit($hasOtherFiles);
   const isFileOpened = useUnit($isFileOpened);
 
@@ -68,6 +71,13 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
     [],
   );
 
+  const renameTitle = t("web:files.buttons.Rename");
+  const roTitle = isRo
+    ? t("web:files.buttons.ReadOnly", "Read Only")
+    : t("web:files.buttons.ReadWrite", "Read, Write");
+  const roIcon = isRo ? <svgs.ReadOnly /> : <svgs.ReadWrite />;
+  const handleRo = useCallback(() => setCurrentLevelsetRo(!isRo), [isRo]);
+
   const removeButton = (
     <Button
       uiColor={removeColor}
@@ -89,7 +99,7 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
 
   return (
     <>
-      {allowManualSave && <SaveFlushButton />}
+      {allowManualSave && !isRo && <SaveFlushButton />}
       {hasLocalOptions && !isCompact && isFileOpened ? (
         <ButtonDropdown
           standalone={saveAsButton}
@@ -127,13 +137,41 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
         title={t("main:files.buttons.ConvertFormat")}
         onClick={handleConvert}
       />
-      {handleRename && (
-        <Button
-          icon={<svgs.Rename />}
-          disabled={!isFileOpened}
-          title={t("web:files.buttons.Rename")}
-          onClick={handleRename}
-        />
+
+      {!isCompact ? (
+        <ButtonDropdown triggerIcon={<svgs.Menu />} noArrow>
+          <Toolbar isMenu>
+            {handleRename && !isRo && (
+              <Button
+                icon={<svgs.Rename />}
+                disabled={!isFileOpened}
+                onClick={handleRename}
+              >
+                {renameTitle}
+              </Button>
+            )}
+            <Button icon={roIcon} disabled={!isFileOpened} onClick={handleRo}>
+              {roTitle}
+            </Button>
+          </Toolbar>
+        </ButtonDropdown>
+      ) : (
+        <>
+          {handleRename && !isRo && (
+            <Button
+              icon={<svgs.Rename />}
+              disabled={!isFileOpened}
+              title={renameTitle}
+              onClick={handleRename}
+            />
+          )}
+          <Button
+            icon={roIcon}
+            disabled={!isFileOpened}
+            title={roTitle}
+            onClick={handleRo}
+          />
+        </>
       )}
 
       {hasOtherFiles && !isCompact ? (
