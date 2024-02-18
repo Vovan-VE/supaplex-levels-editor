@@ -10,7 +10,7 @@ import { $currentDriverName } from "models/levelsets";
 import { HK_EDIT_RANDOM } from "models/ui/hotkeys-defined";
 import { Button, TextButton } from "ui/button";
 import { svgs } from "ui/icon";
-import { Field, Range } from "ui/input";
+import { Field, IntegerInput } from "ui/input";
 import { ColorType } from "ui/types";
 import { EMPTY_MAP } from "utils/data";
 import { elKeepOld } from "./_common";
@@ -43,6 +43,8 @@ const $probabilities = createStore<ReadonlyMap<number, number>>(EMPTY_MAP)
 const $total = $probabilities.map((prob) =>
   RoMap.reduce(prob, (n, c) => n + c, 0),
 );
+
+const MAX = 9999;
 
 const RndEditor: FC<SelectionEditorProps> = ({
   region,
@@ -112,7 +114,11 @@ const RndEditor: FC<SelectionEditorProps> = ({
         ))}
       </Field>
       <Field
-        label={t("main:selectionEditors.rnd.Probabilities")}
+        label={
+          <>
+            {t("main:selectionEditors.rnd.Probabilities")} (1 to {MAX} each)
+          </>
+        }
         labelElement="div"
       >
         {prob.size > 0 ? (
@@ -126,11 +132,11 @@ const RndEditor: FC<SelectionEditorProps> = ({
                   ) : (
                     <em>{t("main:selectionEditors.rnd.Keep")}</em>
                   )}
-                  <Range
-                    min={1}
-                    max={30}
+                  <IntegerInput
                     value={count}
-                    onChange={(v) => setCount([tile, v])}
+                    onChange={(v) =>
+                      v && v >= 1 && v <= MAX && setCount([tile, v])
+                    }
                     className={cl.input}
                   />
                   <div className={cl.help}>

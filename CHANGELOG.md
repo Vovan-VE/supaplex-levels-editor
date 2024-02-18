@@ -10,6 +10,8 @@
 - Enh: Spec Ports DB dialog UX:
   - display the tile in the giver cell;
   - limit dialog height and add scroll to the list.
+- Enh: Random selection editor now uses integer input fields for better
+  probabilities setup.
 
 ### Desktop
 

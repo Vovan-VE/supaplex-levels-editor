@@ -15,17 +15,17 @@
 
 .gridSmall {
   display: grid;
-  grid-gap: 0.5rem 2rem;
-  --cols: 1;
+  grid-gap: 0.5rem 1.5rem;
+  --cols: 2;
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
   align-items: center;
-  @media (min-width: 530px) {
-    --cols: 2;
+  @media (min-width: 520px) {
+    --cols: 3;
   }
 
   > * {
     display: grid;
-    grid-gap: 0.25rem;
+    grid-gap: 0.2rem;
     grid-template-columns: min-content minmax(0, 1fr) 6ch;
     grid-template-areas: "icon input help";
     align-items: center;
@@ -35,6 +35,7 @@
     }
     > .input {
       grid-area: input;
+      text-align: right;
     }
     > .help {
       grid-area: help;

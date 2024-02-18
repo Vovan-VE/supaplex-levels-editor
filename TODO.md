@@ -50,7 +50,6 @@
 - Replace enh:
   - multiple "find"
   - random "replacement"
-- Random: limit 30 is not enough - try use number input
 - 100% offline with level testing and demo replay?
   - Need run game engine and own offline renderer
 
