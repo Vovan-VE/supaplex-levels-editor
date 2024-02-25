@@ -1,0 +1,27 @@
+.root {
+  display: flex;
+  align-items: center;
+  > * + * {
+    margin-left: 1rem;
+  }
+
+  :root & {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  code {
+    font-weight: bold;
+  }
+  sub {
+    font-size: 0.7rem;
+  }
+}
+
+.hex {
+}
+.char {
+  .replaced {
+    font-size: 1.3rem;
+  }
+}

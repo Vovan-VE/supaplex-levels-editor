@@ -52,7 +52,6 @@
   - random "replacement"
 - 100% offline with level testing and demo replay?
   - Need run game engine and own offline renderer
-- Display HEX values for tiles
 
 ### Desktop
 
