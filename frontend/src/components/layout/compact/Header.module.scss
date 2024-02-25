@@ -16,6 +16,16 @@
 .popupPanel,
 .popupToolbar {
   @extend %panel-colors;
+  max-width: 100%;
+}
+
+.popupPanel {
+  > * {
+    //white-space: normal;
+    > wbr {
+      display: initial !important;
+    }
+  }
 }
 
 .scrollableList {

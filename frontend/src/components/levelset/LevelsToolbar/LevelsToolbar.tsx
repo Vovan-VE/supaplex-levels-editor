@@ -1,5 +1,5 @@
 import { useUnit } from "effector-react";
-import { FC, useCallback, useMemo } from "react";
+import { FC, Fragment, ReactElement, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { openFile } from "backend";
 import { getDriverFormat, levelSupportsDemo } from "drivers";
@@ -125,6 +125,68 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
       level.level.undoQueue.current.title,
     );
 
+  let copyAsDemoButton: ReactElement | undefined;
+  if (demoSupport) {
+    const copyLevelAsDemoUrlTitle = hasDemo
+      ? t("main:level.export.CopyLevelAsDemoLink")
+      : t("main:level.export.CopyLevelAsDemoLinkNone");
+    copyAsDemoButton = (
+      <TextButton
+        icon={<svgs.LinkDemo />}
+        uiColor={ColorType.DEFAULT}
+        onClick={copyLevelAsDemoLink}
+        disabled={!hasDemo}
+        title={isCompact ? copyLevelAsDemoUrlTitle : undefined}
+      >
+        {isCompact ? undefined : copyLevelAsDemoUrlTitle}
+      </TextButton>
+    );
+  }
+  const exportLevelAsFileTitle = t("main:level.export.SaveLevelAsFile");
+  const exportSelectionAsImageTitle = t(
+    "main:level.export.SaveSelectionAsImage",
+  );
+  const copySelectionAsImageTitle = t("main:level.export.CopySelectionAsImage");
+  const copyLevelAsTestUrlTitle = t("main:level.export.CopyLevelAsTestUrl");
+  const exportButtons = (
+    <>
+      <TextButton
+        icon={<svgs.SaveLevelAsFile />}
+        onClick={exportCurrentLevel}
+        uiColor={ColorType.DEFAULT}
+        title={isCompact ? exportLevelAsFileTitle : undefined}
+      >
+        {isCompact ? undefined : exportLevelAsFileTitle}
+      </TextButton>
+      <TextButton
+        icon={<svgs.SaveAsImage />}
+        onClick={exportAsImageToFile}
+        uiColor={ColorType.DEFAULT}
+        title={isCompact ? exportSelectionAsImageTitle : undefined}
+      >
+        {isCompact ? undefined : exportSelectionAsImageTitle}
+      </TextButton>
+      <wbr />
+      <TextButton
+        icon={<svgs.CopyImage />}
+        uiColor={ColorType.DEFAULT}
+        onClick={exportAsImageToClipboard}
+        title={isCompact ? copySelectionAsImageTitle : undefined}
+      >
+        {isCompact ? undefined : copySelectionAsImageTitle}
+      </TextButton>
+      <TextButton
+        icon={<svgs.LinkTest />}
+        uiColor={ColorType.DEFAULT}
+        onClick={copyLevelAsTestLink}
+        title={isCompact ? copyLevelAsTestUrlTitle : undefined}
+      >
+        {isCompact ? undefined : copyLevelAsTestUrlTitle}
+      </TextButton>
+      {copyAsDemoButton}
+    </>
+  );
+
   const handleDeleteClick = useMemo(
     () =>
       levelFullReference
@@ -152,38 +214,69 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
     isRo || (maxLevelsCount !== null && levelsCount >= maxLevelsCount);
 
   const cannotRemoveLevel = isRo || levelsCount <= minLevelsCount;
-  const cannotRemoveLevelMessage = cannotRemoveLevel
-    ? t("main:level.manage.CannotLessThenMin", { min: minLevelsCount })
-    : undefined;
 
-  const cannotRemoveRestLevels = !(
-    level === null ||
-    (level.index + 1 < levelsCount && levelsCount > minLevelsCount)
-  );
-  const deleteRestTitle = level
-    ? t("main:level.manage.DeleteRestLevels", {
-        n: levelsCount - (level.index + 1),
-      })
-    : undefined;
+  const addRemoveButtons: ReactElement[] = [];
+  if (!cannotAddLevel) {
+    const appendTitle = t("main:level.manage.Append", {
+      number: fmtLevelNumber(levelsCount, levelsCountDigits),
+    });
 
-  const insertButton = cannotAddLevel ? undefined : (
-    <Button
-      icon={<svgs.InsertRow />}
-      disabled={!level}
-      title={
-        level
-          ? t("main:level.manage.Insert", {
-              number: fmtLevelNumber(level.index, levelsCountDigits),
-            })
-          : ""
-      }
-      onClick={insertAtCurrentLevel}
-    />
-  );
+    addRemoveButtons.push(
+      <Button
+        icon={<svgs.InsertRow />}
+        disabled={!level}
+        title={
+          level
+            ? t("main:level.manage.Insert", {
+                number: fmtLevelNumber(level.index, levelsCountDigits),
+              })
+            : ""
+        }
+        onClick={insertAtCurrentLevel}
+      />,
+      <Button
+        icon={<svgs.AppendRow />}
+        onClick={appendLevel}
+        title={isCompact ? appendTitle : undefined}
+      >
+        {isCompact ? undefined : appendTitle}
+      </Button>,
+    );
+  }
+  if (!cannotRemoveLevel) {
+    const deleteTitle = levelFullReference
+      ? t("main:level.manage.Delete", { level: levelFullReference })
+      : "";
+    const deleteRestTitle = level
+      ? t("main:level.manage.DeleteRestLevels", {
+          n: levelsCount - (level.index + 1),
+        })
+      : undefined;
 
-  const appendTitle = t("main:level.manage.Append", {
-    number: fmtLevelNumber(levelsCount, levelsCountDigits),
-  });
+    addRemoveButtons.push(
+      <Button
+        uiColor={ColorType.DANGER}
+        icon={<svgs.DeleteRow />}
+        disabled={!level}
+        onClick={handleDeleteClick}
+        title={isCompact ? deleteTitle : undefined}
+      >
+        {isCompact ? undefined : deleteTitle}
+      </Button>,
+      <Button
+        uiColor={ColorType.DANGER}
+        icon={<svgs.DeleteRest />}
+        title={isCompact ? deleteRestTitle : undefined}
+        disabled={
+          level !== null &&
+          (level.index >= levelsCount - 1 || levelsCount <= minLevelsCount)
+        }
+        onClick={handleDeleteRestClick}
+      >
+        {isCompact ? undefined : deleteRestTitle}
+      </Button>,
+    );
+  }
 
   const closeButton = (
     <Button
@@ -222,66 +315,25 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
     }
   }, [levelFullReference]);
 
-  const deleteButton = (
-    <Button
-      uiColor={ColorType.DANGER}
-      icon={<svgs.DeleteRow />}
-      disabled={!level}
-      onClick={handleDeleteClick}
-      title={
-        cannotRemoveLevelMessage ||
-        (levelFullReference
-          ? t("main:level.manage.Delete", { level: levelFullReference })
-          : "")
-      }
-    />
-  );
-
   return (
     <>
-      <ButtonDropdown
-        triggerIcon={<svgs.Save />}
-        buttonProps={{
-          iconStack: [[IconStackType.Index, <svgs.FileBlank />]],
-          title: t("main:level.manage.ExportLevel"),
-          disabled: !level,
-        }}
-      >
-        <Toolbar isMenu>
-          <TextButton onClick={exportCurrentLevel} uiColor={ColorType.DEFAULT}>
-            {t("main:level.export.SaveLevelAsFile")}
-          </TextButton>
-          <TextButton onClick={exportAsImageToFile} uiColor={ColorType.DEFAULT}>
-            {t("main:level.export.SaveSelectionAsImage")}
-          </TextButton>
-          <TextButton
-            icon={<svgs.Copy />}
-            uiColor={ColorType.DEFAULT}
-            onClick={exportAsImageToClipboard}
-          >
-            {t("main:level.export.CopySelectionAsImage")}
-          </TextButton>
-          <TextButton
-            icon={<svgs.Copy />}
-            uiColor={ColorType.DEFAULT}
-            onClick={copyLevelAsTestLink}
-          >
-            {t("main:level.export.CopyLevelAsTestUrl")}
-          </TextButton>
-          {demoSupport && (
-            <TextButton
-              icon={<svgs.Copy />}
-              uiColor={ColorType.DEFAULT}
-              onClick={copyLevelAsDemoLink}
-              disabled={!hasDemo}
-            >
-              {hasDemo
-                ? t("main:level.export.CopyLevelAsDemoLink")
-                : t("main:level.export.CopyLevelAsDemoLinkNone")}
-            </TextButton>
-          )}
-        </Toolbar>
-      </ButtonDropdown>
+      {isCompact ? (
+        <>
+          {exportButtons}
+          <wbr />
+        </>
+      ) : (
+        <ButtonDropdown
+          triggerIcon={<svgs.Save />}
+          buttonProps={{
+            iconStack: [[IconStackType.Index, <svgs.FileBlank />]],
+            title: t("main:level.manage.ExportLevel"),
+            disabled: !level,
+          }}
+        >
+          <Toolbar isMenu>{exportButtons}</Toolbar>
+        </ButtonDropdown>
+      )}
       {isRo || (
         <Button
           icon={<svgs.DirOpen />}
@@ -291,54 +343,25 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
           disabled={!level}
         />
       )}
-      {cannotAddLevel ||
-        (isCompact ? (
-          <>
-            {insertButton}
-            <Button
-              icon={<svgs.AppendRow />}
-              title={appendTitle}
-              onClick={appendLevel}
-            />
-          </>
-        ) : (
-          <ButtonDropdown standalone={insertButton}>
-            <Toolbar>
-              <Button icon={<svgs.AppendRow />} onClick={appendLevel}>
-                {appendTitle}
-              </Button>
-            </Toolbar>
-          </ButtonDropdown>
-        ))}
-      {cannotRemoveLevel ||
-        (isCompact ? (
-          <>
-            {deleteButton}
-            <Button
-              uiColor={ColorType.DANGER}
-              icon={<svgs.DeleteRest />}
-              title={deleteRestTitle}
-              disabled={cannotRemoveRestLevels}
-              onClick={handleDeleteRestClick}
-            />
-          </>
-        ) : (
-          <ButtonDropdown
-            standalone={deleteButton}
-            buttonProps={{ uiColor: ColorType.DANGER }}
-          >
-            <Toolbar>
-              <Button
-                uiColor={ColorType.DANGER}
-                icon={<svgs.DeleteRest />}
-                disabled={cannotRemoveRestLevels}
-                onClick={handleDeleteRestClick}
-              >
-                {deleteRestTitle}
-              </Button>
-            </Toolbar>
-          </ButtonDropdown>
-        ))}
+
+      {isCompact ? (
+        addRemoveButtons.map((b, i) => (
+          <Fragment key={i}>
+            {b}
+            <wbr />
+          </Fragment>
+        ))
+      ) : addRemoveButtons.length > 1 ? (
+        <ButtonDropdown standalone={addRemoveButtons[0]}>
+          <Toolbar isMenu>
+            {addRemoveButtons.slice(1).map((b, i) => (
+              <Fragment key={i}>{b}</Fragment>
+            ))}
+          </Toolbar>
+        </ButtonDropdown>
+      ) : (
+        addRemoveButtons[0]
+      )}
 
       {hasOtherOpened && !isCompact ? (
         <ButtonDropdown standalone={closeButton}>

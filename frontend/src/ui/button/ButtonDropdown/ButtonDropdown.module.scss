@@ -53,4 +53,5 @@
 .popup {
   z-index: var(--z-index-popup);
   @include mixins.popup-shadow;
+  max-width: calc(100vw - 5px);
 }
