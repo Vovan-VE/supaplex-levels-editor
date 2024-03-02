@@ -50,8 +50,6 @@
 - Clickable "electron" icon to include/exclude n\*9 infotrons needed.
 - BIN demo export/import?
 - Reorder levels in file
-- Replace enh:
-  - random "replacement"
 - 100% offline with level testing and demo replay?
   - Need run game engine and own offline renderer
 

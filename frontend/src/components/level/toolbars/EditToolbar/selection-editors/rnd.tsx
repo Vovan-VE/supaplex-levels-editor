@@ -1,9 +1,10 @@
 import cn from "classnames";
-import { createEvent, createStore } from "effector";
+import { createEvent, createStore, restore } from "effector";
 import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import * as RoMap from "@cubux/readonly-map";
+import { TileSelectMulti } from "components/driver/TileSelect";
 import { getDriver, getTilesForToolbar } from "drivers";
 import { Trans } from "i18n/Trans";
 import { $currentDriverName } from "models/levelsets";
@@ -32,9 +33,14 @@ const getRandomTile = (
   throw new Error("unreachable");
 };
 
+const setSearchTiles = createEvent<readonly number[]>();
 const toggleTile = createEvent<number>();
 const toggleTileKeep = toggleTile.prepend<any>(() => -1);
 const setCount = createEvent<[tile: number, count: number]>();
+const $searchTiles = restore(
+  setSearchTiles.map((v) => new Set(v)),
+  new Set<number>(),
+);
 const $probabilities = createStore<ReadonlyMap<number, number>>(EMPTY_MAP)
   .on(toggleTile, (map, tile) =>
     map.has(tile) ? RoMap.remove(map, tile) : RoMap.set(map, tile, 1),
@@ -59,6 +65,7 @@ const RndEditor: FC<SelectionEditorProps> = ({
     [region, tempLevelFromRegion],
   );
 
+  const searchTiles = useUnit($searchTiles);
   const prob = useUnit($probabilities);
   const total = useUnit($total);
 
@@ -78,8 +85,15 @@ const RndEditor: FC<SelectionEditorProps> = ({
     onSubmit(
       tempLevel
         .batch((level) => {
+          const skip = searchTiles.size
+            ? (prev: number) => !searchTiles.has(prev)
+            : () => false;
           for (let j = height; j-- > 0; ) {
             for (let i = width; i-- > 0; ) {
+              if (skip(level.getTile(i, j))) {
+                // this thing affects probability logic
+                continue;
+              }
               const tile = getRandomTile(prob, total);
               if (tile >= 0) {
                 level = level.setTile(i, j, tile);
@@ -90,11 +104,14 @@ const RndEditor: FC<SelectionEditorProps> = ({
         })
         .copyRegion({ x: 0, y: 0, width, height }),
     );
-  }, [prob, total, tempLevel, onSubmit]);
+  }, [searchTiles, prob, total, tempLevel, onSubmit]);
 
   return (
     <div>
-      <Field label={t("main:selectionEditors.rnd.WhichTiles")}>
+      <Field
+        label={t("main:selectionEditors.rnd.WhichTiles")}
+        labelElement="span"
+      >
         <Button
           uiColor={prob.has(-1) ? ColorType.WARN : ColorType.MUTE}
           asLink={!prob.has(-1)}
@@ -148,6 +165,19 @@ const RndEditor: FC<SelectionEditorProps> = ({
         ) : (
           <em>{t("main:selectionEditors.rnd.HintMinCount")}</em>
         )}
+      </Field>
+      <Field
+        label={t("main:selectionEditors.rnd.ReplaceWhat", "Replace what")}
+        help={t(
+          "main:selectionEditors.rnd.ReplaceWhatHelp",
+          "Optional. Only these tiles in the given region will be replaced, when specified.",
+        )}
+      >
+        <TileSelectMulti
+          driverName={driverName as any}
+          tile={searchTiles}
+          onChange={setSearchTiles}
+        />
       </Field>
 
       <div className={clC.buttons}>

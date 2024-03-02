@@ -15,6 +15,8 @@
 - Enh: Random selection editor now uses integer input fields for better
   probabilities setup.
 - Enh: Replace selection editor now allows multiple "what" to replace.
+- Enh: Random selection editor now has optional "Replace what" to affect only
+  specified tiles in a selection.
 
 ### Desktop
 
