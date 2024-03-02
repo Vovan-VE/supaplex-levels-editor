@@ -5,11 +5,12 @@ import { TileCoords } from "components/settings/display";
 import { $feedbackCell } from "models/levels/tools";
 import { $currentLevelUndoQueue } from "models/levelsets";
 import { ContainerProps } from "ui/types";
+import { inBounds } from "utils/rect";
 import cl from "./HoveredCell.module.scss";
 
 export const HoveredCell: FC<ContainerProps> = (props) => {
   const feedback = useUnit($feedbackCell);
-  const level = useUnit($currentLevelUndoQueue);
+  const level = useUnit($currentLevelUndoQueue)?.current;
   if (!feedback) {
     return null;
   }
@@ -19,15 +20,14 @@ export const HoveredCell: FC<ContainerProps> = (props) => {
       <span>
         <TileCoords x={x} y={y} />
       </span>
-      <DisplayTileHex tile={level?.current.getTile(x, y)} />
+      {level && inBounds(x, y, level) && (
+        <DisplayTileHex tile={level.getTile(x, y)} />
+      )}
     </span>
   );
 };
 
-const DisplayTileHex: FC<{ tile?: number }> = ({ tile }) => {
-  if (tile === undefined) {
-    return null;
-  }
+const DisplayTileHex: FC<{ tile: number }> = ({ tile }) => {
   const replacedChar = replaceChars.get(tile);
   return (
     <>
