@@ -21,9 +21,12 @@
   - Impossible without gameplay simulation. Only if SO will provide a path
     actually walked.
 - Tooltips with interactive content support.
-- footer info: is std, why not
+- footer info:
+  - is std, why not
+  - selection size
 - new file: format description: common and per format
 - tooltip for a tile/coords (in dialogs) to display part of level as context
+- Import/Open level from test/demo url
 
 - `class UserError extends Error {}`, `new UserError(t => t(...))`
 
@@ -48,7 +51,6 @@
 - BIN demo export/import?
 - Reorder levels in file
 - Replace enh:
-  - multiple "find"
   - random "replacement"
 - 100% offline with level testing and demo replay?
   - Need run game engine and own offline renderer

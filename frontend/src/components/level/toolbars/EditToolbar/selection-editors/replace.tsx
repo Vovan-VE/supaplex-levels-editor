@@ -2,7 +2,7 @@ import { createEvent, restore } from "effector";
 import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { TileSelect } from "components/driver/TileSelect";
+import { TileSelect, TileSelectMulti } from "components/driver/TileSelect";
 import { getDriver, getTilesVariantsMap } from "drivers";
 import { Trans } from "i18n/Trans";
 import { $currentDriverName } from "models/levelsets";
@@ -14,10 +14,13 @@ import { ColorType } from "ui/types";
 import { SelectionEditor, SelectionEditorProps } from "./_types";
 import clC from "./common.module.scss";
 
-const setSearchTile = createEvent<number>();
+const setSearchTiles = createEvent<readonly number[]>();
 const setReplaceTile = createEvent<number>();
 const setKeepVariants = createEvent<boolean>();
-const $searchTile = restore(setSearchTile, -1);
+const $searchTiles = restore(
+  setSearchTiles.map((v) => new Set(v)),
+  new Set<number>(),
+);
 const $replaceTile = restore(setReplaceTile, -1);
 const $keepVariants = restore(setKeepVariants, true);
 
@@ -35,7 +38,7 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
   );
   const tileVariants = useMemo(() => getTilesVariantsMap(tiles), [tiles]);
 
-  const searchTile = useUnit($searchTile);
+  const searchTiles = useUnit($searchTiles);
   const replaceTile = useUnit($replaceTile);
   const keepVariants = useUnit($keepVariants);
 
@@ -50,7 +53,7 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
               if (keepVariants) {
                 prev = tileVariants.get(prev) ?? prev;
               }
-              if (prev === searchTile) {
+              if (searchTiles.has(prev)) {
                 level = level.setTile(i, j, replaceTile, keepVariants);
               }
             }
@@ -60,7 +63,7 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
         .copyRegion({ x: 0, y: 0, width, height }),
     );
   }, [
-    searchTile,
+    searchTiles,
     replaceTile,
     keepVariants,
     tileVariants,
@@ -71,11 +74,17 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
   return (
     <div>
       <div className={clC.row2}>
-        <Field label={t("main:selectionEditors.replace.SearchWhat")}>
-          <TileSelect
+        <Field
+          label={t("main:selectionEditors.replace.SearchWhat")}
+          help={t(
+            "main:selectionEditors.replace.SearchWhatHelp",
+            "Multiple allowed",
+          )}
+        >
+          <TileSelectMulti
             driverName={driverName as any}
-            tile={searchTile}
-            onChange={setSearchTile}
+            tile={searchTiles}
+            onChange={setSearchTiles}
           />
         </Field>
         <Field label={t("main:selectionEditors.replace.ReplaceWith")}>
@@ -86,7 +95,8 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
           />
         </Field>
       </div>
-      {(tileVariants.has(searchTile) || tileVariants.has(replaceTile)) && (
+      {(tileVariants.has(replaceTile) ||
+        Array.from(searchTiles).some((v) => tileVariants.has(v))) && (
         <div>
           <Checkbox checked={keepVariants} onChange={setKeepVariants}>
             {t("main:selectionEditors.replace.KeepTileVariants")}
@@ -98,7 +108,7 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
         <Button
           uiColor={ColorType.SUCCESS}
           onClick={handleSubmit}
-          disabled={searchTile < 0 || replaceTile < 0}
+          disabled={!searchTiles.size || replaceTile < 0}
         >
           {t("main:common.buttons.OK")}
         </Button>

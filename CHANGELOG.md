@@ -14,6 +14,7 @@
   - limit dialog height and add scroll to the list.
 - Enh: Random selection editor now uses integer input fields for better
   probabilities setup.
+- Enh: Replace selection editor now allows multiple "what" to replace.
 
 ### Desktop
 

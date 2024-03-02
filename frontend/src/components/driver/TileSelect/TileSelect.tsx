@@ -11,15 +11,6 @@ import { TranslationGetter } from "i18n/types";
 import { Select, SelectOption } from "ui/input";
 import cl from "./TileSelect.module.scss";
 
-interface Props {
-  driverName: DriverName;
-  tile: number;
-  onChange: (tile: number) => void;
-  // TODO: showVariants?: bool;
-  canClear?: boolean;
-  placeholder?: ReactNode;
-}
-
 type TrSelectOption<V extends AnyKey> = Omit<
   SelectOption<V>,
   "labelSelected"
@@ -44,15 +35,9 @@ const OPTIONS = new Map(
   }),
 );
 
-export const TileSelect: FC<Props> = ({
-  driverName,
-  tile,
-  onChange,
-  canClear = false,
-  ...rest
-}) => {
+const useOptions = (driverName: DriverName) => {
   const { t } = useTranslation();
-  const options = useMemo(
+  return useMemo(
     () =>
       OPTIONS.get(driverName)!.map((o) => ({
         ...o,
@@ -60,24 +45,77 @@ export const TileSelect: FC<Props> = ({
       })),
     [t, driverName],
   );
+};
+
+const classNames = {
+  menuList: () => cl.menuList,
+  option: () => cl.option,
+};
+
+interface Props {
+  driverName: DriverName;
+  // TODO: showVariants?: bool;
+  canClear?: boolean;
+  placeholder?: ReactNode;
+}
+interface PropsSingle extends Props {
+  tile: number;
+  onChange: (tile: number) => void;
+}
+interface PropsMulti extends Props {
+  tile: readonly number[] | ReadonlySet<number>;
+  onChange: (tile: number[]) => void;
+}
+
+export const TileSelect: FC<PropsSingle> = ({
+  driverName,
+  tile,
+  onChange,
+  canClear = false,
+  ...rest
+}) => {
+  const options = useOptions(driverName);
   const handleChange = useCallback(
-    (o: SelectOption<number> | null) => {
-      onChange(o?.value ?? -1);
-    },
+    (o: SelectOption<number> | null) => onChange(o?.value ?? -1),
     [onChange],
   );
 
   return (
     <Select
       {...rest}
-      options={options!}
-      value={options?.find((o) => o.value === tile) ?? null}
+      options={options}
+      value={options.find((o) => o.value === tile) ?? null}
       onChange={handleChange}
       className={cl.root}
-      classNames={{
-        menuList: () => cl.menuList,
-        option: () => cl.option,
-      }}
+      classNames={classNames}
+      isClearable={canClear}
+    />
+  );
+};
+
+export const TileSelectMulti: FC<PropsMulti> = ({
+  driverName,
+  tile,
+  onChange,
+  canClear = false,
+  ...rest
+}) => {
+  const options = useOptions(driverName);
+  const handleChange = useCallback(
+    (o: readonly SelectOption<number>[]) => onChange(o.map((o) => o.value)),
+    [onChange],
+  );
+  const selected = new Set(tile);
+
+  return (
+    <Select
+      {...rest}
+      isMulti
+      options={options}
+      value={options.filter((o) => selected.has(o.value))}
+      onChange={handleChange}
+      className={cl.root}
+      classNames={classNames}
       isClearable={canClear}
     />
   );
