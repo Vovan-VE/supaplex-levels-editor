@@ -51,6 +51,10 @@ jobs:
         env:
           CI: true
 
+      - name: Get release changelog
+        run: |
+          ./frontend/scripts/get-release-notes.sh < ./CHANGELOG.md > ./THIS-CHANGELOG.md
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
@@ -70,6 +74,12 @@ jobs:
         with:
           name: desktop-front
           path: ./frontend/build-wails/
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-data
+          path: ./THIS-CHANGELOG.md
 
   build_desktop:
     name: Build desktop apps
@@ -114,7 +124,7 @@ jobs:
           VERSION: ${{ needs.build_front.outputs.version }}
 
       - name: Upload desktop artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: desktop-bin-${{ matrix.platform }}
           path: ./build/bin/*
@@ -129,13 +139,13 @@ jobs:
       - build_desktop
     steps:
       - name: Download app artifacts from linux
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: desktop-bin-ubuntu-latest
           path: ./release-files
 
 #      - name: Download app artifacts from mac
-#        uses: actions/download-artifact@v3
+#        uses: actions/download-artifact@v4
 #        with:
 #          name: desktop-bin-macos-latest
 #          #path: ./release-files
@@ -150,9 +160,11 @@ jobs:
           done
           cat *.txt
 
-      - name: Get release changelog
-        run: |
-          ./frontend/scripts/get-release-notes.sh < ./CHANGELOG.md > ./THIS-CHANGELOG.md
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-data
+          path: .
 
       - name: Draft release
         uses: softprops/action-gh-release@v0.1.15
