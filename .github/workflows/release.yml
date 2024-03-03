@@ -52,7 +52,7 @@ jobs:
           CI: true
 
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
 
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
@@ -61,12 +61,12 @@ jobs:
           destination: ./frontend/build/docs
 
       - name: Upload web artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./frontend/build
 
       - name: Upload desktop artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: desktop-front
           path: ./frontend/build-wails/
@@ -85,7 +85,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
 
@@ -111,7 +111,7 @@ jobs:
         env:
           SKIP_FRONT: 1
           SKIP_FRONT_CLEAN: ""
-          VERSION: ${{ needs.build_front.outputs.current-version }}
+          VERSION: ${{ needs.build_front.outputs.version }}
 
       - name: Upload desktop artifact
         uses: actions/upload-artifact@v3
@@ -160,8 +160,8 @@ jobs:
           token: "${{ secrets.GITHUB_TOKEN }}"
           draft: true
           prerelease: false
-          tag_name: "v${{ needs.build_front.outputs.current-version }}"
-          name: "v${{ needs.build_front.outputs.current-version }}"
+          tag_name: "v${{ needs.build_front.outputs.version }}"
+          name: "v${{ needs.build_front.outputs.version }}"
           body_path: ./THIS-CHANGELOG.md
           files: |
             ./release-files/*.exe
