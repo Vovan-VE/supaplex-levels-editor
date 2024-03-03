@@ -111,7 +111,7 @@ jobs:
         env:
           SKIP_FRONT: 1
           SKIP_FRONT_CLEAN: ""
-          VERSION: ${{ needs.build_front.outputs.current-version }}
+          VERSION: ${{ needs.build_front.outputs.version }}
 
       - name: Upload desktop artifact
         uses: actions/upload-artifact@v3
@@ -160,8 +160,8 @@ jobs:
           token: "${{ secrets.GITHUB_TOKEN }}"
           draft: true
           prerelease: false
-          tag_name: "v${{ needs.build_front.outputs.current-version }}"
-          name: "v${{ needs.build_front.outputs.current-version }}"
+          tag_name: "v${{ needs.build_front.outputs.version }}"
+          name: "v${{ needs.build_front.outputs.version }}"
           body_path: ./THIS-CHANGELOG.md
           files: |
             ./release-files/*.exe
