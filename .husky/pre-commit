@@ -1,3 +1,5 @@
+set -o errexit
+
 cd frontend
 npm test
 npm exec --no -- lint-staged
