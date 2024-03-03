@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.19.0 (DEV)
+## 0.19.0 (2024-03-03)
 
 - Add: Spec Ports DB dialog now allows to edit entire DB as text.
 - Add: Read Only mode can be toggled in a file. See new button near "Rename".
