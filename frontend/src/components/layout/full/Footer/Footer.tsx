@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ReactComponent as GitHubLogo } from "assets/img/github.svg";
 import { APP_VERSION, REPO_URL, VERSION_URL } from "configs";
 import { showInfoDialog, UpgradeLink, ZoomButtons } from "components/common";
-import { HoveredCell } from "components/level";
+import { HoveredCell, SelectionRegion } from "components/level";
 import { openSettings } from "models/settings";
 import { TextButton } from "ui/button";
 import { svgs } from "ui/icon";
@@ -37,6 +37,8 @@ export const Footer: FC<Props> = ({ className, ...rest }) => {
       {UpgradeLinkC && <UpgradeLinkC />}
       <span className={cl.space} />
       <HoveredCell className={cl.text} />
+      <span className={cl.space} />
+      <SelectionRegion className={cl.text} />
       <span className={cl.space} />
       <ZoomButtons btnClassName={cl.icon} space=" " />{" "}
       <TextButton

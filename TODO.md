@@ -23,7 +23,6 @@
 - Tooltips with interactive content support.
 - footer info:
   - is std, why not
-  - selection size
 - new file: format description: common and per format
 - tooltip for a tile/coords (in dialogs) to display part of level as context
 - Import/Open level from test/demo url

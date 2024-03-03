@@ -328,6 +328,21 @@ export const $selectionRect = $drawState.map<Rect | null>((d) => {
   const { x, y, width, height } = d;
   return { x, y, width, height };
 });
+export const $selectionFeedback = $drawState.map<Rect | null>((d) => {
+  if (!d) {
+    return null;
+  }
+  switch (d.op) {
+    case Op.DEFINE:
+      return fromDrag(d.startX, d.startY, d.endX, d.endY);
+    case Op.STABLE: {
+      const { x, y, width, height } = d;
+      return { x, y, width, height };
+    }
+    default:
+      return null;
+  }
+});
 
 export const deleteSelectionFx = createEffect(async () => {
   if ($openedSelectionEdit.getState()) {
