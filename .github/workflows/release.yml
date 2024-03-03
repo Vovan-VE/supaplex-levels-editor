@@ -52,7 +52,7 @@ jobs:
           CI: true
 
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
 
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
@@ -61,12 +61,12 @@ jobs:
           destination: ./frontend/build/docs
 
       - name: Upload web artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./frontend/build
 
       - name: Upload desktop artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: desktop-front
           path: ./frontend/build-wails/
@@ -85,7 +85,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
 
