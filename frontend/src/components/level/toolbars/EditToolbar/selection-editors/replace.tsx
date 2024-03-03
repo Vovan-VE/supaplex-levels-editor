@@ -76,10 +76,7 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
       <div className={clC.row2}>
         <Field
           label={t("main:selectionEditors.replace.SearchWhat")}
-          help={t(
-            "main:selectionEditors.replace.SearchWhatHelp",
-            "Multiple allowed",
-          )}
+          help={t("main:selectionEditors.replace.SearchWhatHelp")}
         >
           <TileSelectMulti
             driverName={driverName as any}

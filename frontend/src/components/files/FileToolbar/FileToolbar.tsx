@@ -73,8 +73,8 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
 
   const renameTitle = t("web:files.buttons.Rename");
   const roTitle = isRo
-    ? t("web:files.buttons.ReadOnly", "Read Only")
-    : t("web:files.buttons.ReadWrite", "Read, Write");
+    ? t("main:files.buttons.ReadOnly")
+    : t("main:files.buttons.ReadWrite");
   const roIcon = isRo ? <svgs.ReadOnly /> : <svgs.ReadWrite />;
   const handleRo = useCallback(() => setCurrentLevelsetRo(!isRo), [isRo]);
 

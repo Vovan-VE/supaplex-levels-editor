@@ -118,10 +118,7 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
       <p className={cl.info}>
         {isText ? (
           <span>
-            <Trans
-              i18nKey="main:supaplex.specportsDB.DialogIntroText"
-              defaults='All special ports in the level. Both "new line" and <code>&</code> can be used to separate records.'
-            />
+            <Trans i18nKey="main:supaplex.specportsDB.DialogIntroText" />
             <br />
             {textError ? (
               <span className={cl.error}>{textError}</span>
@@ -134,8 +131,8 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
         )}
         <Button onClick={handleToggleText} disabled={hasError}>
           {isText
-            ? t("main:supaplex.specportsDB.BtnToList", "Back to list")
-            : t("main:supaplex.specportsDB.BtnToText", "Edit as text")}
+            ? t("main:supaplex.specportsDB.BtnToList")
+            : t("main:supaplex.specportsDB.BtnToText")}
         </Button>
       </p>
       <CLevel.Provider value={level}>

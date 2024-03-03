@@ -50,7 +50,7 @@ const LevelsOrder: FC<Props> = ({
 
   return (
     <Dialog
-      title={t("main:levels.levelsOrder.Title", "Levels order")}
+      title={t("main:levels.levelsOrder.Title")}
       open={show}
       buttons={
         <>
@@ -71,10 +71,7 @@ const LevelsOrder: FC<Props> = ({
       bodyClassName={cl.root}
     >
       <p className={cl.info}>
-        <Trans
-          i18nKey="main:levels.levelsOrder.Intro"
-          defaults="Drag levels to change order in the file. <b>THIS OPERATION CANNOT BE UNDONE!</b>"
-        />
+        <Trans i18nKey="main:levels.levelsOrder.Intro" />
       </p>
 
       <div

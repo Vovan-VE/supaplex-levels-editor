@@ -293,7 +293,7 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
     [levelset.levels, isRo],
   );
   if (handleLevelsOrder) {
-    const orderTitle = t("main:level.manage.LevelsOrder", "Levels order");
+    const orderTitle = t("main:level.manage.LevelsOrder");
     addRemoveButtons.push(
       <Button
         icon={<svgs.Menu />}

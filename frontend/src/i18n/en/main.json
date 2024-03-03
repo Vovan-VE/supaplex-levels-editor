@@ -89,6 +89,8 @@
       "ConvertFormat": "Convert format...",
       "New": "Create new levelset...",
       "Open": "Open files...",
+      "ReadOnly": "Read Only",
+      "ReadWrite": "Read, Write",
       "SaveZipWithOptions": "Save file ZIP with Options"
     },
     "convert": {
@@ -151,14 +153,14 @@
     },
     "manage": {
       "Append": "Append new level {number}",
-      "CannotLessThenMin": "Cannot remove level because it's already minimum {min}",
       "CloseOtherTabs": "Close other levels tabs",
       "CloseTab": "Close level tab ({level})",
       "Delete": "Delete level {level}",
       "DeleteRestLevels": "Delete rest {n} levels",
       "ExportLevel": "Export level",
       "ImportLevelFromFileReplace": "Import a level from file into current level",
-      "Insert": "Insert a new level at {number} and move the current forward"
+      "Insert": "Insert a new level at {number} and move the current forward",
+      "LevelsOrder": "Levels order"
     },
     "resize": {
       "DialogTitle": "Resize level",
@@ -188,6 +190,10 @@
       "Confirm": "Are you sure you want to delete all the rest <b>{restCount}</b> levels <b>after</b> current one (that is starting from <code>{nextIndex}</code> inclusive) from this levelset?<br/>The levelset then will have only <b>{leftCount}</b> levels.<br/><b>This action can not be undone.</b>"
     },
     "LevelsInFile": "Levels in \"<b>{filename}</b>\"",
+    "levelsOrder": {
+      "Intro": "Drag levels to change order in the file. <b>THIS OPERATION CANNOT BE UNDONE!</b>",
+      "Title": "Levels order"
+    },
     "notActivated": {
       "SelectCompact": "Select a level in <levelsMenu>Levels menu</levelsMenu>.",
       "SelectFull": "Select a level in Dropdown list."
@@ -251,12 +257,15 @@
       "KeepTileVariants": "Keep tile variants",
       "ReplaceWith": "Replace with",
       "SearchWhat": "Search what",
+      "SearchWhatHelp": "Multiple allowed",
       "Title": "Replace"
     },
     "rnd": {
       "HintMinCount": "Check above 2 or more tile to use.",
       "Keep": "keep",
       "Probabilities": "Probabilities, relative to each other",
+      "ReplaceWhat": "Replace what",
+      "ReplaceWhatHelp": "Optional. Only these tiles in the given region will be replaced, when specified.",
       "Title": "Random",
       "WhichTiles": "Which tiles"
     }
@@ -380,7 +389,10 @@
       "Zonks": "Zonks"
     },
     "specportsDB": {
+      "BtnToList": "Back to list",
+      "BtnToText": "Edit as text",
       "DialogIntro": "All special ports in the level. Drag to sort.",
+      "DialogIntroText": "All special ports in the level. Both \"new line\" and <code>&</code> can be used to separate records.",
       "DialogTitle": "Special Ports Database"
     },
     "tiles": {

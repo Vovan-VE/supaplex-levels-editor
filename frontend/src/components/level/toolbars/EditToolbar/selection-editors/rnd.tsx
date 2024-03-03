@@ -167,11 +167,8 @@ const RndEditor: FC<SelectionEditorProps> = ({
         )}
       </Field>
       <Field
-        label={t("main:selectionEditors.rnd.ReplaceWhat", "Replace what")}
-        help={t(
-          "main:selectionEditors.rnd.ReplaceWhatHelp",
-          "Optional. Only these tiles in the given region will be replaced, when specified.",
-        )}
+        label={t("main:selectionEditors.rnd.ReplaceWhat")}
+        help={t("main:selectionEditors.rnd.ReplaceWhatHelp")}
       >
         <TileSelectMulti
           driverName={driverName as any}
