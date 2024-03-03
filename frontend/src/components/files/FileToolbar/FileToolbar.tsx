@@ -1,15 +1,18 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { allowManualSave } from "backend";
 import {
   $currentFileHasLocalOptions,
   $currentFileIsDirty,
+  $currentFileRo,
   $hasOtherFiles,
   $isFileOpened,
   closeCurrentFileFx,
   closeOtherFilesFx,
   flushCurrentFile,
   saveAsCurrentFile,
+  setCurrentLevelsetRo,
 } from "models/levelsets";
 import { Button, ButtonDropdown, Toolbar } from "ui/button";
 import { ColorType } from "ui/types";
@@ -25,22 +28,25 @@ interface Props {
 }
 
 const SaveFlushButton: FC = () => {
-  const isDirty = useStore($currentFileIsDirty);
+  const { t } = useTranslation();
+  const isDirty = useUnit($currentFileIsDirty);
   return (
     <Button
       uiColor={ColorType.SUCCESS}
       icon={<svgs.Save />}
       disabled={!isDirty}
-      title={"Save changes"}
+      title={t("desktop:files.buttons.Save")}
       onClick={flushCurrentFile}
     />
   );
 };
 
 export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
-  const hasLocalOptions = useStore($currentFileHasLocalOptions);
-  const hasOtherFiles = useStore($hasOtherFiles);
-  const isFileOpened = useStore($isFileOpened);
+  const { t } = useTranslation();
+  const hasLocalOptions = useUnit($currentFileHasLocalOptions);
+  const isRo = useUnit($currentFileRo);
+  const hasOtherFiles = useUnit($hasOtherFiles);
+  const isFileOpened = useUnit($isFileOpened);
 
   const saveAsButton = (
     <Button
@@ -50,20 +56,27 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
       title={
         isFileOpened
           ? allowManualSave
-            ? "Save As..."
-            : "Save file from memory"
+            ? t("desktop:files.buttons.SaveAs")
+            : t("web:files.buttons.Save")
           : undefined
       }
       onClick={useCallback(() => saveAsCurrentFile(), [])}
     />
   );
   const saveWithOptionsTitle = isFileOpened
-    ? "Save file ZIP with Options"
+    ? t("main:files.buttons.SaveZipWithOptions")
     : undefined;
   const handleSaveWithOptions = useCallback(
     () => saveAsCurrentFile({ withLocalOptions: true }),
     [],
   );
+
+  const renameTitle = t("web:files.buttons.Rename");
+  const roTitle = isRo
+    ? t("main:files.buttons.ReadOnly")
+    : t("main:files.buttons.ReadWrite");
+  const roIcon = isRo ? <svgs.ReadOnly /> : <svgs.ReadWrite />;
+  const handleRo = useCallback(() => setCurrentLevelsetRo(!isRo), [isRo]);
 
   const removeButton = (
     <Button
@@ -73,20 +86,20 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
       title={
         isFileOpened
           ? allowManualSave
-            ? "Close file"
-            : "Remove file from memory"
+            ? t("desktop:files.buttons.Close")
+            : t("web:files.buttons.Remove")
           : undefined
       }
       onClick={closeCurrentFileFx}
     />
   );
   const removeOthersTitle = allowManualSave
-    ? "Close all others files"
-    : "Remove others files from memory";
+    ? t("desktop:files.buttons.CloseOthers")
+    : t("web:files.buttons.RemoveOthers");
 
   return (
     <>
-      {allowManualSave && <SaveFlushButton />}
+      {allowManualSave && !isRo && <SaveFlushButton />}
       {hasLocalOptions && !isCompact && isFileOpened ? (
         <ButtonDropdown
           standalone={saveAsButton}
@@ -121,16 +134,44 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
         uiColor={ColorType.SUCCESS}
         icon={<svgs.FileConvert />}
         disabled={!isFileOpened}
-        title="Convert format..."
+        title={t("main:files.buttons.ConvertFormat")}
         onClick={handleConvert}
       />
-      {handleRename && (
-        <Button
-          icon={<svgs.Rename />}
-          disabled={!isFileOpened}
-          title="Rename file"
-          onClick={handleRename}
-        />
+
+      {!isCompact ? (
+        <ButtonDropdown triggerIcon={<svgs.Menu />} noArrow>
+          <Toolbar isMenu>
+            {handleRename && !isRo && (
+              <Button
+                icon={<svgs.Rename />}
+                disabled={!isFileOpened}
+                onClick={handleRename}
+              >
+                {renameTitle}
+              </Button>
+            )}
+            <Button icon={roIcon} disabled={!isFileOpened} onClick={handleRo}>
+              {roTitle}
+            </Button>
+          </Toolbar>
+        </ButtonDropdown>
+      ) : (
+        <>
+          {handleRename && !isRo && (
+            <Button
+              icon={<svgs.Rename />}
+              disabled={!isFileOpened}
+              title={renameTitle}
+              onClick={handleRename}
+            />
+          )}
+          <Button
+            icon={roIcon}
+            disabled={!isFileOpened}
+            title={roTitle}
+            onClick={handleRo}
+          />
+        </>
       )}
 
       {hasOtherFiles && !isCompact ? (

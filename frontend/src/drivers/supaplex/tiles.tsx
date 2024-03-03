@@ -1,3 +1,4 @@
+import { TranslationGetter } from "i18n/types";
 import {
   CellContextEventSnapshot,
   PenShape,
@@ -16,9 +17,9 @@ import { ReactComponent as SvgMetaPortD } from "./tiles-svg/meta-port-d.svg";
 import { ReactComponent as SvgMetaPortL } from "./tiles-svg/meta-port-l.svg";
 import { ReactComponent as SvgMetaPortR } from "./tiles-svg/meta-port-r.svg";
 import { ReactComponent as SvgMetaPortU } from "./tiles-svg/meta-port-u.svg";
-import { ReactComponent as SvgPortV } from "./tiles-svg/21-15-port-vertical.svg";
-import { ReactComponent as SvgPortH } from "./tiles-svg/22-16-port-horizontal.svg";
-import { ReactComponent as SvgPortX } from "./tiles-svg/23-17-port-cross.svg";
+import { ReactComponent as SvgMetaPortV } from "./tiles-svg/meta-port-v.svg";
+import { ReactComponent as SvgMetaPortH } from "./tiles-svg/meta-port-h.svg";
+import { ReactComponent as SvgMetaPortX } from "./tiles-svg/meta-port-x2.svg";
 import { ISupaplexLevel, ISupaplexTile } from "./types";
 
 const specPInt: IBaseTileInteraction<ISupaplexLevel> = {
@@ -43,98 +44,104 @@ const enum TBOrder {
   FancyHw,
 }
 
-const metaPortTitle = (direction: string) =>
-  `Regular/Special Port ${direction}\nRight Click on it in level body to see properties`;
+const metaPortTitle =
+  (port: TranslationGetter): TranslationGetter =>
+  (t) =>
+    t("main:supaplex.tilesMeta.Port", { port: port(t) });
 
 const metaPortR: IBaseMetaTile = {
   primaryValue: tid.TILE_PORT_R,
   icon: <SvgMetaPortR />,
-  title: metaPortTitle("Right"),
+  title: metaPortTitle((t) => t("main:supaplex.tiles.PortRight")),
 };
 const metaPortD: IBaseMetaTile = {
   primaryValue: tid.TILE_PORT_D,
   icon: <SvgMetaPortD />,
-  title: metaPortTitle("Down"),
+  title: metaPortTitle((t) => t("main:supaplex.tiles.PortDown")),
 };
 const metaPortL: IBaseMetaTile = {
   primaryValue: tid.TILE_PORT_L,
   icon: <SvgMetaPortL />,
-  title: metaPortTitle("Left"),
+  title: metaPortTitle((t) => t("main:supaplex.tiles.PortLeft")),
 };
 const metaPortU: IBaseMetaTile = {
   primaryValue: tid.TILE_PORT_U,
   icon: <SvgMetaPortU />,
-  title: metaPortTitle("Up"),
+  title: metaPortTitle((t) => t("main:supaplex.tiles.PortUp")),
 };
 const metaPortV: IBaseMetaTile = {
   primaryValue: tid.TILE_PORT_V,
-  icon: <SvgPortV />,
-  title: metaPortTitle("Vertical"),
+  icon: <SvgMetaPortV />,
+  title: metaPortTitle((t) => t("main:supaplex.tiles.PortV")),
 };
 const metaPortH: IBaseMetaTile = {
   primaryValue: tid.TILE_PORT_H,
-  icon: <SvgPortH />,
-  title: metaPortTitle("Horizontal"),
+  icon: <SvgMetaPortH />,
+  title: metaPortTitle((t) => t("main:supaplex.tiles.PortH")),
 };
 const metaPortX: IBaseMetaTile = {
   primaryValue: tid.TILE_PORT_X,
-  icon: <SvgPortX />,
-  title: metaPortTitle("Cross"),
+  icon: <SvgMetaPortX />,
+  title: metaPortTitle((t) => t("main:supaplex.tiles.PortX")),
 };
 
 export const tiles: readonly ISupaplexTile[] = [
-  { value: tid.TILE_SPACE, title: "Space", toolbarOrder: TBOrder.Core },
+  {
+    value: tid.TILE_SPACE,
+    title: (t) => t("main:supaplex.tiles.Empty"),
+    toolbarOrder: TBOrder.Core,
+  },
   {
     value: tid.TILE_ZONK,
-    title: "Zonk",
+    title: (t) => t("main:supaplex.tiles.Zonk"),
     src: tsrc.src01,
     toolbarOrder: TBOrder.Core,
   },
   {
     value: tid.TILE_BASE,
-    title: "Base",
+    title: (t) => t("main:supaplex.tiles.Base"),
     src: tsrc.src02,
     toolbarOrder: TBOrder.Core,
   },
   {
     value: tid.TILE_MURPHY,
-    title: "Murphy",
+    title: (t) => t("main:supaplex.tiles.Murphy"),
     src: tsrc.src03,
     toolbarOrder: TBOrder.Core,
   },
   {
     value: tid.TILE_INFOTRON,
-    title: "Infotron",
+    title: (t) => t("main:supaplex.tiles.Infotron"),
     src: tsrc.src04,
     toolbarOrder: TBOrder.Core,
   },
   {
     value: tid.TILE_CHIP,
-    title: "Chip",
+    title: (t) => t("main:supaplex.tiles.Chip"),
     src: tsrc.src05,
     toolbarOrder: TBOrder.Chip,
   },
   {
     value: tid.TILE_HARDWARE,
-    title: "Hardware",
+    title: (t) => t("main:supaplex.tiles.Hardware"),
     src: tsrc.src06,
     toolbarOrder: TBOrder.Core,
   },
   {
     value: tid.TILE_EXIT,
-    title: "Exit",
+    title: (t) => t("main:supaplex.tiles.Exit"),
     src: tsrc.src07,
     toolbarOrder: TBOrder.Core,
   },
   {
     value: tid.TILE_DISK_O,
-    title: "Orange Disk",
+    title: (t) => t("main:supaplex.tiles.DiskOrange"),
     src: tsrc.src08,
     toolbarOrder: TBOrder.Disk,
   },
   {
     value: tid.TILE_PORT_R,
-    title: "Port Right",
+    title: (t) => t("main:supaplex.tiles.PortRight"),
     src: tsrc.src09,
     metaTile: metaPortR,
     interaction: specPInt,
@@ -142,7 +149,7 @@ export const tiles: readonly ISupaplexTile[] = [
   },
   {
     value: tid.TILE_PORT_D,
-    title: "Port Down",
+    title: (t) => t("main:supaplex.tiles.PortDown"),
     src: tsrc.src10,
     metaTile: metaPortD,
     interaction: specPInt,
@@ -150,7 +157,7 @@ export const tiles: readonly ISupaplexTile[] = [
   },
   {
     value: tid.TILE_PORT_L,
-    title: "Port Left",
+    title: (t) => t("main:supaplex.tiles.PortLeft"),
     src: tsrc.src11,
     metaTile: metaPortL,
     interaction: specPInt,
@@ -158,7 +165,7 @@ export const tiles: readonly ISupaplexTile[] = [
   },
   {
     value: tid.TILE_PORT_U,
-    title: "Port Up",
+    title: (t) => t("main:supaplex.tiles.PortUp"),
     src: tsrc.src12,
     metaTile: metaPortU,
     interaction: specPInt,
@@ -166,7 +173,10 @@ export const tiles: readonly ISupaplexTile[] = [
   },
   {
     value: tid.TILE_SP_PORT_R,
-    title: "Special Port Right",
+    title: (t) =>
+      t("main:supaplex.tiles.SpecPort", {
+        port: t("main:supaplex.tiles.PortRight"),
+      }),
     src: tsrc.src13,
     metaTile: metaPortR,
     interaction: specPInt,
@@ -174,7 +184,10 @@ export const tiles: readonly ISupaplexTile[] = [
   },
   {
     value: tid.TILE_SP_PORT_D,
-    title: "Special Port Down",
+    title: (t) =>
+      t("main:supaplex.tiles.SpecPort", {
+        port: t("main:supaplex.tiles.PortDown"),
+      }),
     src: tsrc.src14,
     metaTile: metaPortD,
     interaction: specPInt,
@@ -182,7 +195,10 @@ export const tiles: readonly ISupaplexTile[] = [
   },
   {
     value: tid.TILE_SP_PORT_L,
-    title: "Special Port Left",
+    title: (t) =>
+      t("main:supaplex.tiles.SpecPort", {
+        port: t("main:supaplex.tiles.PortLeft"),
+      }),
     src: tsrc.src15,
     metaTile: metaPortL,
     interaction: specPInt,
@@ -190,7 +206,10 @@ export const tiles: readonly ISupaplexTile[] = [
   },
   {
     value: tid.TILE_SP_PORT_U,
-    title: "Special Port Up",
+    title: (t) =>
+      t("main:supaplex.tiles.SpecPort", {
+        port: t("main:supaplex.tiles.PortUp"),
+      }),
     src: tsrc.src16,
     metaTile: metaPortU,
     interaction: specPInt,
@@ -198,151 +217,158 @@ export const tiles: readonly ISupaplexTile[] = [
   },
   {
     value: tid.TILE_SNIK_SNAK,
-    title: "Snik-Snak",
+    title: (t) => t("main:supaplex.tiles.SnikSnak"),
     src: tsrc.src17,
     toolbarOrder: TBOrder.Enemy,
   },
   {
     value: tid.TILE_DISK_Y,
-    title: "Yellow Disk",
+    title: (t) => t("main:supaplex.tiles.DiskYellow"),
     src: tsrc.src18,
     toolbarOrder: TBOrder.Disk,
   },
   {
     value: tid.TILE_TERMINAL,
-    title: "Terminal",
+    title: (t) => t("main:supaplex.tiles.Terminal"),
     src: tsrc.src19,
     toolbarOrder: TBOrder.Trigger,
   },
   {
     value: tid.TILE_DISK_R,
-    title: "Red Disk",
+    title: (t) => t("main:supaplex.tiles.DiskRed"),
     src: tsrc.src20,
     toolbarOrder: TBOrder.Disk,
   },
   {
     value: tid.TILE_PORT_V,
-    title: "Port Vertical",
+    title: (t) => t("main:supaplex.tiles.PortV"),
     src: tsrc.src21,
+    srcVariant: new Map().set(1, tsrc.src21v1),
     metaTile: metaPortV,
     interaction: specPInt,
     toolbarOrder: TBOrder.Port,
   },
   {
     value: tid.TILE_PORT_H,
-    title: "Port Horizontal",
+    title: (t) => t("main:supaplex.tiles.PortH"),
     src: tsrc.src22,
+    srcVariant: new Map().set(1, tsrc.src22v1),
     metaTile: metaPortH,
     interaction: specPInt,
     toolbarOrder: TBOrder.Port,
   },
   {
     value: tid.TILE_PORT_X,
-    title: "Port Cross",
+    title: (t) => t("main:supaplex.tiles.PortX"),
     src: tsrc.src23,
+    srcVariant: new Map().set(1, tsrc.src23v1),
     metaTile: metaPortX,
     interaction: specPInt,
     toolbarOrder: TBOrder.Port,
   },
   {
     value: tid.TILE_ELECTRON,
-    title: "Electron",
+    title: (t) => t("main:supaplex.tiles.Electron"),
     src: tsrc.src24,
     toolbarOrder: TBOrder.Enemy,
   },
   {
     value: tid.TILE_BUG,
-    title: "Bug",
+    title: (t) => t("main:supaplex.tiles.Bug"),
     src: tsrc.src25,
     toolbarOrder: TBOrder.Trigger,
   },
   {
     value: tid.TILE_CHIP_L,
-    title: "Chip Left",
+    title: (t) => t("main:supaplex.tiles.ChipLeft"),
     src: tsrc.src26,
     toolbarOrder: TBOrder.Chip,
     drawStruct: { [PenShape._2x1]: { setTiles: [undefined, tid.TILE_CHIP_R] } },
   },
   {
     value: tid.TILE_CHIP_R,
-    title: "Chip Right",
+    title: (t) => t("main:supaplex.tiles.ChipRight"),
     src: tsrc.src27,
     toolbarOrder: TBOrder.Chip,
   },
   {
     value: tid.TILE_HW_CIRCULAR,
-    title: "Hardware Circular",
+    title: (t) => t("main:supaplex.tiles.Hardware28"),
     src: tsrc.src28,
     toolbarOrder: TBOrder.FancyHw,
   },
   {
     value: tid.TILE_HW_LAMP_G,
-    title: "Hardware Lamp Green",
+    title: (t) => t("main:supaplex.tiles.HardwareLampGreen"),
     src: tsrc.src29,
     toolbarOrder: TBOrder.FancyHw,
   },
   {
     value: tid.TILE_HW_LAMP_B,
-    title: "Hardware Lamp Blue",
+    title: (t) => t("main:supaplex.tiles.HardwareLampBlue"),
     src: tsrc.src30,
     toolbarOrder: TBOrder.FancyHw,
   },
   {
     value: tid.TILE_HW_LAMP_R,
-    title: "Hardware Lamp Red",
+    title: (t) => t("main:supaplex.tiles.HardwareLampRed"),
     src: tsrc.src31,
     toolbarOrder: TBOrder.FancyHw,
   },
   {
     value: tid.TILE_HW_STRIPES,
-    title: "Hardware Stripes",
+    title: (t) => t("main:supaplex.tiles.HardwareStripes"),
     src: tsrc.src32,
     toolbarOrder: TBOrder.FancyHw,
   },
   {
     value: tid.TILE_HW_RES,
-    title: "Hardware Resistor",
+    title: (t) => t("main:supaplex.tiles.Hardware33"),
     src: tsrc.src33,
     toolbarOrder: TBOrder.FancyHw,
   },
   {
     value: tid.TILE_HW_CAP,
-    title: "Hardware Capacitor",
+    title: (t) => t("main:supaplex.tiles.HardwareCapacitor"),
     src: tsrc.src34,
     toolbarOrder: TBOrder.FancyHw,
   },
   {
     value: tid.TILE_HW_RES_VAR,
-    title: "Hardware Resistors various",
+    title: (t) => t("main:supaplex.tiles.Hardware35"),
     src: tsrc.src35,
     toolbarOrder: TBOrder.FancyHw,
   },
   {
     value: tid.TILE_HW_RES_VERT,
-    title: "Hardware Resistors vertical",
+    title: (t) => t("main:supaplex.tiles.Hardware36"),
     src: tsrc.src36,
     toolbarOrder: TBOrder.FancyHw,
   },
   {
     value: tid.TILE_HW_RES_HORZ,
-    title: "Hardware Resistors horizontal",
+    title: (t) => t("main:supaplex.tiles.Hardware37"),
     src: tsrc.src37,
     toolbarOrder: TBOrder.FancyHw,
   },
   {
     value: tid.TILE_CHIP_T,
-    title: "Chip Top",
+    title: (t) => t("main:supaplex.tiles.ChipTop"),
     src: tsrc.src38,
     toolbarOrder: TBOrder.Chip,
     drawStruct: { [PenShape._1x2]: { setTiles: [undefined, tid.TILE_CHIP_B] } },
   },
   {
     value: tid.TILE_CHIP_B,
-    title: "Chip Bottom",
+    title: (t) => t("main:supaplex.tiles.ChipBottom"),
     src: tsrc.src39,
     toolbarOrder: TBOrder.Chip,
   },
-  { value: tid.TILE_INVIS_WALL, title: "Invisible Wall", src: tsrc.src40 },
+  {
+    value: tid.TILE_INVIS_WALL,
+    title: (t) => t("main:supaplex.tiles.Invisible"),
+    src: tsrc.src40,
+  },
 ];
 
 export const borderTiles: BorderTiles = new Set([tid.TILE_HARDWARE]);

@@ -17,6 +17,7 @@ export type CreateFile = (
 export type OpenFile = (options: I.OpenFileOptions) => void;
 export type OnOpenFile = Event<I.OpenFiles>;
 export type SaveFileAs = (data: Blob, filename: string) => void;
+export type GetClipboardText = () => Promise<string>;
 
 export type SetTitle = (title: string) => void;
 export type SetIsDirty = (isDirty: boolean) => Promise<unknown>;

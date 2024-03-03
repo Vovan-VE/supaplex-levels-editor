@@ -24,6 +24,24 @@
       margin-left: 0;
       text-align: left;
     }
+    &__multi-value {
+      @extend %button-warn;
+      border-radius: 0;
+      background: var(--btn-bg);
+      color: var(--btn-color);
+
+      &__label {
+        color: inherit;
+      }
+      &__remove {
+        color: inherit;
+        border-radius: 0;
+        &:hover {
+          background: var(--btn-hover-bg);
+          color: var(--btn-hover-color);
+        }
+      }
+    }
 
     &__input-container {
       margin-left: 0;
@@ -73,13 +91,14 @@
     // app classes
 
     &__single-value,
+    &__multi-value,
     &__option {
       ._icon {
         display: inline-block;
         vertical-align: middle;
         font-size: 1.5rem;
         aspect-ratio: 1;
-        margin-right: 0.5rem;
+        margin-right: 0.3rem;
 
         > i {
           width: 100%;

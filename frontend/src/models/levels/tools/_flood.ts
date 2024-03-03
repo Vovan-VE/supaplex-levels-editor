@@ -90,7 +90,7 @@ export const FLOOD: Tool = {
   variants: [
     {
       internalName: "d",
-      title: "Flood Fill",
+      title: (t) => t("main:drawing.FloodFill"),
       Icon: svgs.FloodFill,
       hotkey: HK_TOOL_FLOOD,
     },

@@ -6,7 +6,11 @@ import { detectExportFormat } from "./detectExportFormat";
 import { defaultFormat, formats } from "./formats";
 import { MPX } from "./formats/mpx";
 import { LevelConfigurator } from "./LevelConfigurator";
-import { applyLocalOptions, LevelLocalOptions } from "./LevelLocalOptions";
+import {
+  applyLocalOptions,
+  LevelLocalOptions,
+  parseLocalOptions,
+} from "./LevelLocalOptions";
 import { ISupaplexDriver } from "./types";
 import { Tile } from "./Tile";
 import { borderTiles, fancyTiles, tiles } from "./tiles";
@@ -20,6 +24,7 @@ export const SupaplexDriver: ISupaplexDriver = {
   LevelConfigurator,
   LevelLocalOptions,
   applyLocalOptions,
+  parseLocalOptions,
   formats,
   detectExportFormat,
   defaultFormat,

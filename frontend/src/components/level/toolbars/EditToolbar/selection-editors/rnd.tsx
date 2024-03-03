@@ -1,16 +1,20 @@
 import cn from "classnames";
-import { createEvent, createStore } from "effector";
-import { useStore } from "effector-react";
+import { createEvent, createStore, restore } from "effector";
+import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import * as RoMap from "@cubux/readonly-map";
+import { TileSelectMulti } from "components/driver/TileSelect";
 import { getDriver, getTilesForToolbar } from "drivers";
+import { Trans } from "i18n/Trans";
 import { $currentDriverName } from "models/levelsets";
 import { HK_EDIT_RANDOM } from "models/ui/hotkeys-defined";
 import { Button, TextButton } from "ui/button";
 import { svgs } from "ui/icon";
-import { Field, Range } from "ui/input";
+import { Field, IntegerInput } from "ui/input";
 import { ColorType } from "ui/types";
 import { EMPTY_MAP } from "utils/data";
+import { elKeepOld } from "./_common";
 import { SelectionEditor, SelectionEditorProps } from "./_types";
 import clC from "./common.module.scss";
 import cl from "./rnd.module.scss";
@@ -29,9 +33,14 @@ const getRandomTile = (
   throw new Error("unreachable");
 };
 
+const setSearchTiles = createEvent<readonly number[]>();
 const toggleTile = createEvent<number>();
 const toggleTileKeep = toggleTile.prepend<any>(() => -1);
 const setCount = createEvent<[tile: number, count: number]>();
+const $searchTiles = restore(
+  setSearchTiles.map((v) => new Set(v)),
+  new Set<number>(),
+);
 const $probabilities = createStore<ReadonlyMap<number, number>>(EMPTY_MAP)
   .on(toggleTile, (map, tile) =>
     map.has(tile) ? RoMap.remove(map, tile) : RoMap.set(map, tile, 1),
@@ -41,20 +50,24 @@ const $total = $probabilities.map((prob) =>
   RoMap.reduce(prob, (n, c) => n + c, 0),
 );
 
+const MAX = 9999;
+
 const RndEditor: FC<SelectionEditorProps> = ({
   region,
   onSubmit,
   onCancel,
 }) => {
-  const driverName = useStore($currentDriverName)!;
+  const { t } = useTranslation();
+  const driverName = useUnit($currentDriverName)!;
   const { tempLevelFromRegion, tiles, TileRender } = getDriver(driverName)!;
   const tempLevel = useMemo(
     () => tempLevelFromRegion(region),
     [region, tempLevelFromRegion],
   );
 
-  const prob = useStore($probabilities);
-  const total = useStore($total);
+  const searchTiles = useUnit($searchTiles);
+  const prob = useUnit($probabilities);
+  const total = useUnit($total);
 
   const tilesSorted = useMemo(
     () =>
@@ -72,8 +85,15 @@ const RndEditor: FC<SelectionEditorProps> = ({
     onSubmit(
       tempLevel
         .batch((level) => {
+          const skip = searchTiles.size
+            ? (prev: number) => !searchTiles.has(prev)
+            : () => false;
           for (let j = height; j-- > 0; ) {
             for (let i = width; i-- > 0; ) {
+              if (skip(level.getTile(i, j))) {
+                // this thing affects probability logic
+                continue;
+              }
               const tile = getRandomTile(prob, total);
               if (tile >= 0) {
                 level = level.setTile(i, j, tile);
@@ -84,30 +104,40 @@ const RndEditor: FC<SelectionEditorProps> = ({
         })
         .copyRegion({ x: 0, y: 0, width, height }),
     );
-  }, [prob, total, tempLevel, onSubmit]);
+  }, [searchTiles, prob, total, tempLevel, onSubmit]);
 
   return (
     <div>
-      <Field label="Which tiles">
+      <Field
+        label={t("main:selectionEditors.rnd.WhichTiles")}
+        labelElement="span"
+      >
         <Button
           uiColor={prob.has(-1) ? ColorType.WARN : ColorType.MUTE}
           asLink={!prob.has(-1)}
           onClick={toggleTileKeep}
         >
-          <i>keep old</i>
+          {elKeepOld}
         </Button>
         {tilesSorted.map(([{ value, title, metaTile }, onClick]) => (
           <TextButton
             key={value}
             uiColor={ColorType.WARN}
             icon={<TileRender tile={value} className={cl.tile} />}
-            title={metaTile?.title ?? title}
+            title={(metaTile?.title ?? title)(t)}
             onClick={onClick}
             className={cn(cl.btn, prob.has(value) && cl._checked)}
           />
         ))}
       </Field>
-      <Field label="Probabilities, relative to each other" labelElement="div">
+      <Field
+        label={
+          <>
+            {t("main:selectionEditors.rnd.Probabilities")} (1 to {MAX} each)
+          </>
+        }
+        labelElement="div"
+      >
         {prob.size > 0 ? (
           <div className={cl.gridSmall}>
             {Array.from(prob)
@@ -117,13 +147,13 @@ const RndEditor: FC<SelectionEditorProps> = ({
                   {tile >= 0 ? (
                     <TileRender tile={tile} className={cn(cl.tile, cl.icon)} />
                   ) : (
-                    <i>keep</i>
+                    <em>{t("main:selectionEditors.rnd.Keep")}</em>
                   )}
-                  <Range
-                    min={1}
-                    max={30}
+                  <IntegerInput
                     value={count}
-                    onChange={(v) => setCount([tile, v])}
+                    onChange={(v) =>
+                      v && v >= 1 && v <= MAX && setCount([tile, v])
+                    }
                     className={cl.input}
                   />
                   <div className={cl.help}>
@@ -133,8 +163,18 @@ const RndEditor: FC<SelectionEditorProps> = ({
               ))}
           </div>
         ) : (
-          <i>Check above 2 or more tile to use.</i>
+          <em>{t("main:selectionEditors.rnd.HintMinCount")}</em>
         )}
+      </Field>
+      <Field
+        label={t("main:selectionEditors.rnd.ReplaceWhat")}
+        help={t("main:selectionEditors.rnd.ReplaceWhatHelp")}
+      >
+        <TileSelectMulti
+          driverName={driverName as any}
+          tile={searchTiles}
+          onChange={setSearchTiles}
+        />
       </Field>
 
       <div className={clC.buttons}>
@@ -143,16 +183,16 @@ const RndEditor: FC<SelectionEditorProps> = ({
           onClick={handleSubmit}
           disabled={prob.size < 2}
         >
-          OK
+          {t("main:common.buttons.OK")}
         </Button>
-        <Button onClick={onCancel}>Cancel</Button>
+        <Button onClick={onCancel}>{t("main:common.buttons.Cancel")}</Button>
       </div>
     </div>
   );
 };
 
 export const rnd: SelectionEditor = {
-  title: "Random",
+  title: <Trans i18nKey="main:selectionEditors.rnd.Title" />,
   icon: <svgs.Random />,
   Component: RndEditor,
   hotkeys: HK_EDIT_RANDOM,

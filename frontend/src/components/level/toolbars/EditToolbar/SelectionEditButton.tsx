@@ -1,5 +1,5 @@
 import { combine } from "effector";
-import { useList, useStore } from "effector-react";
+import { useList, useUnit } from "effector-react";
 import { FC, Fragment, ReactElement } from "react";
 import * as RoMap from "@cubux/readonly-map";
 import { ILevelRegion } from "drivers";
@@ -12,6 +12,7 @@ import {
   openSelectionEdit,
   submitSelectionEdit,
 } from "models/levels/tools/_selection";
+import { $currentFileRo } from "models/levelsets";
 import { displayHotKey, HotKey, HotKeyShortcuts } from "models/ui/hotkeys";
 import {
   ButtonDropdown,
@@ -162,10 +163,10 @@ export const SelectionEditHotKeys: FC = () => (
 );
 
 export const SelectionEditMenu: FC = () => {
-  const hasSelection = useStore($hasSelection);
+  const hasSelection = useUnit($hasSelection);
 
-  const cannotWork = useStore($cannotWork);
-  const run = useStore($run);
+  const cannotWork = useUnit($cannotWork);
+  const run = useUnit($run);
 
   return (
     <Toolbar isMenu>
@@ -201,14 +202,17 @@ export const SelectionEditMenu: FC = () => {
 const Reason: FC<{ reason: ReactElement | null }> = ({ reason }) =>
   reason && <span className={cl.reason}>({reason})</span>;
 
-export const SelectionEditButton: FC = () => (
-  <>
-    <SelectionEditHotKeys />
-    <ButtonDropdown
-      triggerIcon={<svgs.EditSelection />}
-      buttonProps={{ disabled: !useStore($hasSelection) }}
-    >
-      <SelectionEditMenu />
-    </ButtonDropdown>
-  </>
-);
+export const SelectionEditButton: FC = () => {
+  const isRo = useUnit($currentFileRo);
+  return (
+    <>
+      {isRo || <SelectionEditHotKeys />}
+      <ButtonDropdown
+        triggerIcon={<svgs.EditSelection />}
+        buttonProps={{ disabled: !useUnit($hasSelection) || isRo }}
+      >
+        {isRo || <SelectionEditMenu />}
+      </ButtonDropdown>
+    </>
+  );
+};

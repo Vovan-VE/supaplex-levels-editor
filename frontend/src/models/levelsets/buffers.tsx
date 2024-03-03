@@ -4,7 +4,6 @@ import {
   createEvent,
   createStore,
   Event,
-  forward,
   restore,
   sample,
   Store,
@@ -36,6 +35,8 @@ import {
 } from "drivers";
 import { SupportReport } from "components/files/FileToolbar/SupportReport";
 import { fmtLevelNumber, fmtLevelShort } from "components/levelset/fmt";
+import { Trans } from "i18n/Trans";
+import { TranslationGetter } from "i18n/types";
 import { msgBox } from "ui/feedback";
 import { ColorType } from "ui/types";
 import { isNotNull } from "utils/fn";
@@ -58,6 +59,7 @@ import {
   DemoData,
   IBaseLevelsList,
   isEqualLevels,
+  LevelBuffer,
   LevelsetFile,
   LevelsetFlushBuffer,
   LevelsetsBuffers,
@@ -99,7 +101,10 @@ const _closeOtherLevels = createEvent<_LevelRefStrict>();
  * Set current level with the given index (open it if not yet)
  */
 export const setCurrentLevel = createEvent<number>();
-forward({ from: setCurrentLevel, to: [openLevel, _willSetCurrentLevelFx] });
+sample({
+  source: setCurrentLevel,
+  target: [openLevel, _willSetCurrentLevelFx],
+});
 // open first level after file created/opened
 fileDidOpen.watch((key) => {
   setCurrentLevelset(key);
@@ -120,6 +125,8 @@ export const appendLevel = createEvent<any>();
  */
 export const deleteCurrentLevel = createEvent<any>();
 const _deleteLevel = createEvent<_LevelRefStrict>();
+export const changeLevelsOrder =
+  createEvent<readonly LevelBuffer<IBaseLevel>[]>();
 /**
  * Delete all the rest levels after the current
  */
@@ -238,6 +245,7 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
           currentIndex: opened?.current,
         });
       }
+      return map;
     },
   )
   // switch per-level "is opened" state
@@ -274,8 +282,8 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
       index === null
         ? { ...buf, currentIndex: index ?? undefined }
         : index >= 0 && index < buf.levels.length
-        ? { ...buf, currentIndex: index }
-        : buf,
+          ? { ...buf, currentIndex: index }
+          : buf,
     ),
   )
   // insert new level at current level index into current levelset
@@ -331,6 +339,27 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     ),
   )
   // operations with current levels in current levelset
+  .on(
+    _withCurrentKey(changeLevelsOrder),
+    (map, { current: key, value: nextLevels }) =>
+      RoMap.update(map, key, (buf) => {
+        const newIndices = new Map(nextLevels.map((l, i) => [l, i]));
+        const { levels, currentIndex } = buf;
+        if (levels.every((l, i) => newIndices.get(l) === i)) {
+          return buf;
+        }
+        return {
+          ...buf,
+          currentIndex:
+            currentIndex !== undefined
+              ? newIndices.get(levels[currentIndex])
+              : undefined,
+          levels: Array.from(levels).sort(
+            (a, b) => (newIndices.get(a) ?? 0) - (newIndices.get(b) ?? 0),
+          ),
+        };
+      }),
+  )
   .on(
     _withCurrentKey(updateCurrentLevel),
     (map, { current: key, value: level }) =>
@@ -685,19 +714,7 @@ let _$dirtyKeys: Store<ReadonlySet<FilesStorageKey>>;
       ),
   );
   _$dirtyKeys = _$changedLevelsets.map<ReadonlySet<FilesStorageKey>>(
-    (map, prev) => {
-      const next = new Set(map.keys());
-      // REFACT: RoSet.syncFrom()
-      if (
-        prev &&
-        prev !== next &&
-        prev.size === next.size &&
-        Array.from(prev).every((v) => next.has(v))
-      ) {
-        return prev;
-      }
-      return next;
-    },
+    (map) => new Set(map.keys()),
   );
 
   // auto trigger flush for all after buffers changed
@@ -1010,21 +1027,35 @@ sample({
     msgBox(
       <>
         <p>
-          {report.type === SupportReportType.ERR
-            ? "Cannot import level due to the following compatibility errors:"
-            : "Level was imported applying the following compatibility changes:"}
+          {report.type === SupportReportType.ERR ? (
+            <Trans i18nKey="main:level.import.CannotImportDueTo" />
+          ) : (
+            <Trans i18nKey="main:level.import.ImportWithChanges" />
+          )}
         </p>
         <SupportReport report={report} />
       </>,
       {
-        button: { uiColor: ColorType.MUTE, text: "Close" },
+        button: {
+          uiColor: ColorType.MUTE,
+          text: <Trans i18nKey="main:common.buttons.Close" />,
+        },
       },
     ),
   );
   importCurrentLevelFx.failData.watch((e) =>
-    msgBox(<>Cannot import level file file: {e.message}</>, {
-      button: { uiColor: ColorType.MUTE, text: "Close" },
-    }),
+    msgBox(
+      <Trans
+        i18nKey="main:level.import.ImportFailed"
+        values={{ reason: e.message }}
+      />,
+      {
+        button: {
+          uiColor: ColorType.MUTE,
+          text: <Trans i18nKey="main:common.buttons.Close" />,
+        },
+      },
+    ),
   );
 }
 
@@ -1070,6 +1101,7 @@ const $cmpFirstLevelRef = restore(setCmpFirstLevelRef, null)
         return null;
       }
     }
+    return ref;
   })
   .on(_deleteLevel, (ref, del) => {
     if (ref) {
@@ -1084,6 +1116,7 @@ const $cmpFirstLevelRef = restore(setCmpFirstLevelRef, null)
         }
       }
     }
+    return ref;
   })
   .on(_deleteRestLevels, (ref, del) => {
     if (ref) {
@@ -1093,6 +1126,7 @@ const $cmpFirstLevelRef = restore(setCmpFirstLevelRef, null)
         return null;
       }
     }
+    return ref;
   })
   .on(_insertAtCurrentLevel, (ref, ins) => {
     if (ref) {
@@ -1102,6 +1136,7 @@ const $cmpFirstLevelRef = restore(setCmpFirstLevelRef, null)
         return [key, index + 1];
       }
     }
+    return ref;
   });
 export const $cmpLevelHasFirst = $cmpFirstLevelRef.map(Boolean);
 export const $cmpLevelFirstTitle = combine(
@@ -1109,25 +1144,30 @@ export const $cmpLevelFirstTitle = combine(
   $levelsets,
   $currentKey,
   _$buffersMap,
-  (ref, levelsets, currentKey, files) => {
+  (ref, levelsets, currentKey, files): TranslationGetter | null => {
     if (!ref) {
-      return "Compare levels: set current as first";
+      return (t) => t("main:cmpLevels.button.SetCurrentAsFirst");
     }
     const [key, index] = ref;
     const buffer = files.get(key);
     if (currentKey && key === currentKey && buffer?.currentIndex === index) {
-      return "Compare levels: select another level to compare with and click again";
+      return (t) => t("main:cmpLevels.button.SelectAnotherLevel");
     }
     const levelset = levelsets.get(key);
     const level = buffer?.levels[index]?.undoQueue.current;
     if (levelset && level) {
-      return `Compare "${levelset.name}" level "${fmtLevelShort(
-        index,
-        String(levelset.levelset.levelsCount).length,
-        level.title,
-      )}" (${level.width}x${level.height}) with current level`;
+      const values = {
+        file: levelset.name,
+        level: fmtLevelShort(
+          index,
+          String(levelset.levelset.levelsCount).length,
+          level.title,
+        ),
+        size: `${level.width}x${level.height}`,
+      };
+      return (t) => t("main:cmpLevels.button.CompareWithCurrent", values);
     }
-    return undefined;
+    return null;
   },
 );
 sample({

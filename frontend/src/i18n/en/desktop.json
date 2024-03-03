@@ -1,0 +1,38 @@
+{
+  "about": {
+    "content": {
+      "A000": "<spleDesktop/>",
+      "B010": "The desktop version of <sple/> is built using <linkWails>Wails</linkWails>. It uses the same source code as the web app <linkSpleMe/> to render frontend, but with some different backend bindings to work with its host binary in desktop environment.",
+      "B020": "Compared to <linkSpleMe/>, <spleDesktop/> <b>DOES</b> work with regular files on your device, like any other desktop editors do.",
+      "C000": "App Info"
+    }
+  },
+  "app": {
+    "NewVersionAvailable": "New version available"
+  },
+  "files": {
+    "buttons": {
+      "Close": "Close file",
+      "CloseOthers": "Close all other files",
+      "DontSave": "Don't save",
+      "Save": "Save changes",
+      "SaveAll": "Save All",
+      "SaveAs": "Save As..."
+    },
+    "confirm": {
+      "CloseFileSave": "File <b>{filename}</b> has been changed. Save the changes?",
+      "CloseOthersSave": "The files you are closing have been changed. Save the changes?",
+      "DontSave": "Don't save",
+      "ExitSave": "Some of the files have been changed. Save the changes before exiting?",
+      "Save": "Save"
+    }
+  },
+  "levelTest": {
+    "buttons": {
+      "ClickInIframe": "Click inside <code>iframe</code> to activate"
+    }
+  },
+  "settings": {
+    "AutoSaveChangesEvery": "Auto Save changed files every"
+  }
+}

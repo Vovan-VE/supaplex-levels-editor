@@ -1,8 +1,9 @@
 import { FC } from "react";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { getDriver, LevelConfiguratorEnvProps } from "drivers";
 import {
   $currentDriverName,
+  $currentFileRo,
   $currentLevelUndoQueue,
   updateCurrentLevel,
 } from "models/levelsets";
@@ -10,16 +11,17 @@ import {
 interface Props extends LevelConfiguratorEnvProps {}
 
 export const LevelDriverConfig: FC<Props> = (props) => {
-  const driverName = useStore($currentDriverName)!;
+  const driverName = useUnit($currentDriverName)!;
   const { LevelConfigurator } = getDriver(driverName)!;
-  const undoQueue = useStore($currentLevelUndoQueue)!;
+  const undoQueue = useUnit($currentLevelUndoQueue)!;
   const rawLevel = undoQueue.current;
+  const isRo = useUnit($currentFileRo);
 
   return LevelConfigurator ? (
     <LevelConfigurator
       {...props}
       level={rawLevel}
-      onChange={updateCurrentLevel}
+      onChange={isRo ? undefined : updateCurrentLevel}
     />
   ) : null;
 };

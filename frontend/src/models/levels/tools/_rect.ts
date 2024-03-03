@@ -124,7 +124,7 @@ const {
   VARIANTS: [
     {
       internalName: "line",
-      title: "Straight line",
+      title: (t) => t("main:drawing.Line"),
       Icon: svgs.Line,
       hotkey: HK_TOOL_LINE,
       drawProps: {
@@ -133,7 +133,7 @@ const {
     },
     {
       internalName: "frame",
-      title: "Frame",
+      title: (t) => t("main:drawing.Frame"),
       Icon: svgs.RectFrame,
       hotkey: HK_TOOL_RECT,
       drawProps: {
@@ -142,7 +142,7 @@ const {
     },
     {
       internalName: "fill",
-      title: "Filled Rect",
+      title: (t) => t("main:drawing.RectFilled"),
       Icon: svgs.RectFill,
       hotkey: HK_TOOL_RECT,
       drawProps: {

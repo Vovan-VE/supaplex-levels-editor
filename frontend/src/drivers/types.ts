@@ -1,4 +1,5 @@
 import { CSSProperties, FC, ReactElement, ReactNode } from "react";
+import { TranslationGetter } from "i18n/types";
 import {
   CellContextEventSnapshot,
   PenShapeStructures,
@@ -58,6 +59,7 @@ export const levelSupportSignature = (level: any): level is IWithSignature =>
 
 export interface ITilesRegion extends IBounds {
   getTile(x: number, y: number): number;
+  // TODO: getTileVariant(x: number, y: number): number | undefined;
   tilesRenderStream(
     x: number,
     y: number,
@@ -128,7 +130,7 @@ export const enum InteractionType {
 export interface InteractionDialogProps<L extends IBaseLevel> {
   cell: CellContextEventSnapshot;
   level: L;
-  submit: (next: L) => void;
+  submit?: (next: L) => void;
   cancel: () => void;
 }
 interface InteractionBase {
@@ -151,14 +153,15 @@ export interface IBaseTileInteraction<L extends IBaseLevel> {
 }
 
 export interface IBaseMetaTile {
-  title: string;
+  title: TranslationGetter;
   icon: ReactElement;
   primaryValue: number;
 }
 export interface IBaseTile<L extends IBaseLevel> {
   value: number;
-  title: string;
+  title: TranslationGetter;
   src?: string;
+  srcVariant?: ReadonlyMap<number, string>;
   metaTile?: IBaseMetaTile;
   toolbarOrder?: number;
   interaction?: IBaseTileInteraction<L>;
@@ -195,7 +198,7 @@ export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
   readonly demoSupport?: boolean;
   readonly signatureMaxLength?: number;
   supportReport(levelset: S): Iterable<ISupportReportMessage>;
-  readLevelset(file: ArrayBuffer): S;
+  readLevelset(file: ArrayBufferLike): S;
   writeLevelset(levelset: S): ArrayBuffer;
   createLevelset(levels?: readonly L[] | Iterable<L>): S;
   createLevel(options?: INewLevelOptions): L;
@@ -211,7 +214,7 @@ export interface TileRenderProps {
 
 export interface LevelEditProps<L extends IBaseLevel> {
   level: L;
-  onChange: (level: L) => void;
+  onChange?: (level: L) => void;
 }
 export interface LevelConfiguratorEnvProps {
   compact?: boolean;
@@ -246,6 +249,7 @@ export interface IBaseDriver<
   LevelConfigurator?: FC<LevelConfiguratorProps<L>>;
   LevelLocalOptions?: FC<LevelLocalOptionsProps<L>>;
   applyLocalOptions?: (level: L, url: URL) => void;
+  parseLocalOptions?: (url: URL, level: L) => L;
   /**
    * Available formats in "detect" order.
    * Display order now is just sorted titles.

@@ -130,7 +130,7 @@ func (f *fullStorage) GetAll() (map[string]*Record, error) {
 			if errors.As(err, &pe) {
 				runtime.LogWarningf(f.ctx, "Remove bad item for file %s", pe.Path)
 				if err = f.opt.RemoveItem(k); err != nil {
-					runtime.LogErrorf(f.ctx, "Cannot remove file item from files registry", err)
+					runtime.LogErrorf(f.ctx, "Cannot remove file item from files registry: %v", err)
 				}
 			}
 			continue

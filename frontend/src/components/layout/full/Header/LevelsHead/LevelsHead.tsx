@@ -1,6 +1,6 @@
 import { FC, useCallback, useMemo } from "react";
 import cn from "classnames";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import {
   fmtLevelFull,
   fmtLevelNumber,
@@ -16,7 +16,7 @@ import cl from "./LevelsHead.module.scss";
 interface Props extends ContainerProps {}
 
 export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
-  const levelset = useStore($currentBuffer)!;
+  const levelset = useUnit($currentBuffer)!;
 
   const levelsCount = levelset.levels.length;
   const levelsCountDigits = String(levelsCount).length;
@@ -38,10 +38,6 @@ export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
       setCurrentLevel(o.value);
     }
   }, []);
-
-  if (!levelset) {
-    throw new Error("Logic error");
-  }
 
   return (
     <div {...rest} className={cn(cl.root, className)}>

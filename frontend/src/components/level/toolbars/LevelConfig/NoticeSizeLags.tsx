@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { Trans } from "i18n/Trans";
 import { ContainerProps } from "ui/types";
 
 interface Props extends ContainerProps {
@@ -13,7 +14,7 @@ export const NoticeSizeLags: FC<Props> = ({ totalTiles, ...rest }) => {
   }
   return (
     <p {...rest}>
-      <strong>NOTICE:</strong> Large level may cause some lags while editing.
+      <Trans i18nKey="main:level.resize.NoticeLargeSizeLags" />
     </p>
   );
 };

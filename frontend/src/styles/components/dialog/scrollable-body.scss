@@ -1,0 +1,12 @@
+%dialog-scrollable_dialog {
+  height: calc(100% - 2 * 0.5em);
+  min-height: 500px;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+%dialog-scrollable_body {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto minmax(0, 1fr);
+}

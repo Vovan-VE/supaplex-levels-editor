@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import equal from "fast-deep-equal";
 import {
   FC,
@@ -123,7 +123,7 @@ export const CoverGrid: FC<Props> = ({
   const prev = useRef<CellEventSnapshot>();
   const [touchPhase, setTouchPhase] = useState(TouchPhase.NO);
 
-  const cursor = useStore($cursor);
+  const cursor = useUnit($cursor);
 
   const handleDown = useGridPointerEventHandler(
     useCallback<GridPointerEventHandler>(

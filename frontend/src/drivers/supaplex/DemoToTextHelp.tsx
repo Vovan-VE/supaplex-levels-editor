@@ -1,104 +1,96 @@
 import { FC } from "react";
+import { Trans } from "i18n/Trans";
 
 export const DemoToTextHelp: FC = () => (
   <div>
     <p>
-      Every keystroke from binary demo converted to text representation.
-      Keystrokes can be separated with any space characters.
+      <Trans i18nKey="main:supaplex.demoEditAsText.help.B010" />
     </p>
     <p>
-      Every keystroke has form:
-      <br />
-      <code>KEY</code> optionally followed by <i>duration</i>.
+      <Trans i18nKey="main:supaplex.demoEditAsText.help.B020" />
     </p>
     <p>
-      where <code>KEY</code> can be one of the following (can be lowercase too):
+      <Trans i18nKey="main:supaplex.demoEditAsText.help.B030" />
     </p>
     <ul>
       <li>
-        <code>-</code> &rArr; no key pressed
+        <code>-</code>
+        {" ⇒ "}
+        <Trans i18nKey="main:supaplex.demoEditAsText.help.NoKeyPressed" />
       </li>
       <li>
-        <code>U</code> &rArr; <kbd>Up</kbd>
+        <code>U</code> ⇒ <kbd>Up</kbd>
       </li>
       <li>
-        <code>D</code> &rArr; <kbd>Down</kbd>
+        <code>D</code> ⇒ <kbd>Down</kbd>
       </li>
       <li>
-        <code>L</code> &rArr; <kbd>Left</kbd>
+        <code>L</code> ⇒ <kbd>Left</kbd>
       </li>
       <li>
-        <code>R</code> &rArr; <kbd>Right</kbd>
+        <code>R</code> ⇒ <kbd>Right</kbd>
       </li>
       <li>
-        <code>SU</code> &rArr; <kbd>Space+Up</kbd>
+        <code>SU</code> ⇒ <kbd>Space+Up</kbd>
       </li>
       <li>
-        <code>SD</code> &rArr; <kbd>Space+Down</kbd>
+        <code>SD</code> ⇒ <kbd>Space+Down</kbd>
       </li>
       <li>
-        <code>SL</code> &rArr; <kbd>Space+Left</kbd>
+        <code>SL</code> ⇒ <kbd>Space+Left</kbd>
       </li>
       <li>
-        <code>SR</code> &rArr; <kbd>Space+Right</kbd>
+        <code>SR</code> ⇒ <kbd>Space+Right</kbd>
       </li>
       <li>
-        <code>S</code> &rArr; <kbd>Space</kbd>
+        <code>S</code> ⇒ <kbd>Space</kbd>
       </li>
     </ul>
     <p>
-      The <i>duration</i> can be:
+      <Trans i18nKey="main:supaplex.demoEditAsText.help.C010" />
     </p>
     <ul>
       <li>
-        <i>omitted</i> &rArr; 1 frame
+        <Trans i18nKey="main:supaplex.demoEditAsText.help.D010" />
       </li>
       <li>
-        <code>
-          <strong>INTEGER</strong>
-        </code>{" "}
-        &rArr; the given number of frames
+        <Trans i18nKey="main:supaplex.demoEditAsText.help.D020" />
       </li>
       <li>
-        <code>
-          <strong>INTEGER.</strong>
-        </code>{" "}
-        &rArr; the given number of "tiles", where 1 "tile" is 8 frames
+        <Trans i18nKey="main:supaplex.demoEditAsText.help.D030" />
       </li>
       <li>
-        <code>
-          <strong>INTEGER.INTEGER</strong>
-        </code>{" "}
-        &rArr; combination of both above, so <code>2.3</code> is 2*8+3, t.i.{" "}
-        <code>19</code>
+        <Trans i18nKey="main:supaplex.demoEditAsText.help.D040" />
       </li>
     </ul>
-    <p>Example:</p>
+    <p>
+      <Trans i18nKey="main:supaplex.demoEditAsText.help.E010" />
+    </p>
     <pre>-7 R42 U2.3 - L3. D5 L</pre>
-    <p>This mean:</p>
+    <p>
+      <Trans i18nKey="main:supaplex.demoEditAsText.help.E020" />
+    </p>
     <ol>
       <li>
-        nothing pressed <code>7</code> frames
+        <Trans i18nKey="main:supaplex.demoEditAsText.help.F010" />
       </li>
       <li>
-        <kbd>Right</kbd> pressed <code>42</code> frames
+        <Trans i18nKey="main:supaplex.demoEditAsText.help.F020" />
       </li>
       <li>
-        <kbd>Up</kbd> pressed <code>2</code> tiles and <code>3</code> frames,
-        which is 2*8+3 = <code>19</code> frames
+        <Trans i18nKey="main:supaplex.demoEditAsText.help.F030" />
       </li>
       <li>
-        nothing pressed <code>1</code> frame
+        <Trans i18nKey="main:supaplex.demoEditAsText.help.F040" />
       </li>
       <li>
-        <kbd>Left</kbd> pressed <code>3</code> tiles, which is 3*8 ={" "}
-        <code>24</code> frames
+        <Trans i18nKey="main:supaplex.demoEditAsText.help.F050" />
       </li>
       <li>
-        <kbd>Down</kbd> pressed <code>5</code> frames
+        <Trans i18nKey="main:supaplex.demoEditAsText.help.F060" />
       </li>
       <li>
-        <kbd>Left</kbd> pressed <code>1</code> frame
+        <Trans i18nKey="main:supaplex.demoEditAsText.help.F070" />
       </li>
     </ol>
   </div>

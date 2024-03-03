@@ -1,12 +1,6 @@
-import { useStore } from "effector-react";
-import {
-  FC,
-  PropsWithChildren,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import { useUnit } from "effector-react";
+import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ReactComponent as MurphyRuns } from "assets/img/murphy-run-right.svg";
 import { testInIframe } from "backend";
 import { TEST_DEMO_URL, TEST_LEVEL_TITLE, TEST_LEVEL_URL } from "configs";
@@ -18,9 +12,11 @@ import {
 } from "drivers";
 import { ReactComponent as DiskYellow } from "drivers/supaplex/tiles-svg/18-12-yellow-disk.svg";
 import { ReactComponent as HwLampGreen } from "drivers/supaplex/tiles-svg/29-1d-hw-g-lamp.svg";
+import { Trans } from "i18n/Trans";
 import { exportLevelAsLink } from "models/levels/export-url";
 import {
   $currentDriverName,
+  $currentFileRo,
   $currentLevelUndoQueue,
   updateCurrentLevel,
 } from "models/levelsets";
@@ -38,9 +34,12 @@ const TEST_WITH_DEMO_STACK: IconStack = [[IconStackType.Index, <DiskYellow />]];
 const PLAY_DEMO_STACK: IconStack = [[IconStackType.Index, <HwLampGreen />]];
 const SIGNATURE_STACK: IconStack = [[IconStackType.Index, <svgs.Pencil />]];
 
+const VALUES = { SO: TEST_LEVEL_TITLE };
+
 export const TestingButtons: FC = () => {
-  const undoQueue = useStore($currentLevelUndoQueue)!;
-  const demoSupport = useStore($fileSupportsDemo);
+  const { t } = useTranslation();
+  const undoQueue = useUnit($currentLevelUndoQueue)!;
+  const demoSupport = useUnit($fileSupportsDemo);
 
   const level = undoQueue.current;
   const hasDemo =
@@ -63,9 +62,11 @@ export const TestingButtons: FC = () => {
         icon={<MurphyRuns />}
         iconStack={demoSupport ? TEST_WITH_DEMO_STACK : undefined}
         className={CL_SVG_ANIMATE_HOVERABLE}
-        title={`Test level at ${TEST_LEVEL_TITLE}${
-          demoSupport ? " (+record a demo)" : ""
-        }`}
+        title={
+          demoSupport
+            ? t("main:levelTest.buttons.TestLevelRecordDemo", VALUES)
+            : t("main:levelTest.buttons.TestLevel", VALUES)
+        }
       />
       {demoSupport && (
         <>
@@ -74,14 +75,14 @@ export const TestingButtons: FC = () => {
             icon={<MurphyRuns />}
             iconStack={PLAY_DEMO_STACK}
             className={CL_SVG_ANIMATE_HOVERABLE}
-            title={`Play embedded demo with ${TEST_LEVEL_TITLE}`}
+            title={t("main:levelTest.buttons.DemoPlayback", VALUES)}
             disabled={!hasDemo}
           />
           <Button
             onClick={openSignatureEdit}
             icon={<svgs.FileBlank />}
             iconStack={SIGNATURE_STACK}
-            title="Edit demo, signature"
+            title={t("main:edit.EditDemoAndSignature")}
             // disabled={!signatureSupport}
           />
         </>
@@ -134,13 +135,9 @@ const openTestUrl = testInIframe
       ask(<TestFrame url={url} />, {
         size: "fullscreen",
         buttons: {
-          okText: (
-            <>
-              Click inside <code>iframe</code> to activate
-            </>
-          ),
+          okText: <Trans i18nKey="desktop:levelTest.buttons.ClickInIframe" />,
           ok: { disabled: true, uiColor: ColorType.MUTE },
-          cancelText: "Close",
+          cancelText: <Trans i18nKey="main:common.buttons.Close" />,
           cancel: { uiColor: ColorType.WARN },
         },
         bodyClassName: cl.soDialogBody,
@@ -159,7 +156,6 @@ const sendLevelTo = async ({
   target,
   withDemo = false,
   // actionTitle,
-  serviceTitle,
   // $confirmed,
   Confirm,
   onConfirmed,
@@ -169,7 +165,6 @@ const sendLevelTo = async ({
   target?: string;
   withDemo?: boolean;
   // actionTitle: string;
-  serviceTitle: string;
   // $confirmed: Store<boolean>;
   Confirm: ConfirmFC;
   onConfirmed?: () => void;
@@ -178,7 +173,9 @@ const sendLevelTo = async ({
   if (!valid) {
     return msgBox(
       <div>
-        <p>The level is unplayable due to the following:</p>
+        <p>
+          <Trans i18nKey="main:levelTest.LevelUnplayableDueTo" />
+        </p>
         <ul>
           {errors.map((err, i) => (
             <li key={i}>{err}</li>
@@ -211,38 +208,51 @@ const sendLevelTo = async ({
 
   // REFACT: adequate components with state
 
-  await ask(<Confirm level={level} onChange={(l) => (level = l)} />, {
-    buttons: {
-      okText: `Go to ${serviceTitle} test`,
-      ok: {
-        uiColor: ColorType.SUCCESS,
-        onClick: async () => {
-          updateCurrentLevel(level);
-          onConfirmed?.();
+  await ask(
+    <Confirm
+      level={level}
+      onChange={$currentFileRo.getState() ? undefined : (l) => (level = l)}
+    />,
+    {
+      buttons: {
+        okText: (
+          <Trans i18nKey="main:levelTest.buttons.GoToSO" values={VALUES} />
+        ),
+        ok: {
+          uiColor: ColorType.SUCCESS,
+          onClick: async () => {
+            if (!$currentFileRo.getState()) {
+              updateCurrentLevel(level);
+            }
+            onConfirmed?.();
 
-          const url = await exportLevelAsLink(level, baseUrl, withDemo);
-          const driverName = $currentDriverName.getState()!;
-          const { applyLocalOptions } = getDriver(driverName)!;
-          applyLocalOptions?.(level, url);
+            const url = await exportLevelAsLink(level, baseUrl, withDemo);
+            const driverName = $currentDriverName.getState()!;
+            const { applyLocalOptions } = getDriver(driverName)!;
+            applyLocalOptions?.(level, url);
 
-          if (openTestUrl(url, targetOrBlank)) {
-            // e.preventDefault();
-          }
+            if (openTestUrl(url, targetOrBlank)) {
+              // e.preventDefault();
+            }
+          },
         },
       },
     },
-  });
+  );
 };
 
 const ConfirmSO: FC<
   PropsWithChildren<
-    { toDoWhat: ReactNode } & Partial<LevelEditProps<IBaseLevel>>
+    { toDoWhat: string; showOptions?: boolean } & Partial<
+      LevelEditProps<IBaseLevel>
+    >
   >
-> = ({ toDoWhat, level, onChange, children }) => {
-  // const confirmed = useStore($prefConfirmedTestSO);
+> = ({ toDoWhat, showOptions, level, onChange, children }) => {
+  const { t } = useTranslation();
+  // const confirmed = useUnit($prefConfirmedTestSO);
 
   const { LevelLocalOptions, applyLocalOptions } = getDriver(
-    useStore($currentDriverName)!,
+    useUnit($currentDriverName)!,
   )!;
 
   const optionsAsCode = useMemo(() => {
@@ -266,13 +276,13 @@ const ConfirmSO: FC<
       try {
         await window.navigator.clipboard.writeText(optionsAsCode);
         showToast({
-          message: "Copied",
+          message: t("main:common.toasts.Copied"),
           color: ColorType.SUCCESS,
         });
       } catch (e) {
         await msgBox(
           <>
-            <p>Could not copy. Here is the code:</p>
+            <p>{t("main:levelTest.CannotCopyHereCode")}</p>
             <pre>
               <code>{optionsAsCode}</code>
             </pre>
@@ -281,17 +291,15 @@ const ConfirmSO: FC<
         );
       }
     }
-  }, [optionsAsCode]);
+  }, [t, optionsAsCode]);
 
   return (
     <div className={cl.confirmSO}>
       <p>
-        {toDoWhat}, it <strong>will be sent to</strong>{" "}
-        <a href={TEST_LEVEL_URL} target="_blank" rel="noopener noreferrer">
-          {TEST_LEVEL_TITLE} test page
-        </a>
-        . It will be opened in new tab/window, so you will not loss undo history
-        in current editing session.
+        <Trans
+          i18nKey="main:levelTest.ToDoWhateverItWillBeSent"
+          values={{ ...VALUES, toDoWhat }}
+        />
       </p>
       {children}
       {/*<div>*/}
@@ -299,7 +307,7 @@ const ConfirmSO: FC<
       {/*    Don't show this confirmation again*/}
       {/*  </Checkbox>*/}
       {/*</div>*/}
-      {level && onChange && LevelLocalOptions && (
+      {level && showOptions && LevelLocalOptions && (
         <div className={cl.options}>
           <div>
             <LevelLocalOptions level={level} onChange={onChange} />
@@ -307,7 +315,7 @@ const ConfirmSO: FC<
           <Button
             icon={<svgs.Copy />}
             onClick={handleCopy}
-            title={`Copy code to clipboard to use in level upload request:\n\n${optionsAsCode}`}
+            title={t("main:levelTest.CopyOptionsAsCode") + "\n" + optionsAsCode}
             disabled={!optionsAsCode}
           />
         </div>
@@ -317,34 +325,35 @@ const ConfirmSO: FC<
 };
 
 const ConfirmTestSO: ConfirmFC = ({ level, onChange }) => {
-  const demoSupport = useStore($fileSupportsDemo);
+  const { t } = useTranslation();
+  const demoSupport = useUnit($fileSupportsDemo);
 
   // REFACT: remove this when resolved outside
   const [_level, _setLevel] = useState(level);
-  const handleLevelChange = useCallback(
-    (level: IBaseLevel) => {
-      _setLevel(level);
-      onChange(level);
-    },
+  const handleLevelChange = useMemo(
+    () =>
+      onChange &&
+      ((level: IBaseLevel) => {
+        _setLevel(level);
+        onChange(level);
+      }),
     [onChange],
   );
 
   return (
     <ConfirmSO
-      toDoWhat="To test a level"
+      toDoWhat={t("main:levelTest.ToTestLevel")}
+      showOptions
       level={_level}
       onChange={handleLevelChange}
     >
       {demoSupport ? (
         <p>
-          In order <strong>to save demo</strong> for this level, please{" "}
-          <strong>don't test another</strong> level until you finish with this
-          one. You will be asked to save new demo.
+          <Trans i18nKey="main:levelTest.NoticeToSaveDemo" />
         </p>
       ) : (
         <p>
-          This file format does not support embedded demos, so a created demo
-          will be silently discarded.
+          <Trans i18nKey="main:levelTest.NoticeNoDemoSupport" />
         </p>
       )}
     </ConfirmSO>
@@ -357,15 +366,15 @@ const sendToTest = (level: IBaseLevel, demoSupport: boolean) =>
     baseUrl: TEST_LEVEL_URL,
     target: demoSupport ? "test-level" : undefined,
     // actionTitle: "Test level",
-    serviceTitle: TEST_LEVEL_TITLE,
     // $confirmed: $prefConfirmedTestSO,
     Confirm: ConfirmTestSO,
     onConfirmed: demoSupport ? rememberDemoTarget : undefined,
   });
 
-const ConfirmPlayDemoSO: FC = () => (
-  <ConfirmSO toDoWhat="To play embedded demo in level" />
-);
+const ConfirmPlayDemoSO: FC = () => {
+  const { t } = useTranslation();
+  return <ConfirmSO toDoWhat={t("main:levelTest.ToReplayDemo")} />;
+};
 
 const sendToDemo = (level: IBaseLevel) =>
   sendLevelTo({
@@ -373,7 +382,6 @@ const sendToDemo = (level: IBaseLevel) =>
     baseUrl: TEST_DEMO_URL,
     withDemo: true,
     // actionTitle: "Play demo",
-    serviceTitle: TEST_LEVEL_TITLE,
     // $confirmed: $prefConfirmedTestSO,
     Confirm: ConfirmPlayDemoSO,
   });

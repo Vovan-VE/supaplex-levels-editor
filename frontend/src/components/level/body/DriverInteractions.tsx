@@ -1,5 +1,5 @@
-import { FC, useCallback } from "react";
-import { useStore } from "effector-react";
+import { FC, useCallback, useMemo } from "react";
+import { useUnit } from "effector-react";
 import {
   IBaseLevel,
   Interaction,
@@ -7,10 +7,14 @@ import {
   InteractionType,
 } from "drivers";
 import { $interactions, removeInteraction } from "models/levels";
-import { $currentLevelUndoQueue, updateCurrentLevel } from "models/levelsets";
+import {
+  $currentFileRo,
+  $currentLevelUndoQueue,
+  updateCurrentLevel,
+} from "models/levelsets";
 
 export const DriverInteractions: FC = () => {
-  const interactions = useStore($interactions);
+  const interactions = useUnit($interactions);
 
   return (
     <>
@@ -40,18 +44,22 @@ const IDialog: FC<IProps<InteractionDialog<IBaseLevel>>> = ({
   interaction,
 }) => {
   const { Component, cell } = interaction;
-  const level = useStore($currentLevelUndoQueue)!.current;
+  const level = useUnit($currentLevelUndoQueue)!.current;
+  const isRo = useUnit($currentFileRo);
 
   const onCancel = useCallback(
     () => removeInteraction(interaction),
     [interaction],
   );
-  const onSubmit = useCallback(
-    (level: IBaseLevel) => {
-      updateCurrentLevel(level);
-      removeInteraction(interaction);
-    },
-    [interaction],
+  const onSubmit = useMemo(
+    () =>
+      isRo
+        ? undefined
+        : (level: IBaseLevel) => {
+            updateCurrentLevel(level);
+            removeInteraction(interaction);
+          },
+    [interaction, isRo],
   );
 
   return (

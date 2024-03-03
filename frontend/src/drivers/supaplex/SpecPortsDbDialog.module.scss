@@ -1,11 +1,37 @@
+@use "styles/components/dialog/scrollable-body";
 @use "styles/themes";
 
+.dialog {
+  @extend %dialog-scrollable_dialog;
+}
 .root {
+  @extend %dialog-scrollable_body;
+}
+
+.info {
+  margin-top: 0;
+  display: flex;
+  align-items: flex-start;
+
+  > span {
+    flex: 1 1 0;
+  }
+  > button {
+    flex: 0 0 auto;
+    margin-left: 1rem;
+  }
+}
+
+.error {
+  color: themes.$color-danger;
 }
 
 .list {
   margin-left: -0.5rem;
   margin-right: -0.5rem;
+  overflow-y: auto;
+}
+.textarea {
 }
 
 .item {
@@ -13,8 +39,10 @@
   padding: 0 0.5rem;
   display: grid;
   grid-gap: 0.2rem;
-  grid-template-areas: "index xy g z e u handle";
-  grid-template-columns: 2.5rem minmax(5rem, 1fr) repeat(4, 12%) min-content;
+  grid-template-areas: "index tile xy g z e u handle";
+  grid-template-columns:
+    calc(1ch * (var(--idx-chars, 2) + 0.75)) 1.75rem minmax(5rem, 1fr)
+    repeat(4, 12%) min-content;
   align-items: center;
   cursor: auto;
 
@@ -25,10 +53,12 @@
   .index {
     grid-area: index;
   }
+  .tile {
+    grid-area: tile;
+  }
   .xy {
     grid-area: xy;
   }
-  //.tile{}
   .g {
     grid-area: g;
   }

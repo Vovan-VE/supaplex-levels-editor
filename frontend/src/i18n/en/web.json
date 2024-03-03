@@ -1,0 +1,57 @@
+{
+  "about": {
+    "content": {
+      "A000": "<spleMe/> Important notes",
+      "B010": "<spleMe/> is a completely frontend (client side) application (web page). It works only with pseudo-files in browser memory.<br/>See also <spleDesktop/> at <linkVer>GutHub repo</linkVer>.",
+      "B020": {
+        "I010": "After you open an existing file, it becomes an in-memory copy of the original file. Technically you are uploading your local file to a web page.",
+        "I020": "In-memory files you open or create from scratch are <b>NOT</b> related to regular files outside of your browser.",
+        "I030": "To get your modified file back as a regular file, you need to download the file from the web page (with appropriate UI button in <spleMe/>)."
+      },
+      "B030": "Also:",
+      "B040": {
+        "I010": {
+          "B010": "<spleMe/> application uses <code>indexedDB</code> and <code>localStorage</code> for better user experience. These things are similar to well known <i>Cookies</i> in terms of privacy.",
+          "B020": "<spleMe/> will keep your modified in-memory files and some preferences in browser storage for better user experience."
+        },
+        "I020": {
+          "B010": "Your data is safe, no part of it gets sent anywhere without your confirmation.",
+          "B020": "<spleMe/> runs locally within your browser and doesn't use any kind of cloud servicessync.",
+          "B030": "<spleMe/> uses <linkSoTest>{SO} test page</linkSoTest> to test your level."
+        },
+        "I030": {
+          "B010": "<b>DON'T</b> rely on browser storage to remember your modified in-memory files forever. <b>DO SAVE BACKUPS</b>. Browser might clean its storage.",
+          "B020": "Also, <spleMe/> storage in your browser can be accidentally reset in case of some errors in <b>{APP_TITLE}</b> itself. Since, you know: <em>Every program has at least one bug</em>."
+        }
+      }
+    }
+  },
+  "app": {
+    "readOnly": {
+      "B010": "This <sple/> instance is in <b>Read Only</b> mode now because a different \"main\" instance was detected.",
+      "B020": "Check other opened tabs in current browser session. Either close the unnecessary tab to continue, or close other tabs and then reload this one.",
+      "B030": "In <b>Read Only</b> mode <sple/> WILL NOT WRITE anything INTO YOR BROWSER STORAGE. This means it WILL NOT remember any changes you made in <b>Read Only</b> mode.",
+      "ButtonHint": "This instance is in Read Only mode"
+    }
+  },
+  "files": {
+    "buttons": {
+      "Remove": "Remove file from memory",
+      "RemoveOthers": "Remove others files from memory",
+      "Rename": "Rename file",
+      "Save": "Save file from memory"
+    },
+    "closeFileSave": {
+      "Confirm": "Are you sure you want to remove file \"<b>{filename}</b>\" from memory?<br/>You will loss all changes in the file. Consider backing it up first.<br/><b>This action can not be undone.</b>",
+      "OK": "Remove \"{filename}\""
+    },
+    "closeOthersSave": {
+      "Confirm": "Are you sure you want to remove ALL OTHER FILES BUT \"<b>{filename}</b>\" from memory?<br/>You will lose all changes in these files. Consider backing them up first.<br/><b>This action can not be undone.</b>",
+      "OK": "Remove ALL BUT \"{filename}\""
+    },
+    "rename": {
+      "NewFileName": "New filename",
+      "Prompt": "Rename file \"<b>{filename}</b>\" in memory"
+    }
+  }
+}

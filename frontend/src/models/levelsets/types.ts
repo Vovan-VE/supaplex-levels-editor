@@ -21,6 +21,7 @@ interface LevelsetFileSourceOld {
   driverFormat: string | undefined;
   /** @since 0.14 */
   order?: number | undefined;
+  ro?: boolean;
 }
 export interface LevelsetFileSource extends LevelsetFileSourceOld {
   driverFormat: string;

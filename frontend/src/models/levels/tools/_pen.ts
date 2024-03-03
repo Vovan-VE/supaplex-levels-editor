@@ -37,7 +37,7 @@ const {
   VARIANTS: [
     {
       internalName: "x1",
-      title: "Pencil",
+      title: (t) => t("main:drawing.Pencil"),
       Icon: svgs.Pencil,
       hotkey: HK_TOOL_PEN,
       drawProps: {
@@ -46,7 +46,7 @@ const {
     },
     {
       internalName: "x1x2",
-      title: "Pencil 1x2",
+      title: (t) => t("main:drawing.Pencil1x2"),
       Icon: svgs.Grid1x2,
       hotkey: HK_TOOL_PEN2,
       drawProps: {
@@ -55,7 +55,7 @@ const {
     },
     {
       internalName: "x2x1",
-      title: "Pencil 2x1",
+      title: (t) => t("main:drawing.Pencil2x1"),
       Icon: svgs.Grid2x1,
       hotkey: HK_TOOL_PEN2,
       drawProps: {
@@ -64,7 +64,7 @@ const {
     },
     {
       internalName: "x3",
-      title: "Pencil 3x3",
+      title: (t) => t("main:drawing.Pencil3x3"),
       Icon: svgs.Grid3x3,
       hotkey: HK_TOOL_PEN3,
       drawProps: {

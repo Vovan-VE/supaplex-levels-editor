@@ -4,9 +4,6 @@
 
 - Toasts.
   - Internal editing exception from store manipulations.
-- WpColEd porting:
-  - Import single level:
-    - with real clipboard as test/demo url;
 - End User Manual.
   - Find or create jekyll template.
 - Tools:
@@ -21,9 +18,14 @@
   - Impossible without gameplay simulation. Only if SO will provide a path
     actually walked.
 - Tooltips with interactive content support.
-- specports
-  - H/V/X ports on toolbar should be halved
-- footer info: is std, why not
+- footer info:
+  - is std, why not
+- new file: format description: common and per format
+- tooltip for a tile/coords (in dialogs) to display part of level as context
+- Import/Open level compatibility report has text from "convert file" context
+- A `Dialog` don't block hotkeys behind
+
+- `class UserError extends Error {}`, `new UserError(t => t(...))`
 
 ### Desktop
 
@@ -44,6 +46,8 @@
     to work more intuitive.
 - Clickable "electron" icon to include/exclude n\*9 infotrons needed.
 - BIN demo export/import?
+- 100% offline with level testing and demo replay?
+  - Need run game engine and own offline renderer
 
 ### Desktop
 

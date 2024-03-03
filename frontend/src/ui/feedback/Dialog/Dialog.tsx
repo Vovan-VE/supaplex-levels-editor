@@ -39,6 +39,7 @@ export interface DialogProps {
   wrapForm?: FormProps;
   buttons?: ReactNode;
   onClose?: () => void;
+  className?: string;
   bodyClassName?: string;
 }
 
@@ -55,6 +56,7 @@ export const Dialog: FC<PropsWithChildren<DialogProps>> = ({
   wrapForm,
   buttons,
   onClose,
+  className,
   bodyClassName,
   children,
 }) => {
@@ -75,7 +77,10 @@ export const Dialog: FC<PropsWithChildren<DialogProps>> = ({
     <PopupPortal className={cl.container}>
       {/*modal &&*/ open && <div className={cl.backdrop} />}
       <div className={cn(cl.scrollContainer, open && cl._open)}>
-        <dialog open={open} className={cn(cl.dialog, size && CL_SIZE[size])}>
+        <dialog
+          open={open}
+          className={cn(cl.dialog, size && CL_SIZE[size], className)}
+        >
           {closeButton && (
             <TextButton
               icon={<svgs.Cross />}

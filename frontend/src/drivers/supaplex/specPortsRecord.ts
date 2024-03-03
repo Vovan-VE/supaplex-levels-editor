@@ -1,6 +1,7 @@
 import { SPEC_PORT_ITEM_LENGTH } from "./formats/std";
 import {
   ISupaplexSpecPortRecord,
+  ISupaplexSpecPortStringOptions,
   SpecPortAlterMod,
   SpecPortFreezeEnemies,
   SpecPortFreezeZonks,
@@ -113,7 +114,7 @@ class SpecPortRecord implements ISupaplexSpecPortRecord {
       this.#unusedByte,
     );
   }
-  toString(): string {
+  toString({ withZeros = false }: ISupaplexSpecPortStringOptions = {}): string {
     let s = `x${this.#x}y${this.#y}`;
     for (const [w, n] of [
       // ["x", this.#x],
@@ -123,7 +124,7 @@ class SpecPortRecord implements ISupaplexSpecPortRecord {
       ["e", this.#freezeEnemies],
       ["u", this.#unusedByte],
     ] as const) {
-      if (n !== 0) {
+      if (n !== 0 || withZeros) {
         s += w + String(n);
       }
     }

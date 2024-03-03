@@ -17,6 +17,7 @@ interface Props<V> extends ContainerProps {
   onChange?: (value: V) => void;
   flowInline?: boolean;
   name?: string;
+  disabled?: boolean;
 }
 
 export const RadioGroup = <V,>({
@@ -25,6 +26,7 @@ export const RadioGroup = <V,>({
   onChange,
   flowInline = false,
   name,
+  disabled,
   className,
   ...rest
 }: Props<V>): ReturnType<FC> => {
@@ -55,6 +57,7 @@ export const RadioGroup = <V,>({
           checked={value !== undefined && o.value === value}
           onChange={handleChange?.[i]}
           name={_name}
+          disabled={disabled}
         >
           {o.label}
         </CheckboxRender>

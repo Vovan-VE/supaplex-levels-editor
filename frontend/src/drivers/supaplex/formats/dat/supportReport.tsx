@@ -1,3 +1,4 @@
+import { Trans } from "i18n/Trans";
 import { ISupportReportMessage } from "../../../types";
 import { ISupaplexLevel, ISupaplexLevelset } from "../../types";
 import { levelReporter as sp_levelReporter } from "../sp/supportReport";
@@ -12,6 +13,11 @@ export function* levelReporter(
   yield* sp_levelReporter(level);
 
   if (level.demo !== null) {
-    yield warn(<>Demo ({level.demo.length} bytes) will be removed.</>);
+    yield warn(
+      <Trans
+        i18nKey="main:supaplex.convert.DemoWillBeRemoved"
+        values={{ n: level.demo.length }}
+      />,
+    );
   }
 }

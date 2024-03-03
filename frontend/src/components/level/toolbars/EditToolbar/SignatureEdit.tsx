@@ -1,12 +1,13 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import {
   ChangeEventHandler,
   FC,
-  FormEvent,
+  FormEventHandler,
   useCallback,
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import {
   getDriver,
   getDriverFormat,
@@ -32,14 +33,15 @@ interface Props extends RenderPromptProps<undefined> {}
 type _TC = ChangeEventHandler<HTMLTextAreaElement>;
 
 const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
-  const driverName = useStore($currentDriverName)!;
+  const { t } = useTranslation();
+  const driverName = useUnit($currentDriverName)!;
   const { DemoToTextConfig, DemoToTextHelp, demoToText, demoFromText } =
     getDriver(driverName)!;
   const { signatureMaxLength } = getDriverFormat(
     driverName,
-    useStore($currentDriverFormat)!,
+    useUnit($currentDriverFormat)!,
   )!;
-  const level = useStore($currentLevelUndoQueue)!.current;
+  const level = useUnit($currentLevelUndoQueue)!.current;
   const [demo, setDemo] = useState(() =>
     levelSupportsDemo(level) ? level.demo : null,
   );
@@ -90,43 +92,42 @@ const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
 
   const signatureError =
     signatureMaxLength !== undefined && signature.length > signatureMaxLength
-      ? `Max length is ${signatureMaxLength}`
+      ? t("main:validate.StrMaxLen", { max: signatureMaxLength })
       : null;
 
   const hasError = Boolean(demoTextError || signatureError);
-  const handleOk = useCallback(() => {
-    if (hasError || !levelSupportsDemo(level)) {
-      return;
-    }
-    try {
-      let next = level.setDemo(demo);
-      if (levelSupportSignature(next)) {
-        next = next.setSignature(signature);
+  const handleOk = useCallback<FormEventHandler>(
+    (e) => {
+      e.preventDefault();
+      if (hasError || !levelSupportsDemo(level)) {
+        return;
       }
-      updateCurrentLevel(next);
-      onSubmit();
-    } catch (e) {
-      showToastError(e);
-    }
-  }, [hasError, demo, signature, level, onSubmit]);
+      try {
+        let next = level.setDemo(demo);
+        if (levelSupportSignature(next)) {
+          next = next.setSignature(signature);
+        }
+        updateCurrentLevel(next);
+        onSubmit();
+      } catch (e) {
+        showToastError(e);
+      }
+    },
+    [hasError, demo, signature, level, onSubmit],
+  );
 
   return (
     <Dialog
-      title="Edit demo"
+      title={t("main:demoEdit.DialogTitle")}
       open={show}
-      wrapForm={{
-        onSubmit: (e: FormEvent) => {
-          e.preventDefault();
-          handleOk();
-        },
-      }}
+      wrapForm={{ onSubmit: handleOk }}
       buttons={
         <>
           <Button uiColor={ColorType.SUCCESS} type="submit" disabled={hasError}>
-            OK
+            {t("main:common.buttons.OK")}
           </Button>
           <Button type="button" onClick={onCancel}>
-            Cancel
+            {t("main:common.buttons.Cancel")}
           </Button>
         </>
       }
@@ -135,11 +136,11 @@ const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
       {levelSupportsDemo(level) && demoToText && (
         <>
           <Field
-            label="Demo text representation"
+            label={t("main:demoEdit.DemoText")}
             help={
               handleDemoHelp && (
                 <TextButton icon={<svgs.Info />} onClick={handleDemoHelp}>
-                  Help
+                  {t("main:common.buttons.Help")}
                 </TextButton>
               )
             }
@@ -161,7 +162,7 @@ const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
         </>
       )}
       {levelSupportSignature(level) && (
-        <Field label="Signature" error={signatureError}>
+        <Field label={t("main:demoEdit.Signature")} error={signatureError}>
           <Textarea
             value={signature}
             maxLength={signatureMaxLength}

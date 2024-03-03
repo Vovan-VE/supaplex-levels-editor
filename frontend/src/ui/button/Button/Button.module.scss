@@ -12,6 +12,9 @@
 ._danger {
   @extend %button-danger;
 }
+._mute {
+  @extend %button-mute;
+}
 
 .button {
   @extend %button;

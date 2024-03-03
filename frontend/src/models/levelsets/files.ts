@@ -3,7 +3,6 @@ import {
   createEffect,
   createEvent,
   createStore,
-  forward,
   sample,
 } from "effector";
 import { withPersistent, withPersistentMap } from "@cubux/effector-persistent";
@@ -198,6 +197,7 @@ export const renameCurrentLevelset = createEvent<string>();
 export const setCurrentLevelset = createEvent<FilesStorageKey>();
 
 export const sortLevelsets = createEvent<readonly FilesStorageKey[]>();
+export const setCurrentLevelsetRo = createEvent<boolean>();
 
 export const fileDidOpen = addLevelsetFileDoneData.map(
   ({ file: { key } }) => key,
@@ -209,10 +209,7 @@ const _willSetCurrentKeyFx = createEffect((next: FilesStorageKey | null) => {
 });
 const _unsetCurrentKey = createEvent();
 const _setCurrentKey = createEvent<FilesStorageKey | null>();
-forward({
-  from: setCurrentLevelset,
-  to: _willSetCurrentKeyFx,
-});
+sample({ source: setCurrentLevelset, target: _willSetCurrentKeyFx });
 /**
  * Key of current selected file within `$levelsets`
  */
@@ -282,6 +279,7 @@ export const $levelsets = withPersistentMap(
       driverName,
       driverFormat,
       order,
+      ro,
       key,
       levelset,
     }: LevelsetFile): Promise<_DbLevelsetFile> => ({
@@ -292,6 +290,7 @@ export const $levelsets = withPersistentMap(
       key,
       fileBuffer: await file.arrayBuffer(),
       _options: levelset.localOptions,
+      ...(ro && { ro }),
 
       // DEV update time for local debug purpose
       ...(process.env.NODE_ENV === "development"
@@ -303,6 +302,7 @@ export const $levelsets = withPersistentMap(
       driverName,
       driverFormat,
       order,
+      ro,
       key,
       fileBuffer,
       _options,
@@ -314,6 +314,7 @@ export const $levelsets = withPersistentMap(
         driverFormat:
           driverFormat ?? FALLBACK_FORMAT[driverName] ?? "_unknown_",
         order,
+        ro: ro || undefined,
         key,
       });
       return {
@@ -341,6 +342,7 @@ export const $levelsets = withPersistentMap(
         return new Map([[key, v]]);
       }
     }
+    return map;
   })
   .on(sortLevelsets, (map, keys) =>
     updateOrders(
@@ -352,6 +354,16 @@ export const $levelsets = withPersistentMap(
         map,
       ),
     ),
+  )
+  .on(
+    sample({
+      clock: setCurrentLevelsetRo,
+      source: $currentKey,
+      filter: Boolean,
+      fn: (key, ro) => ({ key, ro }),
+    }),
+    (map, { key, ro }) =>
+      RoMap.update(map, key, (f) => (!f.ro === !ro ? f : { ...f, ro })),
   );
 if (!allowManualSave) {
   $levelsets.on(
@@ -429,3 +441,4 @@ export const $currentDriverFormat = $currentLevelsetFile.map((f) =>
 export const $currentFileHasLocalOptions = $currentLevelsetFile.map((f) =>
   Boolean(f && f.levelset.hasLocalOptions),
 );
+export const $currentFileRo = $currentLevelsetFile.map((f) => Boolean(f?.ro));

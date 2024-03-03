@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "ui/button";
 import { Dialog, renderPrompt, RenderPromptProps } from "ui/feedback";
 import { ColorType } from "ui/types";
@@ -9,16 +10,17 @@ import cl from "./LevelConfigDialog.module.scss";
 interface Props extends RenderPromptProps<true | undefined> {}
 
 const LevelConfigDialog: FC<Props> = ({ show, onSubmit }) => {
+  const { t } = useTranslation();
   return (
     <Dialog
       open={show}
       onClose={onSubmit}
       buttons={
         <Button uiColor={ColorType.MUTE} onClick={() => onSubmit()}>
-          Close
+          {t("main:common.buttons.Close")}
         </Button>
       }
-      title="Level settings"
+      title={t("main:level.config.DialogTitle")}
     >
       <div className={cl.root}>
         <LevelConfig onDidResize={onSubmit} />

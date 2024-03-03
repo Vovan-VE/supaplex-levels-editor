@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.19.0 (2024-03-03)
+
+- Add: Spec Ports DB dialog now allows to edit entire DB as text.
+- Add: Read Only mode can be toggled in a file. See new button near "Rename".
+- Add: Display Hex and Char values for hovered tile.
+- Add: Reordering levels in file. See "Levels order" in levels buttons.
+- Add: Display selection state in footer.
+- Add: A test/demo link presented in clipboard can be opened as a new file, or
+  can be imported into current level.
+- Fix: Some UI texts correction in progress. Thanks to Lana Snik-Snak!
+- Fix: H/V/X Ports when set as Special wasn't marked Special in "Copy as Image".
+- Fix: Copy/Export Level/Selection icons and compact layout.
+- Fix: Copy level as test/demo link missed custom Options.
+- Enh: H/V/X Ports in Toolbar are halved too.
+- Enh: Spec Ports DB dialog UX:
+  - display the tile in the giver cell;
+  - limit dialog height and add scroll to the list.
+- Enh: Random selection editor now uses integer input fields for better
+  probabilities setup.
+- Enh: Replace selection editor now allows multiple "what" to replace.
+- Enh: Random selection editor now has optional "Replace what" to affect only
+  specified tiles in a selection.
+
+### Desktop
+
+- Enh: A page in WebView now loads faster since Wails upgraded to >=2.7.
+
 ## 0.18.0 (2023-12-01)
 
 - Add: New SO Special Ports Database support. This brings the following changes:

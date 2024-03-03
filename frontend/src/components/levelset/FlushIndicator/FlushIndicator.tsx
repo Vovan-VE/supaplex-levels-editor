@@ -1,8 +1,9 @@
 import cn from "classnames";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { $displayReadOnly } from "backend";
-import { APP_TITLE } from "configs";
+import { Trans } from "i18n/Trans";
 import { $flushError, $isFlushPending } from "models/levelsets/flush";
 import { TextButton } from "ui/button";
 import { msgBox, Spinner } from "ui/feedback";
@@ -10,17 +11,18 @@ import { svgs } from "ui/icon";
 import { ColorType, ContainerProps } from "ui/types";
 import cl from "./FlushIndicator.module.scss";
 
-const displayReadOnly = Boolean($displayReadOnly);
+const displayReadOnly = !!$displayReadOnly;
 const useDisplayRO = displayReadOnly
-  ? () => useStore($displayReadOnly!)
+  ? () => useUnit($displayReadOnly!)
   : () => false;
 
 interface Props extends ContainerProps {}
 
 export const FlushIndicator: FC<Props> = ({ className, ...rest }) => {
+  const { t } = useTranslation();
   const readOnly = useDisplayRO();
-  const isPending = useStore($isFlushPending);
-  const error = useStore($flushError);
+  const isPending = useUnit($isFlushPending);
+  const error = useUnit($flushError);
 
   const handleErrorClick = useMemo(
     () =>
@@ -28,7 +30,7 @@ export const FlushIndicator: FC<Props> = ({ className, ...rest }) => {
         ? () =>
             msgBox(
               <>
-                Failed to flush data to storage:
+                {t("main:files.messages.FailedFlushToStorage")}
                 <br />
                 {error!.message}
               </>,
@@ -37,7 +39,7 @@ export const FlushIndicator: FC<Props> = ({ className, ...rest }) => {
               },
             )
         : undefined,
-    [error],
+    [error, t],
   );
 
   return displayReadOnly && readOnly ? (
@@ -48,7 +50,7 @@ export const FlushIndicator: FC<Props> = ({ className, ...rest }) => {
       className={cn(cl.readonly, className)}
       icon={<svgs.Warning />}
       onClick={handleReadOnlyClick}
-      title="This instance is in Read Only mode"
+      title={t("web:app.readOnly.ButtonHint")}
     />
   ) : isPending ? (
     <TextButton
@@ -56,7 +58,7 @@ export const FlushIndicator: FC<Props> = ({ className, ...rest }) => {
       key="p"
       className={cn(cl.pending, className)}
       icon={<Spinner />}
-      title="Flushing data to storage..."
+      title={t("main:files.messages.FlushingToStorage")}
     />
   ) : (
     <TextButton
@@ -66,7 +68,7 @@ export const FlushIndicator: FC<Props> = ({ className, ...rest }) => {
       className={cn(error ? cl.error : cl.success, className)}
       icon={<svgs.Cross />}
       onClick={handleErrorClick}
-      title="Could not flush data to storage"
+      title={t("main:files.messages.CannotFlushToStorage")}
     />
   );
 };
@@ -75,19 +77,13 @@ const handleReadOnlyClick = () =>
   msgBox(
     <>
       <p>
-        This <strong>{APP_TITLE}</strong> instance now is in{" "}
-        <strong>Read Only</strong> mode because a different "main" instance was
-        detected in the past.
+        <Trans i18nKey="web:app.readOnly.B010" />
       </p>
       <p>
-        Check other opened tabs in current browser session. Either close
-        unnecessary this tab to continue in another opened, or close another
-        tabs and then reload this tab.
+        <Trans i18nKey="web:app.readOnly.B020" />
       </p>
       <p>
-        In <strong>Read Only</strong> mode <strong>{APP_TITLE}</strong> WILL NOT
-        WRITE anything INTO BROWSER STORAGE. This means it WILL NOT remember any
-        changes you made in <strong>Read Only</strong> mode.
+        <Trans i18nKey="web:app.readOnly.B030" />
       </p>
     </>,
     { size: "small" },

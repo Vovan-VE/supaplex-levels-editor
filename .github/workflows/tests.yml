@@ -1,0 +1,55 @@
+name: Tests
+
+on:
+  #push:
+  #  branches: [ "devel" ]
+  pull_request:
+    branches: [ "main", "devel" ]
+  workflow_dispatch:
+
+jobs:
+  test_nodejs:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ 18.x ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: ./frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci --ignore-scripts
+
+      - name: Run tests
+        working-directory: ./frontend
+        run: npm test
+        env:
+          CI: true
+
+  test_go:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        go-version: [ 1.20.3 ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: RunTests
+        run: go test ./...

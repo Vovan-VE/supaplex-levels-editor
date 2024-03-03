@@ -1,7 +1,9 @@
-import { useStore } from "effector-react";
-import { FC, useCallback, useMemo } from "react";
-import { openFile } from "backend";
+import { useUnit } from "effector-react";
+import { FC, Fragment, ReactElement, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { getClipboardText, openFile } from "backend";
 import { getDriverFormat, levelSupportsDemo } from "drivers";
+import { Trans } from "i18n/Trans";
 import {
   exportAsImageToClipboard,
   exportAsImageToFile,
@@ -10,13 +12,16 @@ import {
   copyLevelAsDemoLink,
   copyLevelAsTestLink,
 } from "models/levels/export-url";
+import { importLevelAsLink } from "models/levels/import-url";
 import {
   $currentBuffer,
   $currentBufferHasOtherOpened,
   $currentDriverFormat,
   $currentDriverName,
+  $currentFileRo,
   $currentLevel,
   appendLevel,
+  changeLevelsOrder,
   closeCurrentLevel,
   closeOtherLevels,
   deleteCurrentLevel,
@@ -25,11 +30,13 @@ import {
   importCurrentLevel,
   insertAtCurrentLevel,
 } from "models/levelsets";
+import { showToast, showToastError } from "models/ui/toasts";
 import { Button, ButtonDropdown, TextButton, Toolbar } from "ui/button";
 import { ask } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
 import { ColorType } from "ui/types";
 import { fmtLevelFull, fmtLevelNumber } from "../fmt";
+import { promptLevelsOrder } from "../LevelsOrder";
 
 const closeOtherStack: IconStack = [[IconStackType.Index, <svgs.Cross />]];
 
@@ -37,23 +44,15 @@ interface Props {
   isCompact?: boolean;
 }
 
-const confirmDeleteCurrent = (levelFullReference: string) =>
-  ask(
-    <>
-      Are you sure you want to delete the level "
-      <code>{levelFullReference}</code>" from this level set?
-      <br />
-      This will cause all the levels following to shift backward.
-      <br />
-      <b>This action can not be undone.</b>
-    </>,
+const confirmDeleteCurrent = (levelFullReference: string) => {
+  const values = { level: levelFullReference };
+  return ask(
+    <Trans i18nKey="main:levels.deleteCurrent.Confirm" values={values} />,
     {
       size: "small",
       buttons: {
         okText: (
-          <>
-            Delete <code>"{levelFullReference}"</code>
-          </>
+          <Trans i18nKey="main:levels.deleteCurrent.Button" values={values} />
         ),
         ok: {
           uiColor: ColorType.DANGER,
@@ -65,27 +64,22 @@ const confirmDeleteCurrent = (levelFullReference: string) =>
       },
     },
   );
+};
 
 const confirmDeleteRest = (currentIndex: number, count: number) => {
   const restCount = count - (currentIndex + 1);
+  const values = {
+    restCount,
+    nextIndex: currentIndex + 2,
+    leftCount: currentIndex + 1,
+  };
   return ask(
-    <>
-      Are you sure you want to delete all the rest <strong>{restCount}</strong>{" "}
-      levels <strong>after</strong> current one (that is starting from{" "}
-      <code>{currentIndex + 2}</code> inclusive) from this levelset?
-      <br />
-      The levelset then will have only <strong>{currentIndex + 1}</strong>{" "}
-      levels.
-      <br />
-      <b>This action can not be undone.</b>
-    </>,
+    <Trans i18nKey="main:levels.deleteRest.Confirm" values={values} />,
     {
       size: "small",
       buttons: {
         okText: (
-          <>
-            Delete <strong>{restCount}</strong> rest levels
-          </>
+          <Trans i18nKey="main:levels.deleteRest.Button" values={values} />
         ),
         ok: {
           uiColor: ColorType.DANGER,
@@ -102,18 +96,37 @@ const confirmDeleteRest = (currentIndex: number, count: number) => {
 const handleImportLevelClick = () =>
   openFile({ done: (items) => importCurrentLevel(items[0].file) });
 
+const handleImportLevelByUrl = async () => {
+  try {
+    let text = await getClipboardText();
+    text = text?.trim();
+    if (!text) {
+      showToast({
+        message: <Trans i18nKey="main:levels.import.NoTextInClipboard" />,
+        color: ColorType.WARN,
+      });
+      return;
+    }
+    importCurrentLevel(await importLevelAsLink(text));
+  } catch (e) {
+    showToastError(e);
+  }
+};
+
 export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
+  const { t } = useTranslation();
+  const isRo = useUnit($currentFileRo);
   const format = getDriverFormat(
-    useStore($currentDriverName)!,
-    useStore($currentDriverFormat)!,
+    useUnit($currentDriverName)!,
+    useUnit($currentDriverFormat)!,
   );
   const {
     minLevelsCount = 1,
     maxLevelsCount = null,
     demoSupport = false,
   } = format || {};
-  const levelset = useStore($currentBuffer)!;
-  const level = useStore($currentLevel);
+  const levelset = useUnit($currentBuffer)!;
+  const level = useUnit($currentLevel);
   const hasDemo = Boolean(
     level &&
       ((lvl = level.level.undoQueue.current) =>
@@ -123,7 +136,7 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
   const levelsCount = levelset.levels.length;
   const levelsCountDigits = String(levelsCount).length;
 
-  const hasOtherOpened = useStore($currentBufferHasOtherOpened);
+  const hasOtherOpened = useUnit($currentBufferHasOtherOpened);
 
   const levelFullReference =
     level &&
@@ -132,6 +145,68 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
       levelsCountDigits,
       level.level.undoQueue.current.title,
     );
+
+  let copyAsDemoButton: ReactElement | undefined;
+  if (demoSupport) {
+    const copyLevelAsDemoUrlTitle = hasDemo
+      ? t("main:level.export.CopyLevelAsDemoLink")
+      : t("main:level.export.CopyLevelAsDemoLinkNone");
+    copyAsDemoButton = (
+      <TextButton
+        icon={<svgs.LinkDemo />}
+        uiColor={ColorType.DEFAULT}
+        onClick={copyLevelAsDemoLink}
+        disabled={!hasDemo}
+        title={isCompact ? copyLevelAsDemoUrlTitle : undefined}
+      >
+        {isCompact ? undefined : copyLevelAsDemoUrlTitle}
+      </TextButton>
+    );
+  }
+  const exportLevelAsFileTitle = t("main:level.export.SaveLevelAsFile");
+  const exportSelectionAsImageTitle = t(
+    "main:level.export.SaveSelectionAsImage",
+  );
+  const copySelectionAsImageTitle = t("main:level.export.CopySelectionAsImage");
+  const copyLevelAsTestUrlTitle = t("main:level.export.CopyLevelAsTestUrl");
+  const exportButtons = (
+    <>
+      <TextButton
+        icon={<svgs.SaveLevelAsFile />}
+        onClick={exportCurrentLevel}
+        uiColor={ColorType.DEFAULT}
+        title={isCompact ? exportLevelAsFileTitle : undefined}
+      >
+        {isCompact ? undefined : exportLevelAsFileTitle}
+      </TextButton>
+      <TextButton
+        icon={<svgs.SaveAsImage />}
+        onClick={exportAsImageToFile}
+        uiColor={ColorType.DEFAULT}
+        title={isCompact ? exportSelectionAsImageTitle : undefined}
+      >
+        {isCompact ? undefined : exportSelectionAsImageTitle}
+      </TextButton>
+      <wbr />
+      <TextButton
+        icon={<svgs.CopyImage />}
+        uiColor={ColorType.DEFAULT}
+        onClick={exportAsImageToClipboard}
+        title={isCompact ? copySelectionAsImageTitle : undefined}
+      >
+        {isCompact ? undefined : copySelectionAsImageTitle}
+      </TextButton>
+      <TextButton
+        icon={<svgs.LinkTest />}
+        uiColor={ColorType.DEFAULT}
+        onClick={copyLevelAsTestLink}
+        title={isCompact ? copyLevelAsTestUrlTitle : undefined}
+      >
+        {isCompact ? undefined : copyLevelAsTestUrlTitle}
+      </TextButton>
+      {copyAsDemoButton}
+    </>
+  );
 
   const handleDeleteClick = useMemo(
     () =>
@@ -157,40 +232,97 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
   );
 
   const cannotAddLevel =
-    maxLevelsCount !== null && levelsCount >= maxLevelsCount;
+    isRo || (maxLevelsCount !== null && levelsCount >= maxLevelsCount);
 
-  const cannotRemoveLevel = levelsCount <= minLevelsCount;
-  const cannotRemoveLevelMessage = cannotRemoveLevel
-    ? `Cannot remove level because it's already minimum ${minLevelsCount}`
-    : undefined;
+  const cannotRemoveLevel = isRo || levelsCount <= minLevelsCount;
 
-  const cannotRemoveRestLevels =
-    level !== null &&
-    !(level.index + 1 < levelsCount && levelsCount > minLevelsCount);
-  const deleteRestTitle = level
-    ? `Delete rest ${levelsCount - (level.index + 1)} levels`
-    : undefined;
+  const addRemoveButtons: ReactElement[] = [];
+  if (!cannotAddLevel) {
+    const appendTitle = t("main:level.manage.Append", {
+      number: fmtLevelNumber(levelsCount, levelsCountDigits),
+    });
 
-  const insertButton = cannotAddLevel ? undefined : (
-    <Button
-      icon={<svgs.InsertRow />}
-      disabled={!level}
-      title={
-        level
-          ? `Insert a new level at ${fmtLevelNumber(
-              level.index,
-              levelsCountDigits,
-            )} and move the current forward`
-          : ""
-      }
-      onClick={insertAtCurrentLevel}
-    />
+    addRemoveButtons.push(
+      <Button
+        icon={<svgs.InsertRow />}
+        disabled={!level}
+        title={
+          level
+            ? t("main:level.manage.Insert", {
+                number: fmtLevelNumber(level.index, levelsCountDigits),
+              })
+            : ""
+        }
+        onClick={insertAtCurrentLevel}
+      />,
+      <Button
+        icon={<svgs.AppendRow />}
+        onClick={appendLevel}
+        title={isCompact ? appendTitle : undefined}
+      >
+        {isCompact ? undefined : appendTitle}
+      </Button>,
+    );
+  }
+  if (!cannotRemoveLevel) {
+    const deleteTitle = levelFullReference
+      ? t("main:level.manage.Delete", { level: levelFullReference })
+      : "";
+    const deleteRestTitle = level
+      ? t("main:level.manage.DeleteRestLevels", {
+          n: levelsCount - (level.index + 1),
+        })
+      : undefined;
+
+    addRemoveButtons.push(
+      <Button
+        uiColor={ColorType.DANGER}
+        icon={<svgs.DeleteRow />}
+        disabled={!level}
+        onClick={handleDeleteClick}
+        title={isCompact ? deleteTitle : undefined}
+      >
+        {isCompact ? undefined : deleteTitle}
+      </Button>,
+      <Button
+        uiColor={ColorType.DANGER}
+        icon={<svgs.DeleteRest />}
+        title={isCompact ? deleteRestTitle : undefined}
+        disabled={
+          level !== null &&
+          (level.index >= levelsCount - 1 || levelsCount <= minLevelsCount)
+        }
+        onClick={handleDeleteRestClick}
+      >
+        {isCompact ? undefined : deleteRestTitle}
+      </Button>,
+    );
+  }
+
+  const handleLevelsOrder = useMemo(
+    () =>
+      !isRo && levelset.levels.length > 1
+        ? async () => {
+            const next = await promptLevelsOrder({ levels: levelset.levels });
+            if (next) {
+              changeLevelsOrder(next);
+            }
+          }
+        : undefined,
+    [levelset.levels, isRo],
   );
-
-  const appendTitle = `Append new level ${fmtLevelNumber(
-    levelsCount,
-    levelsCountDigits,
-  )}`;
+  if (handleLevelsOrder) {
+    const orderTitle = t("main:level.manage.LevelsOrder");
+    addRemoveButtons.push(
+      <Button
+        icon={<svgs.Menu />}
+        title={isCompact ? orderTitle : undefined}
+        onClick={handleLevelsOrder}
+      >
+        {isCompact ? undefined : orderTitle}
+      </Button>,
+    );
+  }
 
   const closeButton = (
     <Button
@@ -198,21 +330,23 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
       disabled={!level}
       onClick={closeCurrentLevel}
       title={
-        levelFullReference ? `Close level tab (${levelFullReference})` : ""
+        levelFullReference
+          ? t("main:level.manage.CloseTab", { level: levelFullReference })
+          : ""
       }
     />
   );
-  const closeOthersTitle = "Close other levels tabs";
+  const closeOthersTitle = t("main:level.manage.CloseOtherTabs");
   const handleCloseOthers = useCallback(async () => {
+    const values = { level: levelFullReference };
     if (
       await ask(
-        <>
-          Are you sure you want to close ALL OTHER levels BUT "
-          <b>{levelFullReference}</b>"?
-        </>,
+        <Trans i18nKey="main:levels.closeOther.Confirm" values={values} />,
         {
           buttons: {
-            okText: <>Close OTHER BUT "{levelFullReference}"</>,
+            okText: (
+              <Trans i18nKey="main:levels.closeOther.Button" values={values} />
+            ),
             ok: {
               autoFocus: false,
             },
@@ -227,117 +361,62 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
     }
   }, [levelFullReference]);
 
-  const deleteButton = (
-    <Button
-      uiColor={ColorType.DANGER}
-      icon={<svgs.DeleteRow />}
-      disabled={!level}
-      onClick={handleDeleteClick}
-      title={
-        cannotRemoveLevelMessage ||
-        (levelFullReference ? `Delete level ${levelFullReference}` : "")
-      }
-    />
-  );
-
   return (
     <>
-      <ButtonDropdown
-        triggerIcon={<svgs.Save />}
-        buttonProps={{
-          iconStack: [[IconStackType.Index, <svgs.FileBlank />]],
-          title: "Export level",
-          disabled: !level,
-        }}
-      >
-        <Toolbar isMenu>
-          <TextButton onClick={exportCurrentLevel} uiColor={ColorType.DEFAULT}>
-            Save level as File
-          </TextButton>
-          <TextButton onClick={exportAsImageToFile} uiColor={ColorType.DEFAULT}>
-            Save level/selection as Image
-          </TextButton>
-          <TextButton
-            icon={<svgs.Copy />}
-            uiColor={ColorType.DEFAULT}
-            onClick={exportAsImageToClipboard}
-          >
-            Copy level/selection as Image
-          </TextButton>
-          <TextButton
-            icon={<svgs.Copy />}
-            uiColor={ColorType.DEFAULT}
-            onClick={copyLevelAsTestLink}
-          >
-            Copy level as Test Link
-          </TextButton>
-          {demoSupport && (
-            <TextButton
-              icon={<svgs.Copy />}
-              uiColor={ColorType.DEFAULT}
-              onClick={copyLevelAsDemoLink}
-              disabled={!hasDemo}
-            >
-              Copy level as Demo Link{hasDemo || " (no demo)"}
-            </TextButton>
-          )}
-        </Toolbar>
-      </ButtonDropdown>
-      <Button
-        icon={<svgs.DirOpen />}
-        iconStack={[[IconStackType.Index, <svgs.FileBlank />]]}
-        title="Import a level from file into current level"
-        onClick={handleImportLevelClick}
-        disabled={!level}
-      />
-      {cannotAddLevel ||
-        (isCompact ? (
-          <>
-            {insertButton}
-            <Button
-              icon={<svgs.AppendRow />}
-              title={appendTitle}
-              onClick={appendLevel}
-            />
-          </>
-        ) : (
-          <ButtonDropdown standalone={insertButton}>
-            <Toolbar>
-              <Button icon={<svgs.AppendRow />} onClick={appendLevel}>
-                {appendTitle}
-              </Button>
-            </Toolbar>
-          </ButtonDropdown>
-        ))}
-      {cannotRemoveLevel ||
-        (isCompact ? (
-          <>
-            {deleteButton}
-            <Button
-              uiColor={ColorType.DANGER}
-              icon={<svgs.DeleteRest />}
-              title={deleteRestTitle}
-              disabled={cannotRemoveRestLevels}
-              onClick={handleDeleteRestClick}
-            />
-          </>
-        ) : (
-          <ButtonDropdown
-            standalone={deleteButton}
-            buttonProps={{ uiColor: ColorType.DANGER }}
-          >
-            <Toolbar>
-              <Button
-                uiColor={ColorType.DANGER}
-                icon={<svgs.DeleteRest />}
-                disabled={cannotRemoveRestLevels}
-                onClick={handleDeleteRestClick}
-              >
-                {deleteRestTitle}
-              </Button>
-            </Toolbar>
-          </ButtonDropdown>
-        ))}
+      {isCompact ? (
+        <>
+          {exportButtons}
+          <wbr />
+        </>
+      ) : (
+        <ButtonDropdown
+          triggerIcon={<svgs.Save />}
+          buttonProps={{
+            iconStack: [[IconStackType.Index, <svgs.FileBlank />]],
+            title: t("main:level.manage.ExportLevel"),
+            disabled: !level,
+          }}
+        >
+          <Toolbar isMenu>{exportButtons}</Toolbar>
+        </ButtonDropdown>
+      )}
+      {isRo || (
+        <>
+          <Button
+            icon={<svgs.DirOpen />}
+            iconStack={[[IconStackType.Index, <svgs.FileBlank />]]}
+            title={t("main:level.manage.ImportLevelFromFileReplace")}
+            onClick={handleImportLevelClick}
+            disabled={!level}
+          />
+          <Button
+            icon={<svgs.DirOpen />}
+            iconStack={[[IconStackType.Index, <svgs.LinkTest />]]}
+            title={t("main:level.manage.ImportLevelAsTestLinkReplace")}
+            onClick={handleImportLevelByUrl}
+            disabled={!level}
+          />
+        </>
+      )}
+
+      {isCompact ? (
+        addRemoveButtons.map((b, i) => (
+          <Fragment key={i}>
+            {b}
+            <wbr />
+          </Fragment>
+        ))
+      ) : addRemoveButtons.length > 1 ? (
+        <ButtonDropdown standalone={addRemoveButtons[0]}>
+          <Toolbar isMenu>
+            {addRemoveButtons.slice(1).map((b, i) => (
+              <Fragment key={i}>{b}</Fragment>
+            ))}
+          </Toolbar>
+        </ButtonDropdown>
+      ) : (
+        addRemoveButtons[0]
+      )}
 
       {hasOtherOpened && !isCompact ? (
         <ButtonDropdown standalone={closeButton}>

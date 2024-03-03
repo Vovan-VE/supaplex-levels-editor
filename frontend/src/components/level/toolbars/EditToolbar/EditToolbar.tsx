@@ -1,6 +1,11 @@
+import { useUnit } from "effector-react";
 import { FC } from "react";
-import { useStore } from "effector-react";
-import { $currentLevelUndoQueue, redoCurrentLevel } from "models/levelsets";
+import { useTranslation } from "react-i18next";
+import {
+  $currentFileRo,
+  $currentLevelUndoQueue,
+  redoCurrentLevel,
+} from "models/levelsets";
 import { setToolO } from "models/levels/tools";
 import {
   $clipboardRegionSizeStr,
@@ -11,7 +16,7 @@ import {
   pasteSelectionFx,
   SELECTION,
 } from "models/levels/tools/_selection";
-import { displayHotKey, useHotKey } from "models/ui/hotkeys";
+import { hintWithHotkey, useHotKey } from "models/ui/hotkeys";
 import {
   HK_COPY,
   HK_CUT,
@@ -65,16 +70,22 @@ interface Props {
 }
 
 export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
-  const undoQueue = useStore($currentLevelUndoQueue)!;
-  const noSelection = !useStore($hasSelection);
-  const clipboardSize = useStore($clipboardRegionSizeStr);
+  const { t } = useTranslation();
+  const undoQueue = useUnit($currentLevelUndoQueue)!;
+  const noSelection = !useUnit($hasSelection);
+  const isRo = useUnit($currentFileRo);
+  const clipboardSize = useUnit($clipboardRegionSizeStr);
 
   useHotKey({
     shortcut: HK_REDO,
-    handler: undoQueue.canRedo ? handleHotRedo : noopHandler,
+    handler: undoQueue.canRedo && !isRo ? handleHotRedo : noopHandler,
   });
 
-  useHotKey({ shortcut: HK_CUT, handler: handleHotCut, disabled: noSelection });
+  useHotKey({
+    shortcut: HK_CUT,
+    handler: handleHotCut,
+    disabled: noSelection || isRo,
+  });
   useHotKey({
     shortcut: HK_COPY,
     handler: handleHotCopy,
@@ -83,12 +94,12 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
   useHotKey({
     shortcut: HK_DEL,
     handler: handleHotDelete,
-    disabled: noSelection,
+    disabled: noSelection || isRo,
   });
   useHotKey({
     shortcut: HK_PASTE,
     handler: handleHotPaste,
-    disabled: !clipboardSize,
+    disabled: !clipboardSize || isRo,
   });
 
   return (
@@ -96,38 +107,41 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
       {isCompact || <UndoButton />}
       <Button
         icon={<svgs.Redo />}
-        disabled={!undoQueue.canRedo}
+        disabled={!undoQueue.canRedo || isRo}
         onClick={redoCurrentLevel}
-        title={`Redo (${displayHotKey(HK_REDO)})`}
+        title={hintWithHotkey(t("main:edit.Redo"), HK_REDO)}
       />
       {isCompact || <ToolbarSeparator />}
       <Button
         icon={<svgs.Cut />}
-        disabled={noSelection}
+        disabled={noSelection || isRo}
         onClick={handleCut}
-        title={`Cut selection (${displayHotKey(HK_CUT)})`}
+        title={hintWithHotkey(t("main:edit.Cut"), HK_CUT)}
       />
       <Button
         icon={<svgs.Copy />}
         disabled={noSelection}
         onClick={handleCopy}
-        title={`Copy selection (${displayHotKey(HK_COPY)})`}
+        title={hintWithHotkey(t("main:edit.Copy"), HK_COPY)}
       />
       <Button
         icon={<svgs.Paste />}
-        disabled={!clipboardSize}
+        disabled={!clipboardSize || isRo}
         onClick={handlePaste}
         title={
           clipboardSize
-            ? `Paste selection ${clipboardSize} (${displayHotKey(HK_PASTE)})`
+            ? hintWithHotkey(
+                t("main:edit.Paste", { size: clipboardSize }),
+                HK_PASTE,
+              )
             : undefined
         }
       />
       <Button
         icon={<svgs.DeleteSelection />}
-        disabled={noSelection}
+        disabled={noSelection || isRo}
         onClick={handleDelete}
-        title={`Delete selection (${displayHotKey(HK_DEL)})`}
+        title={hintWithHotkey(t("main:edit.Delete"), HK_DEL)}
       />
       {isCompact || (
         <>

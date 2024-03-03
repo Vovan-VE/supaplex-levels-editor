@@ -1,7 +1,12 @@
-import { useStoreMap } from "effector-react";
+import { useStoreMap, useUnit } from "effector-react";
 import { FC } from "react";
-import { $currentLevelUndoQueue, undoCurrentLevel } from "models/levelsets";
-import { displayHotKey, useHotKey } from "models/ui/hotkeys";
+import { useTranslation } from "react-i18next";
+import {
+  $currentFileRo,
+  $currentLevelUndoQueue,
+  undoCurrentLevel,
+} from "models/levelsets";
+import { hintWithHotkey, useHotKey } from "models/ui/hotkeys";
 import { HK_UNDO } from "models/ui/hotkeys-defined";
 import { Button } from "ui/button";
 import { svgs } from "ui/icon";
@@ -15,9 +20,10 @@ const noopHandler = (e: UIEvent) => {
 };
 
 export const UndoButton: FC = () => {
-  const canUndo = useStoreMap($currentLevelUndoQueue, (q) =>
-    Boolean(q?.canUndo),
-  );
+  const { t } = useTranslation();
+  const isRo = useUnit($currentFileRo);
+  const canUndo =
+    useStoreMap($currentLevelUndoQueue, (q) => Boolean(q?.canUndo)) && !isRo;
 
   useHotKey({
     shortcut: HK_UNDO,
@@ -29,7 +35,7 @@ export const UndoButton: FC = () => {
       icon={<svgs.Undo />}
       disabled={!canUndo}
       onClick={undoCurrentLevel}
-      title={`Redo (${displayHotKey(HK_UNDO)})`}
+      title={hintWithHotkey(t("main:edit.Undo", "Undo"), HK_UNDO)}
     />
   );
 };

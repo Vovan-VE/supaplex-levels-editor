@@ -9,8 +9,7 @@ export const generateKey = (() => {
       lastTime = time;
       lastIndex = 0;
     }
-    return `${time}.${lastIndex}.${Math.floor(Math.random() * 0x1000000)
-      .toString(16)
-      .padStart(6, "0")}`;
+    const [rnd] = window.crypto.getRandomValues(new Uint32Array(1));
+    return `${time}.${lastIndex}.${rnd.toString(16).padStart(8, "0")}`;
   };
 })();

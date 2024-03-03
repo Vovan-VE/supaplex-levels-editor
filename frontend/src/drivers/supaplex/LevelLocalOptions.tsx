@@ -1,15 +1,32 @@
-import { useCallback } from "react";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Trans } from "i18n/Trans";
 import { Checkbox, IntegerInput } from "ui/input";
+import { constElement } from "utils/react";
 import { LevelLocalOptionsProps } from "../types";
 import { InlineTile } from "./InlineTile";
 import { TILE_HW_LAMP_R, TILE_HW_STRIPES, TILE_INFOTRON } from "./tiles-id";
 import { ISupaplexLevel } from "./types";
 import cl from "./LevelLocalOptions.module.scss";
+import { newSpecPortsDatabaseFromString } from "./specPortsDb";
+import { ISupaplexSpecPortDatabase } from "./internal";
+
+const compUsePlasma = {
+  tile: constElement(<InlineTile tile={TILE_HW_STRIPES} />),
+};
+const compUseZonker = {
+  tile: constElement(<InlineTile tile={TILE_HW_LAMP_R} />),
+};
+const compUseInfotrons = {
+  tile: constElement(<InlineTile tile={TILE_INFOTRON} />),
+};
 
 export const LevelLocalOptions = <L extends ISupaplexLevel>({
   level,
   onChange,
 }: LevelLocalOptionsProps<L>) => {
+  const { t } = useTranslation();
+  const isRo = !onChange;
   const {
     usePlasma,
     usePlasmaLimit,
@@ -19,80 +36,113 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
     useInfotronsNeeded,
   } = level;
 
-  const handlePlasmaChange = useCallback(
-    (checked: boolean) => onChange(level.setUsePlasma(checked)),
+  const handlePlasmaChange = useMemo(
+    () =>
+      onChange && ((checked: boolean) => onChange(level.setUsePlasma(checked))),
     [level, onChange],
   );
-  const handlePlasmaLimitChange = useCallback(
-    (v: number | null) => onChange(level.setUsePlasmaLimit(v ?? undefined)),
+  const handlePlasmaLimitChange = useMemo(
+    () =>
+      onChange &&
+      ((v: number | null) => onChange(level.setUsePlasmaLimit(v ?? undefined))),
     [level, onChange],
   );
-  const handlePlasmaTimeChange = useCallback(
-    (v: number | null) => onChange(level.setUsePlasmaTime(v ?? undefined)),
+  const handlePlasmaTimeChange = useMemo(
+    () =>
+      onChange &&
+      ((v: number | null) => onChange(level.setUsePlasmaTime(v ?? undefined))),
     [level, onChange],
   );
-  const handleZonkerChange = useCallback(
-    (checked: boolean) => onChange(level.setUseZonker(checked)),
+  const handleZonkerChange = useMemo(
+    () =>
+      onChange && ((checked: boolean) => onChange(level.setUseZonker(checked))),
     [level, onChange],
   );
-  const handleSerialPortsChange = useCallback(
-    (checked: boolean) => onChange(level.setUseSerialPorts(checked)),
+  const handleSerialPortsChange = useMemo(
+    () =>
+      onChange &&
+      ((checked: boolean) => onChange(level.setUseSerialPorts(checked))),
     [level, onChange],
   );
-  const handleInfotronsNeededChange = useCallback(
-    (v: number | null) => onChange(level.setUseInfotronsNeeded(v ?? undefined)),
+  const handleInfotronsNeededChange = useMemo(
+    () =>
+      onChange &&
+      ((v: number | null) =>
+        onChange(level.setUseInfotronsNeeded(v ?? undefined))),
     [level, onChange],
   );
 
   return (
     <>
       <div>
-        <Checkbox checked={usePlasma} onChange={handlePlasmaChange}>
-          Replace <InlineTile tile={TILE_HW_STRIPES} /> with Plasma
+        <Checkbox
+          checked={usePlasma}
+          onChange={handlePlasmaChange}
+          disabled={isRo}
+        >
+          <Trans
+            i18nKey="main:supaplex.localOptions.UsePlasma"
+            components={compUsePlasma}
+          />
         </Checkbox>
       </div>
       <div className={cl.nested}>
         <div>
-          Growth limit{" "}
+          {t("main:supaplex.localOptions.PlasmaLimitLabel")}{" "}
           <IntegerInput
             value={usePlasmaLimit ?? null}
             onChange={handlePlasmaLimitChange}
-            disabled={!usePlasma}
+            disabled={!usePlasma || isRo}
             className={cl.shortInt}
             placeholder="200"
           />{" "}
-          tiles
+          {t("main:supaplex.localOptions.PlasmaLimitUnits")}
         </div>
         <div>
-          Fast growth phase starts after{" "}
+          {t("main:supaplex.localOptions.PlasmaTimeLabel")}{" "}
           <IntegerInput
             value={usePlasmaTime ?? null}
             onChange={handlePlasmaTimeChange}
-            disabled={!usePlasma}
+            disabled={!usePlasma || isRo}
             className={cl.shortInt}
             placeholder="2400"
           />{" "}
-          frames
+          {t("main:supaplex.localOptions.PlasmaTimeUnits")}
         </div>
       </div>
       <div>
-        <Checkbox checked={useZonker} onChange={handleZonkerChange}>
-          Replace <InlineTile tile={TILE_HW_LAMP_R} /> 2x2 with Zonker
+        <Checkbox
+          checked={useZonker}
+          onChange={handleZonkerChange}
+          disabled={isRo}
+        >
+          <Trans
+            i18nKey="main:supaplex.localOptions.UseZonker"
+            components={compUseZonker}
+          />
         </Checkbox>
       </div>
       <div>
-        <Checkbox checked={useSerialPorts} onChange={handleSerialPortsChange}>
-          Allow serial ports
+        <Checkbox
+          checked={useSerialPorts}
+          onChange={handleSerialPortsChange}
+          disabled={isRo}
+        >
+          {t("main:supaplex.localOptions.UseSerialPorts")}
         </Checkbox>
       </div>
       <div className={cl.notCheckbox}>
-        Override <InlineTile tile={TILE_INFOTRON} /> Needed{" "}
+        <Trans
+          i18nKey="main:supaplex.localOptions.UseInfotronsNeed"
+          components={compUseInfotrons}
+        />{" "}
         <IntegerInput
           value={useInfotronsNeeded ?? null}
           onChange={handleInfotronsNeededChange}
           className={cl.shortInt}
+          disabled={isRo}
         />{" "}
-        (can be &gt; <code>255</code> or exactly <code>0</code>)
+        <Trans i18nKey="main:supaplex.localOptions.UseInfotronsNeedHint" />
       </div>
     </>
   );
@@ -115,12 +165,24 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
 // `use-infotrons-needed` is `in`
 //
 // `force-all-ports-special`
+
 const P_PLASMA = "2a";
+const P_USE_PLASMA = "use-plasma";
+const P_USE_PLASMA_LIMIT = "use-plasma-limit";
+const P_USE_PLASMA_TIME = "use-plasma-time";
+
 const P_ZONKER = "2b";
+const P_USE_ZONKER = "use-zonkers";
+
 const P_SERIAL_PORTS = "ps";
+const P_USE_SERIAL_PORTS = "use-serial-ports";
+
 const P_INFOTRONS_NEEDED = "in";
+const P_USE_INFOTRONS_NEEDED = "use-infotrons-needed";
+
 const P_FREEZE_ENEMIES = "fe";
 const P_PORTS_DB = "pd";
+
 export const applyLocalOptions = <L extends ISupaplexLevel>(
   level: L,
   url: URL,
@@ -150,4 +212,66 @@ export const applyLocalOptions = <L extends ISupaplexLevel>(
     p.set(P_PORTS_DB, level.specports.toString());
   }
   return url;
+};
+
+export const parseLocalOptions = <L extends ISupaplexLevel>(
+  url: URL,
+  level: L,
+): L => {
+  const p = url.searchParams;
+
+  let usePlasma = false;
+  let usePlasmaLimit: number | undefined;
+  let usePlasmaTime: number | undefined;
+  if (p.has(P_PLASMA)) {
+    level = level.setUsePlasma(true);
+    const m = p.get(P_PLASMA)!.match(/^(\d+)?x(\d+)?$/);
+    if (m) {
+      if (m[1] !== undefined) usePlasmaLimit = Number(m[1]);
+      if (m[2] !== undefined) usePlasmaTime = Number(m[2]);
+    }
+  } else {
+    usePlasma = p.has(P_USE_PLASMA);
+    if (p.has(P_USE_PLASMA_LIMIT)) {
+      usePlasmaLimit = parseInt(p.get(P_USE_PLASMA_LIMIT)!);
+    }
+    if (p.has(P_USE_PLASMA_TIME)) {
+      usePlasmaTime = parseInt(p.get(P_USE_PLASMA_TIME)!);
+    }
+  }
+
+  const useZonker = p.has(P_ZONKER) || p.has(P_USE_ZONKER);
+  const useSerialPorts = p.has(P_SERIAL_PORTS) || p.has(P_USE_SERIAL_PORTS);
+
+  let useInfotronsNeed: number | undefined;
+  {
+    const s = p.get(P_INFOTRONS_NEEDED) ?? p.get(P_USE_INFOTRONS_NEEDED);
+    if (s !== null) {
+      useInfotronsNeed = parseInt(s);
+    }
+  }
+
+  // TODO: byte
+  const useFreezeEnemies = p.has(P_FREEZE_ENEMIES);
+
+  let useSPDB: ISupaplexSpecPortDatabase | undefined;
+  {
+    const s = p.get(P_PORTS_DB);
+    if (s !== null) {
+      useSPDB = newSpecPortsDatabaseFromString(s);
+    }
+  }
+
+  return (
+    level
+      .setUsePlasma(usePlasma)
+      .setUsePlasmaLimit(usePlasmaLimit)
+      .setUsePlasmaTime(usePlasmaTime)
+      .setUseZonker(useZonker)
+      .setUseSerialPorts(useSerialPorts)
+      .setUseInfotronsNeeded(useInfotronsNeed)
+      // TODO: byte
+      .setInitialFreezeEnemies(useFreezeEnemies)
+      .updateSpecports((prev) => useSPDB ?? prev)
+  );
 };

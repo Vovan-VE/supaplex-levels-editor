@@ -1,6 +1,7 @@
 import cn from "classnames";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, memo, ReactElement, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { fmtLevelNumber } from "components/levelset";
 import {
   DiffItem,
@@ -10,6 +11,7 @@ import {
   IBaseLevel,
   TileRenderProps,
 } from "drivers";
+import { Trans } from "i18n/Trans";
 import {
   $diffCanZoomIn,
   $diffCanZoomOut,
@@ -43,28 +45,34 @@ import { clipRect, IBounds, Rect } from "utils/rect";
 import { rectDiff, RectDiffResult } from "utils/rect-diff/rectDiff";
 import cl from "./CmpLevels.module.scss";
 
-export const CmpLevelsButton: FC = () => (
-  <Button
-    icon={<svgs.Cmp />}
-    uiColor={useStore($cmpLevelHasFirst) ? ColorType.SUCCESS : undefined}
-    title={useStore($cmpLevelFirstTitle)}
-    onClick={cmpLevelToggle}
-  />
-);
+export const CmpLevelsButton: FC = () => {
+  const { t } = useTranslation();
+  return (
+    <Button
+      icon={<svgs.Cmp />}
+      uiColor={useUnit($cmpLevelHasFirst) ? ColorType.SUCCESS : undefined}
+      title={useUnit($cmpLevelFirstTitle)?.(t)}
+      onClick={cmpLevelToggle}
+    />
+  );
+};
 
-export const CmpLevelsDialog: FC = () => (
-  <Dialog
-    open={useStore($hasCmpLevelsRefs)}
-    onClose={closeCmpLevels}
-    title="Compare levels"
-    size="fullscreen"
-  >
-    <CmpLevels />
-  </Dialog>
-);
+export const CmpLevelsDialog: FC = () => {
+  const { t } = useTranslation();
+  return (
+    <Dialog
+      open={useUnit($hasCmpLevelsRefs)}
+      onClose={closeCmpLevels}
+      title={t("main:cmpLevels.DialogTitle")}
+      size="fullscreen"
+    >
+      <CmpLevels />
+    </Dialog>
+  );
+};
 
 const CmpLevels: FC = () => {
-  const [first, second] = useStore($cmpLevels)!;
+  const [first, second] = useUnit($cmpLevels)!;
   return (
     <div className={cl.root}>
       <CmpHeading first={first} second={second} />
@@ -82,18 +90,31 @@ interface _P {
 // ------------------------------------------------------
 
 const SHAPES = [
-  { shape: DiffTileShape.DIAGONAL, label: "Diagonal" },
-  { shape: DiffTileShape.HORIZONTAL, label: "Horizontal" },
-  { shape: DiffTileShape.VERTICAL, label: "Vertical" },
-  { shape: DiffTileShape.FADE, label: "Fade" },
+  {
+    shape: DiffTileShape.DIAGONAL,
+    label: <Trans i18nKey="main:cmpLevels.shape.Diagonal" />,
+  },
+  {
+    shape: DiffTileShape.HORIZONTAL,
+    label: <Trans i18nKey="main:cmpLevels.shape.Horizontal" />,
+  },
+  {
+    shape: DiffTileShape.VERTICAL,
+    label: <Trans i18nKey="main:cmpLevels.shape.Vertical" />,
+  },
+  {
+    shape: DiffTileShape.FADE,
+    label: <Trans i18nKey="main:cmpLevels.shape.Fade" />,
+  },
 ];
 const formatPercent = (n: number) => `${n}%`;
 const CmpHeading: FC<_P> = ({ first, second }) => {
-  const canZoomOut = useStore($diffCanZoomOut);
-  const canZoomIn = useStore($diffCanZoomIn);
-  const fancyIgnore = useStore($diffFancyIgnore);
-  const tileShape = useStore($diffTileShape);
-  const side = useStore($diffSide);
+  const { t } = useTranslation();
+  const canZoomOut = useUnit($diffCanZoomOut);
+  const canZoomIn = useUnit($diffCanZoomIn);
+  const fancyIgnore = useUnit($diffFancyIgnore);
+  const tileShape = useUnit($diffTileShape);
+  const side = useUnit($diffSide);
   return (
     <div className={cl.headers}>
       <div className={cl.refs}>
@@ -113,27 +134,27 @@ const CmpHeading: FC<_P> = ({ first, second }) => {
       </div>
       <Toolbar className={cl.end}>
         <Button icon={<svgs.SwapVertical />} onClick={swapCmpLevels}>
-          Reverse
+          {t("main:cmpLevels.Reverse")}
         </Button>
         <ToolbarSeparator />
         <Button
           icon={<svgs.MinusSquare />}
-          title="Zoom Out"
+          title={t("main:common.buttons.ZoomOut")}
           onClick={diffZoomOut}
           disabled={!canZoomOut}
         />
         <Button
           icon={<svgs.PlusSquare />}
-          title="Zoom In"
+          title={t("main:common.buttons.ZoomIn")}
           onClick={diffZoomIn}
           disabled={!canZoomIn}
         />
         <ToolbarSeparator />
         <Checkbox checked={fancyIgnore} onChange={diffFancyToggle}>
-          Ignore Fancy
+          {t("main:cmpLevels.IgnoreFancy")}
         </Checkbox>
         <ButtonDropdown
-          trigger="Shape"
+          trigger={t("main:cmpLevels.Shape")}
           triggerIcon={<svgs.CheckboxUnchecked />}
         >
           <Toolbar isMenu>
@@ -165,6 +186,7 @@ const CmpHeading: FC<_P> = ({ first, second }) => {
 // ------------------------------------------------------
 
 const CmpBodies: FC<_P> = ({ first, second }) => {
+  const { t } = useTranslation();
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<RectDiffResult>();
   const [error, setError] = useState<Error>();
@@ -209,10 +231,10 @@ const CmpBodies: FC<_P> = ({ first, second }) => {
     };
   }, [first, second]);
 
-  const zoom = useStore($diffZoom);
-  const fancyIgnore = useStore($diffFancyIgnore);
-  const tileShape = useStore($diffTileShape);
-  const side = useStore($diffSide);
+  const zoom = useUnit($diffZoom);
+  const fancyIgnore = useUnit($diffFancyIgnore);
+  const tileShape = useUnit($diffTileShape);
+  const side = useUnit($diffSide);
 
   return (
     <div className={cl.bodies}>
@@ -225,7 +247,7 @@ const CmpBodies: FC<_P> = ({ first, second }) => {
         </div>
       ) : pending ? (
         <div className={cl.pending}>
-          <Spinner inline /> Calculating...
+          <Spinner inline /> {t("main:cmpLevels.Calculating")}
         </div>
       ) : result ? (
         <Result
@@ -580,10 +602,11 @@ const InsideTiles: FC<
 // ------------------------------------------------------
 
 const CmpFooters: FC<_P> = ({ first: A, second: B }) => {
+  const { t } = useTranslation();
   let diff: DiffItem[] = [];
   if (A.level.title !== B.level.title) {
     diff.push({
-      label: "Title",
+      label: t("main:cmpLevels.prop.Title"),
       a: (
         <DiffValue different side={0}>
           <code>{A.level.title}</code>
@@ -598,14 +621,14 @@ const CmpFooters: FC<_P> = ({ first: A, second: B }) => {
   }
   if (A.level.width !== B.level.width) {
     diff.push({
-      label: "Width",
+      label: t("main:cmpLevels.prop.Width"),
       a: A.level.width,
       b: B.level.width,
     });
   }
   if (A.level.height !== B.level.height) {
     diff.push({
-      label: "Height",
+      label: t("main:cmpLevels.prop.Height"),
       a: A.level.height,
       b: B.level.height,
     });
@@ -613,7 +636,7 @@ const CmpFooters: FC<_P> = ({ first: A, second: B }) => {
 
   if (A.file.driverName !== B.file.driverName) {
     diff.push({
-      label: "Driver",
+      label: t("main:cmpLevels.prop.Driver"),
       a: A.file.driverName,
       b: B.file.driverName,
     });
@@ -629,7 +652,7 @@ const CmpFooters: FC<_P> = ({ first: A, second: B }) => {
       <table>
         <thead>
           <tr>
-            <th>Property</th>
+            <th>{t("main:cmpLevels.Property")}</th>
             <th>
               <del>A</del>
             </th>

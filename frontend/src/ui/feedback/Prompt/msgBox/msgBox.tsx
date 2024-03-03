@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Trans } from "i18n/Trans";
 import { Button } from "ui/button";
 import { ColorType } from "ui/types";
 import { Dialog } from "../../Dialog";
@@ -7,12 +8,11 @@ import { MsgBoxButtonDefaultProps, MsgBoxOptions } from "./types";
 
 const createDefaultButtonsRenderer =
   (onOk: () => void) =>
-  ({ text, ...props }: MsgBoxButtonDefaultProps = {}) =>
-    (
-      <Button autoFocus uiColor={ColorType.SUCCESS} {...props} onClick={onOk}>
-        {text ?? "OK"}
-      </Button>
-    );
+  ({ text, ...props }: MsgBoxButtonDefaultProps = {}) => (
+    <Button autoFocus uiColor={ColorType.SUCCESS} {...props} onClick={onOk}>
+      {text ?? <Trans i18nKey="main:common.buttons.OK" />}
+    </Button>
+  );
 
 export function msgBox(
   content: ReactNode,

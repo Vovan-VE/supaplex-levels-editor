@@ -14,16 +14,14 @@ import (
 	"github.com/vovan-ve/sple-desktop/internal/config"
 	"github.com/vovan-ve/sple-desktop/internal/files"
 	"github.com/vovan-ve/sple-desktop/internal/helpers"
-	"github.com/vovan-ve/sple-desktop/internal/singleton"
 	"github.com/vovan-ve/sple-desktop/internal/storage"
 	"github.com/wailsapp/wails/v2/pkg/logger"
+	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type AppOptions struct {
-	Logger           logger.Logger
-	StartupOpenFiles []string
-	StartupError     error
+	Logger logger.Logger
 }
 
 // App struct
@@ -84,8 +82,6 @@ func (a *App) startup(ctx context.Context) {
 	a.frontConfig = front
 	a.chosenReg = chosenReg
 	a.files = fs
-
-	go a.singletonServer()
 }
 
 // domReady is called after front-end resources have been loaded
@@ -104,18 +100,33 @@ func (a *App) domReady(ctx context.Context) {
 		runtime.WindowSetSize(ctx, p.W, p.H)
 	}
 
-	if len(a.opt.StartupOpenFiles) != 0 {
-		ref, err := a.openFiles(a.opt.StartupOpenFiles)
-		a.opt.StartupOpenFiles = nil
-		a.showError(&err)
-		if len(ref) != 0 {
-			a.triggerFront(backend.FEOpenFiles, ref)
-		}
-	}
-	a.showError(&a.opt.StartupError)
-	a.opt.StartupError = nil
+	absFiles, err := files.NormalizeArgs(os.Args[1:])
+	a.showError(&err)
+	a.openFilesAtFront(absFiles)
 
 	go a.checkUpdate()
+}
+
+func (a *App) secondInstance(data options.SecondInstanceData) {
+	runtime.LogInfof(a.ctx, "secondInstance: %#v", data)
+
+	absFiles, err := files.ResolveArgs(data.WorkingDirectory, data.Args)
+	a.showError(&err)
+	a.openFilesAtFront(absFiles)
+
+	go a.activateWindow()
+}
+
+func (a *App) openFilesAtFront(absFiles []string) {
+	if len(absFiles) == 0 {
+		return
+	}
+	ref, err := a.openFiles(absFiles)
+	a.showError(&err)
+	if len(ref) != 0 {
+		a.triggerFront(backend.FEOpenFiles, ref)
+	}
+	return
 }
 
 func (a *App) checkUpdate() {
@@ -303,65 +314,14 @@ func (a *App) openFiles(filenames []string) (ret []*backend.WebFileRef, _ error)
 	return
 }
 
-func (a *App) singletonServer() {
-	defer a.catchPanic()
-	recv := make(chan []byte)
-	go func() {
-		defer a.catchPanic()
-		defer close(recv)
-		err := singleton.RunReceiver(a.ctx, a.opt.Logger, recv)
-		if err != nil {
-			runtime.LogErrorf(a.ctx, "IPC server run: %#v", err)
-		}
-	}()
-	a.readSingletonMessages(recv)
-}
-
 func (a *App) activateWindow() {
 	// TODO: better activate window
 	runtime.LogDebugf(a.ctx, "%v activating window", time.Now())
-	runtime.WindowHide(a.ctx)
+	//runtime.WindowHide(a.ctx)
+	runtime.WindowUnminimise(a.ctx)
 	time.Sleep(10 * time.Millisecond)
-	runtime.WindowShow(a.ctx)
-}
-
-func (a *App) readSingletonMessages(recv <-chan []byte) {
-	activateDuration := 30 * time.Millisecond
-	activate := time.AfterFunc(activateDuration, a.activateWindow)
-	activate.Stop()
-	defer activate.Stop()
-	for {
-		select {
-		case <-a.ctx.Done():
-			return
-		case b := <-recv:
-			if b == nil {
-				return
-			}
-			msg, err := files.MessageFromIpc(b)
-			if err != nil {
-				runtime.LogWarningf(a.ctx, "cannot parse ipc message: %#v", err)
-				continue
-			}
-
-			runtime.LogDebugf(a.ctx, "IPC message: %s", msg)
-			switch msg.Type {
-			case files.IpcMessageOpenFile:
-				s := string(msg.Data)
-				runtime.LogDebugf(a.ctx, "IPC open file: %s", s)
-				ref, err := a.openFiles([]string{s})
-				a.showError(&err)
-				if len(ref) != 0 {
-					a.triggerFront(backend.FEOpenFiles, ref)
-				}
-			case files.IpcMessageActivate:
-				runtime.LogDebugf(a.ctx, "%v will activate window", time.Now())
-				activate.Reset(activateDuration)
-			default:
-				runtime.LogDebugf(a.ctx, "IPC message type unknown: %d", msg.Type)
-			}
-		}
-	}
+	//runtime.WindowShow(a.ctx)
+	runtime.Show(a.ctx)
 }
 
 func (a *App) SaveFileAs(blob64 helpers.Blob64, baseFileName string) {

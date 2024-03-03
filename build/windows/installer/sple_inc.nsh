@@ -17,7 +17,7 @@
     !define INFO_PRODUCTVERSION "0.0.0"
 !endif
 !ifndef INFO_COPYRIGHT
-    !define INFO_COPYRIGHT "Copyright (C) 2021-2023 Vovan-VE"
+    !define INFO_COPYRIGHT "Copyright (C) 2021-2024 Vovan-VE"
 !endif
 !ifndef PRODUCT_EXECUTABLE
     !define PRODUCT_EXECUTABLE "${INFO_PROJECTNAME}.exe"

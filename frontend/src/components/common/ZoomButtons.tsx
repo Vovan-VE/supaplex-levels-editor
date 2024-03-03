@@ -1,12 +1,13 @@
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import {
   $bodyScaleCanDec,
   $bodyScaleCanInc,
   decBodyScale,
   incBodyScale,
 } from "models/levels";
-import { displayHotKey, useHotKey } from "models/ui/hotkeys";
+import { hintWithHotkey, useHotKey } from "models/ui/hotkeys";
 import { HK_ZOOM_IN, HK_ZOOM_OUT } from "models/ui/hotkeys-defined";
 import { TextButton } from "ui/button";
 import { svgs } from "ui/icon";
@@ -29,8 +30,10 @@ interface Props {
 }
 
 export const ZoomButtons: FC<Props> = ({ btnClassName, space }) => {
-  const canZoomIn = useStore($bodyScaleCanInc);
-  const canZoomOut = useStore($bodyScaleCanDec);
+  const { t } = useTranslation();
+
+  const canZoomIn = useUnit($bodyScaleCanInc);
+  const canZoomOut = useUnit($bodyScaleCanDec);
 
   useHotKey({
     shortcut: HK_ZOOM_IN,
@@ -48,7 +51,7 @@ export const ZoomButtons: FC<Props> = ({ btnClassName, space }) => {
         className={btnClassName}
         onClick={incBodyScale}
         disabled={!canZoomIn}
-        title={`Zoom In (${displayHotKey(HK_ZOOM_IN)})`}
+        title={hintWithHotkey(t("main:common.buttons.ZoomIn"), HK_ZOOM_IN)}
       />
       {space}
       <TextButton
@@ -56,7 +59,7 @@ export const ZoomButtons: FC<Props> = ({ btnClassName, space }) => {
         className={btnClassName}
         onClick={decBodyScale}
         disabled={!canZoomOut}
-        title={`Zoom Out (${displayHotKey(HK_ZOOM_OUT)})`}
+        title={hintWithHotkey(t("main:common.buttons.ZoomOut"), HK_ZOOM_OUT)}
       />
     </>
   );

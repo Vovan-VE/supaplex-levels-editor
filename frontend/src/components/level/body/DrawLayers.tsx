@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, memo, ReactElement } from "react";
 import { $drvTileRender } from "models/levels";
 import {
@@ -86,7 +86,7 @@ const DrawLayerTiles: FC<DrawLayerProps<DrawLayerType.TILES> & VR> = ({
   tiles,
   visibleRect,
 }) => {
-  const TileRender = useStore($drvTileRender)!;
+  const TileRender = useUnit($drvTileRender)!;
   return (
     <>
       {[...tiles.values()].reduce<ReactElement[]>((nodes, { x, y, tile }) => {
@@ -113,7 +113,7 @@ const DrawLayerTiles: FC<DrawLayerProps<DrawLayerType.TILES> & VR> = ({
 const DrawLayerTilesRegion: FC<
   DrawLayerProps<DrawLayerType.TILES_REGION> & VR
 > = ({ x: LX, y: LY, tiles, visibleRect }) => {
-  const TileRender = useStore($drvTileRender)!;
+  const TileRender = useUnit($drvTileRender)!;
   // -----------------------------------> canvas
   //     ----------------------           layer region
   //        ----------------              visible
@@ -149,7 +149,7 @@ const DrawLayerTilesRegion: FC<
 
 const DrawLayerTileFill = memo<DrawLayerProps<DrawLayerType.TILE_FILL>>(
   ({ x, y, width, height, tile }) => {
-    const TileRender = useStore($drvTileRender)!;
+    const TileRender = useUnit($drvTileRender)!;
     return (
       <TileRender
         tile={tile}
@@ -188,10 +188,10 @@ const DrawLayerSelectRange = memo<DrawLayerProps<DrawLayerType.SELECT_RANGE>>(
 );
 
 const FeedbackLayer: FC<ContainerProps> = ({ className, ...rest }) => {
-  const feedback = useStore($feedbackCell);
-  const size = useStore($currentLevelSize)!;
-  const tool = useStore($toolIndex);
-  const toolVariant = useStore($toolVariant);
+  const feedback = useUnit($feedbackCell);
+  const size = useUnit($currentLevelSize)!;
+  const tool = useUnit($toolIndex);
+  const toolVariant = useUnit($toolVariant);
   const { internalName, variants } = TOOLS[tool];
   const variantName = variants[toolVariant].internalName;
   const clTool = `tool-${internalName}`;

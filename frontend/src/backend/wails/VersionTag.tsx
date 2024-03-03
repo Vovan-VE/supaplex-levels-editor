@@ -1,5 +1,5 @@
 import { combine, createEffect, createEvent, restore, sample } from "effector";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useEffect } from "react";
 import { Environment } from "./runtime";
 
@@ -14,7 +14,7 @@ sample({
 
 export const VersionTag: FC = () => {
   useEffect(() => fetch(), []);
-  const info = useStore($info);
+  const info = useUnit($info);
   return info ? (
     <>
       {info.platform} {info.arch} {info.buildType}

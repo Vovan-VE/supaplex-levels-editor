@@ -8,6 +8,7 @@ import {
 } from "react";
 import RSelect, {
   components,
+  MultiValueProps,
   OptionProps,
   Props as RSelectProps,
   SingleValueProps,
@@ -39,6 +40,15 @@ const SingleValue = <V extends AnyKey>({
     {props.data.labelSelected ?? children}
   </components.SingleValue>
 );
+const MultiValue = <V extends AnyKey>({
+  children,
+  ...props
+}: PropsWithChildren<MultiValueProps<SelectOption<V>, true>>) => (
+  <components.MultiValue {...props}>
+    {renderIcon(props.data.icon)}
+    {/*props.data.labelSelected ??*/ children}
+  </components.MultiValue>
+);
 
 const Option = <V extends AnyKey>({
   children,
@@ -52,14 +62,38 @@ const Option = <V extends AnyKey>({
 
 const componentsOverride = {
   SingleValue,
+  MultiValue,
   Option,
 };
 
-interface Props<V extends AnyKey>
-  extends RSelectProps<SelectOption<V>, false> {}
+// interface Props<V extends AnyKey, IsMulti extends boolean>
+//   extends RSelectProps<SelectOption<V>, IsMulti> {}
 
-export const Select = <V extends AnyKey>(props: Props<V>) => {
-  const ref = useRef<SelectClass<any> | null>(null);
+interface PropsSingle<V extends AnyKey>
+  extends RSelectProps<SelectOption<V>, false> {
+  isMulti?: false;
+  value?: SelectOption<V> | null;
+}
+
+interface PropsMulti<V extends AnyKey>
+  extends RSelectProps<SelectOption<V>, true> {
+  isMulti: true;
+  value?: readonly SelectOption<V>[];
+}
+
+interface ISelect {
+  <V extends AnyKey>(props: PropsMulti<V>): ReactElement;
+  <V extends AnyKey>(props: PropsSingle<V>): ReactElement;
+}
+
+export const Select: ISelect = <
+  V extends AnyKey,
+  // IsMulti extends boolean = false,
+>(
+  // props: Props<V, IsMulti>,
+  props: PropsMulti<V> | PropsSingle<V>,
+) => {
+  const ref = useRef<SelectClass<SelectOption<V>, boolean> | null>(null);
   const [isOpened, setOpened] = useState(false);
   const handleOpen = useCallback(() => setOpened(true), []);
   const handleClose = useCallback(() => setOpened(false), []);
@@ -76,8 +110,8 @@ export const Select = <V extends AnyKey>(props: Props<V>) => {
     >
       {({ getClickProps }) => (
         <div {...getClickProps()}>
-          <RSelect
-            {...props}
+          <RSelect<SelectOption<V>, boolean>
+            {...(props as RSelectProps<SelectOption<V>, boolean>)}
             ref={ref}
             components={componentsOverride as any}
             classNamePrefix="app-react-select"

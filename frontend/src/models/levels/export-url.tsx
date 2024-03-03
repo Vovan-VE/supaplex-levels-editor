@@ -1,6 +1,12 @@
 import { createEffect, createEvent, merge, sample } from "effector";
 import { TEST_DEMO_URL, TEST_LEVEL_URL } from "configs";
-import { getDriverFormat, IBaseLevel, levelSupportsDemo } from "drivers";
+import {
+  getDriver,
+  getDriverFormat,
+  IBaseLevel,
+  levelSupportsDemo,
+} from "drivers";
+import { Trans } from "i18n/Trans";
 import { ColorType } from "ui/types";
 import { base64Encode } from "utils/encoding/base64";
 import { tryGzipCompress } from "utils/encoding/gzip";
@@ -21,14 +27,18 @@ export const exportLevelAsLink = async (
   }
 
   const driverName = $currentDriverName.getState()!;
+  const { applyLocalOptions } = getDriver(driverName)!;
   const { writeLevelset, createLevelset } = getDriverFormat(
     driverName,
     $currentDriverFormat.getState()!,
   )!;
   const url = new URL(baseUrl);
+  applyLocalOptions?.(level, url);
   const raw = writeLevelset(createLevelset([level]));
   const compressed = await tryGzipCompress(raw);
-  url.hash = compressed ? "gz," + base64Encode(compressed) : base64Encode(raw);
+  url.hash = compressed
+    ? "#gz," + base64Encode(compressed)
+    : "#" + base64Encode(raw);
   return url;
 };
 
@@ -43,7 +53,10 @@ const copyLevelAsDemoLinkFx = createEffect(async (level: IBaseLevel) =>
   copyText((await exportLevelAsLink(level, TEST_DEMO_URL, true)).toString()),
 );
 merge([copyLevelAsTextLinkFx.done, copyLevelAsDemoLinkFx.done]).watch(() =>
-  showToast({ message: "Link copied", color: ColorType.SUCCESS }),
+  showToast({
+    message: <Trans i18nKey="main:common.toasts.LinkCopied" />,
+    color: ColorType.SUCCESS,
+  }),
 );
 merge([copyLevelAsTextLinkFx.fail, copyLevelAsDemoLinkFx.fail]).watch(
   showToastError,

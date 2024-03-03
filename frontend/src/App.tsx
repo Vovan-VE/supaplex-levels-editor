@@ -1,3 +1,4 @@
+import "./i18n/init";
 import { FC } from "react";
 import { init } from "backend";
 import { LevelsetEditor } from "components/levelset";

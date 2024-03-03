@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useMemo } from "react";
 import cn from "classnames";
-import { useGate, useStore, useStoreMap } from "effector-react";
+import { useGate, useStoreMap, useUnit } from "effector-react";
 import { getTilesVariantsMap } from "drivers";
 import {
   $bodyScale,
@@ -29,10 +29,10 @@ import cl from "./LevelBody.module.scss";
 interface Props extends ContainerProps {}
 
 export const LevelBody: FC<Props> = ({ className, ...rest }) => {
-  const TileRender = useStore($drvTileRender)!;
-  const { width, height } = useStore($currentLevelSize)!;
-  const bodyScale = useStore($bodyScale);
-  const { events, drawLayers, Dialogs } = useStore($toolUI);
+  const TileRender = useUnit($drvTileRender)!;
+  const { width, height } = useUnit($currentLevelSize)!;
+  const bodyScale = useUnit($bodyScale);
+  const { events, drawLayers, Dialogs } = useUnit($toolUI);
   useEffect(() => rollbackWork, []);
 
   const handleContextMenu = useContextMenuHandler(events?.onContextMenu);
@@ -89,8 +89,8 @@ const useContextMenuHandler = (toolContextMenu?: GridContextEventHandler) => {
   const hasDrvContextMenu = useStoreMap($drvTiles, (tiles) =>
     tiles!.some(({ interaction }) => interaction?.onContextMenu),
   );
-  const tiles = useStore($drvTiles)!;
-  const level = useStore($currentLevelUndoQueue)!.current;
+  const tiles = useUnit($drvTiles)!;
+  const level = useUnit($currentLevelUndoQueue)!.current;
   const drvContextMenu = useMemo<GridContextEventHandler | undefined>(() => {
     if (!hasToolContextMenu && hasDrvContextMenu) {
       return (e) => {
@@ -109,9 +109,9 @@ const useContextMenuHandler = (toolContextMenu?: GridContextEventHandler) => {
 };
 
 const usePickTile = () => {
-  const tiles = useStore($drvTiles)!;
+  const tiles = useUnit($drvTiles)!;
   const tileVariants = useMemo(() => getTilesVariantsMap(tiles), [tiles]);
-  const level = useStore($currentLevelUndoQueue)!.current;
+  const level = useUnit($currentLevelUndoQueue)!.current;
 
   return useCallback<GridPickTileEventHandler>(
     ({ x, y }) => {

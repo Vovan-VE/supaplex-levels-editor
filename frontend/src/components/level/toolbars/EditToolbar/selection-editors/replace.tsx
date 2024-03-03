@@ -1,8 +1,10 @@
 import { createEvent, restore } from "effector";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
-import { TileSelect } from "components/driver/TileSelect";
+import { useTranslation } from "react-i18next";
+import { TileSelect, TileSelectMulti } from "components/driver/TileSelect";
 import { getDriver, getTilesVariantsMap } from "drivers";
+import { Trans } from "i18n/Trans";
 import { $currentDriverName } from "models/levelsets";
 import { HK_EDIT_REPLACE } from "models/ui/hotkeys-defined";
 import { Button } from "ui/button";
@@ -12,10 +14,13 @@ import { ColorType } from "ui/types";
 import { SelectionEditor, SelectionEditorProps } from "./_types";
 import clC from "./common.module.scss";
 
-const setSearchTile = createEvent<number>();
+const setSearchTiles = createEvent<readonly number[]>();
 const setReplaceTile = createEvent<number>();
 const setKeepVariants = createEvent<boolean>();
-const $searchTile = restore(setSearchTile, -1);
+const $searchTiles = restore(
+  setSearchTiles.map((v) => new Set(v)),
+  new Set<number>(),
+);
 const $replaceTile = restore(setReplaceTile, -1);
 const $keepVariants = restore(setKeepVariants, true);
 
@@ -24,7 +29,8 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
   onSubmit,
   onCancel,
 }) => {
-  const driverName = useStore($currentDriverName)!;
+  const { t } = useTranslation();
+  const driverName = useUnit($currentDriverName)!;
   const { tempLevelFromRegion, tiles } = getDriver(driverName)!;
   const tempLevel = useMemo(
     () => tempLevelFromRegion(region),
@@ -32,9 +38,9 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
   );
   const tileVariants = useMemo(() => getTilesVariantsMap(tiles), [tiles]);
 
-  const searchTile = useStore($searchTile);
-  const replaceTile = useStore($replaceTile);
-  const keepVariants = useStore($keepVariants);
+  const searchTiles = useUnit($searchTiles);
+  const replaceTile = useUnit($replaceTile);
+  const keepVariants = useUnit($keepVariants);
 
   const handleSubmit = useCallback(() => {
     const { width, height } = tempLevel;
@@ -47,7 +53,7 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
               if (keepVariants) {
                 prev = tileVariants.get(prev) ?? prev;
               }
-              if (prev === searchTile) {
+              if (searchTiles.has(prev)) {
                 level = level.setTile(i, j, replaceTile, keepVariants);
               }
             }
@@ -57,7 +63,7 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
         .copyRegion({ x: 0, y: 0, width, height }),
     );
   }, [
-    searchTile,
+    searchTiles,
     replaceTile,
     keepVariants,
     tileVariants,
@@ -68,14 +74,17 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
   return (
     <div>
       <div className={clC.row2}>
-        <Field label="Search what">
-          <TileSelect
+        <Field
+          label={t("main:selectionEditors.replace.SearchWhat")}
+          help={t("main:selectionEditors.replace.SearchWhatHelp")}
+        >
+          <TileSelectMulti
             driverName={driverName as any}
-            tile={searchTile}
-            onChange={setSearchTile}
+            tile={searchTiles}
+            onChange={setSearchTiles}
           />
         </Field>
-        <Field label="Replace with">
+        <Field label={t("main:selectionEditors.replace.ReplaceWith")}>
           <TileSelect
             driverName={driverName as any}
             tile={replaceTile}
@@ -83,10 +92,11 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
           />
         </Field>
       </div>
-      {(tileVariants.has(searchTile) || tileVariants.has(replaceTile)) && (
+      {(tileVariants.has(replaceTile) ||
+        Array.from(searchTiles).some((v) => tileVariants.has(v))) && (
         <div>
           <Checkbox checked={keepVariants} onChange={setKeepVariants}>
-            Keep tile variants
+            {t("main:selectionEditors.replace.KeepTileVariants")}
           </Checkbox>
         </div>
       )}
@@ -95,18 +105,18 @@ const ReplaceEditor: FC<SelectionEditorProps> = ({
         <Button
           uiColor={ColorType.SUCCESS}
           onClick={handleSubmit}
-          disabled={searchTile < 0 || replaceTile < 0}
+          disabled={!searchTiles.size || replaceTile < 0}
         >
-          OK
+          {t("main:common.buttons.OK")}
         </Button>
-        <Button onClick={onCancel}>Cancel</Button>
+        <Button onClick={onCancel}>{t("main:common.buttons.Cancel")}</Button>
       </div>
     </div>
   );
 };
 
 export const replace: SelectionEditor = {
-  title: "Replace",
+  title: <Trans i18nKey="main:selectionEditors.replace.Title" />,
   icon: <svgs.Replace />,
   Component: ReplaceEditor,
   hotkeys: HK_EDIT_REPLACE,

@@ -1,6 +1,7 @@
 import { createStore } from "effector";
-import { useStore } from "effector-react";
+import { useUnit } from "effector-react";
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { onUpgradeAvailable } from "backend";
 import { APP_VERSION, VERSION_URL } from "configs";
 import { TextButton } from "ui/button";
@@ -41,17 +42,19 @@ if (onUpgradeAvailable) {
       if (cmpVer(prev || (APP_VERSION ?? ""), next) < 0) {
         return next;
       }
+      return prev;
     },
   );
 
   UpgradeLink = (props) => {
-    const upgradeAvailable = useStore($upgradeAvailable);
+    const { t } = useTranslation();
+    const upgradeAvailable = useUnit($upgradeAvailable);
     return upgradeAvailable ? (
       <TextButton
         {...props}
         href={VERSION_URL}
         uiColor={ColorType.MUTE}
-        title="New version available"
+        title={t("desktop:app.NewVersionAvailable")}
       >
         ⇡ {upgradeAvailable}
       </TextButton>

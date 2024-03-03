@@ -1,6 +1,7 @@
 import { createEffect, createEvent, sample } from "effector";
 import { saveFileAs } from "backend";
 import { getDriver, IBaseLevel } from "drivers";
+import { Trans } from "i18n/Trans";
 import { ColorType } from "ui/types";
 import { UndoQueue } from "utils/data";
 import { getImage } from "utils/image";
@@ -38,7 +39,10 @@ const saveRegionToImageFileFx = createEffect(
   },
 );
 copyRegionImageToClipboardFx.done.watch(() =>
-  showToast({ message: "Image copied", color: ColorType.SUCCESS }),
+  showToast({
+    message: <Trans i18nKey="main:common.toasts.ImageCopied" />,
+    color: ColorType.SUCCESS,
+  }),
 );
 for (const [clock, target] of [
   [exportAsImageToClipboard, copyRegionImageToClipboardFx],
@@ -86,20 +90,25 @@ const buildImageBlobFx = createEffect(
 
     // const blob = (canvas as any).convertToBlob();
     return new Promise<File>(async (resolve, reject) => {
-      const images = new Map<number, Promise<HTMLImageElement | undefined>>();
-      const getTileImage = (tile: number) => {
-        let p = images.get(tile);
+      type Key = `${number}-${number}`;
+      const images = new Map<Key, Promise<HTMLImageElement | undefined>>();
+      const getTileImage = (tile: number, variant: number = 0) => {
+        const key: Key = `${tile}-${variant}`;
+        let p = images.get(key);
         if (p) {
           return p;
         }
-        const url = tiles[tile]?.src;
-        p = url
-          ? getImage(url).catch((e) => {
+        const tileRec = tiles[tile];
+        if (tileRec) {
+          const url = variant ? tileRec.srcVariant?.get(variant) : tileRec.src;
+          if (url) {
+            p = getImage(url).catch((e) => {
               console.error("Tile", tile, "image failed", e);
               return undefined;
-            })
-          : P_UNDEFINED;
-        images.set(tile, p);
+            });
+          }
+        }
+        images.set(key, p || P_UNDEFINED);
         return p;
       };
 
@@ -111,8 +120,8 @@ const buildImageBlobFx = createEffect(
         await Promise.all(
           Array.from(
             level.tilesRenderStream(fromX, fromY, width, height),
-            async ([x, y, w, tile]) => {
-              const image = await getTileImage(tile);
+            async ([x, y, w, tile, variant]) => {
+              const image = await getTileImage(tile, variant);
               if (!image) {
                 return;
               }

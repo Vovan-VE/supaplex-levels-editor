@@ -12,16 +12,9 @@ export const onOpenFile = onOpenFileRefs.map<OpenFiles>((files) =>
   files.map(fileRefToOpenFile),
 );
 
-const enum FrontEventType {
-  ExitDirty = "exitDirty",
-  OpenFiles = "openFiles",
-  ShowError = "showError",
-  UpgradeAvailable = "upgradeAvailable",
-}
-
 export const frontEventsHandlers: Record<string, (data?: any) => void> = {
-  [FrontEventType.ExitDirty]: onExitDirty,
-  [FrontEventType.OpenFiles]: onOpenFileRefs,
-  [FrontEventType.ShowError]: onShowError,
-  [FrontEventType.UpgradeAvailable]: onUpgradeAvailable,
+  exitDirty: onExitDirty,
+  openFiles: onOpenFileRefs,
+  showError: onShowError,
+  upgradeAvailable: onUpgradeAvailable,
 };
