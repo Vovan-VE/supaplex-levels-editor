@@ -1,16 +1,11 @@
+@use "styles/components/dialog/scrollable-body";
 @use "styles/themes";
 
 .dialog {
-  height: calc(100% - 2 * 0.5em);
-  min-height: 500px;
-  display: grid;
-  grid-template-columns: 100%;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  @extend %dialog-scrollable_dialog;
 }
 .root {
-  display: grid;
-  grid-template-columns: 100%;
-  grid-template-rows: auto minmax(0, 1fr);
+  @extend %dialog-scrollable_body;
 }
 
 .info {

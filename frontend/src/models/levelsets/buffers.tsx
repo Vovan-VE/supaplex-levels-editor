@@ -59,6 +59,7 @@ import {
   DemoData,
   IBaseLevelsList,
   isEqualLevels,
+  LevelBuffer,
   LevelsetFile,
   LevelsetFlushBuffer,
   LevelsetsBuffers,
@@ -124,6 +125,8 @@ export const appendLevel = createEvent<any>();
  */
 export const deleteCurrentLevel = createEvent<any>();
 const _deleteLevel = createEvent<_LevelRefStrict>();
+export const changeLevelsOrder =
+  createEvent<readonly LevelBuffer<IBaseLevel>[]>();
 /**
  * Delete all the rest levels after the current
  */
@@ -336,6 +339,27 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     ),
   )
   // operations with current levels in current levelset
+  .on(
+    _withCurrentKey(changeLevelsOrder),
+    (map, { current: key, value: nextLevels }) =>
+      RoMap.update(map, key, (buf) => {
+        const newIndices = new Map(nextLevels.map((l, i) => [l, i]));
+        const { levels, currentIndex } = buf;
+        if (levels.every((l, i) => newIndices.get(l) === i)) {
+          return buf;
+        }
+        return {
+          ...buf,
+          currentIndex:
+            currentIndex !== undefined
+              ? newIndices.get(levels[currentIndex])
+              : undefined,
+          levels: Array.from(levels).sort(
+            (a, b) => (newIndices.get(a) ?? 0) - (newIndices.get(b) ?? 0),
+          ),
+        };
+      }),
+  )
   .on(
     _withCurrentKey(updateCurrentLevel),
     (map, { current: key, value: level }) =>

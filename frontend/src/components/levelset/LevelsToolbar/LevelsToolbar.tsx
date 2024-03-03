@@ -20,6 +20,7 @@ import {
   $currentFileRo,
   $currentLevel,
   appendLevel,
+  changeLevelsOrder,
   closeCurrentLevel,
   closeOtherLevels,
   deleteCurrentLevel,
@@ -33,6 +34,7 @@ import { ask } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
 import { ColorType } from "ui/types";
 import { fmtLevelFull, fmtLevelNumber } from "../fmt";
+import { promptLevelsOrder } from "../LevelsOrder";
 
 const closeOtherStack: IconStack = [[IconStackType.Index, <svgs.Cross />]];
 
@@ -274,6 +276,31 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
         onClick={handleDeleteRestClick}
       >
         {isCompact ? undefined : deleteRestTitle}
+      </Button>,
+    );
+  }
+
+  const handleLevelsOrder = useMemo(
+    () =>
+      !isRo && levelset.levels.length > 1
+        ? async () => {
+            const next = await promptLevelsOrder({ levels: levelset.levels });
+            if (next) {
+              changeLevelsOrder(next);
+            }
+          }
+        : undefined,
+    [levelset.levels, isRo],
+  );
+  if (handleLevelsOrder) {
+    const orderTitle = t("main:level.manage.LevelsOrder", "Levels order");
+    addRemoveButtons.push(
+      <Button
+        icon={<svgs.Menu />}
+        title={isCompact ? orderTitle : undefined}
+        onClick={handleLevelsOrder}
+      >
+        {isCompact ? undefined : orderTitle}
       </Button>,
     );
   }
