@@ -36,7 +36,9 @@ export const exportLevelAsLink = async (
   applyLocalOptions?.(level, url);
   const raw = writeLevelset(createLevelset([level]));
   const compressed = await tryGzipCompress(raw);
-  url.hash = compressed ? "gz," + base64Encode(compressed) : base64Encode(raw);
+  url.hash = compressed
+    ? "#gz," + base64Encode(compressed)
+    : "#" + base64Encode(raw);
   return url;
 };
 

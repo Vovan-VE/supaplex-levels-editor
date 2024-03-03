@@ -39,6 +39,9 @@ export const onOpenFile: B.OnOpenFile | undefined = IS_WAILS
 export const saveFileAs: B.SaveFileAs = IS_WAILS
   ? wails.saveFileAs
   : web.saveFileAs;
+export const getClipboardText: B.GetClipboardText = IS_WAILS
+  ? wails.getClipboardText
+  : web.getClipboardText;
 
 export const setTitle: B.SetTitle = IS_WAILS ? wails.setTitle : web.setTitle;
 export const setIsDirty: B.SetIsDirty | undefined = IS_WAILS

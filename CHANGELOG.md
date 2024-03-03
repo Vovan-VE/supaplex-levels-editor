@@ -7,6 +7,8 @@
 - Add: Display Hex and Char values for hovered tile.
 - Add: Reordering levels in file. See "Levels order" in levels buttons.
 - Add: Display selection state in footer.
+- Add: A test/demo link presented in clipboard can be opened as a new file, or
+  can be imported into current level.
 - Fix: Some UI texts correction in progress. Thanks to Lana Snik-Snak!
 - Fix: H/V/X Ports when set as Special wasn't marked Special in "Copy as Image".
 - Fix: Copy/Export Level/Selection icons and compact layout.

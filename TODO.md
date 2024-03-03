@@ -4,9 +4,6 @@
 
 - Toasts.
   - Internal editing exception from store manipulations.
-- WpColEd porting:
-  - Import single level:
-    - with real clipboard as test/demo url;
 - End User Manual.
   - Find or create jekyll template.
 - Tools:
@@ -25,7 +22,7 @@
   - is std, why not
 - new file: format description: common and per format
 - tooltip for a tile/coords (in dialogs) to display part of level as context
-- Import/Open level from test/demo url
+- Import/Open level compatibility report has text from "convert file" context
 - A `Dialog` don't block hotkeys behind
 
 - `class UserError extends Error {}`, `new UserError(t => t(...))`

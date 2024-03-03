@@ -1,7 +1,7 @@
 import { useUnit } from "effector-react";
 import { FC, Fragment, ReactElement, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { openFile } from "backend";
+import { getClipboardText, openFile } from "backend";
 import { getDriverFormat, levelSupportsDemo } from "drivers";
 import { Trans } from "i18n/Trans";
 import {
@@ -12,6 +12,7 @@ import {
   copyLevelAsDemoLink,
   copyLevelAsTestLink,
 } from "models/levels/export-url";
+import { importLevelAsLink } from "models/levels/import-url";
 import {
   $currentBuffer,
   $currentBufferHasOtherOpened,
@@ -29,6 +30,7 @@ import {
   importCurrentLevel,
   insertAtCurrentLevel,
 } from "models/levelsets";
+import { showToast, showToastError } from "models/ui/toasts";
 import { Button, ButtonDropdown, TextButton, Toolbar } from "ui/button";
 import { ask } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
@@ -93,6 +95,23 @@ const confirmDeleteRest = (currentIndex: number, count: number) => {
 
 const handleImportLevelClick = () =>
   openFile({ done: (items) => importCurrentLevel(items[0].file) });
+
+const handleImportLevelByUrl = async () => {
+  try {
+    let text = await getClipboardText();
+    text = text?.trim();
+    if (!text) {
+      showToast({
+        message: <Trans i18nKey="main:levels.import.NoTextInClipboard" />,
+        color: ColorType.WARN,
+      });
+      return;
+    }
+    importCurrentLevel(await importLevelAsLink(text));
+  } catch (e) {
+    showToastError(e);
+  }
+};
 
 export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
   const { t } = useTranslation();
@@ -362,13 +381,22 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
         </ButtonDropdown>
       )}
       {isRo || (
-        <Button
-          icon={<svgs.DirOpen />}
-          iconStack={[[IconStackType.Index, <svgs.FileBlank />]]}
-          title={t("main:level.manage.ImportLevelFromFileReplace")}
-          onClick={handleImportLevelClick}
-          disabled={!level}
-        />
+        <>
+          <Button
+            icon={<svgs.DirOpen />}
+            iconStack={[[IconStackType.Index, <svgs.FileBlank />]]}
+            title={t("main:level.manage.ImportLevelFromFileReplace")}
+            onClick={handleImportLevelClick}
+            disabled={!level}
+          />
+          <Button
+            icon={<svgs.DirOpen />}
+            iconStack={[[IconStackType.Index, <svgs.LinkTest />]]}
+            title={t("main:level.manage.ImportLevelAsTestLinkReplace")}
+            onClick={handleImportLevelByUrl}
+            disabled={!level}
+          />
+        </>
       )}
 
       {isCompact ? (

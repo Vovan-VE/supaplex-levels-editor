@@ -198,7 +198,7 @@ export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
   readonly demoSupport?: boolean;
   readonly signatureMaxLength?: number;
   supportReport(levelset: S): Iterable<ISupportReportMessage>;
-  readLevelset(file: ArrayBuffer): S;
+  readLevelset(file: ArrayBufferLike): S;
   writeLevelset(levelset: S): ArrayBuffer;
   createLevelset(levels?: readonly L[] | Iterable<L>): S;
   createLevel(options?: INewLevelOptions): L;
@@ -249,6 +249,7 @@ export interface IBaseDriver<
   LevelConfigurator?: FC<LevelConfiguratorProps<L>>;
   LevelLocalOptions?: FC<LevelLocalOptionsProps<L>>;
   applyLocalOptions?: (level: L, url: URL) => void;
+  parseLocalOptions?: (url: URL, level: L) => L;
   /**
    * Available formats in "detect" order.
    * Display order now is just sorted titles.

@@ -89,6 +89,7 @@
       "ConvertFormat": "Convert format...",
       "New": "Create new levelset...",
       "Open": "Open files...",
+      "OpenTestLink": "Open a test/demo link from clipboard",
       "ReadOnly": "Read Only",
       "ReadWrite": "Read, Write",
       "SaveZipWithOptions": "Save file ZIP with Options"
@@ -158,6 +159,7 @@
       "Delete": "Delete level {level}",
       "DeleteRestLevels": "Delete rest {n} levels",
       "ExportLevel": "Export level",
+      "ImportLevelAsTestLinkReplace": "Import a level by test/demo link in clipboard into current level",
       "ImportLevelFromFileReplace": "Import a level from file into current level",
       "Insert": "Insert a new level at {number} and move the current forward",
       "LevelsOrder": "Levels order"
@@ -188,6 +190,9 @@
     "deleteRest": {
       "Button": "Delete <b>{restCount}</b> rest levels",
       "Confirm": "Are you sure you want to delete all the rest <b>{restCount}</b> levels <b>after</b> current one (that is starting from <code>{nextIndex}</code> inclusive) from this levelset?<br/>The levelset then will have only <b>{leftCount}</b> levels.<br/><b>This action can not be undone.</b>"
+    },
+    "import": {
+      "NoTextInClipboard": "No text in clipboard"
     },
     "LevelsInFile": "Levels in \"<b>{filename}</b>\"",
     "levelsOrder": {

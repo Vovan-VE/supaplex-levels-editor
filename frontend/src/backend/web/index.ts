@@ -9,6 +9,7 @@ export const allowManualSave = false;
 export const createFile = undefined;
 export { openFile } from "./openFile";
 export { saveAs as saveFileAs } from "file-saver";
+export const getClipboardText = () => window.navigator.clipboard.readText();
 
 export { setTitle } from "./setTitle";
 export const setIsDirty = undefined;

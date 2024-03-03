@@ -4,6 +4,11 @@ declare interface CompressionStreamConstructor {
   new <R = any, W = any>(format: string): ReadableWritablePair<R, W>;
 }
 declare const CompressionStream: CompressionStreamConstructor;
+declare const DecompressionStream: CompressionStreamConstructor;
+declare interface Window {
+  CompressionStream: CompressionStreamConstructor;
+  DecompressionStream: CompressionStreamConstructor;
+}
 
 declare module "classnames" {
   import classnames from "classnames/";
