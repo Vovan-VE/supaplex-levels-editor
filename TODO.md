@@ -48,6 +48,10 @@
 - BIN demo export/import?
 - 100% offline with level testing and demo replay?
   - Need run game engine and own offline renderer
+- "replace what"
+  - hex
+  - "all unknown"
+- Shuffle tiles in selection
 
 ### Desktop
 
