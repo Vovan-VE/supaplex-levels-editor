@@ -13,6 +13,7 @@ permissions:
   contents: write
   pages: write
   id-token: write
+  actions: read
 
 # Allow one concurrent deployment
 concurrency:
@@ -51,8 +52,12 @@ jobs:
         env:
           CI: true
 
+      - name: Get release changelog
+        run: |
+          ./frontend/scripts/get-release-notes.sh < ./CHANGELOG.md > ./THIS-CHANGELOG.md
+
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
 
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
@@ -61,15 +66,21 @@ jobs:
           destination: ./frontend/build/docs
 
       - name: Upload web artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./frontend/build
 
       - name: Upload desktop artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: desktop-front
           path: ./frontend/build-wails/
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-data
+          path: ./THIS-CHANGELOG.md
 
   build_desktop:
     name: Build desktop apps
@@ -85,7 +96,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
 
@@ -96,14 +107,14 @@ jobs:
           sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev nsis
 
       - name: Download desktop front artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: desktop-front
           path: frontend/build-wails
 
       - name: Install Wails
         run: |
-          go install github.com/wailsapp/wails/v2/cmd/wails@v2.6.0
+          go install github.com/wailsapp/wails/v2/cmd/wails@v2.8.0
           wails doctor
 
       - name: Build
@@ -111,10 +122,10 @@ jobs:
         env:
           SKIP_FRONT: 1
           SKIP_FRONT_CLEAN: ""
-          VERSION: ${{ needs.build_front.outputs.current-version }}
+          VERSION: ${{ needs.build_front.outputs.version }}
 
       - name: Upload desktop artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: desktop-bin-${{ matrix.platform }}
           path: ./build/bin/*
@@ -129,13 +140,13 @@ jobs:
       - build_desktop
     steps:
       - name: Download app artifacts from linux
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: desktop-bin-ubuntu-latest
           path: ./release-files
 
 #      - name: Download app artifacts from mac
-#        uses: actions/download-artifact@v3
+#        uses: actions/download-artifact@v4
 #        with:
 #          name: desktop-bin-macos-latest
 #          #path: ./release-files
@@ -150,9 +161,11 @@ jobs:
           done
           cat *.txt
 
-      - name: Get release changelog
-        run: |
-          ./frontend/scripts/get-release-notes.sh < ./CHANGELOG.md > ./THIS-CHANGELOG.md
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-data
+          path: .
 
       - name: Draft release
         uses: softprops/action-gh-release@v0.1.15
@@ -160,8 +173,8 @@ jobs:
           token: "${{ secrets.GITHUB_TOKEN }}"
           draft: true
           prerelease: false
-          tag_name: "v${{ needs.build_front.outputs.current-version }}"
-          name: "v${{ needs.build_front.outputs.current-version }}"
+          tag_name: "v${{ needs.build_front.outputs.version }}"
+          name: "v${{ needs.build_front.outputs.version }}"
           body_path: ./THIS-CHANGELOG.md
           files: |
             ./release-files/*.exe
@@ -181,4 +194,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
