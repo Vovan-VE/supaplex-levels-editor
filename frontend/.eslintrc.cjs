@@ -11,7 +11,6 @@ module.exports = {
   plugins: ["react-refresh"],
   rules: {
     "no-empty": ["warn", { allowEmptyCatch: true }],
-    "no-mixed-spaces-and-tabs": ["warn"],
     "react-refresh/only-export-components": [
       "warn",
       { allowConstantExport: true },
