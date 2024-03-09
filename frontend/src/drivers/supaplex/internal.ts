@@ -38,7 +38,7 @@ export const enum SpecPortAlterMod {
   NOTHING = -1,
   TOGGLE = -2,
 }
-export type SpecPortAlterRaw = number & {};
+export type SpecPortAlterRaw = number & NonNullable<unknown>;
 export type SpecPortAlter = SpecPortAlterMod | SpecPortAlterRaw;
 export type SpecPortGravity = GravityStatic | SpecPortAlter;
 export type SpecPortFreezeZonks = FreezeZonksStatic | SpecPortAlter;

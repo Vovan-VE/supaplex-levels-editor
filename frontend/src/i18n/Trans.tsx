@@ -17,12 +17,8 @@ const components = {
       sple.me
     </a>,
   ),
-  linkVer: (
-    // eslint-disable-next-line jsx-a11y/anchor-has-content
-    <a href={VERSION_URL} target="_blank" rel="noopener noreferrer" />
-  ),
+  linkVer: <a href={VERSION_URL} target="_blank" rel="noopener noreferrer" />,
   linkSo: (
-    // eslint-disable-next-line jsx-a11y/anchor-has-content
     <a
       href="https://www.supaplex.online/"
       target="_blank"
@@ -30,7 +26,6 @@ const components = {
     />
   ),
   linkSoTest: (
-    // eslint-disable-next-line jsx-a11y/anchor-has-content
     <a href={TEST_LEVEL_URL} target="_blank" rel="noopener noreferrer" />
   ),
   b: <strong />,

@@ -20,7 +20,7 @@ export const init = () => {
 
   window.document.body.addEventListener("click", (e) => {
     if (!e.defaultPrevented) {
-      let tr = e.target;
+      const tr = e.target;
       if (tr instanceof HTMLElement) {
         for (let el: HTMLElement | null = tr; el; el = el.parentElement) {
           if (el.matches("a[href]")) {

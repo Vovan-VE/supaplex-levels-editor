@@ -1,10 +1,11 @@
 import { createEvent, createStore, sample } from "effector";
 import { IBaseLevel } from "drivers";
 import { HK_TOOL_FLOOD } from "models/ui/hotkeys-defined";
+import { CellEventSnapshot } from "ui/grid-events";
 import { svgs } from "ui/icon";
 import { $currentLevel, updateCurrentLevel } from "../../levelsets";
 import { $tileIndex } from "../current";
-import { CellEventSnapshot, Tool, ToolUI } from "./interface";
+import { Tool, ToolUI } from "./interface";
 
 const enum TO {
   UP,
@@ -42,7 +43,7 @@ sample({
             throw new Error("Too long loop");
           }
           const point = stack[stack.length - 1];
-          let { x, y, to } = point;
+          const { x, y, to } = point;
           --_limit;
           next = next.setTile(x, y, tile, true);
 

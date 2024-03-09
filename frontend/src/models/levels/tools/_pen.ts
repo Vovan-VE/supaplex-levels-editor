@@ -6,12 +6,12 @@ import {
   HK_TOOL_PEN3,
 } from "models/ui/hotkeys-defined";
 import { svgs } from "ui/icon";
+import { PenShape } from "ui/drawing";
 import { inBounds } from "utils/rect";
 import {
   cellKey,
   DrawLayerType,
   PEN_SHAPES,
-  PenShape,
   TilesPath,
   Tool,
   ToolUI,

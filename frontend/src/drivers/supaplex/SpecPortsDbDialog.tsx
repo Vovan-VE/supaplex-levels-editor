@@ -146,7 +146,7 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
         ) : (
           <div
             className={cl.list}
-            style={{ "--idx-chars": String(ports.length).length } as {}}
+            style={{ "--idx-chars": String(ports.length).length } as object}
           >
             <SortableList
               items={ports}

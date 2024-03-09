@@ -798,7 +798,7 @@ let _$dirtyKeys: Store<ReadonlySet<FilesStorageKey>>;
         return list;
       }, []),
   });
-  if (process.env.NODE_ENV === "development") {
+  if (import.meta.env.DEV) {
     _flushActually.watch((list) => {
       if (list.length) {
         console.info(

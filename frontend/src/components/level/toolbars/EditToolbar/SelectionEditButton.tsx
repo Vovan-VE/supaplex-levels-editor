@@ -91,7 +91,7 @@ const $run = $selectionSize.map((size) =>
               let result: ILevelRegion | null | undefined = undefined;
               if (Component) {
                 openSelectionEdit(name);
-                let unwatch: () => void;
+                let unwatch: (() => void) | undefined;
                 try {
                   result = await renderPrompt<ILevelRegion>((props) => {
                     const { show, onSubmit, onCancel } = props;
@@ -114,7 +114,7 @@ const $run = $selectionSize.map((size) =>
                     );
                   });
                 } finally {
-                  unwatch!?.();
+                  unwatch?.();
                   cancelSelectionEdit();
                 }
               } else if (instant) {

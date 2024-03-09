@@ -34,7 +34,7 @@ const clipTilesRect = (
         key={`${x}:${y}`}
         tile={tile}
         variant={variant}
-        style={{ "--x": x, "--y": y, "--w": n } as {}}
+        style={{ "--x": x, "--y": y, "--w": n } as object}
       />,
     );
   }

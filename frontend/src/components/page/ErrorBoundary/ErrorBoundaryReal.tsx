@@ -24,10 +24,10 @@ export class ErrorBoundaryReal extends PureComponent<
   });
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    if (process.env.NODE_ENV === "development") {
-      console.error(error, "in", errorInfo);
-    } else if (process.env.NODE_ENV === "production") {
+    if (import.meta.env.PROD) {
       console.error(error);
+    } else {
+      console.error(error, "in", errorInfo);
     }
   }
 

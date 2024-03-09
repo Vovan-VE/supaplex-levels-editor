@@ -28,7 +28,7 @@ export const useRefHandlers = <H extends Handler>(
 
       default:
         refResult.current = ((...args) => {
-          for (let handler of given) {
+          for (const handler of given) {
             handler(...args);
           }
         }) as H;

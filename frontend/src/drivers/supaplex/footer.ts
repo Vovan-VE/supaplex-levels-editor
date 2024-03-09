@@ -35,14 +35,13 @@ const DEMO_RNG_SEED_HI_OFFSET = 0x5f; //------------------------'
 export const FOOTER_SPEC_PORT_COUNT_OFFSET = SPEC_PORT_COUNT_OFFSET;
 export const FOOTER_SPEC_PORT_DB_OFFSET = SPEC_PORT_DB_OFFSET;
 
-const validateByte =
-  process.env.NODE_ENV === "production"
-    ? undefined
-    : (byte: number) => {
-        if (byte < 0 || byte > 255) {
-          throw new RangeError(`Invalid byte ${byte}`);
-        }
-      };
+const validateByte = import.meta.env.PROD
+  ? undefined
+  : (byte: number) => {
+      if (byte < 0 || byte > 255) {
+        throw new RangeError(`Invalid byte ${byte}`);
+      }
+    };
 
 export const createLevelFooter = (
   width: number,
@@ -68,14 +67,9 @@ class LevelFooter implements ILevelFooter {
 
     if (data) {
       this.#src = data.slice(0, FOOTER_BYTE_LENGTH);
-      if (
-        process.env.NODE_ENV !== "production" &&
-        this.#src.length !== FOOTER_BYTE_LENGTH
-      ) {
+      if (!import.meta.env.PROD && this.#src.length !== FOOTER_BYTE_LENGTH) {
         throw new Error(
-          `Invalid buffer length ${
-            this.#src.length
-          }, expected exactly ${FOOTER_BYTE_LENGTH}`,
+          `Invalid buffer length ${this.#src.length}, expected exactly ${FOOTER_BYTE_LENGTH}`,
         );
       }
 
@@ -182,7 +176,7 @@ class LevelFooter implements ILevelFooter {
   }
 
   setTitle(title: string) {
-    if (process.env.NODE_ENV !== "production" && title.length > TITLE_LENGTH) {
+    if (!import.meta.env.PROD && title.length > TITLE_LENGTH) {
       throw new RangeError("Title length exceeds limit");
     }
     if (/[^\x20-\x7F]/.test(title)) {

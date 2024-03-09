@@ -1,8 +1,6 @@
 import { TranslationGetter } from "i18n/types";
-import {
-  CellContextEventSnapshot,
-  PenShape,
-} from "models/levels/tools/interface";
+import { PenShape } from "ui/drawing";
+import { CellContextEventSnapshot } from "ui/grid-events";
 import {
   BorderTiles,
   FancyTiles,
@@ -13,19 +11,19 @@ import {
 import { SpecPortDialog } from "./SpecPortDialog";
 import * as tid from "./tiles-id";
 import * as tsrc from "./tiles-svg/index-src";
-import { ReactComponent as SvgMetaPortD } from "./tiles-svg/meta-port-d.svg";
-import { ReactComponent as SvgMetaPortL } from "./tiles-svg/meta-port-l.svg";
-import { ReactComponent as SvgMetaPortR } from "./tiles-svg/meta-port-r.svg";
-import { ReactComponent as SvgMetaPortU } from "./tiles-svg/meta-port-u.svg";
-import { ReactComponent as SvgMetaPortV } from "./tiles-svg/meta-port-v.svg";
-import { ReactComponent as SvgMetaPortH } from "./tiles-svg/meta-port-h.svg";
-import { ReactComponent as SvgMetaPortX } from "./tiles-svg/meta-port-x2.svg";
+import SvgMetaPortD from "./tiles-svg/meta-port-d.svg?react";
+import SvgMetaPortL from "./tiles-svg/meta-port-l.svg?react";
+import SvgMetaPortR from "./tiles-svg/meta-port-r.svg?react";
+import SvgMetaPortU from "./tiles-svg/meta-port-u.svg?react";
+import SvgMetaPortV from "./tiles-svg/meta-port-v.svg?react";
+import SvgMetaPortH from "./tiles-svg/meta-port-h.svg?react";
+import SvgMetaPortX from "./tiles-svg/meta-port-x2.svg?react";
 import { ISupaplexLevel, ISupaplexTile } from "./types";
 
 const specPInt: IBaseTileInteraction<ISupaplexLevel> = {
-  onContextMenu: <T extends ISupaplexLevel>(
+  onContextMenu: /*<T extends ISupaplexLevel>*/ (
     cell: CellContextEventSnapshot,
-    _: T,
+    // _: T,
   ) => ({
     type: InteractionType.DIALOG,
     cell,

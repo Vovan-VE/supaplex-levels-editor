@@ -26,7 +26,7 @@ export const rectSimilarity = ({
   similarTiles,
   needContinue,
 }: RectSimilarityOptions): RectSimilarityResult => {
-  if (process.env.NODE_ENV !== "production") {
+  if (import.meta.env.DEV) {
     if (!inBounds(ax0, ay0, first)) {
       throw new RangeError(`First start point out of range`);
     }
@@ -64,8 +64,8 @@ export const rectSimilarity = ({
       const ax = ax0 + i;
       const bx = bx0 + i;
 
-      let aTile = first.getTile(ax, ay);
-      let bTile = second.getTile(bx, by);
+      const aTile = first.getTile(ax, ay);
+      const bTile = second.getTile(bx, by);
       if (aTile === bTile) {
         sameCount++;
         continue;

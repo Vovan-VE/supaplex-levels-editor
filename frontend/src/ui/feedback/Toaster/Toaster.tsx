@@ -66,7 +66,7 @@ const Toast: FC<ToastInstance> = ({
         CL_COLOR[color ?? ColorType.DEFAULT],
         CL_PHASE[phase],
       )}
-      style={{ "--m": `-${origHeight}px` } as {}}
+      style={{ "--m": `-${origHeight}px` } as object}
     >
       <div className={cl.content}>
         {icon && <IconContainer className={cl.icon}>{icon}</IconContainer>}

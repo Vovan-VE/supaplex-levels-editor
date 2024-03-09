@@ -36,6 +36,8 @@ export interface AttributesProps
     ButtonUniqProps,
     CommonExtraProp {}
 
+const hasOwn = Object.prototype.hasOwnProperty;
+
 const makeHelpers = <
   Me extends AttributesProps,
   Opposite extends AttributesProps,
@@ -43,12 +45,12 @@ const makeHelpers = <
   specificKeys: readonly (keyof AttributesProps)[],
 ) => ({
   is: (props: AttributesProps): props is Me =>
-    specificKeys.some((p) => props.hasOwnProperty(p)),
+    specificKeys.some((p) => hasOwn.call(props, p)),
 
   omit: (props: AttributesProps) => {
     const next = { ...props };
     let found = false;
-    for (let p of specificKeys) {
+    for (const p of specificKeys) {
       if (delete next[p]) {
         found = true;
       }

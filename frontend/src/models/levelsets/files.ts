@@ -261,7 +261,7 @@ type _LevelsetsMap = ReadonlyMap<FilesStorageKey, LevelsetFile>;
 const updateOrders = (map: _LevelsetsMap): _LevelsetsMap =>
   new Map(
     Array.from(map)
-      .sort(([_1, av], [_2, bv]) => cmpLevelsetFiles(av, bv))
+      .sort(([, av], [, bv]) => cmpLevelsetFiles(av, bv))
       .map(([k, v], i) => {
         const order = i * 10;
         return [k, v.order === order ? v : { ...v, order }];
@@ -293,9 +293,7 @@ export const $levelsets = withPersistentMap(
       ...(ro && { ro }),
 
       // DEV update time for local debug purpose
-      ...(process.env.NODE_ENV === "development"
-        ? { _t: new Date().toISOString() }
-        : null),
+      ...(import.meta.env.DEV ? { _t: new Date().toISOString() } : null),
     }),
     unserialize: async ({
       name,

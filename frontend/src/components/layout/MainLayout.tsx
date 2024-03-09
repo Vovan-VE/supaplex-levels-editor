@@ -11,7 +11,7 @@ import cl from "./MainLayout.module.scss";
 
 const CL_SP_CHIP = [SpChipClassic, SpChipWinplex];
 
-export const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
+export const MainLayout: FC<PropsWithChildren<object>> = ({ children }) => {
   const isCompact = useFinalLayoutIsCompact();
   const spChip = useUnit($spChip);
 

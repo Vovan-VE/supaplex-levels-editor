@@ -1,9 +1,7 @@
 import { CSSProperties, FC, ReactElement, ReactNode } from "react";
 import { TranslationGetter } from "i18n/types";
-import {
-  CellContextEventSnapshot,
-  PenShapeStructures,
-} from "models/levels/tools/interface";
+import { PenShapeStructures } from "ui/drawing";
+import { CellContextEventSnapshot } from "ui/grid-events";
 import { IBounds, Point2D, Rect } from "utils/rect";
 
 export interface ISizeLimit {

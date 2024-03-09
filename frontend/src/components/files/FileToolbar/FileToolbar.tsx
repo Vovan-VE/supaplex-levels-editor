@@ -71,7 +71,7 @@ export const FileToolbar: FC<Props> = ({ isCompact = false }) => {
     [],
   );
 
-  const renameTitle = t("web:files.buttons.Rename");
+  const renameTitle = handleRename ? t("web:files.buttons.Rename") : undefined;
   const roTitle = isRo
     ? t("main:files.buttons.ReadOnly")
     : t("main:files.buttons.ReadWrite");

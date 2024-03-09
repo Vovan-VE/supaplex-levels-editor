@@ -1,6 +1,6 @@
 # SpLE
 
-<img src="frontend/public/favicon.svg" alt="sd-ed" align="right" width="96" height="96">
+<img src="frontend/public/favicon.svg" alt="SpLE icon" align="right" width="96" height="96">
 
 [![Version](https://img.shields.io/github/package-json/v/vovan-ve/supaplex-levels-editor?filename=frontend%2Fpackage.json)](https://github.com/Vovan-VE/supaplex-levels-editor/releases)
 [![sple.me](https://img.shields.io/badge/https-sple.me-blue)][sple.me]
@@ -16,7 +16,7 @@ My previous editor (Winplex Collection Editor — WpColEd) is stuck in far 2010 
 Windows. Its source code was lost somewhere in 2016 or about that with HDD
 failure. And so, here it is: yet another Supaplex levels editor!
 
-**SpLE** comes in two forms:
+**SpLE** presented in two forms:
 
 - [sple.me][sple.me] is a web app;
 - Desktop version.
@@ -85,9 +85,8 @@ on your device, like other whatever desktop editors do.
 
 Project root directory was bootstrapped with [Wails][wails].
 
-Frontend common app is now located in `./frontend/` subdirectory. It was
-bootstrapped with [Create React App][cra]. Web [sple.me][sple.me] built from
-that.
+Frontend common app is located in `./frontend/` subdirectory (see also
+[README](./frontend/README.md) there). Web [sple.me][sple.me] built from that.
 
 - To run SpLE in live development mode:
   - Desktop: run `wails dev` in the project directory.
@@ -103,7 +102,7 @@ that.
 
   That will build binaries and packages in `./build/bin/` directory. Notice the
   following variables in root `Makefile`:
-  - `SKIP_FRONT` if `./frontend/build-wails` was pre-built;
+  - `SKIP_FRONT` if `./frontend/dist-wails` was pre-built;
   - `SKIP_DEBUG` to skip debug binaries;
   - `SKIP_ZIP` to skip making zip;
   - `SKIP_PKG` to skip making packages/installers;
@@ -115,7 +114,7 @@ that.
   Don't use `DEBUG` variable, since it's internal.
 - To build web SpLE run `make -C frontend` in project root (or `make` in
   `./frontend` subdirectory which is the same). This will build static web in
-  `./frontend/build` directory.
+  `./frontend/dist` directory.
 
 See also [frontend/README.md](./frontend/README.md).
 
@@ -128,7 +127,6 @@ See also [frontend/README.md](./frontend/README.md).
   - Go >= 1.20
   - Wails v2 ([Installation](https://wails.io/docs/gettingstarted/installation))
 
-[cra]: https://github.com/facebook/create-react-app
 [sple.me]: https://sple.me
 [spo]: https://www.supaplex.online/
 [spo.test]: https://www.supaplex.online/test/

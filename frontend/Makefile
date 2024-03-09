@@ -1,10 +1,8 @@
 NODE ?= node
 NPM ?= npm
 
-BUILD_WEB = ./build
-BUILD_WAILS = ./build-wails
-
-SCRIPT_FIX_BUILD = ./scripts/fix-build.sh
+BUILD_WEB = ./dist
+BUILD_WAILS = ./dist-wails
 
 .PHONY: all
 all: web
@@ -12,7 +10,6 @@ all: web
 .PHONY: web
 web:
 	$(NPM) run build
-	$(SCRIPT_FIX_BUILD) $(BUILD_WEB)
 
 .PHONY: wails-prod
 wails-prod: wails clean-wails-map
@@ -20,7 +17,6 @@ wails-prod: wails clean-wails-map
 .PHONY: wails
 wails:
 	$(NPM) run build:wails
-	$(SCRIPT_FIX_BUILD) $(BUILD_WAILS)
 
 .PHONY: test
 test:
@@ -28,7 +24,7 @@ test:
 
 .PHONY: clean-wails-map
 clean-wails-map:
-	find $(BUILD_WAILS)/static -type f -name "*.map" -delete
+	find $(BUILD_WAILS)/assets -type f -name "*.map" -delete
 
 .PHONY: get-version
 get-version:

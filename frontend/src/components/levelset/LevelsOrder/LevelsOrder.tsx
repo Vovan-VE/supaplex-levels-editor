@@ -76,7 +76,7 @@ const LevelsOrder: FC<Props> = ({
 
       <div
         className={cl.list}
-        style={{ "--idx-chars": String(levels.length).length } as {}}
+        style={{ "--idx-chars": String(levels.length).length } as object}
       >
         <SortableList
           items={levels}

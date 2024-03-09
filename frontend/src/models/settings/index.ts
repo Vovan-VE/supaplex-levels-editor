@@ -38,8 +38,9 @@ export enum LayoutType {
   COMPACT = "compact",
   FULL = "full",
 }
+const hasOwn = Object.prototype.hasOwnProperty;
 const isLayoutType = (v: any): v is LayoutType =>
-  typeof v === "string" && LayoutType.hasOwnProperty(v);
+  typeof v === "string" && hasOwn.call(LayoutType, v);
 export const setLayoutType = createEvent<LayoutType>();
 export const $layoutType = withPersistent(
   restore(setLayoutType, LayoutType.AUTO),

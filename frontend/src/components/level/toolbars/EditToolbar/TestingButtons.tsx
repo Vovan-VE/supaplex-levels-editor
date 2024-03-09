@@ -1,7 +1,7 @@
 import { useUnit } from "effector-react";
 import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ReactComponent as MurphyRuns } from "assets/img/murphy-run-right.svg";
+import MurphyRuns from "assets/img/murphy-run-right.svg?react";
 import { testInIframe } from "backend";
 import { TEST_DEMO_URL, TEST_LEVEL_TITLE, TEST_LEVEL_URL } from "configs";
 import {
@@ -10,8 +10,8 @@ import {
   LevelEditProps,
   levelSupportsDemo,
 } from "drivers";
-import { ReactComponent as DiskYellow } from "drivers/supaplex/tiles-svg/18-12-yellow-disk.svg";
-import { ReactComponent as HwLampGreen } from "drivers/supaplex/tiles-svg/29-1d-hw-g-lamp.svg";
+import DiskYellow from "drivers/supaplex/tiles-svg/18-12-yellow-disk.svg?react";
+import HwLampGreen from "drivers/supaplex/tiles-svg/29-1d-hw-g-lamp.svg?react";
 import { Trans } from "i18n/Trans";
 import { exportLevelAsLink } from "models/levels/export-url";
 import {

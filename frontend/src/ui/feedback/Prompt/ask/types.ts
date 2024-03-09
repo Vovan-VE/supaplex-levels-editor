@@ -15,11 +15,11 @@ export interface AskButtonsRenderProps<V>
   defaults: (props?: AskButtonsDefaultProps) => ReactElement;
 }
 
-export interface AskButtonsRender<V, P = {}> {
+export interface AskButtonsRender<V, P = object> {
   (props: AskButtonsRenderProps<V> & P): ReturnType<FC>;
 }
 
-export interface AskOptions<V = true, P = {}> extends BaseOptions {
+export interface AskOptions<V = true, P = object> extends BaseOptions {
   buttons?: AskButtonsRender<V, P> | AskButtonsDefaultProps;
   buttonsProps?: P;
 }
@@ -27,12 +27,15 @@ export interface AskOptions<V = true, P = {}> extends BaseOptions {
 interface DefaultOpts extends BaseOptions {
   buttons?: AskButtonsDefaultProps;
 }
-interface CustomOpts<V, P = {}> extends BaseOptions {
+interface CustomOpts<V, P = object> extends BaseOptions {
   buttons: AskButtonsRender<V, P>;
   buttonsProps?: P;
 }
 
 export interface AskFunction {
-  <V, P = {}>(content: ReactNode, o: CustomOpts<V, P>): Promise<V | undefined>;
+  <V, P = object>(
+    content: ReactNode,
+    o: CustomOpts<V, P>,
+  ): Promise<V | undefined>;
   (content: ReactNode, o?: DefaultOpts): Promise<true | undefined>;
 }

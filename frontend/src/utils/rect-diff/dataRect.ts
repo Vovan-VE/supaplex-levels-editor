@@ -46,13 +46,12 @@ export class DataRect implements IDataRect {
   }
 }
 
-const throwOutOfBounds =
-  process.env.NODE_ENV !== "production"
-    ? (x: number, y: number, b: IBounds) => {
-        if (!inBounds(x, y, b)) {
-          throw new RangeError(
-            `Out of bounds: [${x}, ${y}] @ ${b.width}x${b.height}`,
-          );
-        }
+const throwOutOfBounds = import.meta.env.DEV
+  ? (x: number, y: number, b: IBounds) => {
+      if (!inBounds(x, y, b)) {
+        throw new RangeError(
+          `Out of bounds: [${x}, ${y}] @ ${b.width}x${b.height}`,
+        );
       }
-    : undefined;
+    }
+  : undefined;

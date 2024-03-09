@@ -5,4 +5,4 @@ export const constElement = (el: ReactElement): ReactElement => {
   return <C />;
 };
 
-export const constComponent = (C: FC<PropsWithChildren<{}>>) => <C />;
+export const constComponent = (C: FC<PropsWithChildren<object>>) => <C />;

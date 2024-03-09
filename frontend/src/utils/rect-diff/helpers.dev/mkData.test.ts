@@ -25,7 +25,7 @@ describe("mkData", () => {
     }
   }
 
-  describe("dumpData", () => {
+  it("dumpData", () => {
     expect(dumpData(data)).toEqual([
       //
       `#### `,

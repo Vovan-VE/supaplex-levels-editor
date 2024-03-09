@@ -24,6 +24,46 @@ export const calcMask = (
   borderTiles: ReadonlySet<number>,
   similarTiles?: SimilarTilesMap,
 ): CalcMaskResult => {
+  function isBorderTile(x: number, y: number): boolean {
+    let tile = canonical.getTile(x, y);
+    if (similarTiles) {
+      const same = similarTiles.get(tile);
+      if (same !== undefined) {
+        tile = same;
+      }
+    }
+    return borderTiles.has(tile);
+  }
+
+  interface Side {
+    lStart: () => number;
+    lEnd: () => number;
+    oCur: () => number;
+    oDelta: number;
+    coords: (l: number, o: number) => [x: number, y: number];
+    shift: () => void;
+  }
+  function trimEdge({ lStart, lEnd, oCur, oDelta, coords }: Side): boolean {
+    const _lStart = lStart();
+    const _lEnd = lEnd();
+    const _oCur = oCur();
+    for (let l = _lStart; l <= _lEnd; l++) {
+      let [x, y] = coords(l, _oCur);
+      if (!isBorderTile(x, y)) {
+        return false;
+      }
+      [x, y] = coords(l, _oCur + oDelta);
+      if (!isBorderTile(x, y)) {
+        return false;
+      }
+    }
+    // for (let l = _lStart; l <= _lEnd; l++) {
+    //   const [x, y] = coords(l, _oCur);
+    //   mask.setTile(x, y, MASK.TRANSPARENT);
+    // }
+    return true;
+  }
+
   const { width, height } = canonical;
   // // by default the mask is filled with zeros, shich is `MASK.UNSET`
   // const mask = new DataRect(width, height);
@@ -32,15 +72,6 @@ export const calcMask = (
   let [left, top, right, bottom] = [0, 0, width - 1, height - 1];
   {
     const isValid = () => left < right && top < bottom;
-
-    interface Side {
-      lStart: () => number;
-      lEnd: () => number;
-      oCur: () => number;
-      oDelta: number;
-      coords: (l: number, o: number) => [x: number, y: number];
-      shift: () => void;
-    }
 
     const sides: Side[] = [
       // left
@@ -80,37 +111,6 @@ export const calcMask = (
         shift: () => bottom--,
       },
     ];
-
-    function isBorderTile(x: number, y: number): boolean {
-      let tile = canonical.getTile(x, y);
-      if (similarTiles) {
-        const same = similarTiles.get(tile);
-        if (same !== undefined) {
-          tile = same;
-        }
-      }
-      return borderTiles.has(tile);
-    }
-    function trimEdge({ lStart, lEnd, oCur, oDelta, coords }: Side): boolean {
-      const _lStart = lStart();
-      const _lEnd = lEnd();
-      const _oCur = oCur();
-      for (let l = _lStart; l <= _lEnd; l++) {
-        let [x, y] = coords(l, _oCur);
-        if (!isBorderTile(x, y)) {
-          return false;
-        }
-        [x, y] = coords(l, _oCur + oDelta);
-        if (!isBorderTile(x, y)) {
-          return false;
-        }
-      }
-      // for (let l = _lStart; l <= _lEnd; l++) {
-      //   const [x, y] = coords(l, _oCur);
-      //   mask.setTile(x, y, MASK.TRANSPARENT);
-      // }
-      return true;
-    }
 
     for (const side of sides) {
       while (isValid() && trimEdge(side)) {

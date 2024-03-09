@@ -1,7 +1,7 @@
 import cn from "classnames";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
-import { ReactComponent as GitHubLogo } from "assets/img/github.svg";
+import GitHubLogo from "assets/img/github.svg?react";
 import { APP_VERSION, REPO_URL, VERSION_URL } from "configs";
 import { showInfoDialog, UpgradeLink, ZoomButtons } from "components/common";
 import { HoveredCell, SelectionRegion } from "components/level";

@@ -6,24 +6,19 @@ import { InlineTile } from "./InlineTile";
 import { tiles } from "./tiles";
 import { TILE_EXIT, TILE_MURPHY } from "./tiles-id";
 
-const validateByte =
-  process.env.NODE_ENV === "production"
-    ? undefined
-    : (byte: number) => {
-        if (byte < 0 || byte > 255) {
-          throw new RangeError(`Invalid byte ${byte}`);
-        }
-      };
+const validateByte = import.meta.env.PROD
+  ? undefined
+  : (byte: number) => {
+      if (byte < 0 || byte > 255) {
+        throw new RangeError(`Invalid byte ${byte}`);
+      }
+    };
 
 export const createLevelBody = (
   box: ISupaplexBox,
   data?: Uint8Array,
 ): ILevelBody => {
-  if (
-    process.env.NODE_ENV !== "production" &&
-    data &&
-    data.length !== box.length
-  ) {
+  if (!import.meta.env.PROD && data && data.length !== box.length) {
     throw new Error(
       `Invalid buffer length ${data.length}, expected ${box.length}`,
     );

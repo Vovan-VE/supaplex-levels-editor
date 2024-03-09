@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, ReactHTML } from "react";
 
-interface Props extends PropsWithChildren<{}> {
+interface Props extends PropsWithChildren<object> {
   different: boolean;
   side: 0 | 1;
 }

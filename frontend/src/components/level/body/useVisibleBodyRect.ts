@@ -41,13 +41,13 @@ const useElementScrollOffset = (ref: R) => {
   useEffect(() => {
     if (ref.current) {
       const el = ref.current;
-      function handler() {
+      const handler = () => {
         const { scrollLeft, scrollTop } = el;
         startTransition(() => {
           setLeft(Math.round(scrollLeft));
           setTop(Math.round(scrollTop));
         });
-      }
+      };
 
       handler();
       el.addEventListener("scroll", handler);

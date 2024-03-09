@@ -23,21 +23,22 @@ export const readLevelset = (file: ArrayBuffer): ISupaplexLevelset =>
 
 export const writeLevelset = (levelset: ISupaplexLevelset): ArrayBuffer => {
   const result = new Uint8Array(levelset.levelsCount * LEVEL_BYTES_LENGTH);
-  for (let [i, level] of levelset.getLevels().entries()) {
+  for (const [i, level] of levelset.getLevels().entries()) {
+    let lvl = level;
     // errors covered by "support report"
-    if (level.width > LEVEL_WIDTH || level.height > LEVEL_HEIGHT) {
+    if (lvl.width > LEVEL_WIDTH || lvl.height > LEVEL_HEIGHT) {
       throw new Error(
-        `Level ${i + 1} is too large: ${level.width}x${level.height}`,
+        `Level ${i + 1} is too large: ${lvl.width}x${lvl.height}`,
       );
     }
 
     // warnings covered by "support report"
-    if (level.width < LEVEL_WIDTH || level.height < LEVEL_HEIGHT) {
-      level = level.resize({ width: LEVEL_WIDTH, height: LEVEL_HEIGHT });
+    if (lvl.width < LEVEL_WIDTH || lvl.height < LEVEL_HEIGHT) {
+      lvl = lvl.resize({ width: LEVEL_WIDTH, height: LEVEL_HEIGHT });
     }
-    level = level.setDemo(null);
+    lvl = lvl.setDemo(null);
 
-    result.set(level.raw, i * LEVEL_BYTES_LENGTH);
+    result.set(lvl.raw, i * LEVEL_BYTES_LENGTH);
   }
   return result.buffer;
 };

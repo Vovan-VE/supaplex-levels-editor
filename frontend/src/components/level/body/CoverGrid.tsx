@@ -13,14 +13,16 @@ import {
 } from "react";
 import {
   $cursor,
-  CellEventSnapshot,
   DrawCursor,
-  GridEventsProps,
-  GridPointerEvent,
-  GridPointerEventHandler,
   removeFeedbackCell,
   setFeedbackCell,
 } from "models/levels/tools";
+import {
+  CellEventSnapshot,
+  GridEventsProps,
+  GridPointerEvent,
+  GridPointerEventHandler,
+} from "ui/grid-events";
 import { ContainerProps } from "ui/types";
 import { inBounds } from "utils/rect";
 import cl from "./CoverGrid.module.scss";
@@ -103,7 +105,7 @@ const TOUCH_CLASSES: Partial<Record<TouchPhase, string>> = {
 export const CoverGrid: FC<Props> = ({
   cols,
   rows,
-  drawCursor,
+  // drawCursor,
   onPointerDown,
   onPointerMove,
   onPointerUp,

@@ -53,7 +53,7 @@ import {
 const sliceFooter = (bodyLength: number, data?: Uint8Array) => {
   if (data) {
     const minLength = bodyLength + FOOTER_BYTE_LENGTH;
-    if (process.env.NODE_ENV !== "production" && data.length < minLength) {
+    if (!import.meta.env.PROD && data.length < minLength) {
       throw new Error(
         `Invalid buffer length ${data.length}, expected at least ${minLength}`,
       );

@@ -89,7 +89,7 @@ const buildImageBlobFx = createEffect(
     canvas.height = height * TILE_SIZE;
 
     // const blob = (canvas as any).convertToBlob();
-    return new Promise<File>(async (resolve, reject) => {
+    return new Promise<File>((resolve, reject) => {
       type Key = `${number}-${number}`;
       const images = new Map<Key, Promise<HTMLImageElement | undefined>>();
       const getTileImage = (tile: number, variant: number = 0) => {
@@ -112,49 +112,53 @@ const buildImageBlobFx = createEffect(
         return p;
       };
 
-      try {
-        const ctx = canvas.getContext("2d")! as any as CanvasRenderingContext2D;
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, width * TILE_SIZE, height * TILE_SIZE);
+      (async () => {
+        try {
+          const ctx = canvas.getContext(
+            "2d",
+          )! as any as CanvasRenderingContext2D;
+          ctx.fillStyle = "#000";
+          ctx.fillRect(0, 0, width * TILE_SIZE, height * TILE_SIZE);
 
-        await Promise.all(
-          Array.from(
-            level.tilesRenderStream(fromX, fromY, width, height),
-            async ([x, y, w, tile, variant]) => {
-              const image = await getTileImage(tile, variant);
-              if (!image) {
-                return;
-              }
-              const dy = (y - fromY) * TILE_SIZE;
-              for (let i = w; i-- > 0; ) {
-                ctx.drawImage(
-                  image,
-                  (x - fromX + i) * TILE_SIZE,
-                  dy,
-                  TILE_SIZE,
-                  TILE_SIZE,
-                );
-              }
-            },
-          ),
-        );
+          await Promise.all(
+            Array.from(
+              level.tilesRenderStream(fromX, fromY, width, height),
+              async ([x, y, w, tile, variant]) => {
+                const image = await getTileImage(tile, variant);
+                if (!image) {
+                  return;
+                }
+                const dy = (y - fromY) * TILE_SIZE;
+                for (let i = w; i-- > 0; ) {
+                  ctx.drawImage(
+                    image,
+                    (x - fromX + i) * TILE_SIZE,
+                    dy,
+                    TILE_SIZE,
+                    TILE_SIZE,
+                  );
+                }
+              },
+            ),
+          );
 
-        ctx.save();
+          ctx.save();
 
-        canvas.toBlob((b) => {
-          if (b) {
-            resolve(
-              new File([b], `${filename}.${levelIndex + 1}.png`, {
-                type: b.type,
-              }),
-            );
-          } else {
-            reject(new Error("toBlob() failed"));
-          }
-        }, MIME_PNG);
-      } catch (e) {
-        reject(e);
-      }
+          canvas.toBlob((b) => {
+            if (b) {
+              resolve(
+                new File([b], `${filename}.${levelIndex + 1}.png`, {
+                  type: b.type,
+                }),
+              );
+            } else {
+              reject(new Error("toBlob() failed"));
+            }
+          }, MIME_PNG);
+        } catch (e) {
+          reject(e);
+        }
+      })();
     });
   },
 );

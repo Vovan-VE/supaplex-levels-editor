@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`read original levelset: levelset 1`] = `
-Object {
-  "levels": Array [
-    Object {
-      "cells": Array [
+exports[`read original levelset > levelset 1`] = `
+{
+  "levels": [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▧573D·< ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
@@ -62,7 +62,7 @@ Object {
 Thanks to Herman Perk for SPEED-FIX
 Thanks to Maarten (Elmer) Egmond for SPEDIT
 Thanks to original SUPAPLEX creators",
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "======= QUICKY! =======",
       "width": 60,
     },
@@ -71,9 +71,9 @@ Thanks to original SUPAPLEX creators",
 }
 `;
 
-exports[`writeLevelset level height extend 1`] = `
-Object {
-  "cells": Array [
+exports[`writeLevelset > level height extend 1`] = `
+{
+  "cells": [
     "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
     "▓                                                          ▓",
     "▓                                                          ▓",
@@ -106,15 +106,15 @@ Object {
   "initialGravity": false,
   "maxTitleLength": 23,
   "signature": null,
-  "specialPorts": Array [],
+  "specialPorts": [],
   "title": "                       ",
   "width": 60,
 }
 `;
 
-exports[`writeLevelset level size extend 1`] = `
-Object {
-  "cells": Array [
+exports[`writeLevelset > level size extend 1`] = `
+{
+  "cells": [
     "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
     "▓                                                ▓         ▓",
     "▓                                                ▓         ▓",
@@ -147,15 +147,15 @@ Object {
   "initialGravity": false,
   "maxTitleLength": 23,
   "signature": null,
-  "specialPorts": Array [],
+  "specialPorts": [],
   "title": "                       ",
   "width": 60,
 }
 `;
 
-exports[`writeLevelset level width extend 1`] = `
-Object {
-  "cells": Array [
+exports[`writeLevelset > level width extend 1`] = `
+{
+  "cells": [
     "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
     "▓                                                ▓         ▓",
     "▓                                                ▓         ▓",
@@ -188,17 +188,17 @@ Object {
   "initialGravity": false,
   "maxTitleLength": 23,
   "signature": null,
-  "specialPorts": Array [],
+  "specialPorts": [],
   "title": "                       ",
   "width": 60,
 }
 `;
 
-exports[`writeLevelset remove extra levels 1`] = `
-Object {
-  "levels": Array [
-    Object {
-      "cells": Array [
+exports[`writeLevelset > remove extra levels 1`] = `
+{
+  "levels": [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓                                                          ▓",
         "▓                                                          ▓",
@@ -238,7 +238,7 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "                       ",
       "width": 60,
     },

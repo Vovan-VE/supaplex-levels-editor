@@ -56,8 +56,10 @@ export const $displayReadOnly = $mode.map(
 // A very short delay may cause a wrong decision (the timeout IS triggered)
 // before the message is delivered and response message is delivered back.
 
+const hasOwn = Object.prototype.hasOwnProperty;
+
 export const init = () => {
-  if (process.env.NODE_ENV === "test") {
+  if (import.meta.env.MODE === "test") {
     return;
   }
   const bc = new BroadcastChannel("instanceSemaphore.1");
@@ -65,7 +67,7 @@ export const init = () => {
   const id = generateKey();
   const DEBUG: boolean = false;
   const _log =
-    process.env.NODE_ENV === "development" && DEBUG
+    import.meta.env.DEV && DEBUG
       ? (...args: any) => console.log("[SEM]", Date.now(), id, ...args)
       : null;
   _log?.("Created");
@@ -88,8 +90,8 @@ export const init = () => {
   const isMyMsg = (v: any): v is _Msg =>
     v !== null &&
     typeof v === "object" &&
-    v.hasOwnProperty("msg") &&
-    v.hasOwnProperty("from") &&
+    hasOwn.call(v, "msg") &&
+    hasOwn.call(v, "from") &&
     typeof v.msg === "string" &&
     typeof v.from === "string";
 

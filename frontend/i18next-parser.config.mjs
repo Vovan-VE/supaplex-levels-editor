@@ -3,7 +3,7 @@ const config = {
   locales: ["en"],
   defaultNamespace: "main",
   input: [
-    "public/index.html",
+    "index.html",
     "src/**/*.{ts,tsx}",
     // "!src/i18n/**",
     "!src/**/*.{test.{ts,tsx},d.ts}",
