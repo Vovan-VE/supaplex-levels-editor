@@ -19,7 +19,7 @@ import {
 } from "models/levelsets";
 import { TextButton } from "ui/button";
 import { Field, Input } from "ui/input";
-import { Dialog, renderPrompt } from "ui/feedback";
+import { Dialog } from "ui/feedback";
 import { ColorType } from "ui/types";
 import { compileFilter, filterTitles } from "./filterTitles";
 import cl from "./LevelsListDialog.module.scss";
@@ -29,7 +29,7 @@ interface Props {
   onSubmit: () => void;
 }
 
-const LevelsListDialog: FC<Props> = ({ show, onSubmit }) => {
+export const LevelsListDialog: FC<Props> = ({ show, onSubmit }) => {
   const { t } = useTranslation();
   const key = useUnit($currentKey);
   // close dialog when current file switched somehow
@@ -119,6 +119,3 @@ const LevelsListDialog: FC<Props> = ({ show, onSubmit }) => {
     </Dialog>
   );
 };
-
-export const openLevelsListDialog = () =>
-  renderPrompt((props) => <LevelsListDialog {...props} />);

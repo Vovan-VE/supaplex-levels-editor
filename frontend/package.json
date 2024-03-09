@@ -94,7 +94,7 @@
     "node": ">=18"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md,html}": [
+    "src/**/*.{js,jsx,ts,tsx,cjs,mjs,json,css,scss,md,html}": [
       "prettier --write"
     ]
   },

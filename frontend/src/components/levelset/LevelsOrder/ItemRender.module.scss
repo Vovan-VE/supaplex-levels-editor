@@ -1,0 +1,29 @@
+@use "styles/components/dialog/scrollable-body";
+
+.item {
+  padding: 0 0.5rem;
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-areas: "index title handle";
+  grid-template-columns:
+    calc(1ch * (var(--idx-chars, 2) + 0.75)) minmax(5rem, 1fr)
+    min-content;
+  align-items: center;
+  cursor: auto;
+
+  &:nth-child(even) {
+    background-color: rgba(128, 128, 128, 0.25);
+  }
+
+  .index {
+    grid-area: index;
+    text-align: right;
+  }
+  .title {
+    grid-area: title;
+  }
+  .handle {
+    grid-area: handle;
+    cursor: grab;
+  }
+}

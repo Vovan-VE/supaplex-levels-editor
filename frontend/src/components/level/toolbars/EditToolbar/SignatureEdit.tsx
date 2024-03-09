@@ -22,7 +22,7 @@ import {
 } from "models/levelsets";
 import { showToastError } from "models/ui/toasts";
 import { Button, TextButton } from "ui/button";
-import { Dialog, msgBox, renderPrompt, RenderPromptProps } from "ui/feedback";
+import { Dialog, msgBox, RenderPromptProps } from "ui/feedback";
 import { svgs } from "ui/icon";
 import { Field, Textarea } from "ui/input";
 import { ColorType } from "ui/types";
@@ -32,7 +32,7 @@ interface Props extends RenderPromptProps<undefined> {}
 
 type _TC = ChangeEventHandler<HTMLTextAreaElement>;
 
-const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
+export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const { t } = useTranslation();
   const driverName = useUnit($currentDriverName)!;
   const { DemoToTextConfig, DemoToTextHelp, demoToText, demoFromText } =
@@ -174,6 +174,3 @@ const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
     </Dialog>
   );
 };
-
-export const openSignatureEdit = () =>
-  renderPrompt<undefined>((props) => <SignatureEdit {...props} />);

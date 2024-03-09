@@ -26,7 +26,7 @@ import { Button, TextButton } from "ui/button";
 import { ask, msgBox } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
 import { ColorType } from "ui/types";
-import { openSignatureEdit } from "./SignatureEdit";
+import { openSignatureEdit } from "./openSignatureEdit";
 import cl from "./TestingButtons.module.scss";
 
 const CL_SVG_ANIMATE_HOVERABLE = "svg-animate_hover-target";

@@ -1,0 +1,35 @@
+@use "styles/components/dialog/scrollable-body";
+@use "styles/themes";
+
+.dialog {
+  @extend %dialog-scrollable_dialog;
+}
+.root {
+  @extend %dialog-scrollable_body;
+}
+
+.info {
+  margin-top: 0;
+  display: flex;
+  align-items: flex-start;
+
+  > span {
+    flex: 1 1 0;
+  }
+  > button {
+    flex: 0 0 auto;
+    margin-left: 1rem;
+  }
+}
+
+.error {
+  color: themes.$color-danger;
+}
+
+.list {
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+  overflow-y: auto;
+}
+.textarea {
+}
