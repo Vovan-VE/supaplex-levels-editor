@@ -1,9 +1,6 @@
 #!/bin/bash
 
 # Cut latest release notes from CHANGELOG from STDIN
-#
-# But unfortunely `marvinpinto/action-automatic-releases` doesn't support
-# release notes text.
 
 IS_STARTED=''
 IS_PRINTED=''

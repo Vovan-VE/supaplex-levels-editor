@@ -1,6 +1,6 @@
 /.husky/
-/build/
-/build-wails/
+/dist/
+/dist-wails/
 /coverage/
 /node_modules/
 /wailsjs/
