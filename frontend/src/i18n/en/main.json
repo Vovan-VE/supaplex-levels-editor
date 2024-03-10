@@ -1,4 +1,7 @@
 {
+  "$language": {
+    "name": "English"
+  },
   "about": {
     "content": {
       "B010": "<b>{APP_TITLE}</b> is <b>Supaplex Levels Editor</b>. Inspired by <linkSo>Supaplex.Online</linkSo> and its community."
@@ -287,6 +290,7 @@
       "Label": "Double Chips",
       "WinPlex": "WinPlex"
     },
+    "Language": "Language",
     "layout": {
       "Auto": "Auto responsive",
       "Compact": "Force Compact",

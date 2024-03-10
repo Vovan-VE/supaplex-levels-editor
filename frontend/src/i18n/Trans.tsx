@@ -32,6 +32,7 @@ const components = {
   br: <br />,
   code: <code />,
   i: <em />,
+  em: <em />,
   kbd: <kbd />,
 };
 

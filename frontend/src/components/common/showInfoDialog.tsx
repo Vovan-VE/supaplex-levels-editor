@@ -1,4 +1,5 @@
 import { msgBox } from "ui/feedback";
+import { Trans } from "i18n/Trans";
 import { InfoContent } from "./InfoContent";
 
 export const showInfoDialog = () =>
@@ -6,7 +7,7 @@ export const showInfoDialog = () =>
     size: "full",
     closeSetAutoFocus: true,
     button: {
-      text: "Close",
+      text: <Trans i18nKey="main:common.buttons.Close" />,
       autoFocus: false,
     },
   });

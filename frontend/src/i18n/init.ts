@@ -1,21 +1,13 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import { IS_WAILS } from "configs";
-import desktop from "./en/desktop.json";
-import main from "./en/main.json";
-import web from "./en/web.json";
-
-const en = {
-  main,
-  ...(IS_WAILS ? { desktop } : { web }),
-};
+import defaultLang, { locales } from "./locales";
 
 i18n.use(initReactI18next).init({
-  lng: "en",
-  resources: {
-    en,
-  },
-  ns: Object.keys(en),
+  lng: defaultLang,
+  supportedLngs: Object.keys(locales),
+  fallbackLng: defaultLang,
+  resources: locales,
+  ns: Object.keys(locales[defaultLang]),
   defaultNS: "main",
   interpolation: {
     prefix: "{", // TODO: ICU?
@@ -24,4 +16,8 @@ i18n.use(initReactI18next).init({
   },
   returnEmptyString: false,
   appendNamespaceToMissingKey: false,
+});
+
+i18n.on("languageChanged", (lng) => {
+  document.documentElement.setAttribute("lang", lng);
 });

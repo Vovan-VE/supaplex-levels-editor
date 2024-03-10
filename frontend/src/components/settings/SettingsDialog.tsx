@@ -8,6 +8,7 @@ import { Dialog } from "ui/feedback";
 import { ColorType } from "ui/types";
 import { AutoSave } from "./AutoSave";
 import { CoordsChoice } from "./CoordsChoice";
+import { LanguageSelect } from "./LanguageSelect";
 import { LayoutChoice } from "./LayoutChoice";
 import { SpChips } from "./SpChips";
 
@@ -32,6 +33,7 @@ export const SettingsDialog: FC = () => {
       <CoordsChoice />
       {/*<Confirmations />*/}
       <SpChips />
+      <LanguageSelect />
     </Dialog>
   );
 };

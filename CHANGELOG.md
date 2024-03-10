@@ -2,7 +2,7 @@
 
 ## 0.20.0 (DEV)
 
-- ...
+- Add: Experimental support for multiple languages. Russian language added.
 
 ## 0.19.0 (2024-03-03)
 

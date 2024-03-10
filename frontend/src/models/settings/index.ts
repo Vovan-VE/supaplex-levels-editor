@@ -1,6 +1,8 @@
 import { createEvent, createStore, restore } from "effector";
+import i18n from "i18next";
 import { withPersistent } from "@cubux/effector-persistent";
 import { $instanceIsReadOnly, allowManualSave, configStorage } from "backend";
+import defaultLang, { isValidLocale } from "i18n/locales";
 
 export const openSettings = createEvent<any>();
 export const closeSettings = createEvent<any>();
@@ -10,6 +12,22 @@ export const $opened = restore(
 ).reset(closeSettings);
 
 const ro = $instanceIsReadOnly ? { readOnly: $instanceIsReadOnly } : undefined;
+
+export const setLanguage = createEvent<string>();
+export const $language = withPersistent(
+  restore(setLanguage, defaultLang),
+  configStorage,
+  "lng",
+  {
+    ...ro,
+    unserialize: (v) => (isValidLocale(v) ? v : defaultLang),
+  },
+);
+$language.updates.watch((lng) => {
+  if (i18n.language !== lng) {
+    i18n.changeLanguage(lng);
+  }
+});
 
 export const setPrefAskTestSO = createEvent<boolean>();
 export const $prefConfirmedTestSO = withPersistent(
