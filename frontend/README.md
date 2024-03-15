@@ -19,5 +19,7 @@ npm run test:watch
 make web
 ```
 
+**On Windows** use PowerShell as [`script-shell`](https://docs.npmjs.com/cli/v10/using-npm/config#script-shell).
+
 [vite]: https://vitejs.dev/
 [vitest]: https://vitest.dev/
