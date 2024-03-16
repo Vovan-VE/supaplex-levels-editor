@@ -3,6 +3,7 @@
 ## 0.20.0 (DEV)
 
 - Add: Experimental support for multiple languages. Russian language added.
+- Fix: FireFox cannot read text from clipboard (open/import test url).
 
 ## 0.19.0 (2024-03-03)
 
