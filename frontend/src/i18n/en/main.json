@@ -265,8 +265,11 @@
     "replace": {
       "KeepTileVariants": "Keep tile variants",
       "ReplaceWith": "Replace with",
+      "SearchUnknown": "All Unknown",
       "SearchWhat": "Search what",
       "SearchWhatHelp": "Multiple allowed",
+      "SearchWhatHex": "Raw HEX",
+      "SearchWhatHexHelp": "Ex.: <code>d,1e,30..3f, ..2, 80..</code>",
       "Title": "Replace"
     },
     "rnd": {

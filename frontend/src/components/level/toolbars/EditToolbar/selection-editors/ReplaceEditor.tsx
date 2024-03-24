@@ -1,25 +1,64 @@
-import { createEvent, restore } from "effector";
+import { combine, createEvent, restore } from "effector";
 import { useUnit } from "effector-react";
-import { FC, useCallback, useMemo } from "react";
+import { ChangeEvent, FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import * as RoSet from "@cubux/readonly-set";
 import { TileSelect, TileSelectMulti } from "components/driver/TileSelect";
 import { getDriver, getTilesVariantsMap } from "drivers";
+import { Trans } from "i18n/Trans";
 import { $currentDriverName } from "models/levelsets";
 import { Button } from "ui/button";
-import { Checkbox, Field } from "ui/input";
+import { Checkbox, Field, Input } from "ui/input";
 import { ColorType } from "ui/types";
 import { SelectionEditorProps } from "./_types";
 import clC from "./common.module.scss";
 
+const EMPTY_SET_N: ReadonlySet<number> = new Set();
+const ALL_BYTES = Array.from({ length: 256 }, (_, i) => i);
+
 const setSearchTiles = createEvent<readonly number[]>();
+const setSearchHexText = createEvent<ChangeEvent<HTMLInputElement>>();
 const setReplaceTile = createEvent<number>();
+const setSearchUnknown = createEvent<boolean>();
 const setKeepVariants = createEvent<boolean>();
-const $searchTiles = restore(
+const $searchTiles = restore<ReadonlySet<number>>(
   setSearchTiles.map((v) => new Set(v)),
-  new Set<number>(),
+  EMPTY_SET_N,
 );
+const $searchHexText = restore(
+  setSearchHexText.map((e) => e.target.value),
+  "",
+);
+const $searchHex = $searchHexText.map((input) => {
+  const nums = new Set<number>();
+  for (const range of input.split(/[;,\s]+/u)) {
+    if (!range) continue;
+    const m = range.match(/^([\da-f]*)(?:\.\.([\da-f]*))?$/i);
+    if (!m) return { error: err("invalid", range) };
+    const [, as, bs] = m;
+    const a = as ? parseInt(as, 16) : 0;
+    const b = bs ? parseInt(bs, 16) : 255;
+    if (a >= b) return { error: err("a >= b", range) };
+    for (let i = a; i <= b; i++) {
+      nums.add(i);
+    }
+  }
+  return { nums };
+});
+const $searchAll = combine($searchTiles, $searchHex, (tiles, { nums: hex }) => {
+  let res = tiles;
+  if (hex?.size) res = RoSet.union(res, hex);
+  return res;
+});
+const $searchUnknown = restore(setSearchUnknown, false);
 const $replaceTile = restore(setReplaceTile, -1);
 const $keepVariants = restore(setKeepVariants, true);
+
+const err = (reason: string, code: string) => (
+  <>
+    {reason}: <code>{code}</code>
+  </>
+);
 
 export const ReplaceEditor: FC<SelectionEditorProps> = ({
   region,
@@ -34,8 +73,27 @@ export const ReplaceEditor: FC<SelectionEditorProps> = ({
     [region, tempLevelFromRegion],
   );
   const tileVariants = useMemo(() => getTilesVariantsMap(tiles), [tiles]);
+  const unknownTiles = useMemo(
+    () =>
+      tiles.reduce((s, { value }) => {
+        s.delete(value);
+        return s;
+      }, new Set(ALL_BYTES)),
+    [tiles],
+  );
 
   const searchTiles = useUnit($searchTiles);
+  const searchHexText = useUnit($searchHexText);
+  const searchHex = useUnit($searchHex);
+  const searchUnknown = useUnit($searchUnknown);
+  const searchAllChosen = useUnit($searchAll);
+  const searchAll = useMemo(
+    () =>
+      searchUnknown
+        ? RoSet.union(searchAllChosen, unknownTiles)
+        : searchAllChosen,
+    [searchAllChosen, unknownTiles, searchUnknown],
+  );
   const replaceTile = useUnit($replaceTile);
   const keepVariants = useUnit($keepVariants);
 
@@ -50,7 +108,7 @@ export const ReplaceEditor: FC<SelectionEditorProps> = ({
               if (keepVariants) {
                 prev = tileVariants.get(prev) ?? prev;
               }
-              if (searchTiles.has(prev)) {
+              if (searchAll.has(prev)) {
                 level = level.setTile(i, j, replaceTile, keepVariants);
               }
             }
@@ -59,38 +117,50 @@ export const ReplaceEditor: FC<SelectionEditorProps> = ({
         })
         .copyRegion({ x: 0, y: 0, width, height }),
     );
-  }, [
-    searchTiles,
-    replaceTile,
-    keepVariants,
-    tileVariants,
-    tempLevel,
-    onSubmit,
-  ]);
+  }, [searchAll, replaceTile, keepVariants, tileVariants, tempLevel, onSubmit]);
 
   return (
     <div>
       <div className={clC.row2}>
-        <Field
-          label={t("main:selectionEditors.replace.SearchWhat")}
-          help={t("main:selectionEditors.replace.SearchWhatHelp")}
-        >
-          <TileSelectMulti
-            driverName={driverName as any}
-            tile={searchTiles}
-            onChange={setSearchTiles}
-          />
-        </Field>
-        <Field label={t("main:selectionEditors.replace.ReplaceWith")}>
-          <TileSelect
-            driverName={driverName as any}
-            tile={replaceTile}
-            onChange={setReplaceTile}
-          />
-        </Field>
+        <div>
+          <Field
+            label={t("main:selectionEditors.replace.SearchWhat")}
+            help={t("main:selectionEditors.replace.SearchWhatHelp")}
+          >
+            <TileSelectMulti
+              driverName={driverName as any}
+              tile={searchTiles}
+              onChange={setSearchTiles}
+            />
+          </Field>
+          <Field
+            label={t("main:selectionEditors.replace.SearchWhatHex")}
+            help={
+              <Trans i18nKey="main:selectionEditors.replace.SearchWhatHexHelp" />
+            }
+            error={searchHex.error}
+          >
+            <Input value={searchHexText} onChange={setSearchHexText} />
+          </Field>
+          <div>
+            <Checkbox checked={searchUnknown} onChange={setSearchUnknown}>
+              {t("main:selectionEditors.replace.SearchUnknown")}
+            </Checkbox>
+          </div>
+        </div>
+
+        <div>
+          <Field label={t("main:selectionEditors.replace.ReplaceWith")}>
+            <TileSelect
+              driverName={driverName as any}
+              tile={replaceTile}
+              onChange={setReplaceTile}
+            />
+          </Field>
+        </div>
       </div>
       {(tileVariants.has(replaceTile) ||
-        Array.from(searchTiles).some((v) => tileVariants.has(v))) && (
+        Array.from(searchAll).some((v) => tileVariants.has(v))) && (
         <div>
           <Checkbox checked={keepVariants} onChange={setKeepVariants}>
             {t("main:selectionEditors.replace.KeepTileVariants")}
@@ -102,7 +172,7 @@ export const ReplaceEditor: FC<SelectionEditorProps> = ({
         <Button
           uiColor={ColorType.SUCCESS}
           onClick={handleSubmit}
-          disabled={!searchTiles.size || replaceTile < 0}
+          disabled={!searchAll.size || replaceTile < 0}
         >
           {t("main:common.buttons.OK")}
         </Button>

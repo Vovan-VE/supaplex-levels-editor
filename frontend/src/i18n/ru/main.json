@@ -265,8 +265,11 @@
     "replace": {
       "KeepTileVariants": "Сохранять \"варианты\"",
       "ReplaceWith": "Заменить на",
+      "SearchUnknown": "Все неизвестные",
       "SearchWhat": "Искать что",
       "SearchWhatHelp": "Можно несколько",
+      "SearchWhatHex": "HEX",
+      "SearchWhatHexHelp": "Пр.: <code>d,1e,30..3f, ..2, 80..</code>",
       "Title": "Замена"
     },
     "rnd": {
