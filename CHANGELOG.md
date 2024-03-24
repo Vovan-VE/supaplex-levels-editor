@@ -5,6 +5,7 @@
 - Add: Experimental support for multiple languages. Russian language added.
 - Add: Display demo duration in Demo/Signature edit dialog.
 - Add: Replace selection editor can replace raw HEX and all unknown tiles.
+- Add: Shuffle selection editor.
 - Fix: FireFox cannot read text from clipboard (open/import test url).
 - Fix: Open/import level by test/demo url loss local options.
 - Fix: Export test/demo url could miss `pd=` (spec ports db) param, when spec

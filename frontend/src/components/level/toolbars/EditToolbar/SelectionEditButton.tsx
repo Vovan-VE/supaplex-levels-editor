@@ -34,6 +34,7 @@ import {
   replace,
   rnd,
   SelectionEditor,
+  shuffle,
 } from "./selection-editors";
 import cl from "./SelectionEditButton.module.scss";
 
@@ -57,6 +58,7 @@ const EDITORS: readonly EditorsGroup[] = [
     editors: {
       flipH,
       flipV,
+      shuffle,
     },
     // rotate?
   },

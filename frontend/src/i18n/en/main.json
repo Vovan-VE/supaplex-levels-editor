@@ -243,6 +243,7 @@
     },
     "flip": {
       "HTitle": "Flip Horizontal",
+      "Shuffle": "Shuffle",
       "VTitle": "Flip Vertical"
     },
     "gradient": {
