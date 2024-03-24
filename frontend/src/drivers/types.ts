@@ -2,6 +2,7 @@ import { CSSProperties, FC, ReactElement, ReactNode } from "react";
 import { TranslationGetter } from "i18n/types";
 import { PenShapeStructures } from "ui/drawing";
 import { CellContextEventSnapshot } from "ui/grid-events";
+import { isNotNull } from "utils/fn";
 import { IBounds, Point2D, Rect } from "utils/rect";
 
 export interface ISizeLimit {
@@ -91,6 +92,29 @@ export const enum FlipDirection {
 
 export type LocalOptions = Record<string, any>;
 export type LocalOptionsList = readonly (LocalOptions | null | undefined)[];
+export type LocalOptionsTable = Record<`${number}`, LocalOptions>;
+
+export const serializeLocalOptionsList = (
+  l: LocalOptionsList,
+): LocalOptionsTable =>
+  Object.fromEntries(
+    l.map((o, i) => (o ? ([i + 1, o] as const) : undefined)).filter(isNotNull),
+  );
+
+// And what then should I do with Undo history? Every level has its own undo,
+// but not entire levelset.
+// export const unserializeLocalOptionsList = (
+//   lt: LocalOptionsTable,
+// ): LocalOptionsList => {
+//   const a: (LocalOptions | undefined)[] = [];
+//   for (const [k, o] of Object.entries(lt)) {
+//     const n = parseInt(k);
+//     if (Number.isInteger(n) && n > 0 && String(n) === k) {
+//       a[n - 1] = o;
+//     }
+//   }
+//   return a;
+// };
 
 export interface IBaseLevel extends ITilesRegion {
   readonly raw: Uint8Array;

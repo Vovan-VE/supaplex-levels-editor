@@ -31,6 +31,7 @@ import {
   IBaseLevelset,
   levelSupportsDemo,
   LocalOptions,
+  serializeLocalOptionsList,
   summarySupportReport,
   SupportReportType,
 } from "drivers";
@@ -40,7 +41,6 @@ import { Trans } from "i18n/Trans";
 import { TranslationGetter } from "i18n/types";
 import { msgBox } from "ui/feedback";
 import { ColorType } from "ui/types";
-import { isNotNull } from "utils/fn";
 import { IBounds } from "utils/rect";
 import { $autoSave, $autoSaveDelay } from "../settings";
 import {
@@ -672,15 +672,7 @@ sample({
       zip.file(file.name, file.file.arrayBuffer());
       zip.file(
         `${file.name}.options.json`,
-        JSON.stringify(
-          Object.fromEntries(
-            localOptions
-              .map((o, i) => (o ? ([i + 1, o] as const) : undefined))
-              .filter(isNotNull),
-          ),
-          null,
-          2,
-        ) + "\n",
+        JSON.stringify(serializeLocalOptionsList(localOptions), null, 2) + "\n",
       );
       saveFileAs(await zip.generateAsync({ type: "blob" }), `${file.name}.zip`);
     } else {
