@@ -236,6 +236,14 @@ export interface DemoToTextConfigProps<P extends object = object> {
   options: P;
   onChange: (options: P) => void;
 }
+export interface DemoToTextResult {
+  text: string;
+  duration: number;
+}
+export interface DemoFromTextResult {
+  demo: Uint8Array | null;
+  duration: number;
+}
 
 export interface IBaseDriver<
   L extends IBaseLevel = IBaseLevel,
@@ -262,6 +270,6 @@ export interface IBaseDriver<
   cmpLevels?: (a: L, b: L) => DiffItem[];
   DemoToTextConfig?: FC<DemoToTextConfigProps>;
   DemoToTextHelp?: FC;
-  demoToText?: (demo: Uint8Array | null, options?: object) => string;
-  demoFromText?: (text: string) => Uint8Array | null;
+  demoToText?: (demo: Uint8Array | null, options?: object) => DemoToTextResult;
+  demoFromText?: (text: string) => DemoFromTextResult;
 }

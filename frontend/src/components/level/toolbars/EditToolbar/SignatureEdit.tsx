@@ -4,6 +4,7 @@ import {
   FC,
   FormEventHandler,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -14,6 +15,7 @@ import {
   levelSupportsDemo,
   levelSupportSignature,
 } from "drivers";
+import { Trans } from "i18n/Trans";
 import {
   $currentDriverFormat,
   $currentDriverName,
@@ -26,6 +28,7 @@ import { Dialog, msgBox, RenderPromptProps } from "ui/feedback";
 import { svgs } from "ui/icon";
 import { Field, Textarea } from "ui/input";
 import { ColorType } from "ui/types";
+import { round } from "utils/number";
 import cl from "./SignatureEdit.module.scss";
 
 interface Props extends RenderPromptProps<undefined> {}
@@ -42,24 +45,36 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
     useUnit($currentDriverFormat)!,
   )!;
   const level = useUnit($currentLevelUndoQueue)!.current;
-  const [demo, setDemo] = useState(() =>
-    levelSupportsDemo(level) ? level.demo : null,
-  );
+  const [demo, setDemo] = useState<Uint8Array | null>(null);
+  const [demoDuration, setDemoDuration] = useState(0);
   const [demoTextOptions, setDemoTextOptions] = useState<object>({});
-  const [demoText, setDemoText] = useState(() =>
-    demoToText ? demoToText(demo) : "",
-  );
+  const [demoText, setDemoText] = useState("");
   const [demoTextError, setDemoTextError] = useState<Error | null>(null);
   const [signature, setSignature] = useState(() =>
     levelSupportSignature(level) ? level.signatureString : "",
   );
+  useEffect(() => {
+    if (levelSupportsDemo(level)) {
+      setDemo(level.demo);
+      if (demoToText) {
+        const { text, duration } = demoToText(level.demo);
+        setDemoText(text);
+        setDemoDuration(duration);
+      }
+    }
+    if (levelSupportSignature(level)) {
+      setSignature(level.signatureString);
+    }
+  }, [level, demoToText]);
 
   const handleDemoChange = useCallback<_TC>(
     ({ target: { value } }) => {
       if (demoFromText) {
         setDemoText(value);
         try {
-          setDemo(demoFromText(value));
+          const { demo, duration } = demoFromText(value);
+          setDemo(demo);
+          setDemoDuration(duration);
           setDemoTextError(null);
         } catch (e) {
           if (e instanceof Error) {
@@ -76,7 +91,9 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
     (options: object) => {
       if (demoToText) {
         setDemoTextOptions(options);
-        setDemoText(demoToText(demo, options));
+        const { text, duration } = demoToText(demo, options);
+        setDemoText(text);
+        setDemoDuration(duration);
       }
     },
     [demo, demoToText],
@@ -135,6 +152,17 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
     >
       {levelSupportsDemo(level) && demoToText && (
         <>
+          <div>
+            <Trans
+              i18nKey="main:demoEdit.DemoDuration"
+              defaults="{frames},{sec40},{sec1000}"
+              values={{
+                frames: demoDuration,
+                sec40: round(demoDuration / 40, 1),
+                sec1000: round(demoDuration / 1000, 1),
+              }}
+            />
+          </div>
           <Field
             label={t("main:demoEdit.DemoText")}
             help={

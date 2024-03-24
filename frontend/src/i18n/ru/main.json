@@ -62,6 +62,7 @@
     }
   },
   "demoEdit": {
+    "DemoDuration": "Демо: <b>{frames}</b> кадров, <b>{sec40}</b> сек@40, <b>{sec1000}</b> сек@1000",
     "DemoText": "Текстовое представление Демо",
     "DialogTitle": "Изменить Демо",
     "Signature": "Подпись"

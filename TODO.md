@@ -24,7 +24,6 @@
 - tooltip for a tile/coords (in dialogs) to display part of level as context
 - Import/Open level compatibility report has text from "convert file" context
 - A `Dialog` don't block hotkeys behind
-- Display demo total duration
 - Open ZIP with options
   - Entire ZIP
   - Add options.json to opened files

@@ -62,6 +62,7 @@
     }
   },
   "demoEdit": {
+    "DemoDuration": "Demo: <b>{frames}</b> frames, <b>{sec40}</b> sec@30, <b>{sec1000}</b> sec@1000",
     "DemoText": "Demo text representation",
     "DialogTitle": "Edit demo",
     "Signature": "Signature"
