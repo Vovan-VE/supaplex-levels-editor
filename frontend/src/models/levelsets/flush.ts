@@ -1,14 +1,10 @@
 import { createStore } from "effector";
+import * as RoSet from "@cubux/readonly-set";
 import { flushEvents } from "./flushEvents";
 
-const $flushesPending = createStore(new Set<symbol>())
-  // REFACT: RoSet
-  .on(flushEvents.onFlushStart, (set, { id }) => new Set(set).add(id))
-  .on(flushEvents.onFlushFinally, (set, { id }) => {
-    const next = new Set(set);
-    next.delete(id);
-    return next;
-  });
+const $flushesPending = createStore<ReadonlySet<symbol>>(new Set())
+  .on(flushEvents.onFlushStart, (set, { id }) => RoSet.add(set, id))
+  .on(flushEvents.onFlushFinally, (set, { id }) => RoSet.remove(set, id));
 export const $isFlushPending = $flushesPending.map((set) => set.size > 0);
 
 export const $flushError = createStore<Error | null>(null)

@@ -1,10 +1,8 @@
-import { FC, HTMLAttributes, ReactElement } from "react";
 import cn from "classnames";
+import { FC, HTMLAttributes, ReactElement } from "react";
+import { IconStackType } from "./IconStackType";
 import cl from "./IconContainer.module.scss";
 
-export const enum IconStackType {
-  Index = "i",
-}
 export type IconStackItem = [IconStackType, ReactElement];
 export type IconStack = readonly IconStackItem[];
 

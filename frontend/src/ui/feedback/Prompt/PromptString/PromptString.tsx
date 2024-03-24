@@ -13,7 +13,7 @@ import { Button } from "ui/button";
 import { Field, Input } from "ui/input";
 import { ColorType } from "ui/types";
 import { Dialog } from "../../Dialog";
-import { renderPrompt, RenderPromptProps } from "../renderPrompt";
+import { RenderPromptProps } from "../renderPrompt";
 
 // import cl from "./PromptString.module.scss";
 
@@ -135,6 +135,3 @@ export const PromptString: FC<Props> = ({
     </Dialog>
   );
 };
-
-export const promptString = (options?: PromptStringOptions) =>
-  renderPrompt<string>((props) => <PromptString {...props} {...options} />);

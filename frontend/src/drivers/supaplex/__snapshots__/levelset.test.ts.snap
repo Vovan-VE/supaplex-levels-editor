@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`levelset constructor levels 1`] = `
-Object {
-  "levels": Array [
-    Object {
-      "cells": Array [
+exports[`levelset > constructor > levels 1`] = `
+{
+  "levels": [
+    {
+      "cells": [
         "     ",
         "     ",
         "     ",
@@ -16,12 +16,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "                       ",
       "width": 5,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "       ",
         "       ",
         "       ",
@@ -39,7 +39,7 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "                       ",
       "width": 7,
     },
@@ -48,11 +48,11 @@ Object {
 }
 `;
 
-exports[`levelset constructor none 1`] = `
-Object {
-  "levels": Array [
-    Object {
-      "cells": Array [
+exports[`levelset > constructor > none 1`] = `
+{
+  "levels": [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓                                                          ▓",
         "▓                                                          ▓",
@@ -85,7 +85,7 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "                       ",
       "width": 60,
     },

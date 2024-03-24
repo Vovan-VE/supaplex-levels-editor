@@ -328,7 +328,7 @@ const Result = memo<{
                 "--th": totalHeight,
                 "--size": `${zoom}px`,
                 "--diff-side": side / 100,
-              } as {}
+              } as object
             }
           >
             {/* top outside full rows */}
@@ -501,7 +501,7 @@ const Frame: FC<Rect & ContainerProps> = ({
         "--y": y,
         "--w": width,
         "--h": height,
-      } as {}
+      } as object
     }
   />
 );
@@ -529,7 +529,7 @@ const OutsideTiles: FC<{
         tile={tile}
         variant={v}
         className={cl.tileE}
-        style={{ "--x": cx, "--y": cy, "--w": w } as {}}
+        style={{ "--x": cx, "--y": cy, "--w": w } as object}
       />,
     );
   }
@@ -581,7 +581,7 @@ const InsideTiles: FC<
           key={`${cx};${cy}`}
           tile={aTile}
           className={isSame ? cl.tileE : cl.tileA}
-          style={{ "--x": cx, "--y": cy } as {}}
+          style={{ "--x": cx, "--y": cy } as object}
         />,
       );
       if (!isSame) {
@@ -590,7 +590,7 @@ const InsideTiles: FC<
             key={`${cx};${cy}b`}
             tile={bTile}
             className={cl.tileB}
-            style={{ "--x": cx, "--y": cy } as {}}
+            style={{ "--x": cx, "--y": cy } as object}
           />,
         );
       }

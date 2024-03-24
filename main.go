@@ -17,7 +17,7 @@ import (
 
 const appTitle = "SpLE"
 
-//go:embed all:frontend/build-wails
+//go:embed all:frontend/dist-wails
 var assets embed.FS
 
 func main() {

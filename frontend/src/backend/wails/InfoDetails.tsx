@@ -25,7 +25,6 @@ export const InfoDetails: FC = () => (
         values={{ APP_TITLE }}
         components={{
           linkWails: (
-            // eslint-disable-next-line jsx-a11y/anchor-has-content
             <a
               href="https://github.com/wailsapp/wails"
               target="_blank"

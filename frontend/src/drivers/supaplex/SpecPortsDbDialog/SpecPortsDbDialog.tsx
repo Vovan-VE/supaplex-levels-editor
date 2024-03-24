@@ -1,42 +1,34 @@
 import {
   ChangeEventHandler,
-  createContext,
-  forwardRef,
   ReactNode,
   startTransition,
   useCallback,
-  useContext,
   useMemo,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { TileCoords } from "components/settings/display";
 import { Trans } from "i18n/Trans";
-import { Button, TextButton } from "ui/button";
-import { Dialog, renderPrompt, RenderPromptProps } from "ui/feedback";
-import { svgs } from "ui/icon";
+import { Button } from "ui/button";
+import { Dialog, RenderPromptProps } from "ui/feedback";
 import { Textarea } from "ui/input";
-import { SortableItemProps, SortableList } from "ui/list";
+import { SortableList } from "ui/list";
 import { ColorType } from "ui/types";
-import { ITilesRegion, LevelEditProps } from "../types";
-import { InlineTile } from "./InlineTile";
-import { ISupaplexSpecPortRecord } from "./internal";
-import { isDbEqualToArray, newSpecPortsDatabase } from "./specPortsDb";
-import { newSpecPortRecordFromString } from "./specPortsRecord";
-import { ISupaplexLevel } from "./types";
+import { LevelEditProps } from "../../types";
+import { ISupaplexSpecPortRecord } from "../internal";
+import { isDbEqualToArray, newSpecPortsDatabase } from "../specPortsDb";
+import { newSpecPortRecordFromString } from "../specPortsRecord";
+import { ISupaplexLevel } from "../types";
+import { CLevel } from "./context";
+import { Item } from "./Item";
 import cl from "./SpecPortsDbDialog.module.scss";
 
 interface Options<L extends ISupaplexLevel> extends LevelEditProps<L> {}
-
-export const showSpecPortsDbDialog = <L extends ISupaplexLevel>(
-  o: Options<L>,
-) => renderPrompt<void>((p) => <SpecPortsDbDialog {...o} {...p} />);
 
 interface Props<L extends ISupaplexLevel>
   extends Options<L>,
     RenderPromptProps<void> {}
 
-const SpecPortsDbDialog = <L extends ISupaplexLevel>({
+export const SpecPortsDbDialog = <L extends ISupaplexLevel>({
   show,
   onSubmit,
   onCancel,
@@ -146,7 +138,7 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
         ) : (
           <div
             className={cl.list}
-            style={{ "--idx-chars": String(ports.length).length } as {}}
+            style={{ "--idx-chars": String(ports.length).length } as object}
           >
             <SortableList
               items={ports}
@@ -162,38 +154,6 @@ const SpecPortsDbDialog = <L extends ISupaplexLevel>({
 };
 
 const portKey = (p: ISupaplexSpecPortRecord) => `${p.x};${p.y}`;
-
-const Item = forwardRef<
-  HTMLDivElement,
-  SortableItemProps<ISupaplexSpecPortRecord>
->(({ item, itemProps, handleProps, index }, ref) => {
-  const level = useContext(CLevel)!;
-  // TODO: level.getTileVariant()
-  const [[, , , tile, variant]] = level.tilesRenderStream(item.x, item.y, 1, 1);
-  return (
-    <div ref={ref} {...itemProps} className={cl.item}>
-      <span className={cl.index}>{index + 1}.</span>
-      <span className={cl.tile}>
-        <InlineTile tile={tile} variant={variant} />
-      </span>
-      <span className={cl.xy}>
-        <TileCoords x={item.x} y={item.y} />
-      </span>
-      <span className={cl.g}>g{item.gravity}</span>
-      <span className={cl.z}>z{item.freezeZonks}</span>
-      <span className={cl.e}>e{item.freezeEnemies}</span>
-      <span className={cl.u}>u{item.unusedByte}</span>
-      {/* TODO: <span>{item.isStdCompatible(width) && 'STD'}</span>*/}
-      <TextButton
-        icon={<svgs.DragV />}
-        {...handleProps}
-        className={cl.handle}
-      />
-    </div>
-  );
-});
-
-const CLevel = createContext<ITilesRegion | null>(null);
 
 // ----------------------
 

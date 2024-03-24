@@ -10,13 +10,12 @@ import {
   BodyVisibleRectGate,
   setTile,
 } from "models/levels";
+import { $toolUI, rollbackWork } from "models/levels/tools";
+import { $currentLevelSize, $currentLevelUndoQueue } from "models/levelsets";
 import {
-  $toolUI,
   GridContextEventHandler,
   GridPickTileEventHandler,
-  rollbackWork,
-} from "models/levels/tools";
-import { $currentLevelSize, $currentLevelUndoQueue } from "models/levelsets";
+} from "ui/grid-events";
 import { ContainerProps } from "ui/types";
 import { CoverGrid } from "./CoverGrid";
 import { DrawLayers } from "./DrawLayers";

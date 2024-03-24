@@ -20,7 +20,7 @@ export const PlayerLocator: FC = () => {
     return null;
   }
   return (
-    <div className={cl.root} style={{ "--x": pos[0], "--y": pos[1] } as {}}>
+    <div className={cl.root} style={{ "--x": pos[0], "--y": pos[1] } as object}>
       <div
         // to cause remounting, which itself is to restart animation
         key={id}

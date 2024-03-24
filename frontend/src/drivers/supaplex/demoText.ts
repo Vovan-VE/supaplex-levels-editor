@@ -31,6 +31,8 @@
 // versions 5 and up to 48650 bytes because the same space is needed for all 10
 // demo levels of 1536 bytes each. (48650+10*1536=64010) See also just below.
 
+import { DemoFromTextResult, DemoToTextResult } from "../types";
+
 const KEY_STR = ["-", "U", "L", "D", "R", "SU", "SL", "SD", "SR", "S"];
 const CH_TILES = ".";
 const FRAMES_PER_TILE = 8;
@@ -43,9 +45,12 @@ export interface ToTextOptions {
 export const demoToText = (
   demo: Uint8Array | null,
   { wrapWidth = Infinity, useTilesTime = false }: ToTextOptions = {},
-): string => {
+): DemoToTextResult => {
   if (!demo) {
-    return "";
+    return {
+      text: "",
+      duration: 0,
+    };
   }
   let text = "";
   let lastKey = 0;
@@ -88,6 +93,7 @@ export const demoToText = (
     }
     duration = 0;
   }
+  let totalDuration = 0;
   for (const hh of demo) {
     const time = ((hh >> 4) & 0xf) + 1;
     const key = hh & 0xf;
@@ -96,15 +102,18 @@ export const demoToText = (
       lastKey = key;
     }
     duration += time;
+    totalDuration += time;
   }
   flush();
 
-  return text;
+  return { text, duration: totalDuration };
 };
 
-export const demoFromText = (text: string) => {
+export const demoFromText = (text: string): DemoFromTextResult => {
   const demo: number[] = [];
+  let totalDuration = 0;
   function flush(key: number, duration: number) {
+    totalDuration += duration;
     const fulls = Math.floor(duration / 16);
     const rest = duration % 16;
     if (fulls > 0) {
@@ -195,8 +204,8 @@ export const demoFromText = (text: string) => {
     flush(keyCode, frames);
   }
 
-  if (demo.length <= 0) {
-    return null;
-  }
-  return new Uint8Array(demo);
+  return {
+    demo: demo.length ? new Uint8Array(demo) : null,
+    duration: totalDuration,
+  };
 };

@@ -1,57 +1,11 @@
 import { Event, EventCallable, Store } from "effector";
-import { CSSProperties, FC, PointerEvent } from "react";
+import { CSSProperties, FC } from "react";
 import { ITilesRegion } from "drivers";
 import { TranslationGetter } from "i18n/types";
 import { HotKeyShortcuts } from "models/ui/hotkeys";
+import { PenShape } from "ui/drawing";
+import { GridEventsProps } from "ui/grid-events";
 import { IBounds, Point2D, Rect } from "utils/rect";
-
-export interface CellEventProps extends IBounds {
-  inBounds: boolean;
-}
-
-type ModifiersEventProps = Pick<
-  PointerEvent<any>,
-  "altKey" | "ctrlKey" | "metaKey" | "shiftKey"
->;
-type ButtonsEventProps = Pick<PointerEvent<any>, "type" | "button" | "buttons">;
-
-interface CellBaseEventProps
-  extends Point2D,
-    CellEventProps,
-    ModifiersEventProps {}
-
-export interface CellEventSnapshot
-  extends CellBaseEventProps,
-    ButtonsEventProps {}
-
-export type GridPointerEvent = PointerEvent<HTMLDivElement>;
-export type GridPointerEventHandler = (
-  event: GridPointerEvent,
-  cell: CellEventSnapshot,
-) => void;
-export type GridPointerCancelEventHandler = (
-  event?: GridPointerEvent,
-  cell?: CellEventSnapshot,
-) => void;
-
-export interface CellContextEventSnapshot extends CellBaseEventProps {}
-export type GridContextEventHandler = (cell: CellContextEventSnapshot) => void;
-
-export type GridPickTileEventHandler = (at: Point2D) => void;
-
-export interface GridEventsProps {
-  onPointerDown?: GridPointerEventHandler | undefined;
-  onPointerMove?: GridPointerEventHandler | undefined;
-  onPointerUp?: GridPointerEventHandler | undefined;
-  onPointerCancel?: GridPointerCancelEventHandler | undefined;
-  onPointerEnter?: GridPointerEventHandler | undefined;
-  onPointerLeave?: GridPointerEventHandler | undefined;
-  onClick?: GridPointerEventHandler | undefined;
-  onContextMenu?: GridContextEventHandler | undefined;
-  onPickTile?: GridPickTileEventHandler | undefined;
-}
-
-//-------------------------------
 
 export type CellKey = `${number}:${number}`;
 export const cellKey = ({ x, y }: Point2D): CellKey => `${x}:${y}`;
@@ -112,13 +66,6 @@ export interface DrawCursor {
 
 //-------------------------------
 
-export const enum PenShape {
-  DOT,
-  _1x2,
-  _2x1,
-  _3x3,
-  // TODO: 2x1 & 1x2 with driver specific hacks (sp double chips)
-}
 export type PenShapePoint = readonly (readonly [x: number, y: number])[];
 export const PEN_SHAPES: Record<PenShape, PenShapePoint> = {
   [PenShape.DOT]: [[0, 0]],
@@ -143,11 +90,6 @@ export const PEN_SHAPES: Record<PenShape, PenShapePoint> = {
   ],
   // Double chips: a "structured/connected"
 };
-
-export interface DrawStructure {
-  setTiles?: readonly (number | undefined)[];
-}
-export type PenShapeStructures = Partial<Record<PenShape, DrawStructure>>;
 
 export interface ToolUI {
   rollback?: Event<any>;

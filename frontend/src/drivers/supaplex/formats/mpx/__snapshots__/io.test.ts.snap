@@ -1,60 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`read mpx levelset 1 5x3 1`] = `
-Object {
-  "levels": Array [
-    Object {
-      "cells": Array [
-        "▓▓▓▓▓",
-        "▓@ E▓",
-        "▓▓▓▓▓",
-      ],
-      "demo": null,
-      "height": 3,
-      "infotronsNeed": 2,
-      "initialFreezeZonks": false,
-      "initialGravity": true,
-      "maxTitleLength": 23,
-      "signature": null,
-      "specialPorts": Array [],
-      "title": "-----------------------",
-      "width": 5,
-    },
-  ],
-  "levelsCount": 1,
-}
-`;
-
-exports[`read mpx levelset 1 5x3 winplex 1`] = `
-Object {
-  "levels": Array [
-    Object {
-      "cells": Array [
-        "▓▓▓▓▓",
-        "▓@ E▓",
-        "▓▓▓▓▓",
-      ],
-      "demo": null,
-      "height": 3,
-      "infotronsNeed": 2,
-      "initialFreezeZonks": false,
-      "initialGravity": true,
-      "maxTitleLength": 23,
-      "signature": null,
-      "specialPorts": Array [],
-      "title": "-----------------------",
-      "width": 5,
-    },
-  ],
-  "levelsCount": 1,
-}
-`;
-
-exports[`read mpx levelset: levelset 1`] = `
-Object {
-  "levels": Array [
-    Object {
-      "cells": Array [
+exports[`read mpx levelset > levelset 1`] = `
+{
+  "levels": [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓··························o·······························▓",
         "▓·····o··································o····oo····o······▓",
@@ -87,12 +37,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------- WARM UP -------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓                          ▓   ▓ ▓ ▓   ▓     ▓     ▓   ▓   ▓",
         "▓▓▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓   ▓   ▓   ▓   ▓ ▓   ▓ ▓   ▓ ▓ ▓ ▓",
@@ -125,12 +75,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-------- EXIT! --------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·▢o▢·⊓·oooooo·········ooooo▢ooooooooooooo·▢▢⊏⊐·····o▢·····▓",
         "▓·▢&▢·⊔··oooo···oooo&▢······▢oooooooooooo▢&·▢▢⊓·o▢o·o▢o·⊏⊐·▓",
@@ -163,12 +113,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ STONE-AGE ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&o·@·o&o······o······o·o·····o··o·o····o·o····o·o·····o&o·▓",
         "▓··········o····o·o&o··o·····o···o··o··&oo·o·o·&o··o··o····▓",
@@ -201,12 +151,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ COLLECTOR ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&··o·oo···&⊓···o·o··o···&> ·oo····▧·ooo&o·▧··o····oo······▓",
         "▓·oo·····&o·⊔··o·&···o····⊓·o····o·⊓·o·····> ··o··o··oo··o·▓",
@@ -239,12 +189,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ EASY DEAL ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓o          ooo⊓&▢oooooo···································▓",
         "▓o@▓·⊓▢⊏⊐  oooo⊔&⊓oooooo▢▢▢▢▢▢▢▢▢⊓▢▢▢▢▢⊓▢▢▢▢⊓▢oooooooooooo·▓",
@@ -277,12 +227,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "--- DOWN THEY FALL! ---",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&·······························o························&▓",
         "▓··⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐··⊓⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐3··▓",
@@ -315,12 +265,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- GO THROUGH! -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓@···&·····▢&····o···oo······&o·o&··oo&··⊓·&▢▢··⊓▢▢&···&··&▓",
         "▓·o··▢▢▢·&······o&o·&····&▢·&···▢▢··o···▢⊔▢··&·▢⊔&·&··▢·o··▓",
@@ -353,12 +303,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "--- GET THOSE TOO!! ---",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓··············&··⚡············&·⚡···⚡······⚡··⚡···⚡··&····▓",
         "▓·⚡E···⚡···&················⚡···············&··············▓",
@@ -391,12 +341,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ BUG FUNNY ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&@···o·> ·········▓o·> ··&·&······&·······&·····&····&···&▓",
         "▓····&··▓·&····o···▓&·▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▧··▓",
@@ -429,12 +379,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "- EASY COME, EASY GO! -",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓··························································▓",
         "▓····················&············&························▓",
@@ -467,12 +417,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- RUN FOR LIFE! ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓✂  ·····o················▢············&··········o·······&▓",
         "▓   ·o&oo·····o·······o···▢··o&··o&····&········o···oo·&·o·▓",
@@ -505,12 +455,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- IGNORE THEM -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·····▓··o·&······▓o·o··&▓·o&o·▓·&o&···&o·▓o&oo▓&o·&·o▓Eo&·▓",
         "▓··o··▓··o·o·o····▓&·····▓·o·&·o▓····▓o···▓·&·&▓······▓·&o·▓",
@@ -543,12 +493,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ ANONYMOUS ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓             ⊓·····&·····&·····&·····&·····&⊓            E▓",
         "▓             ⊔······························⊔             ▓",
@@ -581,12 +531,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ FALL OUT! ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·&·o·▢···o&······▢&·····o·&··▢···&···o···▢··o······&·▢···o▓",
         "▓··o··▢·······o··&▢··&&·······▢·o····&····▢&···o&·oo·o▢·&··▓",
@@ -619,12 +569,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- ONE THING ... ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓··oo······················································▓",
         "▓············o············o································▓",
@@ -657,12 +607,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- JUST DO IT! -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓····················o·····································▓",
         "▓····o···············o······⊏⊐⊓··························o·▓",
@@ -695,12 +645,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-------- BANG! --------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▧573 ·< ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
@@ -733,12 +683,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------- QUICKY! -------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·········DD··········DD·····D······D········D·····D·D·D··D▓",
         "▓··DD····D···D···@·D····D········D·······D········D····D···▓",
@@ -771,12 +721,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- CRAZY HARRY -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓   ▓ ▓            ▓▓            ▓                     ▓✂▓✂▓",
         "▓ ▓&  ▓ ▓▓▓▓ ▓ ▓▓▓ ▓ &▓▓▓▓▓▓▓▓▓▓ ▓ ▓ ▓▓▓ ▓ ▓ ▓ ▓▓▓ ▓ ▓ ▓ ▓ ▓",
@@ -809,12 +759,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- MINOTAURUS! -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓@·············&···························&············&··▓",
         "▓······&o·················&·o··&················&&·········▓",
@@ -847,12 +797,12 @@ Object {
       "initialGravity": true,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------- GRAVITY -------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&· &· ·&  ·······o···&··  ·&············  E·······&·····@·▓",
         "▓·· ·· o·  ·&············  ···········o··  ··o·············▓",
@@ -885,12 +835,12 @@ Object {
       "initialGravity": true,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- UP AND DOWN -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓oo&·····&·▢·o··oo··&o·⊓····o·o······o·o·····o··o··o·o··o··▓",
         "▓···o·o····▢&··o··o··o&⊔···o···o···o······o··o··R··o·o···oo▓",
@@ -923,12 +873,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ BOMB TIME ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓ <&&&&&&&&&▓ ▢▢▢▢▢▢▢RRR▓▓▓▓▓▢▢▢▢▢▢▢    &     ▓@           ▓",
         "▓R⊓ooooooooo▓ ▢▢▢▢▢▢▢▢RR    ▓        ▢▢▢▢▢ ▢▢  ▓▓▓▓▓▓▓▓▓▓▓ ▓",
@@ -961,8 +911,8 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 1,
           "freezeZonks": 0,
           "gravity": 0,
@@ -974,8 +924,8 @@ Object {
       "title": "- 200 MOVING OBJECTS! -",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓······o·····oo······R···▢·····&··&····⊓············oo···&·▓",
         "▓··o·&&··oo·····&··&·····⊓·o·&··oo·&···⊔·o···o·······&···&·▓",
@@ -1008,12 +958,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-------- YAWN! --------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
@@ -1046,12 +996,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "--------- ONE ---------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&···o····o·&··&··&··&··&·············&▢··&o·····&oo··o·&&▢▓",
         "▓·o······oo▢▢⊏⊐▢▢▢⊏⊐▢▢▢▢▢·o···&o····o·o> ·o···o··o·····o·▢&▓",
@@ -1084,8 +1034,8 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 1,
           "freezeZonks": 0,
           "gravity": 0,
@@ -1097,8 +1047,8 @@ Object {
       "title": "----- ONCE AROUND -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·o&·······⊓·····⊏⊐o·o···&·&·⊓·o··▢&···o····&▢···&··▢·E····▓",
         "▓·▢D···D···⊔·o··o▢o··&▢oo···⊓⊔·&&·▢▢·&·····&▢·oooooo▢·····▢▓",
@@ -1131,12 +1081,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- BABA'S WORK -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓··D···········&·DD··&▧&· ··▓····· ··D▓···&···ooo··&·····o·▓",
         "▓····&··DD·&·DDD····D·3·o···▓···o· ··&▓&····oo···o···o··oo·▓",
@@ -1169,12 +1119,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "--------- TNT ---------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·······o···················o···········o··············oo··▓",
         "▓······································o···········o····o··▓",
@@ -1207,12 +1157,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- NO PROBLEM! -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓                           ooo                            ▓",
         "▓··························································▓",
@@ -1245,12 +1195,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- TIME TO OPEN! ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓······················> ··R···o···························▓",
         "▓······················▧·······o···························▓",
@@ -1283,12 +1233,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- EASY BUSINESS ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓                      ▓5867▓&&&&&&&▓                      ▓",
         "▓✂▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢ ▓⊓▓▓▓▓&&▧3▧&&▓✂▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢ ▓",
@@ -1321,12 +1271,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-INSIDE-OUTSIDE-INSIDE-",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓@···o▢··········&·· ✂⊃     &     ▓····o·····D·····   ····&▓",
         "▓R···o▢···&·········  ▓⊏⊐···· & & ▓··&▢············ · ·····▓",
@@ -1359,8 +1309,8 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -1368,7 +1318,7 @@ Object {
           "x": 34,
           "y": 22,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 1,
@@ -1380,8 +1330,8 @@ Object {
       "title": "----- EASY RIDER! -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓E·················> ·····&································▓",
         "▓···········o······▓o·····▢·········▢······················▓",
@@ -1414,12 +1364,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- NO MIRACLE! -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓@·························································▓",
         "▓·▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢⊏⊐⊓·▓",
@@ -1452,12 +1402,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-------- PUSH! --------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&··o···&···o&o········o·o··&o··o&&&o···········&··o···o··&▓",
         "▓⊏⊐⊓····oo·o···o················o&oo&oo·&··ooo&·o···o·o·⊓⊏⊐▓",
@@ -1490,12 +1440,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- NEARLY BORING ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓@·T&·········&·▓o▓DD··o··&··&··&························&·▓",
         "▓T··T▓▓▓▓▓▓▓▓▓▓·▓·▓D▓D············DDDDDDDDDDDDDDDDDDDDDD···▓",
@@ -1528,12 +1478,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ BOMBASTIC ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&····D·······&············▓····&············&·············▓",
         "▓▓▓D▓·&·▓·&▓▓▓▓▓▓▓▓··▓·D·▓D▓D▓▓▓▓▓▓D▓··▓·▓·▓▓▓▓▓D▓▓··▓D▓▓DD▓",
@@ -1566,12 +1516,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------- SIMPLE! -------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓ o o   o & o&oo   &▓  o&&o&&o&▓E&o&&&&oo&&&ooo&&&o&o&&o&o&▓",
         "▓   & o    o     &  ▓ ▓&oo&o&&o▓&o&oo&o&&&&oo&o&oooo&o&o&o&▓",
@@ -1604,12 +1554,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "--- MIND THE STONES ---",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓D▓EDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD▓",
         "▓@··▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓D▓",
@@ -1642,12 +1592,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- TIME-RUNNER -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓······· ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓·▓▓▓▓▓▓^▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
@@ -1680,12 +1630,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "--- LITTLE PLEASURE ---",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·········o·▢······o▢oo·o·▢··D··@▢···················DD····▓",
         "▓·o·········▢··D···o▢·····⊓··o···⊓·····D···················▓",
@@ -1718,12 +1668,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "--- ANTI-CLOCKWISE! ---",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓······o··············o·············&················o·o···▓",
         "▓····o·&··o··········&··············&············o··&·&····▓",
@@ -1756,12 +1706,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ TELEPATHY ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓&▓▓▓▓▓▓▓▓▓▓▓▓▓···&▓▓▓▓▓▓···▓▓&·▓▓▓▓&·▓▓▓▓▓&▓▓▓▓▓·▓▓▓▓▓▓▓",
         "▓▓····▓▓▓▓·&▓▓▓▓▓·&▓···▓▓▓▓·&▓&··▓·&·▓▓··&·▓▓▓·····&&··▓▓▓▓▓",
@@ -1794,12 +1744,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ EASY WORK ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓······ooo··o····o·······o····o··o··o····· o·o· ········&o·▓",
         "▓·······o···oo······oo···o·o··o··o··o····· ·o·o ·······&o·&▓",
@@ -1832,12 +1782,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- CHAMBER-MUSIC ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·       ▓&&oooo&o&o&&o&o&&▓o▢ ·· ▢· · <    ▢ DD <✂   ▢··D·▓",
         "▓·       ▓▢&o&&oooooo&o&oo▢▓o▢·&&·▢ · ·▢·· ·▢o···▢    ▢··@·▓",
@@ -1870,12 +1820,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "--- LOOKS DIFFICULT ---",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓   ▢              ▢ o& &▢&▢&▢·⊓o··o ··o  ⊓     o          ▓",
         "▓ ▢ ooooooooooooo▢  ·▢o▢o▢o o▢&⊔··o&o··oo ⊔   o⊓o⊓o⊓o⊓o⊓   ▓",
@@ -1908,12 +1858,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-- READY-STEADY-GO!! --",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓E@                                                        ▓",
         "▓vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv^▓",
@@ -1946,12 +1896,12 @@ Object {
       "initialGravity": true,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- FALL-FESTIVAL ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓ >  o o  o         > o···▢&⊓ > > > > v < >  ✂ &      ⊓E  &▓",
         "▓ ⊓ ···⊏⊐⊏⊐·⊏⊐⊏⊐⊏⊐⊓ ⊓·▢▢▢·▢·⊔^ v < > v v ^⊓    ·      ⊔   ·▓",
@@ -1984,12 +1934,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- DON'T WORRY!! ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓E·······    ··o·o·o··········o·············⊓···▢·oD···o·o·▓",
         "▓·o··o··o ·o   ·······o··o··········o···o···⊔·&·⊓········D·▓",
@@ -2022,12 +1972,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- STATE OF MIND ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓o············o·o··o···&················ooo&····o··o···&·o·▓",
         "▓····oo·&···o······o········ooo··o··o&····&o·o&o···&····oo·▓",
@@ -2060,12 +2010,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "--- DO IT YOURSELF! ---",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓125▢Eoooo▢8T6▧⊓&·o·o·o·o·o·o·o·o·······················o⊏⊐▓",
         "▓3▧80▢ooo▢--709⊔·o·o·o·o·o·o·o·o·o▓▢▢⊓▢▢▢▢▢▢▢▢▢▢▢⊓▢▢▢▢▢·⊏⊐·▓",
@@ -2098,12 +2048,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------- FILL IN -------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&  ^ > > > v > ^ v v v > < < < < < < < < > < < < < < < < &▓",
         "▓< | ^ < < v > ^ > > > > ^ ^ ^ ^ v ^ ^ ^ ^ v > > > > > > ^ ▓",
@@ -2136,12 +2086,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-- CORNER CONFUSION! --",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓o&o&&&o&&&&&&&o&⊓o▓✂▓▓o▓▓▓▓▓▓▓▓▓▓▓▓▓o··········o··o··o····▓",
         "▓&o&o▢&oo⊓o&o⊓&&o⊔·▓ > ·> > > > > > ▓·o··o&·oo····o·&&&·o··▓",
@@ -2174,8 +2124,8 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 1,
@@ -2187,8 +2137,8 @@ Object {
       "title": "---- THE ELDRITCH! ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓  ✂             ⊓              ▓·····o·········· ·⊏⊐⊏⊐··o·▓",
         "▓ ⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐ ⊔^▢vvvvvvvvvvv ▓····⊏⊐⊏⊐········ ·⊓&&⊓··o·▓",
@@ -2221,8 +2171,8 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -2230,7 +2180,7 @@ Object {
           "x": 32,
           "y": 6,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 1,
@@ -2242,8 +2192,8 @@ Object {
       "title": "----- KEEP COOL!! -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·o·······································ooo·o············▓",
         "▓·o············o  D·▓▓▓▓▓▓▓▓▓▓▓·D··D·······················▓",
@@ -2276,12 +2226,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "--- THOSE WE LIKE!! ---",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&·&· ·· ·&▓···⊓········· Y  ·····&·o···o&&o·o··&·······o&·▓",
         "▓· · ·· & ·▓·&·⊔··T······ Y ···&▢···o·&··&o········oo·&··o&▓",
@@ -2314,12 +2264,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- ALL TOGETHER! ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓···o··o&ooo····o    oo  ······o·o ·ooo·······o··········oE▓",
         "▓···o··o&&oo···oo··ooooo  ····o·o···o&&o····ooo·······o·oo·▓",
@@ -2352,12 +2302,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-------- VICE- --------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓···o··o&ooo····o    oo  ······o·o ·ooo·······o··········o@▓",
         "▓···o··o&&&o···oo··ooooo  ····o·o···o&&o····ooo·······o·oo·▓",
@@ -2390,12 +2340,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-------- VERSA --------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓ooo·D···o·&·o···▓ ······  ▓·o············▓·DD···········o·▓",
         "▓&·o· ·oooD···o·&▓ ·       ▓·········  ···▓oDDD···&··DD·o··▓",
@@ -2428,8 +2378,8 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 1,
@@ -2437,7 +2387,7 @@ Object {
           "x": 17,
           "y": 10,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -2449,8 +2399,8 @@ Object {
       "title": "---- PRE-IGNITION! ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▢▓·> ▢R▢R▢R▢R▢▢▢▢▢▓▢▢▢▓▢·▢▓▢▓▢▢▢▓▢▓▢▓▢▓▢R▢R▢R▢R▢R▢R▢R▢R▢&▢▓",
         "▓··D &▢▢▢▢▢▢▢▢▢▢▢▢▢▓▓▢▓▓▓▢▓▓▢▓▢▓&▓▢▓▢▓▢▓▢▢▢▢▢▢▓▢▓▢▓▢▓▢▓▢▓▢▢▓",
@@ -2483,12 +2433,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-------- GUMBO --------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓oooooo& & & &o  ·········o⊏⊐&&&&o⊏⊐·⊏⊐⊏⊐⊏⊐⊏⊐o⊓  &o·&·▢·&·▢▓",
         "▓oooooo▢⊏⊐⊏⊐⊏⊐oo ⊏⊐⊏⊐⊏⊐⊏⊐··⊏⊐&o&o&o▢·o········⊔ ▢·&&o&·&&··▓",
@@ -2521,8 +2471,8 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -2530,7 +2480,7 @@ Object {
           "x": 39,
           "y": 18,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -2542,8 +2492,8 @@ Object {
       "title": "---- PHIL'S FIRST! ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓··oo····D·····o···o·····oo·o·····oooooR▓⊏⊐⊓···············▓",
         "▓···············o·o··········oo···oooRoo▓⊓&⊔·····⊏⊐⊓·⊏⊐⊓···▓",
@@ -2576,12 +2526,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- THERE YOU GO! ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓E·······  ··················  ··········  ····            ▓",
         "▓ ▓     ·  ·                &  ·    ✂ ✂ ·  · ✂·   ········ ▓",
@@ -2614,12 +2564,12 @@ Object {
       "initialGravity": true,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- PATHFINDER! -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓E ^ v ^&⊓                         >        ▓&<    >  >    ▓",
         "▓ > > < >⊔                         ▓▓▓▓▓▓▓▓ ▓▓▓  ▢ ▓  ▢&·· ▓",
@@ -2652,12 +2602,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- ISLAND HOPPER ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·o·&··o&·▢···o··········o··▓&D·DD··D&&&&&··▓·· ·· ·· ····&▓",
         "▓&o··&oo&·▢···o······&···o··▓D&···D··DDDDD··▓· ····· ·& ✂··▓",
@@ -2690,12 +2640,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- GET THEM OUT! ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓o▢·▢·▢·▢·▢·▢·▢·▢·▢R▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢R▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▓",
         "▓▢·▢o▢·▢·▢D▢·▢D▢·▢·▢·▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢R▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▓",
@@ -2728,12 +2678,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- TOUGH GOING -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓E·······················▓&&ooo ·o ·o&·oo  o&▓▓··········▓·▓",
         "▓·····D··················▓oo·&· o&·oooo·&·&&·▓▓·&&·&··&··▓·▓",
@@ -2766,12 +2716,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ HURRY UP! ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓⊓⊏⊐⊓|2-⊓⊏⊐⊏⊐⊏⊐⊏⊐⊏⊐▢▓068950▓▓▓     &   ▓▓····&·&D······&···▓",
         "▓⊔▓ ⊔086⊔▢    ✂     ▓750▓▓▓▓    ▢▓▢▓▢▓ ▓▓·o&·····&·&·&··&··▓",
@@ -2804,12 +2754,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "- TOUGH BUT POSSIBLE! -",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·····················▢▢▢&····▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▓",
         "▓·▢▢▢▢▢··▢&&▢&&▢▢&▢▢·&✂▢▢·▢▢▢·&✂✂✂▢&▢▢▢&▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▢▓",
@@ -2842,12 +2792,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- HEAD-HUNTER -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓oo&o&&▓oo&oo&> o&o&&> ······o······E·o···o·> ···▓▓▓▓▓   ▓&▓",
         "▓o&&&oo▓·ooooo▓&&o&oo▓··o·o·oo·oo·o·········▓·^▓▓▓▓▓   ▓ ▓⊓▓",
@@ -2880,12 +2830,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "--- COMMUNITY WORK! ---",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓      ✂         <&··oooooo··▓o& <··ooooo·&o·&···oo····ooo·▓",
         "▓v▓▓▓▓▓▓▓▓▓▓▓▓▓  ▓D··oooooo·o▓&&oo▓·o··&ooo·&·oo·o&·⊏⊐·o&o·▓",
@@ -2918,8 +2868,8 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -2927,7 +2877,7 @@ Object {
           "x": 24,
           "y": 16,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 1,
@@ -2935,7 +2885,7 @@ Object {
           "x": 20,
           "y": 18,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -2943,7 +2893,7 @@ Object {
           "x": 34,
           "y": 19,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -2955,8 +2905,8 @@ Object {
       "title": "------- ONE WAY -------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓                     ▢····················▓▓▓▓▓▓▓▓▓▓▓▓▓",
@@ -2989,12 +2939,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "--- INSPIN-OUTSPIN! ---",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓··D··&·ooo&·oo···o&···················o···&oo······o·····T▓",
         "▓·······o···o··o···ooo··o&oo·····oo········o·······o&······▓",
@@ -3027,12 +2977,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-------- NICE ---------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓ v > v < v⊏⊐&o&▢&oo&o > · · · · · ⊃ · &  & ·&·⊏⊐&D······D·▓",
         "▓< > < > > ⊏⊐o&o▢&&&&▢▢⊏⊐· · ·✂· · ⊏⊐··· ·▢&·&·⊏⊐D&o·······▓",
@@ -3065,8 +3015,8 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 0,
           "freezeZonks": 2,
           "gravity": 1,
@@ -3074,7 +3024,7 @@ Object {
           "x": 35,
           "y": 1,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -3086,8 +3036,8 @@ Object {
       "title": "--- ALL THE FAMILY! ---",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·····&···oo······················⊓··o········o····DDD·····▓",
         "▓&o·····o·&&o·····················⊔·········⊏⊐⊓············▓",
@@ -3120,12 +3070,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- LITTLE DETAIL ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓D··DD·D···DD·D····▓▢&▢·&·&·o&··o·&·⊏⊐⊏⊐▓········o·········▓",
         "▓·D··D&DDDD·D·DD···▓⊏o⊏⊐·&o·▢&·o&o·⊏⊐⊓⊓⊓▓····✂··o·o········▓",
@@ -3158,12 +3108,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- TRANSPORT IT! ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&▢&▢▢▢E▢▢···▢▢o·····▢&ooo▢···▢··▢····▢·▢▢▢o··▢···o▢····▢&&▓",
         "▓▢·▢&▢·▢·▢····o&▢····▢oooo··▢·············▢&o··▢·o&▢··▢▢&▢&▓",
@@ -3196,12 +3146,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-- DON'T WASTE THEM! --",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓o····o·o··o········▢        ▢         > ··················▓",
         "▓··o·······o···T··· < Ro o o <✂        ▓·DDDDDDDDDDDDDDDE··▓",
@@ -3234,12 +3184,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-CLASSIC ENTERTAINMENT-",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓▓▓▓&▓▓▓▓·▓▓▓▓ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓D>   ▓·▓▓▓▓▓ ▓▓▓▓E▓▓▓▓",
         "▓▓▓▓▓▓▓···▓▓·&·▓▓   > &▓▓▓▓·▓▓▓▓▓▓▓▓▓···▓▓v··o▓▓▓✧  ▓▓▓ ▓▓▓▓",
@@ -3272,12 +3222,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ DIAGONAL! ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓✂✂·              ▓",
         "▓▓·······························>     ·▓▓✂✂· ▓ ▓ ▓ ▓ ▓ ▓  ▓",
@@ -3310,12 +3260,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- TIME IS INFO! ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&&o··&o····▓  ▓&··o·····&·&▓E ▓············▓  ▓o&o··&·····▓",
         "▓oooo&o··o··▓  ▓··⊏⊐⊓o··ooo·▓  ▓·▢▢▢▢▢▢▢▢▢▢·▓  ▓o&···&··oo·▓",
@@ -3348,12 +3298,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- FUN-TASTIC! -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓                                        ··················▓",
         "▓  &&&&    &  &   &&   &                 ·✂✂✂✂✂✂✂✂✂✂✂✂   &·▓",
@@ -3386,12 +3336,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- ALL THAT FUSS ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓····oo⊓····o···ooo⊓       ⊓ · · · · · ·⊓&  ·&  ⊓        @ ▓",
         "▓······⊔···o&o··ooR⊔ ⊏⊐✂▢⊓✂⊔· · · · · · ⊔··  · ·⊔    o     ▓",
@@ -3424,12 +3374,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- A PRO'S WORK! ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·····o···················  ▢RRRRR▢····o·····o········oo···▓",
         "▓·························  ▓▓▓▓▓▓▓················oo······▓",
@@ -3462,12 +3412,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-------- CRASH --------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓@·o   ·o···o·⊓&oo&·⊓··   ⊓    &  ▢········oo▢·▓···▢······&▓",
         "▓▓▓▓▓···ooo·o·⊔⊏⊐o▢·⊔·⊓ ⊓ ⊔ ⊏⊐⊏⊐⊓ ⊓·▓▓▓▓▓▓···⊓·▓o··▢·▢▢▢oo·▓",
@@ -3500,12 +3450,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-- SEE YOU TOMORROW! --",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·········▓···▓······o··▢D····· ·R  ✂▓✂<······ ············▓",
         "▓·5|0|9|8|··3·▓····o····▓··R·▢ ·ooo··▓ ▓▓▓▓▓▓▓^▓▓▓▓▓▓▓▓▓▓▓·▓",
@@ -3538,12 +3488,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- FLIP AND FLOP ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&·············✂ ✂▓&▓&▓&▓&▓&▓E▓&▓&▓&▓&▓&▓✂ ✂·············&▓▓",
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ · ▓·▓·▓·▓·▓·▓·▓·▓·▓·▓·▓·▓ · ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
@@ -3576,12 +3526,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- TRIPLE FORK -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓E·························································▓",
         "▓··························································▓",
@@ -3614,12 +3564,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- KNOW THAT ? -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓⊓&oo·····o·ooooo····ooo··o&·o&⊓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓▓▓▓▓▓▓▓▓▓▓▓7650▓⊔·&o·ooo·o·o·oooo···o&o···o·&o⊔▓▓▓▓▓▓▓▓▓▓▓",
@@ -3652,12 +3602,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- VOYAGER III -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·&o·o&·▢&···o·o▢·&·····▢···▓·▓····⊓ · · · ⊓·o·····▢·   ···▓",
         "▓o·····o⊓&oo&···⊓···o·&&⊓···▓ ▓····⊔· · · ·⊔·o··o·o⊓ ··· T·▓",
@@ -3690,12 +3640,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "HAM AND CHEESE SANDWICH",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓ o> o  ▓oo  o&▓··ooooooooooooooo▓ ·········  ····  ·······▓",
         "▓  ▓▓v▢ ▓&· ⊏⊐·▓·················▓ · ✂ ✂  ✂   · ✂  ··    ✂ ▓",
@@ -3728,8 +3678,8 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 1,
@@ -3741,8 +3691,8 @@ Object {
       "title": "------- TIMING! -------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓RRR············································ooooooooooo▓",
         "▓RR·············································▢▢▢▢▢▢▢▢▢▢▢▓",
@@ -3775,12 +3725,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-EINSTEIN'S FAVOURITE!-",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓@⊓&ooo· o······o ···o·····o·o⊓·▢·▢·▢&▢·▢&▢·▢&▢·▢··⊓ ⊓ ⊓ ⊓ ▓",
         "▓·⊔o⊏⊐· &▢⊓·oo·▢· ▢·▢&▢o▢&▢o▢o⊔··&o& o···· o···&···⊔ ⊔ ⊔ ⊔ ▓",
@@ -3813,12 +3763,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ GOOD LUCK ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓ER······················································▢R▓",
         "▓························································▢R▓",
@@ -3851,12 +3801,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------- CRACKER -------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&&&o·o·····o·▓o·    D              ▓D···o&o·&⊓⊏⊐o·&·&&&&& ▓",
         "▓TYo···oo··o··▓▢ ▓  ▢ ▢▢▢▢▢▢▢▢▢▢▢▢  ▓·o······o⊔o⊓····⊏⊐▢⊏⊐ ▓",
@@ -3889,8 +3839,8 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -3898,7 +3848,7 @@ Object {
           "x": 36,
           "y": 22,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -3910,8 +3860,8 @@ Object {
       "title": "------ GOOD JOB! ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&o&o··>   >       &> - ·····&······&···T····oooooo▓   > o ▓",
         "▓o&o··▓  ▓  ▓& ⊏⊐ &▓   ▓··&·o&o&o&··&&&····D&ooooo▓  ▓  ▓RR▓",
@@ -3944,12 +3894,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- MIXED SALAD -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓DDDDDDDDDDDDDDDDDDDD▓··········▓···▓o▓▓··DD····D······D··D▓",
         "▓D▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓D▓·▓▓▓▓▓▓▓▓·▓·▓·▓o▓▓·D··D···DD·····D···▓",
@@ -3982,12 +3932,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-- JOYSTICK-HANDLING --",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓R▢  ▓···&·&··&··&··&&····&&·&·&··&··&&·····&·&·······&·&··▓",
         "▓▢ ▢ ▢··&···&······&·····&··&····&··&··&&··&···&·&&···&&···▓",
@@ -4020,12 +3970,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "--------- IQ! ---------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓                ···· - ⊂·································▓",
         "▓·+·▓···········⊏⊐⊏⊐⊏⊐▢ ·▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▢⊏⊐··▓",
@@ -4058,8 +4008,8 @@ Object {
       "initialGravity": true,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -4067,7 +4017,7 @@ Object {
           "x": 25,
           "y": 22,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 1,
@@ -4075,7 +4025,7 @@ Object {
           "x": 35,
           "y": 22,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -4083,7 +4033,7 @@ Object {
           "x": 45,
           "y": 22,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 1,
@@ -4091,7 +4041,7 @@ Object {
           "x": 55,
           "y": 22,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -4099,7 +4049,7 @@ Object {
           "x": 56,
           "y": 10,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 1,
@@ -4111,8 +4061,8 @@ Object {
       "title": "------- ON-OFF! -------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓o·&&·o··&&&&&&o·ooo·▓&▢ ▢ ▢ ▢ ▢ ▓▓▓▓D▓▓▓▓▓o     <ooooo▓·&&▓",
         "▓o&·o&·o▢&·▢o··&o·&&·▓·▢ ▢ ▢ ▢ ▢ ▓▓▓▓·▓o▓  o&▓o&o▓o&ooo▓·oo▓",
@@ -4145,12 +4095,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- SUB-EFFECTS -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓&&▢R&▢·o▢ ·o·▢  ▢ &▢·&▢· ··o·   ···o o·   ·▢·o▢· ▢· ▢· ▢· ▓",
         "▓&&▢o·▢R&▢·&· ▢·&▢&·▢ ·▢· · ··o····o· ····o·▢··▢· ▢· ▢· ▢· ▓",
@@ -4183,12 +4133,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ KNOW-HOW! ------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓····o ···o········▢·······o·▢· ············ ✂·····D······E▓",
         "▓·R· ···▢·D·&&· · ··  &▢·&··▢·▢···· &··o·····o··o········▢·▓",
@@ -4221,12 +4171,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "-------- CHAOS --------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓  ▓▓▓▓▓▓▓▓▓▓▓▓▓·o·····o·····&o····o&o·····o···o&o·····oo&▓",
         "▓▓  ▓▓▓▓▓▓▓▓▓▓▓▓▓·ooo··o·o····oo········o······o·········oo▓",
@@ -4259,12 +4209,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- ONE'S MISSING ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓o&D·······o·&·····D···o···D·········o·······o·D·········oE▓",
         "▓·o·····D&··o·······&Do·D·····D&···Do···D···o·o&····D···o··▓",
@@ -4297,12 +4247,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "----- WATCH OUT!! -----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓o····o··o▢··············▢ <& < ▢·o ··> ·····o&▢·····o··ooo▓",
         "▓······o &▢····o··▢▢▢▢▢▢·▢v▢▢▢▢^▢·▓ ▓v▢▢▢····o&▢·&··o<··▢··▓",
@@ -4335,12 +4285,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "---- FIND THE WAY! ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓@····o&o· > > >▓oo▓·⊏⊐▓               ▓& DD·······▢&▓&▢o▢&▓",
         "▓▢Eoo·o&ooo + <  R·▢·· ⊂ vvvvvvvvvvvv^v▓▓▓▓▓·o··oo··▢▓▢·o·▢▓",
@@ -4373,8 +4323,8 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -4382,7 +4332,7 @@ Object {
           "x": 15,
           "y": 3,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -4390,7 +4340,7 @@ Object {
           "x": 23,
           "y": 2,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 1,
@@ -4402,8 +4352,8 @@ Object {
       "title": "------- SADISM! -------",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓E             ✂              < ✂   ✂   >       ▓▓  ▓  ▓  ▓▓",
         "▓▓             ✂              > ▓▓▓ ▓▓▓ ▓ ▓▓▓  ▓▓  ▓  v  ▓ ▓",
@@ -4436,12 +4386,12 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "- UPSTAIRS-DOWNSTAIRS -",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓·· ··· ··     ··· ······ R·····⊏⊐ &▓&o&o▓         ▓&&&D&&&▓",
         "▓· ··  ···    ··  · D·▓ ▓∪▓o··o·o>oo▓&&&&▓ ▓&▓✂ &▓✂▓⊏⊐·⚡·⊏⊐▓",
@@ -4474,8 +4424,8 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [
-        Object {
+      "specialPorts": [
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -4483,7 +4433,7 @@ Object {
           "x": 57,
           "y": 10,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 1,
@@ -4491,7 +4441,7 @@ Object {
           "x": 7,
           "y": 7,
         },
-        Object {
+        {
           "freezeEnemies": 0,
           "freezeZonks": 0,
           "gravity": 0,
@@ -4503,8 +4453,8 @@ Object {
       "title": "---- TROUBLE AHEAD ----",
       "width": 60,
     },
-    Object {
-      "cells": Array [
+    {
+      "cells": [
         "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
         "▓▓···o·o&o< ▢··o&o&·o  <& ▢o&oo o  ▢&·o -o-o·R·▢·o▓ <·▢o&oo▓",
         "▓o·o▢o·&oo▢&▢v▢ooo▢·▓▢ ▢▢^▢&·oo^▢v  ▢&o·▓·▢&·▢v▢▢o▓R>· ▢·oo▓",
@@ -4537,11 +4487,61 @@ Object {
       "initialGravity": false,
       "maxTitleLength": 23,
       "signature": null,
-      "specialPorts": Array [],
+      "specialPorts": [],
       "title": "------ BRAINMAN! ------",
       "width": 60,
     },
   ],
   "levelsCount": 111,
+}
+`;
+
+exports[`read mpx levelset 1 5x3 1`] = `
+{
+  "levels": [
+    {
+      "cells": [
+        "▓▓▓▓▓",
+        "▓@ E▓",
+        "▓▓▓▓▓",
+      ],
+      "demo": null,
+      "height": 3,
+      "infotronsNeed": 2,
+      "initialFreezeZonks": false,
+      "initialGravity": true,
+      "maxTitleLength": 23,
+      "signature": null,
+      "specialPorts": [],
+      "title": "-----------------------",
+      "width": 5,
+    },
+  ],
+  "levelsCount": 1,
+}
+`;
+
+exports[`read mpx levelset 1 5x3 winplex 1`] = `
+{
+  "levels": [
+    {
+      "cells": [
+        "▓▓▓▓▓",
+        "▓@ E▓",
+        "▓▓▓▓▓",
+      ],
+      "demo": null,
+      "height": 3,
+      "infotronsNeed": 2,
+      "initialFreezeZonks": false,
+      "initialGravity": true,
+      "maxTitleLength": 23,
+      "signature": null,
+      "specialPorts": [],
+      "title": "-----------------------",
+      "width": 5,
+    },
+  ],
+  "levelsCount": 1,
 }
 `;

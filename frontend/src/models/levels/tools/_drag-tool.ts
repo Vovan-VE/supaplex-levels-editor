@@ -7,6 +7,8 @@ import {
   split,
 } from "effector";
 import { IBaseLevel } from "drivers";
+import { PenShapeStructures } from "ui/drawing";
+import { CellEventSnapshot, GridEventsProps } from "ui/grid-events";
 import {
   $currentFileRo,
   $currentLevelIsSelected,
@@ -14,12 +16,7 @@ import {
   updateCurrentLevel,
 } from "../../levelsets";
 import { $drvTiles, $tileIndex } from "../current";
-import {
-  CellEventSnapshot,
-  GridEventsProps,
-  PenShapeStructures,
-  ToolVariantUI,
-} from "./interface";
+import { ToolVariantUI } from "./interface";
 
 interface Variant<P> extends ToolVariantUI {
   drawProps: P;
@@ -244,12 +241,12 @@ export const createDragTool = <DrawProps, DrawState>({
         tryDrawMove(cell);
       }
     },
-    onPointerDown: (e, cell) => {
+    onPointerDown: (_, cell) => {
       if (enabled()) {
         tryDrawEnd(cell);
       }
     },
-    onPointerUp: (e, cell) => {
+    onPointerUp: (_, cell) => {
       if (enabled()) {
         tryDrawMove(cell);
         tryDrawEnd(cell);

@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`createNewLevel all 1`] = `
-Object {
-  "cells": Array [
+exports[`createNewLevel > all 1`] = `
+{
+  "cells": [
     "ooooo",
     "o&&&o",
     "ooooo",
@@ -14,15 +14,15 @@ Object {
   "initialGravity": false,
   "maxTitleLength": 23,
   "signature": null,
-  "specialPorts": Array [],
+  "specialPorts": [],
   "title": "                       ",
   "width": 5,
 }
 `;
 
-exports[`createNewLevel all 2`] = `
-Object {
-  "cells": Array [
+exports[`createNewLevel > all 2`] = `
+{
+  "cells": [
     "&&&&&",
     "&&&&&",
     "&&&&&",
@@ -34,15 +34,15 @@ Object {
   "initialGravity": false,
   "maxTitleLength": 23,
   "signature": null,
-  "specialPorts": Array [],
+  "specialPorts": [],
   "title": "                       ",
   "width": 5,
 }
 `;
 
-exports[`createNewLevel border 1`] = `
-Object {
-  "cells": Array [
+exports[`createNewLevel > border 1`] = `
+{
+  "cells": [
     "ooooo",
     "o   o",
     "ooooo",
@@ -54,15 +54,15 @@ Object {
   "initialGravity": false,
   "maxTitleLength": 23,
   "signature": null,
-  "specialPorts": Array [],
+  "specialPorts": [],
   "title": "                       ",
   "width": 5,
 }
 `;
 
-exports[`createNewLevel fill 1`] = `
-Object {
-  "cells": Array [
+exports[`createNewLevel > fill 1`] = `
+{
+  "cells": [
     "▓▓▓▓▓",
     "▓&&&▓",
     "▓▓▓▓▓",
@@ -74,15 +74,15 @@ Object {
   "initialGravity": false,
   "maxTitleLength": 23,
   "signature": null,
-  "specialPorts": Array [],
+  "specialPorts": [],
   "title": "                       ",
   "width": 5,
 }
 `;
 
-exports[`createNewLevel no options 1`] = `
-Object {
-  "cells": Array [
+exports[`createNewLevel > no options 1`] = `
+{
+  "cells": [
     "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
     "▓                                                          ▓",
     "▓                                                          ▓",
@@ -115,15 +115,15 @@ Object {
   "initialGravity": false,
   "maxTitleLength": 23,
   "signature": null,
-  "specialPorts": Array [],
+  "specialPorts": [],
   "title": "                       ",
   "width": 60,
 }
 `;
 
-exports[`createNewLevel size 1`] = `
-Object {
-  "cells": Array [
+exports[`createNewLevel > size 1`] = `
+{
+  "cells": [
     "▓▓▓▓▓",
     "▓   ▓",
     "▓▓▓▓▓",
@@ -135,15 +135,15 @@ Object {
   "initialGravity": false,
   "maxTitleLength": 23,
   "signature": null,
-  "specialPorts": Array [],
+  "specialPorts": [],
   "title": "                       ",
   "width": 5,
 }
 `;
 
-exports[`level constructor data 1`] = `
-Object {
-  "cells": Array [
+exports[`level > constructor > data 1`] = `
+{
+  "cells": [
     " ∩&",
     "o@▢",
   ],
@@ -154,8 +154,8 @@ Object {
   "initialGravity": true,
   "maxTitleLength": 23,
   "signature": null,
-  "specialPorts": Array [
-    Object {
+  "specialPorts": [
+    {
       "freezeEnemies": 1,
       "freezeZonks": 2,
       "gravity": 1,
@@ -169,9 +169,9 @@ Object {
 }
 `;
 
-exports[`level constructor no params 1`] = `
-Object {
-  "cells": Array [
+exports[`level > constructor > no params 1`] = `
+{
+  "cells": [
     "                                                            ",
     "                                                            ",
     "                                                            ",
@@ -204,15 +204,15 @@ Object {
   "initialGravity": false,
   "maxTitleLength": 23,
   "signature": null,
-  "specialPorts": Array [],
+  "specialPorts": [],
   "title": "                       ",
   "width": 60,
 }
 `;
 
-exports[`level resize simple 1`] = `
-Object {
-  "cells": Array [
+exports[`level > resize > simple 1`] = `
+{
+  "cells": [
     " ∩&▓▓",
     "o@▢ ▓",
     "▓   ▓",
@@ -225,8 +225,8 @@ Object {
   "initialGravity": true,
   "maxTitleLength": 23,
   "signature": null,
-  "specialPorts": Array [
-    Object {
+  "specialPorts": [
+    {
       "freezeEnemies": 1,
       "freezeZonks": 2,
       "gravity": 1,
@@ -240,9 +240,9 @@ Object {
 }
 `;
 
-exports[`level resize simple 2`] = `
-Object {
-  "cells": Array [
+exports[`level > resize > simple 2`] = `
+{
+  "cells": [
     " ∩&&⊃",
     "o@▢ ▓",
     "o   ▓",
@@ -255,8 +255,8 @@ Object {
   "initialGravity": true,
   "maxTitleLength": 23,
   "signature": null,
-  "specialPorts": Array [
-    Object {
+  "specialPorts": [
+    {
       "freezeEnemies": 1,
       "freezeZonks": 2,
       "gravity": 1,
@@ -264,7 +264,7 @@ Object {
       "x": 1,
       "y": 0,
     },
-    Object {
+    {
       "freezeEnemies": 1,
       "freezeZonks": 0,
       "gravity": 1,
@@ -272,7 +272,7 @@ Object {
       "x": 4,
       "y": 0,
     },
-    Object {
+    {
       "freezeEnemies": 1,
       "freezeZonks": 2,
       "gravity": 0,

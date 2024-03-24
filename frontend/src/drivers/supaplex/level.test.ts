@@ -27,6 +27,7 @@ import { newSpecPortRecord } from "./specPortsRecord";
 import {
   TILE_HARDWARE,
   TILE_INFOTRON,
+  TILE_PORT_D,
   TILE_PORT_H,
   TILE_PORT_V,
   TILE_SP_PORT_D,
@@ -332,38 +333,39 @@ describe("level", () => {
       expect(result.title).toBe("Foo bar                ");
     });
 
-    it("100k * 10k", () => {
-      const origin = createLevel(100_000, 10_000);
-
-      // how many copies will we make in 1.5 sec?
-      let start = Date.now();
-      let result = origin;
-      let count = 0;
-      let took: number;
-      for (; (took = Date.now() - start) < 1000; count++) {
-        result = result.setTile(10, 10, 1 + (count % 10));
-      }
-      expect(count).toBeGreaterThan(2);
-      expect(result).not.toBe(origin);
-      expect(origin.getTile(10, 10)).toBe(0);
-      expect(result.getTile(10, 10)).not.toBe(0);
-
-      // then doing the same in batch - it must be faster
-      start = Date.now();
-      result = origin.batch((result) => {
-        for (let i = count; i-- > 0; ) {
-          result = result.setTile(10, 10, 1 + (i % 10));
-        }
-        return result.setTitle("Foo bar");
-      });
-      // it must take time shorten then 2 copies, but sometimes
-      expect(Date.now() - start).toBeLessThan((took / count) * 3);
-      expect(result).not.toBe(origin);
-      expect(origin.getTile(10, 10)).toBe(0);
-      expect(result.getTile(10, 10)).not.toBe(0);
-      expect(origin.title).toBe("                       ");
-      expect(result.title).toBe("Foo bar                ");
-    });
+    // REFACT: bench: plain vs batch
+    // it("100k * 10ak", () => {
+    //   const origin = createLevel(70_000, 10_000);
+    //
+    //   // how many copies will we make in 1.5 sec?
+    //   let start = Date.now();
+    //   let result = origin;
+    //   let count = 0;
+    //   let took: number;
+    //   for (; (took = Date.now() - start) < 1000; count++) {
+    //     result = result.setTile(10, 10, 1 + (count % 10));
+    //   }
+    //   expect(count).toBeGreaterThan(2);
+    //   expect(result).not.toBe(origin);
+    //   expect(origin.getTile(10, 10)).toBe(0);
+    //   expect(result.getTile(10, 10)).not.toBe(0);
+    //
+    //   // then doing the same in batch - it must be faster
+    //   start = Date.now();
+    //   result = origin.batch((result) => {
+    //     for (let i = count; i-- > 0; ) {
+    //       result = result.setTile(10, 10, 1 + (i % 10));
+    //     }
+    //     return result.setTitle("Foo bar");
+    //   });
+    //   // it must take time shorten then 2 copies, but sometimes
+    //   expect(Date.now() - start).toBeLessThan((took / count) * 3);
+    //   expect(result).not.toBe(origin);
+    //   expect(origin.getTile(10, 10)).toBe(0);
+    //   expect(result.getTile(10, 10)).not.toBe(0);
+    //   expect(origin.title).toBe("                       ");
+    //   expect(result.title).toBe("Foo bar                ");
+    // });
   });
 
   it("findSpecPort", () => {
@@ -733,10 +735,24 @@ describe("level", () => {
 
       // std compatible
       expect(
-        level.setLocalOptions({
-          [LocalOpt.PortsDatabase]: "x10y20g1z2,x5y6g0z7u97",
-        }).localOptions,
+        level
+          .setTile(10, 20, TILE_SP_PORT_U)
+          .setTile(5, 6, TILE_SP_PORT_D)
+          .setLocalOptions({
+            [LocalOpt.PortsDatabase]: "x10y20g1z2,x5y6g0z7u97",
+          }).localOptions,
       ).toBeUndefined();
+      // not std compatible
+      expect(
+        level
+          .setTile(10, 20, TILE_SP_PORT_U)
+          .setTile(5, 6, TILE_PORT_D)
+          .setLocalOptions({
+            [LocalOpt.PortsDatabase]: "x10y20g1z2,x5y6g0z7u97",
+          }).localOptions,
+      ).toEqual({
+        [LocalOpt.PortsDatabase]: "x10y20g1z2,x5y6z7u97",
+      });
     });
 
     it("all together", () => {

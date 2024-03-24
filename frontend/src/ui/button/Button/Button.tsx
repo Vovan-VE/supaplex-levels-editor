@@ -63,7 +63,7 @@ export interface TextButtonProps extends Props {}
 
 export const TextButton = forwardRef(makeButtonRender(cl.textButton));
 
-if (process.env.NODE_ENV !== "production") {
+if (import.meta.env.DEV) {
   Button.displayName = "Button";
   TextButton.displayName = "TextButton";
 }

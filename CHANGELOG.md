@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.20.0 (2024-03-24)
+
+- Add: Display demo duration in Demo/Signature edit dialog.
+- Add: Replace selection editor can replace raw HEX and all unknown tiles.
+- Add: Shuffle selection editor.
+- Add: Experimental support for multiple languages. Russian language added.
+- Fix: FireFox cannot read text from clipboard (open/import test url).
+- Fix: Open/import level by test/demo url loss local options.
+- Fix: Export test/demo url could miss `pd=` (spec ports db) param, when spec
+  ports db itself is std compatible without notice, that some port actually is
+  not special port tile.
+
+### Desktop
+
+- Fix: Copy to clipboard didn't work (level options, export as link).
+
 ## 0.19.0 (2024-03-03)
 
 - Add: Spec Ports DB dialog now allows to edit entire DB as text.

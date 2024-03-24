@@ -1,8 +1,8 @@
 import { useUnit } from "effector-react";
 import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ReactComponent as MurphyRuns } from "assets/img/murphy-run-right.svg";
-import { testInIframe } from "backend";
+import MurphyRuns from "assets/img/murphy-run-right.svg?react";
+import { setClipboardText, testInIframe } from "backend";
 import { TEST_DEMO_URL, TEST_LEVEL_TITLE, TEST_LEVEL_URL } from "configs";
 import {
   getDriver,
@@ -10,8 +10,8 @@ import {
   LevelEditProps,
   levelSupportsDemo,
 } from "drivers";
-import { ReactComponent as DiskYellow } from "drivers/supaplex/tiles-svg/18-12-yellow-disk.svg";
-import { ReactComponent as HwLampGreen } from "drivers/supaplex/tiles-svg/29-1d-hw-g-lamp.svg";
+import DiskYellow from "drivers/supaplex/tiles-svg/18-12-yellow-disk.svg?react";
+import HwLampGreen from "drivers/supaplex/tiles-svg/29-1d-hw-g-lamp.svg?react";
 import { Trans } from "i18n/Trans";
 import { exportLevelAsLink } from "models/levels/export-url";
 import {
@@ -26,7 +26,7 @@ import { Button, TextButton } from "ui/button";
 import { ask, msgBox } from "ui/feedback";
 import { IconStack, IconStackType, svgs } from "ui/icon";
 import { ColorType } from "ui/types";
-import { openSignatureEdit } from "./SignatureEdit";
+import { openSignatureEdit } from "./openSignatureEdit";
 import cl from "./TestingButtons.module.scss";
 
 const CL_SVG_ANIMATE_HOVERABLE = "svg-animate_hover-target";
@@ -274,7 +274,7 @@ const ConfirmSO: FC<
   const handleCopy = useCallback(async () => {
     if (optionsAsCode) {
       try {
-        await window.navigator.clipboard.writeText(optionsAsCode);
+        await setClipboardText(optionsAsCode);
         showToast({
           message: t("main:common.toasts.Copied"),
           color: ColorType.SUCCESS,

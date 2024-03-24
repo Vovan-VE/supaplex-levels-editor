@@ -1,6 +1,6 @@
 import { useUnit } from "effector-react";
 import { useTranslation } from "react-i18next";
-import { ReactComponent as MurphySad } from "assets/img/murphy-sad.svg";
+import MurphySad from "assets/img/murphy-sad.svg?react";
 import { useTileCoordsDisplay } from "components/settings/display";
 import { TILE_MURPHY } from "drivers/supaplex/tiles-id";
 import { Tile } from "drivers/supaplex/Tile";

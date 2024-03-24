@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ReactComponent as SpinnerSvg } from "assets/img/spinner.svg";
+import SpinnerSvg from "assets/img/spinner.svg?react";
 import { IconContainer } from "../../icon";
 
 interface Props {

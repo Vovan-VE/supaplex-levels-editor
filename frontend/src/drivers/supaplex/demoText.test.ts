@@ -21,9 +21,16 @@ describe("demo text", () => {
 
       expect(textDefault).toMatchSnapshot("default");
       expect(textWithTiles).toMatchSnapshot("+tiles");
+      expect(textDefault.duration).toBe(textWithTiles.duration);
 
-      expect(demoFromText(textDefault)).toEqual(demo);
-      expect(demoFromText(textWithTiles)).toEqual(demo);
+      expect(demoFromText(textDefault.text)).toEqual({
+        demo,
+        duration: textDefault.duration,
+      });
+      expect(demoFromText(textWithTiles.text)).toEqual({
+        demo,
+        duration: textWithTiles.duration,
+      });
     });
   }
 });

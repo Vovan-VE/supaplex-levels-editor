@@ -8,6 +8,7 @@ import {
 import { withPersistent, withPersistentMap } from "@cubux/effector-persistent";
 import * as RoMap from "@cubux/readonly-map";
 import { StoreDriver } from "@cubux/storage-driver";
+import { PartialSome } from "@cubux/types";
 import {
   $instanceIsReadOnly,
   allowManualSave,
@@ -38,8 +39,6 @@ import {
   LevelsetConvertTry,
   LevelsetFile,
   LevelsetFileData,
-  LevelsetFileDataOld,
-  LevelsetFileSource,
 } from "./types";
 
 const fulfillFileLevels = async (
@@ -66,12 +65,7 @@ const fulfillFileLevels = async (
   };
 };
 
-interface AddFileParams extends LevelsetFileSource {
-  key?: FilesStorageKey;
-}
-interface AddFileResult {
-  file: LevelsetFile;
-}
+interface AddFileParams extends PartialSome<LevelsetFile, "key" | "levelset"> {}
 
 const prepareCreateFileAborted = createFile ? new Error() : undefined;
 const prepareCreateFileFx = createFile
@@ -91,9 +85,10 @@ const prepareCreateFileFx = createFile
 export const addLevelsetFileFx = createEffect(
   async ({
     key,
+    levelset,
     name,
     ...source
-  }: AddFileParams): Promise<AddFileResult | null> => {
+  }: AddFileParams): Promise<LevelsetFile | null> => {
     const isNew = !key;
     key ??= generateKey() as FilesStorageKey;
     if (prepareCreateFileFx && isNew) {
@@ -106,12 +101,14 @@ export const addLevelsetFileFx = createEffect(
         throw e;
       }
     }
-    const file = await fulfillFileLevels({
+    if (levelset) {
+      return { ...source, key, levelset, name };
+    }
+    return await fulfillFileLevels({
       ...source,
       key,
       name,
     });
-    return { file };
   },
 );
 const addLevelsetFileDoneData = sample({
@@ -199,9 +196,7 @@ export const setCurrentLevelset = createEvent<FilesStorageKey>();
 export const sortLevelsets = createEvent<readonly FilesStorageKey[]>();
 export const setCurrentLevelsetRo = createEvent<boolean>();
 
-export const fileDidOpen = addLevelsetFileDoneData.map(
-  ({ file: { key } }) => key,
-);
+export const fileDidOpen = addLevelsetFileDoneData.map(({ key }) => key);
 
 const _willSetCurrentKeyFx = createEffect((next: FilesStorageKey | null) => {
   _unsetCurrentKey();
@@ -245,15 +240,11 @@ const _removeOthersLevelsetFile = sample({
   filter: Boolean,
 });
 
-/**
- * Old < 0.6 interface before formats
- *
- * Any user can skip several >=0.6 versions, so `driverFormat` can still be
- * `undefined` for someone.
- */
 interface _DbLevelsetFile
-  extends Omit<LevelsetFileDataOld, "file">,
+  extends Omit<LevelsetFileData, "file" | "driverFormat">,
     FilesStorageItem {
+  // since 0.6, absent earlier
+  driverFormat?: string;
   fileBuffer: ArrayBuffer;
   _options?: LocalOptionsList;
 }
@@ -261,7 +252,7 @@ type _LevelsetsMap = ReadonlyMap<FilesStorageKey, LevelsetFile>;
 const updateOrders = (map: _LevelsetsMap): _LevelsetsMap =>
   new Map(
     Array.from(map)
-      .sort(([_1, av], [_2, bv]) => cmpLevelsetFiles(av, bv))
+      .sort(([, av], [, bv]) => cmpLevelsetFiles(av, bv))
       .map(([k, v], i) => {
         const order = i * 10;
         return [k, v.order === order ? v : { ...v, order }];
@@ -293,9 +284,7 @@ export const $levelsets = withPersistentMap(
       ...(ro && { ro }),
 
       // DEV update time for local debug purpose
-      ...(process.env.NODE_ENV === "development"
-        ? { _t: new Date().toISOString() }
-        : null),
+      ...(import.meta.env.DEV ? { _t: new Date().toISOString() } : null),
     }),
     unserialize: async ({
       name,
@@ -325,7 +314,7 @@ export const $levelsets = withPersistentMap(
   },
 )
   .on(updateLevelsetFile, (map, file) => RoMap.set(map, file.key, file))
-  .on(addLevelsetFileDoneData, (map, { file }) =>
+  .on(addLevelsetFileDoneData, (map, file) =>
     updateOrders(
       RoMap.set(
         map,

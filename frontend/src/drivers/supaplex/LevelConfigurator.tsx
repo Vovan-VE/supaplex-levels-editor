@@ -13,7 +13,7 @@ import { Checkbox, IntegerInput, useInputDebounce } from "ui/input";
 import { ColorType } from "ui/types";
 import { LevelConfiguratorProps } from "../types";
 import { InlineTile } from "./InlineTile";
-import { showSpecPortsDbDialog } from "./SpecPortsDbDialog";
+import { showSpecPortsDbDialog } from "./showSpecPortsDbDialog";
 import { ISupaplexLevel } from "./types";
 import { TILE_ELECTRON, TILE_INFOTRON } from "./tiles-id";
 import cl from "./LevelConfigurator.module.scss";

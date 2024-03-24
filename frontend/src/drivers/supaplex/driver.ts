@@ -6,11 +6,8 @@ import { detectExportFormat } from "./detectExportFormat";
 import { defaultFormat, formats } from "./formats";
 import { MPX } from "./formats/mpx";
 import { LevelConfigurator } from "./LevelConfigurator";
-import {
-  applyLocalOptions,
-  LevelLocalOptions,
-  parseLocalOptions,
-} from "./LevelLocalOptions";
+import { LevelLocalOptions } from "./LevelLocalOptions";
+import { applyLocalOptions, parseLocalOptions } from "./localOptions";
 import { ISupaplexDriver } from "./types";
 import { Tile } from "./Tile";
 import { borderTiles, fancyTiles, tiles } from "./tiles";

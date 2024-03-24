@@ -34,6 +34,7 @@ import {
   replace,
   rnd,
   SelectionEditor,
+  shuffle,
 } from "./selection-editors";
 import cl from "./SelectionEditButton.module.scss";
 
@@ -57,6 +58,7 @@ const EDITORS: readonly EditorsGroup[] = [
     editors: {
       flipH,
       flipV,
+      shuffle,
     },
     // rotate?
   },
@@ -91,7 +93,7 @@ const $run = $selectionSize.map((size) =>
               let result: ILevelRegion | null | undefined = undefined;
               if (Component) {
                 openSelectionEdit(name);
-                let unwatch: () => void;
+                let unwatch: (() => void) | undefined;
                 try {
                   result = await renderPrompt<ILevelRegion>((props) => {
                     const { show, onSubmit, onCancel } = props;
@@ -114,7 +116,7 @@ const $run = $selectionSize.map((size) =>
                     );
                   });
                 } finally {
-                  unwatch!?.();
+                  unwatch?.();
                   cancelSelectionEdit();
                 }
               } else if (instant) {

@@ -1,6 +1,7 @@
 import { IBounds, Rect } from "utils/rect";
 import {
   IsPlayableResult,
+  ITilesGrid,
   ITilesRegion,
   IWithDemo,
   IWithSignature,
@@ -38,7 +39,7 @@ export const enum SpecPortAlterMod {
   NOTHING = -1,
   TOGGLE = -2,
 }
-export type SpecPortAlterRaw = number & {};
+export type SpecPortAlterRaw = number & NonNullable<unknown>;
 export type SpecPortAlter = SpecPortAlterMod | SpecPortAlterRaw;
 export type SpecPortGravity = GravityStatic | SpecPortAlter;
 export type SpecPortFreezeZonks = FreezeZonksStatic | SpecPortAlter;
@@ -48,7 +49,6 @@ export interface ISupaplexSpecPortStringOptions {
   withZeros?: boolean;
 }
 export interface ISupaplexSpecPortsIO {
-  isStdCompatible(width: number): boolean;
   toString(o?: ISupaplexSpecPortStringOptions): string;
   toRaw(width: number): Uint8Array;
 }
@@ -65,6 +65,7 @@ export interface ISupaplexSpecPortRecordReadonly {
 export interface ISupaplexSpecPortRecord
   extends ISupaplexSpecPortRecordReadonly,
     ISupaplexSpecPortsIO {
+  isStdCompatible(width: number, tile: number): boolean;
   setX(x: number): ISupaplexSpecPortRecord;
   setY(y: number): ISupaplexSpecPortRecord;
   setGravity(v: SpecPortGravity): ISupaplexSpecPortRecord;
@@ -75,6 +76,7 @@ export interface ISupaplexSpecPortRecord
 export interface ISupaplexSpecPortDatabase extends ISupaplexSpecPortsIO {
   readonly count: number;
   readonly countStdCompatible: number;
+  isStdCompatible(tiles: ITilesGrid): boolean;
   getAll(): Iterable<ISupaplexSpecPortRecord>;
   copySpecPortsInRegion(r: Rect): ISupaplexSpecPortDatabase;
   clear(): ISupaplexSpecPortDatabase;

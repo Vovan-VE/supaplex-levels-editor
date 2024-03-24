@@ -39,7 +39,7 @@ describe("levelset", () => {
   it("getLevel", () => {
     const levelset = createLevelset(3);
 
-    let e = /^Invalid level index -?\d+$/;
+    const e = /^Invalid level index -?\d+$/;
     expect(() => levelset.getLevel(-2)).toThrow(e);
     expect(() => levelset.getLevel(-1)).toThrow(e);
     expect(() => levelset.getLevel(3)).toThrow(e);

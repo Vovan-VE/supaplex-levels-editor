@@ -25,6 +25,8 @@ export const $fileSupportsDemo = combine(
     (name && format && getDriverFormat(name, format)?.demoSupport) || false,
 );
 
+const hasOwn = Object.prototype.hasOwnProperty;
+
 const decodeDemoMessage = (data: any): DemoData | null => {
   if (typeof data === "string") {
     try {
@@ -32,9 +34,9 @@ const decodeDemoMessage = (data: any): DemoData | null => {
       if (
         typeof data === "object" &&
         data &&
-        data.hasOwnProperty("data") &&
-        data.hasOwnProperty("seed_hi") &&
-        data.hasOwnProperty("seed_lo") &&
+        hasOwn.call(data, "data") &&
+        hasOwn.call(data, "seed_hi") &&
+        hasOwn.call(data, "seed_lo") &&
         typeof data.data === "string" &&
         typeof data.seed_hi === "number" &&
         typeof data.seed_lo === "number" &&
@@ -61,7 +63,7 @@ const _receivedDemo = sample({
   filter: Boolean,
 });
 
-if (process.env.NODE_ENV === "development") {
+if (import.meta.env.DEV) {
   // since we cannot receive `postMessage()` sent to production origin,
   // we can "proxy" it manually
   (window as any).__DEV__receivedDemoFromTest = receivedDemoFromTest;

@@ -7,6 +7,7 @@ import {
   SpecPortFreezeZonks,
   SpecPortGravity,
 } from "./internal";
+import { isSpecPort } from "./tiles-id";
 
 const coordsToOffsetNumber = (x: number, y: number, width: number) =>
   (y * width + x) << 1;
@@ -95,8 +96,9 @@ class SpecPortRecord implements ISupaplexSpecPortRecord {
     });
   }
 
-  isStdCompatible(width: number): boolean {
+  isStdCompatible(width: number, tile: number): boolean {
     return (
+      isSpecPort(tile) &&
       isOffsetNumberValid(coordsToOffsetNumber(this.#x, this.#y, width)) &&
       this.#gravity >= 0 &&
       this.#freezeZonks >= 0 &&

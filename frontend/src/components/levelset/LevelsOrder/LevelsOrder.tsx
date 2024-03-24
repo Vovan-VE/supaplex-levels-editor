@@ -1,28 +1,22 @@
-import { FC, forwardRef, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IBaseLevel } from "drivers";
 import { Trans } from "i18n/Trans";
 import { LevelBuffer } from "models/levelsets";
-import { Button, TextButton } from "ui/button";
-import { Dialog, renderPrompt, RenderPromptProps } from "ui/feedback";
-import { svgs } from "ui/icon";
-import { SortableItemProps, SortableList } from "ui/list";
+import { Button } from "ui/button";
+import { Dialog, RenderPromptProps } from "ui/feedback";
+import { SortableList } from "ui/list";
 import { ColorType } from "ui/types";
+import { ItemRender } from "./ItemRender";
+import { Options } from "./types";
 import cl from "./LevelsOrder.module.scss";
 
 type I = LevelBuffer<IBaseLevel>;
 type V = readonly I[];
 
-interface Options {
-  levels: V;
-}
-
-export const promptLevelsOrder = (o: Options) =>
-  renderPrompt<V>((p) => <LevelsOrder {...p} {...o} />);
-
 interface Props extends RenderPromptProps<V>, Options {}
 
-const LevelsOrder: FC<Props> = ({
+export const LevelsOrder: FC<Props> = ({
   show,
   onSubmit,
   onCancel,
@@ -76,7 +70,7 @@ const LevelsOrder: FC<Props> = ({
 
       <div
         className={cl.list}
-        style={{ "--idx-chars": String(levels.length).length } as {}}
+        style={{ "--idx-chars": String(levels.length).length } as object}
       >
         <SortableList
           items={levels}
@@ -88,27 +82,3 @@ const LevelsOrder: FC<Props> = ({
     </Dialog>
   );
 };
-
-const ItemRender = forwardRef<HTMLDivElement, SortableItemProps<I>>(
-  (
-    {
-      item: {
-        undoQueue: { current: level },
-      },
-      itemProps,
-      handleProps,
-      index,
-    },
-    ref,
-  ) => (
-    <div ref={ref} {...itemProps} className={cl.item}>
-      <div className={cl.index}>{index + 1}</div>
-      <div className={cl.title}>{level.title}</div>
-      <TextButton
-        {...handleProps}
-        icon={<svgs.DragV />}
-        className={cl.handle}
-      />
-    </div>
-  ),
-);

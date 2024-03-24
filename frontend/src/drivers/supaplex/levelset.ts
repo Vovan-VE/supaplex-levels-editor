@@ -4,23 +4,21 @@ import { LocalOptionsList } from "../types";
 import { createNewLevel } from "./level";
 import { ISupaplexLevel, ISupaplexLevelset } from "./types";
 
-const validateLevelsCount =
-  process.env.NODE_ENV === "production"
-    ? undefined
-    : (count: number) => {
-        if (count < 1) {
-          throw new RangeError("Invalid levels count");
-        }
-      };
+const validateLevelsCount = import.meta.env.PROD
+  ? undefined
+  : (count: number) => {
+      if (count < 1) {
+        throw new RangeError("Invalid levels count");
+      }
+    };
 
-const validateLevelsIndex =
-  process.env.NODE_ENV === "production"
-    ? undefined
-    : (index: number, count: number) => {
-        if (!isOffsetInRange(index, 0, count)) {
-          throw new RangeError(`Invalid level index ${index}`);
-        }
-      };
+const validateLevelsIndex = import.meta.env.PROD
+  ? undefined
+  : (index: number, count: number) => {
+      if (!isOffsetInRange(index, 0, count)) {
+        throw new RangeError(`Invalid level index ${index}`);
+      }
+    };
 
 const newLevels = (count: number) => {
   const result: ISupaplexLevel[] = [];
@@ -89,7 +87,7 @@ class SupaplexLevelset implements ISupaplexLevelset {
 
   removeLevel(index: number) {
     validateLevelsIndex?.(index, this.levelsCount);
-    if (process.env.NODE_ENV !== "production" && this.levelsCount === 1) {
+    if (!import.meta.env.PROD && this.levelsCount === 1) {
       throw new RangeError(`Cannot remove the last one level`);
     }
     const copy = this.copy();

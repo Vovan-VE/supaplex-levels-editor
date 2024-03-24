@@ -2,24 +2,10 @@ import { FC } from "react";
 import { InfoDetails, VersionTag } from "backend";
 import { APP_TITLE, APP_VERSION } from "configs";
 import { Trans } from "i18n/Trans";
-import { msgBox } from "ui/feedback";
 import { UpgradeLink } from "./UpgradeLink";
 import cl from "./InfoContent.module.scss";
 
-export const showInfoDialog = () =>
-  msgBox(<InfoContent />, {
-    size: "full",
-    closeSetAutoFocus: true,
-    button: {
-      text: "Close",
-      autoFocus: false,
-    },
-  });
-
-const VersionTagC = VersionTag;
-const UpgradeLinkC = UpgradeLink;
-
-const InfoContent: FC = () => (
+export const InfoContent: FC = () => (
   <div className={cl.root}>
     <img
       src="/favicon.svg"
@@ -32,13 +18,13 @@ const InfoContent: FC = () => (
       {APP_TITLE}{" "}
       <span>
         v{APP_VERSION}
-        {VersionTagC && (
+        {VersionTag && (
           <>
             {" "}
-            (<VersionTagC />)
+            (<VersionTag />)
           </>
         )}
-        {UpgradeLinkC && <UpgradeLinkC />}
+        {UpgradeLink && <UpgradeLink />}
       </span>
     </h1>
     <p>

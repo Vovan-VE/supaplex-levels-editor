@@ -1,24 +1,6 @@
 import { FC, ReactElement, Suspense, useEffect, useRef, useState } from "react";
 import * as RoMap from "@cubux/readonly-map";
-
-export type DialogContainerNode = {
-  readonly index: number;
-  render(node: ReactElement): void;
-  delete(): void;
-};
-
-interface IContainer {
-  add(): DialogContainerNode;
-}
-
-let container: IContainer | null = null;
-
-export const getPromptContainer = () => {
-  if (!container) {
-    throw new Error(`PromptContainer does not exist`);
-  }
-  return container;
-};
+import { setContainer, unsetContainer } from "./container";
 
 export const PromptContainer: FC = () => {
   const refId = useRef(0);
@@ -27,14 +9,9 @@ export const PromptContainer: FC = () => {
   );
 
   useEffect(() => {
-    if (container) {
-      throw new Error(`PromptContainer already exist`);
-    }
-
-    const me = (container = {
+    setContainer({
       add() {
         const id = ++refId.current;
-
         return {
           index: id,
           render: (node) => setInstances((map) => RoMap.set(map, id, node)),
@@ -42,12 +19,7 @@ export const PromptContainer: FC = () => {
         };
       },
     });
-
-    return () => {
-      if (container === me) {
-        container = null;
-      }
-    };
+    return unsetContainer;
   }, []);
 
   return (

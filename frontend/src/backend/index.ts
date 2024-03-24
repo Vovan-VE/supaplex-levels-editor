@@ -42,6 +42,9 @@ export const saveFileAs: B.SaveFileAs = IS_WAILS
 export const getClipboardText: B.GetClipboardText = IS_WAILS
   ? wails.getClipboardText
   : web.getClipboardText;
+export const setClipboardText: B.SetClipboardText = IS_WAILS
+  ? wails.setClipboardText
+  : web.setClipboardText;
 
 export const setTitle: B.SetTitle = IS_WAILS ? wails.setTitle : web.setTitle;
 export const setIsDirty: B.SetIsDirty | undefined = IS_WAILS

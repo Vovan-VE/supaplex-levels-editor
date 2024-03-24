@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "ui/button";
-import { Dialog, renderPrompt, RenderPromptProps } from "ui/feedback";
+import { Dialog, RenderPromptProps } from "ui/feedback";
 import { ColorType } from "ui/types";
 import { LevelConfig } from "./LevelConfig";
 import { LevelDriverConfig } from "./LevelDriverConfig";
@@ -9,7 +9,7 @@ import cl from "./LevelConfigDialog.module.scss";
 
 interface Props extends RenderPromptProps<true | undefined> {}
 
-const LevelConfigDialog: FC<Props> = ({ show, onSubmit }) => {
+export const LevelConfigDialog: FC<Props> = ({ show, onSubmit }) => {
   const { t } = useTranslation();
   return (
     <Dialog
@@ -29,6 +29,3 @@ const LevelConfigDialog: FC<Props> = ({ show, onSubmit }) => {
     </Dialog>
   );
 };
-
-export const promptLevelConfig = () =>
-  renderPrompt((props) => <LevelConfigDialog {...props} />);

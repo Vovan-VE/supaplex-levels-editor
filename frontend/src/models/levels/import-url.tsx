@@ -45,7 +45,7 @@ export const importLevelAsLink = async (url: string) => {
   const { parseLocalOptions, detectExportFormat } = getDriver(driverName)!;
   const { readLevelset } = getDriverFormat(driverName, formatName)!;
 
-  const levelset = readLevelset(raw);
+  let levelset = readLevelset(raw);
   let level = levelset.getLevel(0);
   if (parseLocalOptions) {
     level = parseLocalOptions(u, level);
@@ -58,10 +58,12 @@ export const importLevelAsLink = async (url: string) => {
     driverName,
     outFormat,
   );
-  return new File(
-    [writeLevelset(levelset.setLevel(0, level))],
-    "clipboard." + fileExtensionDefault,
-  );
+  levelset = levelset.setLevel(0, level);
+  return {
+    file: new File(
+      [writeLevelset(levelset)],
+      "clipboard." + fileExtensionDefault,
+    ),
+    levelset,
+  };
 };
-
-// - as new file

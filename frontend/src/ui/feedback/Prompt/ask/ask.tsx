@@ -36,7 +36,7 @@ const createDefaultButtonsRenderer =
     </>
   );
 
-function ask_<V = true, P = {}>(
+function ask_<V = true, P = object>(
   content: ReactNode,
   { buttons, buttonsProps, ...options }: AskOptions<V, P> = {},
 ) {
@@ -54,7 +54,7 @@ function ask_<V = true, P = {}>(
           typeof buttons === "function"
             ? buttons({
                 ...buttonsProps,
-                onSubmit: onSubmit as any,
+                onSubmit,
                 onCancel,
                 defaults: defaultButtonsRenderer,
               } as AskButtonsRenderProps<V> & P)

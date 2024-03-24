@@ -53,7 +53,7 @@ type DrawState = DefineRect | StableRect;
 
 const fillRegionInLevel = (level: IBaseLevel, r: Rect, tile: number) =>
   level.batch((level) => {
-    let { x, y, width, height } = clipRect(r, level);
+    const { x, y, width, height } = clipRect(r, level);
     for (let j = 0; j < height; j++) {
       for (let i = 0; i < width; i++) {
         level = level.setTile(x + i, y + j, tile, true);
@@ -89,7 +89,7 @@ const {
     let { drawState, level } = prev;
     // already have previous selection
     if (drawState?.op === Op.STABLE) {
-      let { x: cx, y: cy } = drawState;
+      const { x: cx, y: cy } = drawState;
       // starting with pointer inside previous selection
       if (inRect(x, y, drawState)) {
         // it means "drag" selected region

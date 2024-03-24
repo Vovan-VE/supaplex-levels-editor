@@ -1,4 +1,5 @@
 import { createEffect, createEvent, merge, sample } from "effector";
+import { setClipboardText } from "backend";
 import { TEST_DEMO_URL, TEST_LEVEL_URL } from "configs";
 import {
   getDriver,
@@ -45,12 +46,17 @@ export const exportLevelAsLink = async (
 export const copyLevelAsTestLink = createEvent<any>();
 export const copyLevelAsDemoLink = createEvent<any>();
 
-const copyText = (text: string) => window.navigator.clipboard.writeText(text);
-const copyLevelAsTextLinkFx = createEffect(async (level: IBaseLevel) =>
-  copyText((await exportLevelAsLink(level, TEST_LEVEL_URL, false)).toString()),
+const copyLevelAsTextLinkFx = createEffect(
+  async (level: IBaseLevel) =>
+    await setClipboardText(
+      (await exportLevelAsLink(level, TEST_LEVEL_URL, false)).toString(),
+    ),
 );
-const copyLevelAsDemoLinkFx = createEffect(async (level: IBaseLevel) =>
-  copyText((await exportLevelAsLink(level, TEST_DEMO_URL, true)).toString()),
+const copyLevelAsDemoLinkFx = createEffect(
+  async (level: IBaseLevel) =>
+    await setClipboardText(
+      (await exportLevelAsLink(level, TEST_DEMO_URL, true)).toString(),
+    ),
 );
 merge([copyLevelAsTextLinkFx.done, copyLevelAsDemoLinkFx.done]).watch(() =>
   showToast({

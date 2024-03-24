@@ -11,7 +11,7 @@ interface Options {
 }
 
 export const renderContent = (
-  { icon, iconPosition, iconStack, loading = false, uiColor }: OwnProps,
+  { icon, iconPosition, iconStack, loading = false /*, uiColor*/ }: OwnProps,
   children: ReactNode,
   {
     wrapClassName,

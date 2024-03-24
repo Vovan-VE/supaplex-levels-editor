@@ -24,8 +24,13 @@
 - tooltip for a tile/coords (in dialogs) to display part of level as context
 - Import/Open level compatibility report has text from "convert file" context
 - A `Dialog` don't block hotkeys behind
-
-- `class UserError extends Error {}`, `new UserError(t => t(...))`
+- Open ZIP with options
+  - Entire ZIP
+  - Add options.json to opened files
+- Hovered cell hex don't use selection content
+- `class UserError extends Error {}`
+- Own file format, editor specific: JSON + schema
+  - Problem: users will use it in levels upload request instead of exported
 
 ### Desktop
 

@@ -99,7 +99,7 @@ const DrawLayerTiles: FC<DrawLayerProps<DrawLayerType.TILES> & VR> = ({
                 {
                   "--x": LX + x,
                   "--y": LY + y,
-                } as {}
+                } as object
               }
             />,
           );
@@ -138,7 +138,7 @@ const DrawLayerTilesRegion: FC<
             "--x": x + LX,
             "--y": y + LY,
             "--w": n,
-          } as {}
+          } as object
         }
       />,
     );
@@ -159,7 +159,7 @@ const DrawLayerTileFill = memo<DrawLayerProps<DrawLayerType.TILE_FILL>>(
             "--y": y,
             "--w": width,
             "--h": height,
-          } as {}
+          } as object
         }
       />
     );
@@ -181,7 +181,7 @@ const DrawLayerSelectRange = memo<DrawLayerProps<DrawLayerType.SELECT_RANGE>>(
           "--y": y,
           "--w": width,
           "--h": height,
-        } as {}
+        } as object
       }
     />
   ),
@@ -212,7 +212,7 @@ const FeedbackLayer: FC<ContainerProps> = ({ className, ...rest }) => {
             {
               "--x": feedback.x,
               "--y": feedback.y,
-            } as {}
+            } as object
           }
         />
       )}

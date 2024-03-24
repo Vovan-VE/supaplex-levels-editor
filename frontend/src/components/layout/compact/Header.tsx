@@ -2,7 +2,7 @@ import cn from "classnames";
 import { useUnit } from "effector-react";
 import { FC, Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { ReactComponent as GitHubLogo } from "assets/img/github.svg";
+import GitHubLogo from "assets/img/github.svg?react";
 import { showInfoDialog, ZoomButtons } from "components/common";
 import { EditorTabs, FilesToolbar, FileToolbar } from "components/files";
 import {

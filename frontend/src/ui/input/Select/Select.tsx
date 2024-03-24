@@ -11,9 +11,9 @@ import RSelect, {
   MultiValueProps,
   OptionProps,
   Props as RSelectProps,
+  SelectInstance,
   SingleValueProps,
 } from "react-select";
-import type SelectClass from "react-select/dist/declarations/src/Select";
 import { AnyKey } from "@cubux/types";
 import { ClickOutside } from "ui/helpers";
 import { IconContainer } from "ui/icon";
@@ -93,7 +93,7 @@ export const Select: ISelect = <
   // props: Props<V, IsMulti>,
   props: PropsMulti<V> | PropsSingle<V>,
 ) => {
-  const ref = useRef<SelectClass<SelectOption<V>, boolean> | null>(null);
+  const ref = useRef<SelectInstance<SelectOption<V>, boolean> | null>(null);
   const [isOpened, setOpened] = useState(false);
   const handleOpen = useCallback(() => setOpened(true), []);
   const handleClose = useCallback(() => setOpened(false), []);

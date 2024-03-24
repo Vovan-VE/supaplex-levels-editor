@@ -1,9 +1,8 @@
 import { CSSProperties, FC, ReactElement, ReactNode } from "react";
 import { TranslationGetter } from "i18n/types";
-import {
-  CellContextEventSnapshot,
-  PenShapeStructures,
-} from "models/levels/tools/interface";
+import { PenShapeStructures } from "ui/drawing";
+import { CellContextEventSnapshot } from "ui/grid-events";
+import { isNotNull } from "utils/fn";
 import { IBounds, Point2D, Rect } from "utils/rect";
 
 export interface ISizeLimit {
@@ -57,8 +56,10 @@ export const levelSupportSignature = (level: any): level is IWithSignature =>
   level !== null &&
   typeof level.setSignature === "function";
 
-export interface ITilesRegion extends IBounds {
+export interface ITilesGrid extends IBounds {
   getTile(x: number, y: number): number;
+}
+export interface ITilesRegion extends ITilesGrid {
   // TODO: getTileVariant(x: number, y: number): number | undefined;
   tilesRenderStream(
     x: number,
@@ -91,6 +92,29 @@ export const enum FlipDirection {
 
 export type LocalOptions = Record<string, any>;
 export type LocalOptionsList = readonly (LocalOptions | null | undefined)[];
+export type LocalOptionsTable = Record<`${number}`, LocalOptions>;
+
+export const serializeLocalOptionsList = (
+  l: LocalOptionsList,
+): LocalOptionsTable =>
+  Object.fromEntries(
+    l.map((o, i) => (o ? ([i + 1, o] as const) : undefined)).filter(isNotNull),
+  );
+
+// And what then should I do with Undo history? Every level has its own undo,
+// but not entire levelset.
+// export const unserializeLocalOptionsList = (
+//   lt: LocalOptionsTable,
+// ): LocalOptionsList => {
+//   const a: (LocalOptions | undefined)[] = [];
+//   for (const [k, o] of Object.entries(lt)) {
+//     const n = parseInt(k);
+//     if (Number.isInteger(n) && n > 0 && String(n) === k) {
+//       a[n - 1] = o;
+//     }
+//   }
+//   return a;
+// };
 
 export interface IBaseLevel extends ITilesRegion {
   readonly raw: Uint8Array;
@@ -236,6 +260,14 @@ export interface DemoToTextConfigProps<P extends object = object> {
   options: P;
   onChange: (options: P) => void;
 }
+export interface DemoToTextResult {
+  text: string;
+  duration: number;
+}
+export interface DemoFromTextResult {
+  demo: Uint8Array | null;
+  duration: number;
+}
 
 export interface IBaseDriver<
   L extends IBaseLevel = IBaseLevel,
@@ -262,6 +294,6 @@ export interface IBaseDriver<
   cmpLevels?: (a: L, b: L) => DiffItem[];
   DemoToTextConfig?: FC<DemoToTextConfigProps>;
   DemoToTextHelp?: FC;
-  demoToText?: (demo: Uint8Array | null, options?: object) => string;
-  demoFromText?: (text: string) => Uint8Array | null;
+  demoToText?: (demo: Uint8Array | null, options?: object) => DemoToTextResult;
+  demoFromText?: (text: string) => DemoFromTextResult;
 }

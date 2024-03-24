@@ -27,6 +27,8 @@ export interface SortableListProps<
   direction?: SortDirection;
 }
 
+const hasOwn = Object.prototype.hasOwnProperty;
+
 export type IdGetter<T, ID extends ValidKey> = (item: T) => ID;
 export const defaultIdGetter = <ID extends ValidKey = ValidKey>(
   item: any,
@@ -36,7 +38,7 @@ export const defaultIdGetter = <ID extends ValidKey = ValidKey>(
   }
   if (typeof item === "object" && item) {
     for (const k of ["key", "id"]) {
-      if (item.hasOwnProperty(k) && isValidKey(item[k])) {
+      if (hasOwn.call(item, k) && isValidKey(item[k])) {
         return item[k];
       }
     }

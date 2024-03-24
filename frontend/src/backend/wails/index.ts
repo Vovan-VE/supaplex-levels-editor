@@ -12,6 +12,7 @@ export { openFile } from "./openFile";
 export { onOpenFile } from "./trigger";
 export { saveFileAs } from "./saveFileAs";
 export { ClipboardGetText as getClipboardText } from "./runtime";
+export { ClipboardSetText as setClipboardText } from "./runtime";
 
 export { WindowSetTitle as setTitle } from "./runtime";
 export { SetIsDirty as setIsDirty } from "./go/main/App";

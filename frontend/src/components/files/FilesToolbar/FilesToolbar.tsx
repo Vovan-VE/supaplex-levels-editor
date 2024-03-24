@@ -23,7 +23,7 @@ const handleOpenTestLink = async () => {
       });
       return;
     }
-    const file = await importLevelAsLink(text);
+    const { file, levelset } = await importLevelAsLink(text);
     const whatIsThat = detectDriverFormat(await file.arrayBuffer(), file.name);
     const [driverName, driverFormat] = whatIsThat!;
     await addLevelsetFileFx({
@@ -31,6 +31,7 @@ const handleOpenTestLink = async () => {
       driverName,
       driverFormat,
       name: file.name,
+      levelset,
     });
   } catch (e) {
     showToastError(e);

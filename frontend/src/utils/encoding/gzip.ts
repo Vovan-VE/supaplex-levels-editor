@@ -1,5 +1,9 @@
+interface CompressionConstructor {
+  new (format: CompressionFormat): GenericTransformStream;
+}
+
 const mkPipe =
-  (pipeCtor: CompressionStreamConstructor) => async (input: ArrayBuffer) =>
+  (pipeCtor: CompressionConstructor) => async (input: ArrayBuffer) =>
     await (
       await new Response(
         new Blob([input], { type: "application/octet-stream" })

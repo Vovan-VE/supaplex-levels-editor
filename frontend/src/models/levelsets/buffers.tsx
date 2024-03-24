@@ -30,6 +30,8 @@ import {
   IBaseLevel,
   IBaseLevelset,
   levelSupportsDemo,
+  LocalOptions,
+  serializeLocalOptionsList,
   summarySupportReport,
   SupportReportType,
 } from "drivers";
@@ -39,7 +41,6 @@ import { Trans } from "i18n/Trans";
 import { TranslationGetter } from "i18n/types";
 import { msgBox } from "ui/feedback";
 import { ColorType } from "ui/types";
-import { isNotNull } from "utils/fn";
 import { IBounds } from "utils/rect";
 import { $autoSave, $autoSaveDelay } from "../settings";
 import {
@@ -111,7 +112,11 @@ fileDidOpen.watch((key) => {
   setCurrentLevel(0);
 });
 export const exportCurrentLevel = createEvent<any>();
-export const importCurrentLevel = createEvent<File>();
+interface ImportLevelParams {
+  file: File;
+  levelset?: IBaseLevelset<IBaseLevel>;
+}
+export const importCurrentLevel = createEvent<ImportLevelParams>();
 /**
  * Insert new level in current level index in current levelset
  */
@@ -667,15 +672,7 @@ sample({
       zip.file(file.name, file.file.arrayBuffer());
       zip.file(
         `${file.name}.options.json`,
-        JSON.stringify(
-          Object.fromEntries(
-            localOptions
-              .map((o, i) => (o ? ([i + 1, o] as const) : undefined))
-              .filter(isNotNull),
-          ),
-          null,
-          2,
-        ) + "\n",
+        JSON.stringify(serializeLocalOptionsList(localOptions), null, 2) + "\n",
       );
       saveFileAs(await zip.generateAsync({ type: "blob" }), `${file.name}.zip`);
     } else {
@@ -798,7 +795,7 @@ let _$dirtyKeys: Store<ReadonlySet<FilesStorageKey>>;
         return list;
       }, []),
   });
-  if (process.env.NODE_ENV === "development") {
+  if (import.meta.env.DEV) {
     _flushActually.watch((list) => {
       if (list.length) {
         console.info(
@@ -977,7 +974,12 @@ sample({
   }
 
   const importCurrentLevelFx = createEffect(
-    async ({ file, driverName, driverFormat }: { file: File } & DriverOpt) => {
+    async ({
+      file,
+      levelset,
+      driverName,
+      driverFormat,
+    }: ImportLevelParams & DriverOpt) => {
       const { formats } = getDriver(driverName)!;
       const { createLevelset, readLevelset, supportReport, writeLevelset } =
         formats[driverFormat];
@@ -992,7 +994,12 @@ sample({
       }
       const from = formats[fromFormat];
 
-      let levelset = from.readLevelset(await file.arrayBuffer());
+      let localOptions: LocalOptions | undefined = undefined;
+      if (levelset) {
+        localOptions = levelset.getLevel(0).localOptions;
+      } else {
+        levelset = from.readLevelset(await file.arrayBuffer());
+      }
       const report = summarySupportReport(supportReport(levelset));
       if (report?.type === SupportReportType.ERR) {
         return { report };
@@ -1001,7 +1008,10 @@ sample({
       levelset = readLevelset(
         writeLevelset(createLevelset([levelset.getLevel(0)])),
       );
-      return { level: levelset.getLevel(0), report };
+      return {
+        level: levelset.getLevel(0).setLocalOptions(localOptions),
+        report,
+      };
     },
   );
   sample({
@@ -1011,7 +1021,7 @@ sample({
       driverFormat: $currentDriverFormat,
     },
     filter: (o): o is DriverOpt => Boolean(o.driverName && o.driverFormat),
-    fn: (s: DriverOpt, file: File) => ({ ...s, file }),
+    fn: (s: DriverOpt, f: ImportLevelParams) => ({ ...s, ...f }),
     target: importCurrentLevelFx,
   });
 
