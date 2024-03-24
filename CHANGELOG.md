@@ -5,6 +5,9 @@
 - Add: Experimental support for multiple languages. Russian language added.
 - Fix: FireFox cannot read text from clipboard (open/import test url).
 - Fix: Open/import level by test/demo url loss local options.
+- Fix: Export test/demo url could miss `pd=` (spec ports db) param, when spec
+  ports db itself is std compatible without notice, that some port actually is
+  not special port tile.
 
 ## 0.19.0 (2024-03-03)
 

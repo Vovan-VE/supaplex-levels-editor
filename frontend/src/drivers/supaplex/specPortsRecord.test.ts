@@ -11,6 +11,7 @@ import {
   GravityStatic,
   SpecPortAlterMod,
 } from "./internal";
+import { TILE_PORT_U, TILE_SP_PORT_U } from "./tiles-id";
 
 it("spec port coords", () => {
   expect(specPortCoordsToOffset(0, 0, 60)).toEqual([0, 0]);
@@ -156,7 +157,7 @@ describe("SpecPortRecord", () => {
       .setUnusedByte(42);
 
     it("ok", () => {
-      expect(ok.isStdCompatible(WIDTH)).toBe(true);
+      expect(ok.isStdCompatible(WIDTH, TILE_SP_PORT_U)).toBe(true);
       // > ((53 * 613 + 278) * 2).toString(16)
       //   => 'fffe'
       expect(ok.toRaw(WIDTH)).toEqual(Uint8Array.of(0xff, 0xfe, 1, 2, 1, 42));
@@ -164,7 +165,7 @@ describe("SpecPortRecord", () => {
     });
     it("zero", () => {
       const zero = newSpecPortRecord(0, 0);
-      expect(zero.isStdCompatible(WIDTH)).toBe(true);
+      expect(zero.isStdCompatible(WIDTH, TILE_SP_PORT_U)).toBe(true);
       expect(zero.toRaw(WIDTH)).toEqual(Uint8Array.of(0, 0, 0, 0, 0, 0));
       expect(zero.toString()).toBe("x0y0");
     });
@@ -172,7 +173,7 @@ describe("SpecPortRecord", () => {
     it("x overflow", () => {
       const bad = ok.setX(279);
 
-      expect(bad.isStdCompatible(WIDTH)).toBe(false);
+      expect(bad.isStdCompatible(WIDTH, TILE_SP_PORT_U)).toBe(false);
       // > ((53 * 613 + 279) * 2).toString(16)
       //   => '10000'
       expect(bad.toRaw(WIDTH)).toEqual(Uint8Array.of(0x0, 0x0, 1, 2, 1, 42));
@@ -181,7 +182,7 @@ describe("SpecPortRecord", () => {
     it("y overflow", () => {
       const bad = ok.setY(54);
 
-      expect(bad.isStdCompatible(WIDTH)).toBe(false);
+      expect(bad.isStdCompatible(WIDTH, TILE_SP_PORT_U)).toBe(false);
       // > ((54 * 613 + 278) * 2).toString(16)
       //   => '104c8'
       expect(bad.toRaw(WIDTH)).toEqual(Uint8Array.of(0x04, 0xc8, 1, 2, 1, 42));
@@ -190,44 +191,48 @@ describe("SpecPortRecord", () => {
     it("gravity keep", () => {
       const bad = ok.setGravity(SpecPortAlterMod.NOTHING);
 
-      expect(bad.isStdCompatible(WIDTH)).toBe(false);
+      expect(bad.isStdCompatible(WIDTH, TILE_SP_PORT_U)).toBe(false);
       expect(bad.toRaw(WIDTH)).toEqual(Uint8Array.of(0xff, 0xfe, 0, 2, 1, 42));
       expect(bad.toString()).toBe("x278y53g-1z2e1u42");
     });
     it("gravity toggle", () => {
       const bad = ok.setGravity(SpecPortAlterMod.TOGGLE);
 
-      expect(bad.isStdCompatible(WIDTH)).toBe(false);
+      expect(bad.isStdCompatible(WIDTH, TILE_SP_PORT_U)).toBe(false);
       expect(bad.toRaw(WIDTH)).toEqual(Uint8Array.of(0xff, 0xfe, 0, 2, 1, 42));
       expect(bad.toString()).toBe("x278y53g-2z2e1u42");
     });
     it("freeze zonks keep", () => {
       const bad = ok.setFreezeZonks(SpecPortAlterMod.NOTHING);
 
-      expect(bad.isStdCompatible(WIDTH)).toBe(false);
+      expect(bad.isStdCompatible(WIDTH, TILE_SP_PORT_U)).toBe(false);
       expect(bad.toRaw(WIDTH)).toEqual(Uint8Array.of(0xff, 0xfe, 1, 0, 1, 42));
       expect(bad.toString()).toBe("x278y53g1z-1e1u42");
     });
     it("freeze zonks toggle", () => {
       const bad = ok.setFreezeZonks(SpecPortAlterMod.TOGGLE);
 
-      expect(bad.isStdCompatible(WIDTH)).toBe(false);
+      expect(bad.isStdCompatible(WIDTH, TILE_SP_PORT_U)).toBe(false);
       expect(bad.toRaw(WIDTH)).toEqual(Uint8Array.of(0xff, 0xfe, 1, 0, 1, 42));
       expect(bad.toString()).toBe("x278y53g1z-2e1u42");
     });
     it("freeze enemies keep", () => {
       const bad = ok.setFreezeEnemies(SpecPortAlterMod.NOTHING);
 
-      expect(bad.isStdCompatible(WIDTH)).toBe(false);
+      expect(bad.isStdCompatible(WIDTH, TILE_SP_PORT_U)).toBe(false);
       expect(bad.toRaw(WIDTH)).toEqual(Uint8Array.of(0xff, 0xfe, 1, 2, 0, 42));
       expect(bad.toString()).toBe("x278y53g1z2e-1u42");
     });
     it("freeze enemies toggle", () => {
       const bad = ok.setFreezeEnemies(SpecPortAlterMod.TOGGLE);
 
-      expect(bad.isStdCompatible(WIDTH)).toBe(false);
+      expect(bad.isStdCompatible(WIDTH, TILE_SP_PORT_U)).toBe(false);
       expect(bad.toRaw(WIDTH)).toEqual(Uint8Array.of(0xff, 0xfe, 1, 2, 0, 42));
       expect(bad.toString()).toBe("x278y53g1z2e-2u42");
+    });
+    it("not spe-port tile", () => {
+      const zero = newSpecPortRecord(0, 0);
+      expect(zero.isStdCompatible(WIDTH, TILE_PORT_U)).toBe(false);
     });
   });
 

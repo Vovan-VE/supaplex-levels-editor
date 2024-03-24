@@ -24,7 +24,6 @@
 - tooltip for a tile/coords (in dialogs) to display part of level as context
 - Import/Open level compatibility report has text from "convert file" context
 - A `Dialog` don't block hotkeys behind
-- BUG: SpLE thinks it's a usual (std compatible) specport db record without notice it was set to not a special port tile.
 - Display demo total duration
 - Open ZIP with options
   - Entire ZIP

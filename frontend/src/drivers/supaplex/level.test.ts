@@ -27,6 +27,7 @@ import { newSpecPortRecord } from "./specPortsRecord";
 import {
   TILE_HARDWARE,
   TILE_INFOTRON,
+  TILE_PORT_D,
   TILE_PORT_H,
   TILE_PORT_V,
   TILE_SP_PORT_D,
@@ -734,10 +735,24 @@ describe("level", () => {
 
       // std compatible
       expect(
-        level.setLocalOptions({
-          [LocalOpt.PortsDatabase]: "x10y20g1z2,x5y6g0z7u97",
-        }).localOptions,
+        level
+          .setTile(10, 20, TILE_SP_PORT_U)
+          .setTile(5, 6, TILE_SP_PORT_D)
+          .setLocalOptions({
+            [LocalOpt.PortsDatabase]: "x10y20g1z2,x5y6g0z7u97",
+          }).localOptions,
       ).toBeUndefined();
+      // not std compatible
+      expect(
+        level
+          .setTile(10, 20, TILE_SP_PORT_U)
+          .setTile(5, 6, TILE_PORT_D)
+          .setLocalOptions({
+            [LocalOpt.PortsDatabase]: "x10y20g1z2,x5y6g0z7u97",
+          }).localOptions,
+      ).toEqual({
+        [LocalOpt.PortsDatabase]: "x10y20g1z2,x5y6z7u97",
+      });
     });
 
     it("all together", () => {

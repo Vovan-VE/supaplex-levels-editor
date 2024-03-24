@@ -494,7 +494,7 @@ class SupaplexLevel implements ISupaplexLevel {
     if (this.initialFreezeEnemies) {
       o[LocalOpt.InitialFreezeEnemies] = 1;
     }
-    if (!this.#specports.isStdCompatible(this.width)) {
+    if (!this.#specports.isStdCompatible(this)) {
       o[LocalOpt.PortsDatabase] = this.#specports.toString();
     }
     if (isEmptyObject(o)) {

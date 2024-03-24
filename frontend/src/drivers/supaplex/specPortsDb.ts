@@ -1,5 +1,6 @@
 import * as RoMap from "@cubux/readonly-map";
 import { inRect, Point2D, Rect } from "utils/rect";
+import { ITilesGrid } from "../types";
 import {
   SPEC_PORT_ITEM_LENGTH,
   SPEC_PORT_MAX_COUNT,
@@ -29,12 +30,12 @@ class SpecPortsDatabase implements ISupaplexSpecPortDatabase {
     this.#ports = ports ? RoMap.fromArray(ports, keyPort) : new Map();
   }
 
-  isStdCompatible(width: number): boolean {
+  isStdCompatible(tiles: ITilesGrid): boolean {
     if (this.#ports.size > SPEC_PORT_MAX_COUNT) {
       return false;
     }
     for (const p of this.#ports.values()) {
-      if (!p.isStdCompatible(width)) {
+      if (!p.isStdCompatible(tiles.width, tiles.getTile(p.x, p.y))) {
         return false;
       }
     }

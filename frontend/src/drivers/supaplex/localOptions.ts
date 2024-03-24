@@ -62,7 +62,7 @@ export const applyLocalOptions = <L extends ISupaplexLevel>(
     // TODO: byte
     p.set(P_FREEZE_ENEMIES, "1");
   }
-  if (!level.specports.isStdCompatible(level.width)) {
+  if (!level.specports.isStdCompatible(level)) {
     p.set(P_PORTS_DB, level.specports.toString());
   }
   return url;

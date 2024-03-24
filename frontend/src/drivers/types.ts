@@ -55,8 +55,10 @@ export const levelSupportSignature = (level: any): level is IWithSignature =>
   level !== null &&
   typeof level.setSignature === "function";
 
-export interface ITilesRegion extends IBounds {
+export interface ITilesGrid extends IBounds {
   getTile(x: number, y: number): number;
+}
+export interface ITilesRegion extends ITilesGrid {
   // TODO: getTileVariant(x: number, y: number): number | undefined;
   tilesRenderStream(
     x: number,
