@@ -94,7 +94,7 @@ const confirmDeleteRest = (currentIndex: number, count: number) => {
 };
 
 const handleImportLevelClick = () =>
-  openFile({ done: (items) => importCurrentLevel(items[0].file) });
+  openFile({ done: (items) => importCurrentLevel({ file: items[0].file }) });
 
 const handleImportLevelByUrl = async () => {
   try {

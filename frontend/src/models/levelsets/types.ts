@@ -13,30 +13,19 @@ export type IBaseLevelsList = readonly IBaseLevel[];
  * Any user can skip several >=0.6 versions, so `driverFormat` can still be
  * `undefined` for someone.
  */
-interface LevelsetFileSourceOld {
+export interface LevelsetFileSource {
   file: Blob;
   name: string;
   driverName: string;
   /** @since 0.6 */
-  driverFormat: string | undefined;
+  driverFormat: string;
   /** @since 0.14 */
   order?: number | undefined;
+  /** @since 0.19 */
   ro?: boolean;
 }
-export interface LevelsetFileSource extends LevelsetFileSourceOld {
-  driverFormat: string;
-}
-/**
- * Old < 0.6 interface before formats
- *
- * Any user can skip several >=0.6 versions, so `driverFormat` can still be
- * `undefined` for someone.
- */
-export interface LevelsetFileDataOld extends LevelsetFileSourceOld {
+export interface LevelsetFileData extends LevelsetFileSource {
   key: FilesStorageKey;
-}
-export interface LevelsetFileData extends LevelsetFileDataOld {
-  driverFormat: string;
 }
 export interface LevelsetFile extends LevelsetFileData {
   levelset: IBaseLevelset<IBaseLevel>;
