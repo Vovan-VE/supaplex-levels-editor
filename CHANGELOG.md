@@ -12,6 +12,10 @@
   ports db itself is std compatible without notice, that some port actually is
   not special port tile.
 
+### Desktop
+
+- Fix: Copy to clipboard didn't work (level options, export as link).
+
 ## 0.19.0 (2024-03-03)
 
 - Add: Spec Ports DB dialog now allows to edit entire DB as text.

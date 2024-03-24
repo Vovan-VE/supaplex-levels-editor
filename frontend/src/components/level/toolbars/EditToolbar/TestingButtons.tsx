@@ -2,7 +2,7 @@ import { useUnit } from "effector-react";
 import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import MurphyRuns from "assets/img/murphy-run-right.svg?react";
-import { testInIframe } from "backend";
+import { setClipboardText, testInIframe } from "backend";
 import { TEST_DEMO_URL, TEST_LEVEL_TITLE, TEST_LEVEL_URL } from "configs";
 import {
   getDriver,
@@ -274,7 +274,7 @@ const ConfirmSO: FC<
   const handleCopy = useCallback(async () => {
     if (optionsAsCode) {
       try {
-        await window.navigator.clipboard.writeText(optionsAsCode);
+        await setClipboardText(optionsAsCode);
         showToast({
           message: t("main:common.toasts.Copied"),
           color: ColorType.SUCCESS,

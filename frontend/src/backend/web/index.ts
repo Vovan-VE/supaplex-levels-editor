@@ -9,7 +9,7 @@ export const allowManualSave = false;
 export const createFile = undefined;
 export { openFile } from "./openFile";
 export { saveAs as saveFileAs } from "file-saver";
-export { getClipboardText } from "./getClipboardText";
+export { getClipboardText, setClipboardText } from "./clipboard";
 
 export { setTitle } from "./setTitle";
 export const setIsDirty = undefined;

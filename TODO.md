@@ -27,8 +27,10 @@
 - Open ZIP with options
   - Entire ZIP
   - Add options.json to opened files
-
-- `class UserError extends Error {}`, `new UserError(t => t(...))`
+- Hovered cell hex don't use selection content
+- `class UserError extends Error {}`
+- Own file format, editor specific: JSON + schema
+  - Problem: users will use it in levels upload request instead of exported
 
 ### Desktop
 
