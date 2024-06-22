@@ -39,7 +39,7 @@ export const defaultIdGetter = <ID extends ValidKey = ValidKey>(
   if (typeof item === "object" && item) {
     for (const k of ["key", "id"]) {
       if (hasOwn.call(item, k) && isValidKey(item[k])) {
-        return item[k];
+        return item[k] as ID;
       }
     }
   }
