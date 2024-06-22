@@ -4,8 +4,8 @@ import { withPersistent } from "@cubux/effector-persistent";
 import { $instanceIsReadOnly, allowManualSave, configStorage } from "backend";
 import defaultLang, { isValidLocale } from "i18n/locales";
 
-export const openSettings = createEvent<any>();
-export const closeSettings = createEvent<any>();
+export const openSettings = createEvent<unknown>();
+export const closeSettings = createEvent<unknown>();
 export const $opened = restore(
   openSettings.map(() => true),
   false,
@@ -56,9 +56,9 @@ export enum LayoutType {
   COMPACT = "compact",
   FULL = "full",
 }
-const hasOwn = Object.prototype.hasOwnProperty;
-const isLayoutType = (v: any): v is LayoutType =>
-  typeof v === "string" && hasOwn.call(LayoutType, v);
+const hasOwn = Object.hasOwn;
+const isLayoutType = (v: unknown): v is LayoutType =>
+  typeof v === "string" && hasOwn(LayoutType, v);
 export const setLayoutType = createEvent<LayoutType>();
 export const $layoutType = withPersistent(
   restore(setLayoutType, LayoutType.AUTO),
@@ -71,7 +71,7 @@ export const $layoutType = withPersistent(
 );
 
 type SpChipType = 0 | 1;
-const isSpChipType = (v: any): v is SpChipType =>
+const isSpChipType = (v: unknown): v is SpChipType =>
   typeof v === "number" && Number.isInteger(v) && v >= 0 && v <= 1;
 export const setSpChip = createEvent<SpChipType>();
 export const $spChip = withPersistent(

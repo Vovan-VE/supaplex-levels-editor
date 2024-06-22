@@ -91,12 +91,12 @@ export const openLevel = createEvent<number>();
 /**
  * Switch level with the given index in current levelset to closed state
  */
-export const closeCurrentLevel = createEvent<any>();
+export const closeCurrentLevel = createEvent<unknown>();
 const _closeLevel = createEvent<_LevelRefStrict>();
 /**
  * Switch all other levels but the given index in current levelset to closed state
  */
-export const closeOtherLevels = createEvent<any>();
+export const closeOtherLevels = createEvent<unknown>();
 const _closeOtherLevels = createEvent<_LevelRefStrict>();
 /**
  * Set current level with the given index (open it if not yet)
@@ -111,7 +111,7 @@ fileDidOpen.watch((key) => {
   setCurrentLevelset(key);
   setCurrentLevel(0);
 });
-export const exportCurrentLevel = createEvent<any>();
+export const exportCurrentLevel = createEvent<unknown>();
 interface ImportLevelParams {
   file: File;
   levelset?: IBaseLevelset<IBaseLevel>;
@@ -120,22 +120,22 @@ export const importCurrentLevel = createEvent<ImportLevelParams>();
 /**
  * Insert new level in current level index in current levelset
  */
-export const insertAtCurrentLevel = createEvent<any>();
+export const insertAtCurrentLevel = createEvent<unknown>();
 /**
  * Append new level in current levelset
  */
-export const appendLevel = createEvent<any>();
+export const appendLevel = createEvent<unknown>();
 /**
  * Delete current level in current levelset
  */
-export const deleteCurrentLevel = createEvent<any>();
+export const deleteCurrentLevel = createEvent<unknown>();
 const _deleteLevel = createEvent<_LevelRefStrict>();
 export const changeLevelsOrder =
   createEvent<readonly LevelBuffer<IBaseLevel>[]>();
 /**
  * Delete all the rest levels after the current
  */
-export const deleteRestLevels = createEvent<any>();
+export const deleteRestLevels = createEvent<unknown>();
 const _deleteRestLevels = createEvent<_LevelRefStrict>();
 /**
  * Update current level in current levelset
@@ -154,11 +154,11 @@ export const internalUpdateLevelDemo = createEvent<{
 /**
  * Undo in current level in current levelset
  */
-export const undoCurrentLevel = createEvent<any>();
+export const undoCurrentLevel = createEvent<unknown>();
 /**
  * Undo in current level in current levelset
  */
-export const redoCurrentLevel = createEvent<any>();
+export const redoCurrentLevel = createEvent<unknown>();
 
 /**
  * Flush changes for the given levelset to blob
@@ -167,7 +167,7 @@ const flushBuffer = createEvent<FilesStorageKey>();
 /**
  * Flush changes for all levelset to blob
  */
-const flushBuffers = createEvent<any>();
+const flushBuffers = createEvent<unknown>();
 if (onDeactivate) {
   sample({
     source: onDeactivate,
@@ -633,9 +633,9 @@ _$wakeUpOpenedIndices.on(
   (map, keys) => RoMap.filter(map, (_, k) => !keys.has(k)),
 );
 
-export const flushCurrentFile = createEvent<any>();
-export const saveAndClose = createEvent<any>();
-export const saveOthersAndClose = createEvent<any>();
+export const flushCurrentFile = createEvent<unknown>();
+export const saveAndClose = createEvent<unknown>();
+export const saveOthersAndClose = createEvent<unknown>();
 if (allowManualSave) {
   sample({
     clock: flushCurrentFile,
@@ -890,7 +890,7 @@ export const $playerPos = $currentLevelUndoQueue.map<
   }
   return next;
 });
-export const findPlayer = createEvent<any>();
+export const findPlayer = createEvent<unknown>();
 export const scrollToPlayer = sample({
   clock: findPlayer,
   source: $playerPos,
@@ -1069,10 +1069,10 @@ sample({
   );
 }
 
-export const cmpLevelToggle = createEvent<any>();
+export const cmpLevelToggle = createEvent<unknown>();
 const setCmpFirstLevelRef = createEvent<_LevelRefStrict | null>();
-export const closeCmpLevels = createEvent<any>();
-export const swapCmpLevels = createEvent<any>();
+export const closeCmpLevels = createEvent<unknown>();
+export const swapCmpLevels = createEvent<unknown>();
 const setCmpLevels = createEvent<[_LevelRefStrict, _LevelRefStrict]>();
 const $cmpLevelsRefs = restore(setCmpLevels, null)
   .reset(closeCmpLevels)

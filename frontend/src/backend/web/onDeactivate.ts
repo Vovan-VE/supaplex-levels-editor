@@ -1,6 +1,6 @@
 import { createEvent } from "effector";
 
-export const onDeactivate = createEvent<any>();
+export const onDeactivate = createEvent<unknown>();
 
 function handleSuspend() {
   onDeactivate();

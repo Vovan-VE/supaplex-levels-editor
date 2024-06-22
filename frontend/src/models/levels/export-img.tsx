@@ -15,8 +15,8 @@ import {
 import { showToast, showToastError } from "../ui/toasts";
 import { $selectionRect } from "./tools/_selection";
 
-export const exportAsImageToClipboard = createEvent<any>();
-export const exportAsImageToFile = createEvent<any>();
+export const exportAsImageToClipboard = createEvent<unknown>();
+export const exportAsImageToFile = createEvent<unknown>();
 
 interface ExportImgParams {
   filename: string;
@@ -114,9 +114,7 @@ const buildImageBlobFx = createEffect(
 
       (async () => {
         try {
-          const ctx = canvas.getContext(
-            "2d",
-          )! as any as CanvasRenderingContext2D;
+          const ctx = canvas.getContext("2d")!;
           ctx.fillStyle = "#000";
           ctx.fillRect(0, 0, width * TILE_SIZE, height * TILE_SIZE);
 

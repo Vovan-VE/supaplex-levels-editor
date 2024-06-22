@@ -231,8 +231,8 @@ const selectFrame = (d: DrawState, level: IBounds): DrawLayerSelectRange => {
   };
 };
 
-const commitOnEnd = (target: EventCallable<any>) => {
-  const willEndWork = createEvent<any>();
+const commitOnEnd = (target: EventCallable<unknown>) => {
+  const willEndWork = createEvent<unknown>();
   const doEndWork = sample({
     clock: willEndWork,
     source: {
@@ -255,8 +255,8 @@ const commitOnEnd = (target: EventCallable<any>) => {
   return willEndWork;
 };
 
-const externalFree = createEvent<any>();
-const externalRollback = createEvent<any>();
+const externalFree = createEvent<unknown>();
+const externalRollback = createEvent<unknown>();
 sample({ source: externalFree, target: commitOnEnd(free) });
 sample({ source: externalRollback, target: commitOnEnd(rollback) });
 
@@ -357,7 +357,7 @@ export const deleteSelectionFx = createEffect(async () => {
   rollback();
 });
 
-export const copySelection = createEvent<any>();
+export const copySelection = createEvent<unknown>();
 // TODO: driver compatibility?
 export const $clipboardRegion = createStore<ILevelRegion | null>(null).on(
   sample({
@@ -434,7 +434,7 @@ export const getSelectionContentFx = createEffect(() => {
   return null;
 });
 export const openSelectionEdit = createEvent<string>();
-export const cancelSelectionEdit = createEvent<any>();
+export const cancelSelectionEdit = createEvent<unknown>();
 export const submitSelectionEdit = createEvent<ILevelRegion>();
 export const $openedSelectionEdit = createStore<string | null>(null)
   .reset(cancelSelectionEdit, $selectionSizeHash.updates)

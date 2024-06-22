@@ -90,7 +90,7 @@ export const enum FlipDirection {
   V = "V",
 }
 
-export type LocalOptions = Record<string, any>;
+export type LocalOptions = Record<string, unknown>;
 export type LocalOptionsList = readonly (LocalOptions | null | undefined)[];
 export type LocalOptionsTable = Record<`${number}`, LocalOptions>;
 

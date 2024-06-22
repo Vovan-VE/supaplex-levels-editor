@@ -174,11 +174,11 @@ export const convertLevelsetTryFx = createEffect(
 /**
  * Close file and forget everything about it
  */
-export const removeCurrentLevelsetFile = createEvent<any>();
+export const removeCurrentLevelsetFile = createEvent<unknown>();
 /**
  * Close other files but current and forget everything about them
  */
-export const removeOthersLevelsetFile = createEvent<any>();
+export const removeOthersLevelsetFile = createEvent<unknown>();
 /**
  * Update loaded file in memory
  */

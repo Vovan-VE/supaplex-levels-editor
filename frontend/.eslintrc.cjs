@@ -17,5 +17,9 @@ module.exports = {
     ],
     "@typescript-eslint/no-explicit-any": ["warn"],
     "@typescript-eslint/no-namespace": ["warn"],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { ignoreRestSiblings: true },
+    ],
   },
 };

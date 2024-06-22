@@ -16,7 +16,7 @@ interface Props extends ContainerProps {
   help?: ReactNode;
 }
 const P_ERROR: keyof Props = "error";
-const hasOwn = Object.prototype.hasOwnProperty;
+const hasOwn = Object.hasOwn;
 
 export const Field: FC<PropsWithChildren<Props>> = (props) => {
   const {
@@ -30,7 +30,7 @@ export const Field: FC<PropsWithChildren<Props>> = (props) => {
     children,
     ...rest
   } = props;
-  const withError = hasOwn.call(props, P_ERROR);
+  const withError = hasOwn(props, P_ERROR);
 
   const control = <div className={cl.control}>{children}</div>;
   const labelClass = cn(cl.label, labelClassName);

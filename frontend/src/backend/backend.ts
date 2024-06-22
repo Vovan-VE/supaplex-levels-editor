@@ -22,8 +22,8 @@ export type SetClipboardText = (text: string) => Promise<unknown>;
 
 export type SetTitle = (title: string) => void;
 export type SetIsDirty = (isDirty: boolean) => Promise<unknown>;
-export type OnExitDirty = Event<any>;
-export type OnDeactivate = Event<any>;
+export type OnExitDirty = Event<unknown>;
+export type OnDeactivate = Event<unknown>;
 export type ExitApp = (ignoreDirty?: boolean) => void;
 
 export type TestInIframe = boolean;

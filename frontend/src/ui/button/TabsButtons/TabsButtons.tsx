@@ -25,7 +25,7 @@ type P = PropsWithChildren<ButtonProps> & {
 const Item = forwardRef<HTMLButtonElement, SortableItemProps<P>>(
   (
     {
-      item: { curRef, className, children, ...props },
+      item: { key, curRef, className, children, ...props },
       isDragging,
       itemProps,
       handleProps,

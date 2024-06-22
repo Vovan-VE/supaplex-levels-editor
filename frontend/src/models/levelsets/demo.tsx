@@ -25,7 +25,7 @@ export const $fileSupportsDemo = combine(
     (name && format && getDriverFormat(name, format)?.demoSupport) || false,
 );
 
-const hasOwn = Object.prototype.hasOwnProperty;
+const hasOwn = Object.hasOwn;
 
 const decodeDemoMessage = (data: any): DemoData | null => {
   if (typeof data === "string") {
@@ -34,9 +34,9 @@ const decodeDemoMessage = (data: any): DemoData | null => {
       if (
         typeof data === "object" &&
         data &&
-        hasOwn.call(data, "data") &&
-        hasOwn.call(data, "seed_hi") &&
-        hasOwn.call(data, "seed_lo") &&
+        hasOwn(data, "data") &&
+        hasOwn(data, "seed_hi") &&
+        hasOwn(data, "seed_lo") &&
         typeof data.data === "string" &&
         typeof data.seed_hi === "number" &&
         typeof data.seed_lo === "number" &&
@@ -80,7 +80,7 @@ interface _DemoTarget extends _DemoTargetNullable {
 const isDemoTarget = (s: _DemoTargetNullable): s is _DemoTarget =>
   Boolean(s.fileKey && s.levelIndex !== null);
 
-const takeLevelRef = (clock: Event<any>) =>
+const takeLevelRef = (clock: Event<unknown>) =>
   sample({
     clock,
     source: {
@@ -90,7 +90,7 @@ const takeLevelRef = (clock: Event<any>) =>
     filter: isDemoTarget,
   });
 
-export const rememberDemoTarget = createEvent<any>();
+export const rememberDemoTarget = createEvent<unknown>();
 
 const $demoTarget = createStore<_DemoTarget | null>(null)
   // remember last target to save demo to

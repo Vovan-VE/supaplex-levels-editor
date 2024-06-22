@@ -43,8 +43,8 @@ export const exportLevelAsLink = async (
   return url;
 };
 
-export const copyLevelAsTestLink = createEvent<any>();
-export const copyLevelAsDemoLink = createEvent<any>();
+export const copyLevelAsTestLink = createEvent<unknown>();
+export const copyLevelAsDemoLink = createEvent<unknown>();
 
 const copyLevelAsTextLinkFx = createEffect(
   async (level: IBaseLevel) =>

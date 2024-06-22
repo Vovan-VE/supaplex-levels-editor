@@ -56,7 +56,7 @@ export const $displayReadOnly = $mode.map(
 // A very short delay may cause a wrong decision (the timeout IS triggered)
 // before the message is delivered and response message is delivered back.
 
-const hasOwn = Object.prototype.hasOwnProperty;
+const hasOwn = Object.hasOwn;
 
 export const init = () => {
   if (import.meta.env.MODE === "test") {
@@ -90,8 +90,8 @@ export const init = () => {
   const isMyMsg = (v: any): v is _Msg =>
     v !== null &&
     typeof v === "object" &&
-    hasOwn.call(v, "msg") &&
-    hasOwn.call(v, "from") &&
+    hasOwn(v, "msg") &&
+    hasOwn(v, "from") &&
     typeof v.msg === "string" &&
     typeof v.from === "string";
 

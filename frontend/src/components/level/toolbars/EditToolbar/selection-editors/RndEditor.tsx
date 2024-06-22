@@ -32,7 +32,7 @@ const getRandomTile = (
 
 const setSearchTiles = createEvent<readonly number[]>();
 const toggleTile = createEvent<number>();
-const toggleTileKeep = toggleTile.prepend<any>(() => -1);
+const toggleTileKeep = toggleTile.prepend<unknown>(() => -1);
 const setCount = createEvent<[tile: number, count: number]>();
 const $searchTiles = restore(
   setSearchTiles.map((v) => new Set(v)),

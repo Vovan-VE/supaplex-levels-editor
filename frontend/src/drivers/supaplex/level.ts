@@ -506,7 +506,8 @@ class SupaplexLevel implements ISupaplexLevel {
     if (!opt) {
       return this;
     }
-    const toInt = (v: any) => (Number.isInteger(v) ? (v as number) : undefined);
+    const toInt = (v: unknown) =>
+      Number.isInteger(v) ? (v as number) : undefined;
     return this.batch((l) => {
       l = l
         .setUsePlasma(Boolean(opt[LocalOpt.UsePlasma]))
@@ -517,7 +518,7 @@ class SupaplexLevel implements ISupaplexLevel {
         .setUseInfotronsNeeded(toInt(opt[LocalOpt.UseInfotronsNeeded]))
         .setInitialFreezeEnemies(Boolean(opt[LocalOpt.InitialFreezeEnemies]));
       const pdStr = opt[LocalOpt.PortsDatabase];
-      if (pdStr !== undefined) {
+      if (typeof pdStr === "string") {
         l = l.setSpecports(newSpecPortsDatabaseFromString(pdStr));
       }
       return l;
