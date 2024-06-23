@@ -24,7 +24,10 @@ endif
 
 APP_BASENAME := sple
 # -noPackage cause missing ico & info in windows exe
-BUILD_ARGS := -v 2 -trimpath -s
+COMMON_BUILD_ARGS := -tags webkit2_41
+#COMMON_BUILD_ARGS :=
+DEV_ARGS := $(COMMON_BUILD_ARGS)
+BUILD_ARGS := $(COMMON_BUILD_ARGS) -v 2 -trimpath -s
 ifneq ($(DEBUG),)
   BUILD_ARGS += -debug
 endif
@@ -163,6 +166,12 @@ $(BIN_PLATFORMS): $(BIN_DIR)/%:
 ifeq (,$(SKIP_ZIP))
 	zip --junk-paths $(call RESULT_BIN_NAME_ZIP,$*) $(BIN_DIR)/$(call INNER_BIN_NAME,$*)
 endif
+
+# ----------------------------------------------------------
+
+.PHONY: dev
+dev:
+	$(WAILS) dev $(DEV_ARGS)
 
 # ----------------------------------------------------------
 

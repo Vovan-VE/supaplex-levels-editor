@@ -4,6 +4,10 @@
 
 - ...
 
+### Desktop
+
+- On Linux now `libwebkit` 4.1 is required (`libwebkit2gtk-4.1-0`).
+
 ## 0.20.0 (2024-03-24)
 
 - Add: Display demo duration in Demo/Signature edit dialog.
