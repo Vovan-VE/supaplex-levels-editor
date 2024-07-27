@@ -198,13 +198,8 @@ export const setCurrentLevelsetRo = createEvent<boolean>();
 
 export const fileDidOpen = addLevelsetFileDoneData.map(({ key }) => key);
 
-const _willSetCurrentKeyFx = createEffect((next: FilesStorageKey | null) => {
-  _unsetCurrentKey();
-  _setCurrentKey(next);
-});
 const _unsetCurrentKey = createEvent();
 const _setCurrentKey = createEvent<FilesStorageKey | null>();
-sample({ source: setCurrentLevelset, target: _willSetCurrentKeyFx });
 /**
  * Key of current selected file within `$levelsets`
  */
@@ -214,6 +209,13 @@ export const $currentKey = withPersistent(
   "currentFile",
   $instanceIsReadOnly ? { readOnly: $instanceIsReadOnly } : undefined,
 ).on(_setCurrentKey, (_, c) => c);
+
+const _willSetCurrentKeyFx = createEffect((next: FilesStorageKey | null) => {
+  if (next === $currentKey.getState()) return;
+  _unsetCurrentKey();
+  _setCurrentKey(next);
+});
+sample({ source: setCurrentLevelset, target: _willSetCurrentKeyFx });
 
 export const currentKeyWillGone = createEvent<FilesStorageKey>();
 export const currentKeyBeforeWillGone = sample({
@@ -233,6 +235,16 @@ sample({
   fn: () => null,
   target: _willSetCurrentKeyFx,
 });
+
+// setCurrentLevelset.watch((p) => console.log(">> setCurrentLevelset", p));
+// _removeLevelsetFile.watch((p) => console.log(">> _removeLevelsetFile", p));
+// _willSetCurrentKeyFx.watch((p) => console.log(">> _willSetCurrentKeyFx", p));
+// _willSetCurrentKeyFx.done.watch((p) =>
+//   console.log(">> _willSetCurrentKeyFx.done", p),
+// );
+// _unsetCurrentKey.watch((p) => console.log(">> _unsetCurrentKey", p));
+// _setCurrentKey.watch((p) => console.log(">> _setCurrentKey", p));
+// $currentKey.watch((p) => console.log(">> $currentKey", p));
 
 const _removeOthersLevelsetFile = sample({
   clock: removeOthersLevelsetFile,
@@ -258,12 +270,17 @@ const updateOrders = (map: _LevelsetsMap): _LevelsetsMap =>
         return [k, v.order === order ? v : { ...v, order }];
       }),
   );
+
+export const levelsetsDidWakeUp = createEvent<void>();
+// levelsetsDidWakeUp.watch(() => console.warn("FILES WAKE UP END"));
+
 export const $levelsets = withPersistentMap(
   createStore<_LevelsetsMap>(new Map()),
   filesStorage as StoreDriver<FilesStorageKey, _DbLevelsetFile>,
   {
     ...flushEvents,
     ...($instanceIsReadOnly ? { readOnly: $instanceIsReadOnly } : null),
+    onAfterWakeUp: levelsetsDidWakeUp,
     serialize: async ({
       file,
       name,
@@ -367,6 +384,12 @@ if (!allowManualSave) {
   );
 }
 
+// addLevelsetFileFx.watch((p) => console.log(">> addLevelsetFileFx", p));
+// addLevelsetFileFx.doneData.watch((p) =>
+//   console.log(">> addLevelsetFileFx.doneData", p),
+// );
+// $levelsets.watch((p) => console.log(">> $levelsets", p));
+
 export const onceFlushDone = createEvent<() => void>();
 if (onExitDirty && exitApp) {
   type F = () => void;
@@ -405,9 +428,19 @@ sample({
   clock: $levelsets,
   source: { key: $currentKey, files: $levelsets },
   filter: ({ key, files }) => typeof key === "string" && !files.has(key),
+  // fn: (s, c) => ({ s, c }),
   fn: () => null,
   target: _willSetCurrentKeyFx,
 });
+// .watch(({ s, c }) => {
+//   console.log(
+//     ">> $levelsets: reset current file key when is refers to non-existing file",
+//     s,
+//     c,
+//   );
+//   _willSetCurrentKeyFx(null);
+// });
+// $levelsets.watch((p) => console.log(">> $levelsets", Array.from(p.keys()), p));
 
 /**
  * Reference to current file and key together

@@ -37,7 +37,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@cubux/effector-persistent": "^0.7.0",
+    "@cubux/effector-persistent": "^0.8.0",
     "@cubux/readonly-array": "^2.0.0",
     "@cubux/readonly-map": "^2.0.1",
     "@cubux/readonly-set": "^2.0.0",

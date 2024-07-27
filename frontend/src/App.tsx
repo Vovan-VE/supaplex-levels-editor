@@ -1,6 +1,6 @@
 import "./i18n/init";
 import { FC } from "react";
-import { init } from "backend";
+import { Classes, init } from "backend";
 import { LevelsetEditor } from "components/levelset";
 import { MainLayout } from "components/layout";
 import { ErrorBoundary } from "components/page";
@@ -13,7 +13,7 @@ init();
 
 export const App: FC = () => (
   <ErrorBoundary>
-    <PopupContainer>
+    <PopupContainer className={Classes.app}>
       <HotkeysManagerGate />
 
       <MainLayout>

@@ -1,6 +1,8 @@
 package files
 
 import (
+	"context"
+
 	"github.com/pkg/errors"
 )
 
@@ -18,14 +20,17 @@ type ChosenRegistry interface {
 }
 
 type chosenRegistry struct {
+	ctx   context.Context
 	files map[string]string
 }
 
-func NewChosenRegistry() ChosenRegistry {
-	return &chosenRegistry{}
+func NewChosenRegistry(ctx context.Context) ChosenRegistry {
+	return &chosenRegistry{ctx: ctx}
 }
 
 func (c *chosenRegistry) AddFile(path string) (key string) {
+	//runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.AddFile(%v)", c, path)
+	//defer func() { runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.AddFile(%v) -> %v", c, path, key) }()
 	key = newKey()
 	if c.files == nil {
 		c.files = make(map[string]string)
@@ -34,6 +39,8 @@ func (c *chosenRegistry) AddFile(path string) (key string) {
 	return
 }
 func (c *chosenRegistry) AddFileWithKey(key, path string) error {
+	//runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.AddFileWithKey(%v, %v)", c, key, path)
+	//defer func() { runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.AddFileWithKey(%v, %v) -> %v", c, key, path, _1) }()
 	if c.files == nil {
 		c.files = make(map[string]string)
 	} else {
@@ -49,10 +56,13 @@ func (c *chosenRegistry) AddFileWithKey(key, path string) error {
 }
 
 func (c *chosenRegistry) Get(key string) (path string, ok bool) {
+	//runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.Get(%v)", c, key)
+	//defer func() { runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.Get(%v) -> %v, %v", c, key, path, ok) }()
 	path, ok = c.files[key]
 	return
 }
 
 func (c *chosenRegistry) Remove(key string) {
+	//runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.Remove(%v);", c, key)
 	delete(c.files, key)
 }

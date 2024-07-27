@@ -12,6 +12,7 @@ import JSZip from "jszip";
 import { flushDelayed, withPersistent } from "@cubux/effector-persistent";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
+import * as RoSet from "@cubux/readonly-set";
 import {
   $displayReadOnly,
   $instanceIsReadOnly,
@@ -52,6 +53,7 @@ import {
   $levelsets,
   currentKeyBeforeWillGone,
   fileDidOpen,
+  levelsetsDidWakeUp,
   removeCurrentLevelsetFile,
   removeOthersLevelsetFile,
   setCurrentLevelset,
@@ -74,20 +76,17 @@ import {
 type _LevelRef = readonly [FilesStorageKey, number | null];
 type _LevelRefStrict = readonly [FilesStorageKey, number];
 
-const _willSetCurrentLevelFx = createEffect((next: number | null) => {
-  const key = $currentKey.getState();
-  if (key) {
-    _unsetCurrentLevel();
-    _setCurrentLevel([key, next]);
-  }
+const _willSetCurrentLevelFx = createEffect((r: _LevelRef) => {
+  const [key] = r;
+  _unsetCurrentLevel(key);
+  _setCurrentLevel(r);
 });
-const _unsetCurrentLevel = createEvent();
+const _unsetCurrentLevel = createEvent<FilesStorageKey>();
 const _setCurrentLevel = createEvent<_LevelRef>();
+// _unsetCurrentLevel.watch((p) => console.log(">> _unsetCurrentLevel", p));
+// _setCurrentLevel.watch((p) => console.log(">> _setCurrentLevel", p));
 
-/**
- * Switch level with the given index in current levelset to opened state
- */
-export const openLevel = createEvent<number>();
+const openLevel = createEvent<_LevelRefStrict>();
 /**
  * Switch level with the given index in current levelset to closed state
  */
@@ -102,15 +101,33 @@ const _closeOtherLevels = createEvent<_LevelRefStrict>();
  * Set current level with the given index (open it if not yet)
  */
 export const setCurrentLevel = createEvent<number>();
+const setCurrentLevelRef = createEvent<_LevelRefStrict>();
 sample({
-  source: setCurrentLevel,
+  clock: setCurrentLevel,
+  source: $currentKey,
+  filter: Boolean,
+  fn: (key, i): _LevelRefStrict => [key, i],
+  target: setCurrentLevelRef,
+});
+sample({
+  clock: setCurrentLevelRef,
   target: [openLevel, _willSetCurrentLevelFx],
 });
 // open first level after file created/opened
 fileDidOpen.watch((key) => {
+  // console.log(">> fileDidOpen", key);
   setCurrentLevelset(key);
-  setCurrentLevel(0);
+  setCurrentLevelRef([key, 0]);
+  // console.log(">> fileDidOpen end.", key);
 });
+// setCurrentLevelRef.watch((p) => console.log(">> setCurrentLevelRef", p));
+// openLevel.watch((p) => console.log(">> openLevel", p));
+// _willSetCurrentLevelFx.watch((p) =>
+//   console.log(">> _willSetCurrentLevelFx", p),
+// );
+// _willSetCurrentLevelFx.done.watch((p) =>
+//   console.log(">> _willSetCurrentLevelFx.done", p),
+// );
 export const exportCurrentLevel = createEvent<unknown>();
 interface ImportLevelParams {
   file: File;
@@ -254,7 +271,7 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     },
   )
   // switch per-level "is opened" state
-  .on(_withCurrentKey(openLevel), (map, { current: key, value: index }) =>
+  .on(openLevel, (map, [key, index]) =>
     updateBufferLevel(map, key, index, (b) => ({ ...b, isOpened: true })),
   )
   // switch per-level "is opened" state
@@ -411,19 +428,16 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
 
 export const currentLevelIndexWillGone = sample({
   clock: [_unsetCurrentLevel, currentKeyBeforeWillGone],
-  source: {
-    files: _$buffersMap,
-    key: $currentKey,
-  },
-  filter: ({ files, key }) =>
+  source: _$buffersMap,
+  filter: (files, key) =>
     Boolean(
       key && files.has(key) && files.get(key)!.currentIndex !== undefined,
     ),
-  fn: ({ files, key }) => files.get(key!)!.currentIndex!,
+  fn: (files, key) => files.get(key!)!.currentIndex!,
 });
 
 const _willCloseLevelFx = createEffect(async (ref: _LevelRefStrict) => {
-  await _willSetCurrentLevelFx(null);
+  await _willSetCurrentLevelFx([ref[0], null]);
   _closeLevel(ref);
 });
 sample({
@@ -485,7 +499,6 @@ const _insertAtCurrentLevel = sample({
 });
 sample({
   source: _insertAtCurrentLevel,
-  fn: ([, index]) => index,
   target: _willSetCurrentLevelFx,
 });
 sample({
@@ -495,9 +508,11 @@ sample({
     key: $currentKey,
   },
   filter: ({ files, key }) => Boolean(key && files.has(key)),
-  fn: ({ files, key }) =>
+  fn: ({ files, key }): _LevelRef => [
+    key!,
     // at this moment it already has new level in the end
     files.get(key!)!.levels.length - 1,
+  ],
   target: _willSetCurrentLevelFx,
 });
 
@@ -508,7 +523,7 @@ const _$currentDriverMinLevelsCount = combine(
 );
 
 const _willDeleteLevelFx = createEffect(async (ref: _LevelRefStrict) => {
-  await _willSetCurrentLevelFx(null);
+  await _willSetCurrentLevelFx([ref[0], null]);
   _deleteLevel(ref);
 });
 sample({
@@ -584,6 +599,22 @@ const _$keepOpenedIndices = combine(
   _$wakeUpOpenedIndices,
   RoMap.merge,
 );
+// _$openedIndices.watch((p) => console.log(">> _$openedIndices", p));
+// _$wakeUpOpenedIndices.watch((p) => console.log(">> _$wakeUpOpenedIndices", p));
+// _$keepOpenedIndices.watch((p) => console.log(">> _$keepOpenedIndices", p));
+
+const openedLevelsDidWakeUp = createEvent<void>();
+const _$wakeUpWait = createStore<ReadonlySet<1 | 2>>(new Set([1, 2]))
+  .on(levelsetsDidWakeUp, (s) => RoSet.remove(s, 1))
+  .on(openedLevelsDidWakeUp, (s) => RoSet.remove(s, 2));
+
+export const filesDidWakeUp = sample({
+  clock: _$wakeUpWait,
+  filter: (s) => !s.size,
+});
+
+// openedLevelsDidWakeUp.watch(() => console.warn("OPENED LEVELS WAKE UP END"));
+// filesDidWakeUp.watch(() => console.warn("DATA WAKE UP END"));
 
 // persistent store indices for opened levels
 type _OpenedIndicesSerialized = readonly [
@@ -597,8 +628,12 @@ withPersistent<string, _OpenedIndicesWakeUpMap, _OpenedIndicesSerializedList>(
   configStorage,
   "openedLevels",
   {
+    // Opening a file cause it first to appear with no current level,
+    // then the current level set to 0.
+    flushDelay: 5,
     wakeUp: _$wakeUpOpenedIndices,
     ...($instanceIsReadOnly ? { readOnly: $instanceIsReadOnly } : null),
+    onAfterWakeUp: openedLevelsDidWakeUp,
     serialize: (map: _OpenedIndicesWakeUpMap) =>
       [...map]
         .map<_OpenedIndicesSerialized>(([key, item]) => [

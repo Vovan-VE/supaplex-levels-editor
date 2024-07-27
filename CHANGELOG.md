@@ -7,6 +7,8 @@
 ### Desktop
 
 - On Linux now `libwebkit` 4.1 is required (`libwebkit2gtk-4.1-0`).
+- Fix: Several issues potentially causing losing config and/or opened
+  files/levels state due to bad and/or unstable concurrent I/O.
 
 ## 0.20.0 (2024-03-24)
 

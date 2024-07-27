@@ -20,6 +20,9 @@ import { FOOTER_BYTE_LENGTH } from "../std";
 //    : std sp level with respect to w & h
 //    : demo
 // }
+//
+// - https://git.artsoft.org/?p=rocksndiamonds.git;a=commit;h=29ea60b3
+// - https://github.com/ArtsoftEntertainment/rocksndiamonds/commit/29ea60b3#diff-6854d2255acd6155f61b1558b39cbce581fad371b897b8ab58a90e6a227a6a5eR370
 
 const MPX_SIGN = new Uint8Array("MPX ".split("").map((ch) => ch.charCodeAt(0)));
 const MIN_FILE_SIZE = 8 + 12 + 1 + FOOTER_BYTE_LENGTH;

@@ -1,8 +1,9 @@
+import { createStore } from "effector";
 import { ReactNode } from "react";
 import { onOpenFile, openFile, OpenFileItem } from "backend";
 import { detectDriverFormat } from "drivers";
 import { Trans } from "i18n/Trans";
-import { addLevelsetFileFx } from "models/levelsets";
+import { addLevelsetFileFx, filesDidWakeUp } from "models/levelsets";
 import { msgBox } from "ui/feedback";
 
 const openFiles = async (items: readonly OpenFileItem[]) => {
@@ -18,6 +19,7 @@ const openFiles = async (items: readonly OpenFileItem[]) => {
   const errors: ReactNode[] = [];
   for (const [i, item] of detected.entries()) {
     if (item.status !== "fulfilled") {
+      //console.warn("openFiles failed", item, item.reason);
       errors.push(
         <Trans
           i18nKey="main:files.messages.CannotReadFile"
@@ -44,13 +46,13 @@ const openFiles = async (items: readonly OpenFileItem[]) => {
       continue;
     }
     const [driverName, driverFormat] = d;
-    addLevelsetFileFx({
+    await addLevelsetFileFx({
       file,
       driverName,
       driverFormat,
       name: file.name,
       key,
-    });
+    }).catch(() => {});
   }
   if (errors.length) {
     // TODO: typography component to add intro text with apply uiColor
@@ -66,7 +68,22 @@ const openFiles = async (items: readonly OpenFileItem[]) => {
 
 const _onOpenFile = onOpenFile;
 if (_onOpenFile) {
-  _onOpenFile.map(openFiles);
+  const initFiles: OpenFileItem[] = [];
+  const $didInit = createStore(false).on(filesDidWakeUp, () => true);
+  filesDidWakeUp.watch(() => {
+    // console.log(">>>> onOpenFile from init");
+    openFiles(initFiles);
+  });
+  _onOpenFile.watch((f) => {
+    // console.log(">>>> onOpenFile", f);
+    if ($didInit.getState()) {
+      // console.log(">>>> onOpenFile after init", f);
+      openFiles(f);
+    } else {
+      // console.log(">>>> onOpenFile before init", f);
+      initFiles.push(...f);
+    }
+  });
 }
 
 export const handleOpenClick = () =>

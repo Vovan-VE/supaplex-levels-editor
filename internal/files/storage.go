@@ -21,7 +21,7 @@ type Storage interface {
 }
 
 func NewStorage(ctx context.Context, path string, chosen ChosenPicker) (Storage, error) {
-	opt, err := config.NewFileStorage(path)
+	opt, err := config.NewFileStorage(ctx, path)
 	if err != nil {
 		return nil, errors.Wrap(err, "options storage")
 	}
@@ -39,6 +39,8 @@ type fullStorage struct {
 }
 
 func (f *fullStorage) HasFile(filename string) (bool, error) {
+	//runtime.LogDebugf(f.ctx, "fullStorage<%p>.HasFile(%v)", f, filename)
+	//defer func() { runtime.LogDebugf(f.ctx, "fullStorage<%p>.HasFile(%v) -> %v, %v", f, filename, _1, _2) }()
 	return f.opt.HasFunc(func(s string) (bool, error) {
 		e, err := entryFromString(s)
 		if err != nil {
@@ -49,6 +51,8 @@ func (f *fullStorage) HasFile(filename string) (bool, error) {
 }
 
 func (f *fullStorage) GetItem(key string) (value *Record, ok bool, err error) {
+	//runtime.LogDebugf(f.ctx, "fullStorage<%p>.GetItem(%v)", f, key)
+	//defer func() { runtime.LogDebugf(f.ctx, "fullStorage<%p>.GetItem(%v) -> %v, %v, %v", f, key, value, ok, err) }()
 	var s string
 	s, ok, err = f.opt.GetItem(key)
 	if err != nil {
@@ -68,6 +72,8 @@ func (f *fullStorage) GetItem(key string) (value *Record, ok bool, err error) {
 }
 
 func (f *fullStorage) SetItem(key string, value *Record) (err error) {
+	//runtime.LogDebugf(f.ctx, "fullStorage<%p>.SetItem(%v, %v)", f, key, value)
+	//defer func() { runtime.LogDebugf(f.ctx, "fullStorage<%p>.SetItem(%v, %v) -> %v", f, key, value, err) }()
 	s, ok, err := f.opt.GetItem(key)
 	if err != nil {
 		return errors.Wrap(err, "read options storage")
@@ -108,6 +114,8 @@ func (f *fullStorage) SetItem(key string, value *Record) (err error) {
 }
 
 func (f *fullStorage) RemoveItem(key string) (err error) {
+	//runtime.LogDebugf(f.ctx, "fullStorage<%p>.RemoveItem(%v)", f, key)
+	//defer func() { runtime.LogDebugf(f.ctx, "fullStorage<%p>.RemoveItem(%v) -> %v", f, key, err) }()
 	err = f.opt.RemoveItem(key)
 	if err != nil {
 		return errors.Wrap(err, "options storage")
@@ -116,6 +124,8 @@ func (f *fullStorage) RemoveItem(key string) (err error) {
 }
 
 func (f *fullStorage) GetAll() (map[string]*Record, error) {
+	//runtime.LogDebugf(f.ctx, "fullStorage<%p>.GetAll()", f)
+	//defer func() { runtime.LogDebugf(f.ctx, "fullStorage<%p>.GetAll() -> %v, %v", f, _1, _2) }()
 	ms, err := f.opt.GetAll()
 	if err != nil {
 		return nil, errors.Wrap(err, "read options storage")
@@ -141,6 +151,8 @@ func (f *fullStorage) GetAll() (map[string]*Record, error) {
 }
 
 func (f *fullStorage) SetAll(all map[string]*Record) (err error) {
+	//runtime.LogDebugf(f.ctx, "fullStorage<%p>.SetAll(%v)", f, all)
+	//defer func() { runtime.LogDebugf(f.ctx, "fullStorage<%p>.SetAll(%v) -> %v", f, all, err) }()
 	hasMs, err := f.opt.GetAll()
 	if err != nil {
 		return errors.Wrap(err, "read options storage")

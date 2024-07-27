@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/pkg/errors"
@@ -35,6 +36,11 @@ type App struct {
 	isDirty bool
 
 	opt *AppOptions
+
+	// DomReady keep triggering with every drag-n-drop
+	// https://github.com/wailsapp/wails/issues/3563
+	onceDomReady sync.Once
+	//dropFiles    chan []string
 }
 
 // NewApp creates a new App application struct
@@ -44,6 +50,7 @@ func NewApp(opt *AppOptions) *App {
 	}
 	return &App{
 		opt: opt,
+		//dropFiles: make(chan []string, 1),
 	}
 }
 
@@ -58,20 +65,20 @@ func (a *App) startup(ctx context.Context) {
 		return
 	}
 
-	appConfig, err := config.NewFileStorage(filepath.Join(configDir, "config.json"))
+	appConfig, err := config.NewFileStorage(ctx, filepath.Join(configDir, "config.json"))
 	if err != nil {
 		runtime.LogErrorf(ctx, "front config: %v", err)
 		return
 	}
 
-	front, err := config.NewFileStorage(filepath.Join(configDir, "front.json"))
+	front, err := config.NewFileStorage(ctx, filepath.Join(configDir, "front.json"))
 	if err != nil {
 		runtime.LogErrorf(ctx, "front config: %v", err)
 		return
 	}
 
 	filesRegPath := filepath.Join(configDir, "files.json")
-	chosenReg := files.NewChosenRegistry()
+	chosenReg := files.NewChosenRegistry(ctx)
 	fs, err := files.NewStorage(ctx, filesRegPath, chosenReg)
 	if err != nil {
 		runtime.LogErrorf(ctx, "files registry: %v", err)
@@ -82,22 +89,36 @@ func (a *App) startup(ctx context.Context) {
 	a.frontConfig = front
 	a.chosenReg = chosenReg
 	a.files = fs
+
+	//runtime.OnFileDrop(ctx, a.onFileDrop)
 }
 
 // domReady is called after front-end resources have been loaded
 func (a *App) domReady(ctx context.Context) {
-	// Add your action here
+	//runtime.LogInfof(a.ctx, "dom ready")
+	// https://github.com/wailsapp/wails/issues/3563
+	a.onceDomReady.Do(a.domReadyHandler)
 
+	//go func() {
+	//	select {
+	//	case paths := <-a.dropFiles:
+	//		a.openFilesAtFront(paths)
+	//	default:
+	//	}
+	//}()
+}
+
+func (a *App) domReadyHandler() {
 	winPl, _, err := a.appConfig.GetItem(config.AppWindowPlacement)
 	if err != nil {
-		runtime.LogErrorf(ctx, "cannot read %s: %v", config.AppWindowPlacement, err)
+		runtime.LogErrorf(a.ctx, "cannot read %s: %v", config.AppWindowPlacement, err)
 	}
 	p := config.WindowPlacementFromString(winPl)
 	if p.IsMax {
-		runtime.WindowMaximise(ctx)
+		runtime.WindowMaximise(a.ctx)
 	} else {
-		runtime.WindowSetPosition(ctx, p.X, p.Y)
-		runtime.WindowSetSize(ctx, p.W, p.H)
+		runtime.WindowSetPosition(a.ctx, p.X, p.Y)
+		runtime.WindowSetSize(a.ctx, p.W, p.H)
 	}
 
 	absFiles, err := files.NormalizeArgs(os.Args[1:])
@@ -116,6 +137,16 @@ func (a *App) secondInstance(data options.SecondInstanceData) {
 
 	go a.activateWindow()
 }
+
+//func (a *App) onFileDrop(x, y int, paths []string) {
+//	runtime.LogInfof(a.ctx, "drop files: %#v", paths)
+//	// First drag-n-drop cause some strange bug with access at frontend.
+//	// Also, every drop cause DomReady to trigger again.
+//	// And so, I delay opening files until next fake DomReady will run.
+//	go func() {
+//		a.dropFiles <- paths
+//	}()
+//}
 
 func (a *App) openFilesAtFront(absFiles []string) {
 	if len(absFiles) == 0 {
@@ -199,9 +230,11 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 	return
 }
 
-//// shutdown is called at application termination
+// shutdown is called at application termination
 //func (a *App) shutdown(ctx context.Context) {
-//	// Perform your teardown here
+//	runtime.LogInfof(a.ctx, "shutdown")
+//	close(a.dropFiles)
+//	// TODO: wait flush files
 //}
 
 func (a *App) configStorage() storage.Full[string] {
@@ -220,6 +253,7 @@ func (a *App) showError(pErr *error) {
 }
 
 func (a *App) triggerFront(event string, data any) {
+	//runtime.LogDebugf(a.ctx, "App.triggerFront(%v, %v)", event, data)
 	runtime.EventsEmit(a.ctx, event, data)
 }
 
