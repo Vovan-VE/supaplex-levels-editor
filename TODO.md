@@ -14,6 +14,7 @@
 - Convert format config: SP: Which level to take.
 - Drag-n-drop open files
   - Desktop: cannot handle from backend to get real file path
+  - https://github.com/wailsapp/wails/issues/3563
 - Demo path visualization
   - Impossible without gameplay simulation. Only if SO will provide a path
     actually walked.
