@@ -2,6 +2,7 @@ package files
 
 import (
 	"context"
+	"encoding/json"
 	"os"
 
 	"github.com/pkg/errors"
@@ -20,16 +21,27 @@ type Storage interface {
 	HasFile(filename string) (bool, error)
 }
 
-func NewStorage(ctx context.Context, path string, chosen ChosenPicker) (Storage, error) {
-	opt, err := config.NewFileStorage(ctx, path)
+func NewStorage(options StorageOptions) (Storage, error) {
+	opt, err := config.NewFileStorage(config.FileStorageOptions{
+		Ctx:         options.Ctx,
+		Filepath:    options.Filepath,
+		FilepathOld: options.FilepathOld,
+	})
 	if err != nil {
 		return nil, errors.Wrap(err, "options storage")
 	}
 	return &fullStorage{
-		ctx:    ctx,
+		ctx:    options.Ctx,
 		opt:    opt,
-		chosen: chosen,
+		chosen: options.Chosen,
 	}, nil
+}
+
+type StorageOptions struct {
+	Ctx         context.Context
+	Filepath    string
+	FilepathOld string
+	Chosen      ChosenPicker
 }
 
 type fullStorage struct {
@@ -41,8 +53,8 @@ type fullStorage struct {
 func (f *fullStorage) HasFile(filename string) (bool, error) {
 	//runtime.LogDebugf(f.ctx, "fullStorage<%p>.HasFile(%v)", f, filename)
 	//defer func() { runtime.LogDebugf(f.ctx, "fullStorage<%p>.HasFile(%v) -> %v, %v", f, filename, _1, _2) }()
-	return f.opt.HasFunc(func(s string) (bool, error) {
-		e, err := entryFromString(s)
+	return f.opt.HasFunc(func(b json.RawMessage) (bool, error) {
+		e, err := entryFromString(string(b))
 		if err != nil {
 			return false, errors.Wrap(err, "entry from string")
 		}
@@ -68,6 +80,17 @@ func (f *fullStorage) GetItem(key string) (value *Record, ok bool, err error) {
 		return
 	}
 	ok = true
+	//if value.needUpgrade {
+	//	s, _, err = replaceOptionsInString(s, value)
+	//	if err != nil {
+	//		return nil, false, errors.Wrap(err, "entry to string")
+	//	}
+	//
+	//	err = f.opt.SetItem(key, s)
+	//	if err != nil {
+	//		return nil, false, errors.Wrap(err, "write options storage")
+	//	}
+	//}
 	return
 }
 
@@ -146,6 +169,20 @@ func (f *fullStorage) GetAll() (map[string]*Record, error) {
 			continue
 		}
 		mr[k] = r
+
+		if r.needUpgrade {
+			s, _, err = replaceOptionsInString(s, r)
+			if err != nil {
+				runtime.LogErrorf(f.ctx, "entry to string: %v", err)
+				continue
+			}
+
+			err = f.opt.SetItem(k, s)
+			if err != nil {
+				runtime.LogErrorf(f.ctx, "write options storage: %v", err)
+				continue
+			}
+		}
 	}
 	return mr, nil
 }

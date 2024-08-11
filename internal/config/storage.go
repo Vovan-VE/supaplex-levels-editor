@@ -10,33 +10,48 @@ import (
 	"github.com/pkg/errors"
 	"github.com/vovan-ve/sple-desktop/internal/helpers"
 	"github.com/vovan-ve/sple-desktop/internal/storage"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type Storage interface {
 	storage.Full[string]
-	HasFunc(func(string) (bool, error)) (bool, error)
+	HasFunc(func(json.RawMessage) (bool, error)) (bool, error)
 }
 
-func NewFileStorage(ctx context.Context, path string) (Storage, error) {
-	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0644)
+func NewFileStorage(opt FileStorageOptions) (Storage, error) {
+	f, err := os.OpenFile(opt.Filepath, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return nil, errors.Wrap(err, "open file")
 	}
 	return &fileStorage{
-		ctx:  ctx,
-		file: f,
+		ctx:     opt.Ctx,
+		file:    f,
+		fileOld: opt.FilepathOld,
 	}, nil
 }
 
-type fileStorage struct {
-	ctx  context.Context
-	file *os.File
-	data map[string]string
-	rw   sync.RWMutex
-	rwd  sync.RWMutex
+type FileStorageOptions struct {
+	Ctx         context.Context
+	Filepath    string
+	FilepathOld string
 }
 
-func (f *fileStorage) HasFunc(match func(v string) (bool, error)) (bool, error) {
+const fileVersion = "1.0"
+
+type fileData struct {
+	VERSION string                     `json:"$version"`
+	Data    map[string]json.RawMessage `json:"data"`
+}
+type fileStorage struct {
+	ctx     context.Context
+	file    *os.File
+	fileOld string
+	data    *fileData
+	rw      sync.RWMutex
+	rwd     sync.RWMutex
+}
+
+func (f *fileStorage) HasFunc(match func(v json.RawMessage) (bool, error)) (bool, error) {
 	//runtime.LogDebugf(f.ctx, "fileStorage<%p>.HasFunc()", f)
 	//defer func() { runtime.LogDebugf(f.ctx, "fileStorage<%p>.HasFunc() -> %v, %v", f, _1, _2) }()
 	f.rw.RLock()
@@ -46,7 +61,7 @@ func (f *fileStorage) HasFunc(match func(v string) (bool, error)) (bool, error) 
 	}
 	f.rwd.RLock()
 	defer f.rwd.RUnlock()
-	for _, v := range f.data {
+	for _, v := range f.data.Data {
 		if ok, err := match(v); err != nil || ok {
 			//runtime.LogDebugf(f.ctx, "fileStorage<%p>.HasFunc() match %v", f, v)
 			return ok, err
@@ -65,7 +80,10 @@ func (f *fileStorage) GetItem(key string) (value string, ok bool, err error) {
 	}
 	f.rwd.RLock()
 	defer f.rwd.RUnlock()
-	value, ok = f.data[key]
+	raw, ok := f.data.Data[key]
+	if ok {
+		value = string(raw)
+	}
 	return
 }
 
@@ -83,10 +101,13 @@ func (f *fileStorage) SetItem(key, value string) error {
 	}
 	f.rwd.Lock()
 	defer f.rwd.Unlock()
-	if v, ok := f.data[key]; ok && v == value {
+	if v, ok := f.data.Data[key]; ok && string(v) == value {
 		return nil
 	}
-	f.data[key] = value
+	if !json.Valid([]byte(value)) {
+		return errors.New("value is not valid json")
+	}
+	f.data.Data[key] = []byte(value)
 	return f.write()
 }
 
@@ -100,10 +121,10 @@ func (f *fileStorage) RemoveItem(key string) error {
 	}
 	f.rwd.Lock()
 	defer f.rwd.Unlock()
-	if _, ok := f.data[key]; !ok {
+	if _, ok := f.data.Data[key]; !ok {
 		return nil
 	}
-	delete(f.data, key)
+	delete(f.data.Data, key)
 	return f.write()
 }
 
@@ -117,7 +138,7 @@ func (f *fileStorage) GetAll() (map[string]string, error) {
 	}
 	f.rwd.RLock()
 	defer f.rwd.RUnlock()
-	return helpers.CopyMap(f.data), nil
+	return helpers.CopyMapCast(f.data.Data, r2s), nil
 }
 
 func (f *fileStorage) SetAll(all map[string]string) error {
@@ -127,9 +148,12 @@ func (f *fileStorage) SetAll(all map[string]string) error {
 	defer f.rw.Unlock()
 	f.rwd.Lock()
 	defer f.rwd.Unlock()
-	f.data = helpers.CopyMap(all)
+	f.data.Data = helpers.CopyMapCast(all, s2r)
 	return f.write()
 }
+
+func r2s(b json.RawMessage) string { return string(b) }
+func s2r(s string) json.RawMessage { return []byte(s) }
 
 func (f *fileStorage) read() error {
 	//runtime.LogDebugf(f.ctx, "fileStorage<%p>.read()", f)
@@ -148,15 +172,67 @@ func (f *fileStorage) read() error {
 		return errors.Wrap(err, "read file")
 	}
 	//runtime.LogDebugf(f.ctx, "fileStorage<%p>.read(): raw=%s", f, bshort(b))
-	m := make(map[string]string)
-	if len(b) > 0 {
-		if err = json.Unmarshal(b, &m); err != nil {
+	data := new(fileData)
+	var writeBack bool
+	if len(b) != 0 {
+		if err = json.Unmarshal(b, &data); err != nil {
 			return errors.Wrap(err, "json unmarshal")
 		}
+	} else {
+		m, err := f.readOld()
+		//runtime.LogDebugf(f.ctx, "fileStorage<%p>.readOld(): %v, %v", f, mpretty(m), err)
+		if err != nil {
+			return errors.Wrap(err, "old file")
+		}
+		if m != nil {
+			data.Data = helpers.CopyMapCast(m, s2r)
+			writeBack = true
+		}
 	}
-	//runtime.LogDebugf(f.ctx, "fileStorage<%p>.read(): m=%v", f, mpretty(m))
-	f.data = m
+	//runtime.LogDebugf(f.ctx, "fileStorage<%p>.read(): data.Data=%v", f, mpretty(data.Data))
+	data.VERSION = fileVersion
+	if data.Data == nil {
+		data.Data = make(map[string]json.RawMessage)
+	}
+	f.data = data
+
+	if writeBack {
+		runtime.LogInfof(f.ctx, "fileStorage<%p>.read(): write new file from old file", f)
+		if err = f.write(); err != nil {
+			return errors.Wrap(err, "write new file read from old file")
+		}
+	}
+
 	return nil
+}
+func (f *fileStorage) readOld() (m map[string]string, err error) {
+	_, err = os.Stat(f.fileOld)
+	if os.IsNotExist(err) {
+		//runtime.LogDebugf(f.ctx, "fileStorage<%p>.readOld(): not exists %v, %#v", f, f.fileOld, err)
+		return nil, nil
+	}
+	if err != nil {
+		return nil, errors.Wrap(err, "stat old file")
+	}
+	oldFile, err := os.Open(f.fileOld)
+	if err != nil {
+		return nil, errors.Wrap(err, "open old file")
+	}
+	defer oldFile.Close()
+
+	b, err := io.ReadAll(oldFile)
+	if err != nil {
+		return nil, errors.Wrap(err, "read old file")
+	}
+	if len(b) == 0 {
+		//runtime.LogDebugf(f.ctx, "fileStorage<%p>.readOld(): read empty body", f)
+		return nil, nil
+	}
+	m = make(map[string]string)
+	if err = json.Unmarshal(b, &m); err != nil {
+		return nil, errors.Wrap(err, "json unmarshal")
+	}
+	return
 }
 
 func (f *fileStorage) write() error {
@@ -166,11 +242,12 @@ func (f *fileStorage) write() error {
 		//runtime.LogDebugf(f.ctx, "fileStorage<%p>.write(): no data, nothing to write", f)
 		return nil
 	}
-	//runtime.LogDebugf(f.ctx, "fileStorage<%p>.write(): m=%s", f, mpretty(f.data))
-	b, err := json.Marshal(f.data)
+	//runtime.LogDebugf(f.ctx, "fileStorage<%p>.write(): data.Data=%s", f, mpretty(f.data.Data))
+	b, err := json.MarshalIndent(f.data, "", "  ")
 	if err != nil {
 		return errors.Wrap(err, "json marshal")
 	}
+	b = append(b, '\n')
 	//runtime.LogDebugf(f.ctx, "fileStorage<%p>.write(): raw=%s", f, bshort(b))
 	if _, err = f.file.WriteAt(b, 0); err != nil {
 		return errors.Wrap(err, "write file")

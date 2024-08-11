@@ -21,6 +21,20 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+const (
+	// since 0.21.0: remove either after several versions, or since 1.0
+	configFileConfigOld = "config.json"
+	configFileConfig    = "config.v1.json"
+
+	// since 0.21.0: remove either after several versions, or since 1.0
+	configFileFrontOld = "front.json"
+	configFileFront    = "front.v1.json"
+
+	// since 0.21.0: remove either after several versions, or since 1.0
+	configFileFilesOld = "files.json"
+	configFileFiles    = "files.v1.json"
+)
+
 type AppOptions struct {
 	Logger logger.Logger
 }
@@ -65,21 +79,33 @@ func (a *App) startup(ctx context.Context) {
 		return
 	}
 
-	appConfig, err := config.NewFileStorage(ctx, filepath.Join(configDir, "config.json"))
+	appConfig, err := config.NewFileStorage(config.FileStorageOptions{
+		Ctx:         ctx,
+		Filepath:    filepath.Join(configDir, configFileConfig),
+		FilepathOld: filepath.Join(configDir, configFileConfigOld),
+	})
 	if err != nil {
 		runtime.LogErrorf(ctx, "front config: %v", err)
 		return
 	}
 
-	front, err := config.NewFileStorage(ctx, filepath.Join(configDir, "front.json"))
+	front, err := config.NewFileStorage(config.FileStorageOptions{
+		Ctx:         ctx,
+		Filepath:    filepath.Join(configDir, configFileFront),
+		FilepathOld: filepath.Join(configDir, configFileFrontOld),
+	})
 	if err != nil {
 		runtime.LogErrorf(ctx, "front config: %v", err)
 		return
 	}
 
-	filesRegPath := filepath.Join(configDir, "files.json")
 	chosenReg := files.NewChosenRegistry(ctx)
-	fs, err := files.NewStorage(ctx, filesRegPath, chosenReg)
+	fs, err := files.NewStorage(files.StorageOptions{
+		Ctx:         ctx,
+		Filepath:    filepath.Join(configDir, configFileFiles),
+		FilepathOld: filepath.Join(configDir, configFileFilesOld),
+		Chosen:      chosenReg,
+	})
 	if err != nil {
 		runtime.LogErrorf(ctx, "files registry: %v", err)
 		return
