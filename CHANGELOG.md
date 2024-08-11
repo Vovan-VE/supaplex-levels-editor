@@ -2,7 +2,7 @@
 
 ## 0.21.0 (DEV)
 
-- ...
+- Enh: Use level title in filename when exporting a level.
 
 ### Desktop
 

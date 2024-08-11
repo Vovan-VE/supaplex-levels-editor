@@ -35,7 +35,6 @@
 - Demo edit: seed
 - export a level with zip options
 - an SP level was exported as "*.zip" just renamed
-- export a level: use title in filename
 
 ### Desktop
 

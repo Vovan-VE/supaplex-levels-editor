@@ -37,7 +37,11 @@ import {
   SupportReportType,
 } from "drivers";
 import { SupportReport } from "components/files/FileToolbar/SupportReport";
-import { fmtLevelNumber, fmtLevelShort } from "components/levelset/fmt";
+import {
+  fmtLevelForFilename,
+  fmtLevelNumber,
+  fmtLevelShort,
+} from "components/levelset/fmt";
 import { Trans } from "i18n/Trans";
 import { TranslationGetter } from "i18n/types";
 import { msgBox } from "ui/feedback";
@@ -996,7 +1000,7 @@ sample({
           file.toUpperCase().endsWith(dotExt.toUpperCase())
             ? file.substring(0, file.length - dotExt.length)
             : file
-        }.${index + 1}${dotExt}`,
+        }.${fmtLevelForFilename(index, lvl.title)}${dotExt}`,
       );
     }
   }
