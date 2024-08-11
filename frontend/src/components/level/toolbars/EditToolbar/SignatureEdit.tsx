@@ -26,7 +26,7 @@ import { showToastError } from "models/ui/toasts";
 import { Button, TextButton } from "ui/button";
 import { Dialog, msgBox, RenderPromptProps } from "ui/feedback";
 import { svgs } from "ui/icon";
-import { Field, Textarea } from "ui/input";
+import { Field, IntegerInput, Textarea } from "ui/input";
 import { ColorType } from "ui/types";
 import { round } from "utils/number";
 import cl from "./SignatureEdit.module.scss";
@@ -50,6 +50,7 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const [demoTextOptions, setDemoTextOptions] = useState<object>({});
   const [demoText, setDemoText] = useState("");
   const [demoTextError, setDemoTextError] = useState<Error | null>(null);
+  const [demoSeed, setDemoSeed] = useState<number | null>(null);
   const [signature, setSignature] = useState(() =>
     levelSupportSignature(level) ? level.signatureString : "",
   );
@@ -61,6 +62,8 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
         setDemoText(text);
         setDemoDuration(duration);
       }
+      const seed = level.demoSeed;
+      setDemoSeed((seed.hi << 8) | seed.lo);
     }
     if (levelSupportSignature(level)) {
       setSignature(level.signatureString);
@@ -107,12 +110,21 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
     [DemoToTextHelp],
   );
 
+  const seedError =
+    demoSeed === null
+      ? null
+      : demoSeed < 0
+        ? t("main:validate.IntMin", { min: 0 })
+        : demoSeed > 0xffff
+          ? t("main:validate.IntMax", { max: 0xffff })
+          : null;
+
   const signatureError =
     signatureMaxLength !== undefined && signature.length > signatureMaxLength
       ? t("main:validate.StrMaxLen", { max: signatureMaxLength })
       : null;
 
-  const hasError = Boolean(demoTextError || signatureError);
+  const hasError = Boolean(demoTextError || seedError || signatureError);
   const handleOk = useCallback<FormEventHandler>(
     (e) => {
       e.preventDefault();
@@ -121,6 +133,12 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
       }
       try {
         let next = level.setDemo(demo);
+        if (demoSeed !== null) {
+          next = next.setDemoSeed({
+            lo: demoSeed & 0xff,
+            hi: (demoSeed >> 8) & 0xff,
+          });
+        }
         if (levelSupportSignature(next)) {
           next = next.setSignature(signature);
         }
@@ -130,7 +148,7 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
         showToastError(e);
       }
     },
-    [hasError, demo, signature, level, onSubmit],
+    [hasError, demo, demoSeed, signature, level, onSubmit],
   );
 
   return (
@@ -187,6 +205,13 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
               onChange={handleDemoTextOptionsChange}
             />
           )}
+
+          <Field
+            label={t("main:demoEdit.DemoSeed")}
+            help={t("main:demoEdit.DemoSeedHelp")}
+          >
+            <IntegerInput value={demoSeed} onChange={setDemoSeed} />
+          </Field>
         </>
       )}
       {levelSupportSignature(level) && (

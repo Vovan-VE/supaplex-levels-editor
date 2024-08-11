@@ -62,7 +62,9 @@
     }
   },
   "demoEdit": {
-    "DemoDuration": "Demo: <b>{frames}</b> frames, <b>{sec40}</b> sec@30, <b>{sec1000}</b> sec@1000",
+    "DemoDuration": "Demo: <b>{frames}</b> frames, <b>{sec40}</b> sec@40, <b>{sec1000}</b> sec@1000",
+    "DemoSeed": "Seed",
+    "DemoSeedHelp": "Integer from 0 to 65535. For example, 65280 is FF00, so hi=FF, lo=00",
     "DemoText": "Demo text representation",
     "DialogTitle": "Edit demo",
     "Signature": "Signature"

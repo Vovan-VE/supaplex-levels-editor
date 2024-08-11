@@ -63,6 +63,8 @@
   },
   "demoEdit": {
     "DemoDuration": "Демо: <b>{frames}</b> кадров, <b>{sec40}</b> сек@40, <b>{sec1000}</b> сек@1000",
+    "DemoSeed": "Зерно (seed)",
+    "DemoSeedHelp": "Целое от 0 до 65535. Например, 65280 есть FF00, поэтому hi=FF, lo=00",
     "DemoText": "Текстовое представление Демо",
     "DialogTitle": "Изменить Демо",
     "Signature": "Подпись"

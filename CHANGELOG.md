@@ -3,6 +3,7 @@
 ## 0.21.0 (DEV)
 
 - Add: Export current level as ZIP With Options.
+- Add: Seed in Demo Edit dialog.
 - Enh: Use level title in filename when exporting a level.
 
 ### Desktop
