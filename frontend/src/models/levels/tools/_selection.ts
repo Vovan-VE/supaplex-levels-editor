@@ -321,12 +321,15 @@ const $selectionSizeHash = $selectionSize.map(
   (s) => s && (`${s.width}x${s.height}` as const),
 );
 
-export const $selectionRect = $drawState.map<Rect | null>((d) => {
+interface RectWithContent extends Rect {
+  content?: ILevelRegion;
+}
+export const $selectionRect = $drawState.map<RectWithContent | null>((d) => {
   if (!d || d.op !== Op.STABLE) {
     return null;
   }
-  const { x, y, width, height } = d;
-  return { x, y, width, height };
+  const { x, y, width, height, content } = d;
+  return { x, y, width, height, content };
 });
 export const $selectionFeedback = $drawState.map<Rect | null>((d) => {
   if (!d) {
