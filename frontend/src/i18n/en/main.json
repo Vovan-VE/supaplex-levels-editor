@@ -149,6 +149,7 @@
       "CopyLevelAsTestUrl": "Copy level as Test Link",
       "CopySelectionAsImage": "Copy level/selection as Image",
       "SaveLevelAsFile": "Save level as File",
+      "SaveLevelAsFileWithOptions": "Save level as ZIP With Options",
       "SaveSelectionAsImage": "Save level/selection as Image"
     },
     "import": {

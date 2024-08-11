@@ -33,7 +33,6 @@
 - Own file format, editor specific: JSON + schema
   - Problem: users will use it in levels upload request instead of exported
 - Demo edit: seed
-- export a level with zip options
 - an SP level was exported as "*.zip" just renamed
 
 ### Desktop

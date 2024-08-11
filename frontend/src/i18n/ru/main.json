@@ -149,6 +149,7 @@
       "CopyLevelAsTestUrl": "Копировать уровень, как ссылку Тест",
       "CopySelectionAsImage": "Копировать уровень/выделение, как Изображение",
       "SaveLevelAsFile": "Сохранить уровень, как файл",
+      "SaveLevelAsFileWithOptions": "Сохранить уровень, как ZIP с Настройками",
       "SaveSelectionAsImage": "Сохранить уровень/выделение, как Изображение"
     },
     "import": {

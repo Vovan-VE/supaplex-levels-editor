@@ -132,7 +132,18 @@ fileDidOpen.watch((key) => {
 // _willSetCurrentLevelFx.done.watch((p) =>
 //   console.log(">> _willSetCurrentLevelFx.done", p),
 // );
-export const exportCurrentLevel = createEvent<unknown>();
+
+export interface SaveAsOptions {
+  withLocalOptions?: boolean;
+}
+
+const exportCurrentLevel = createEvent<SaveAsOptions | undefined>();
+export const exportCurrentLevelPlain = exportCurrentLevel.prepend<unknown>(
+  () => undefined,
+);
+export const exportCurrentLevelWithOptions =
+  exportCurrentLevel.prepend<unknown>(() => ({ withLocalOptions: true }));
+
 interface ImportLevelParams {
   file: File;
   levelset?: IBaseLevelset<IBaseLevel>;
@@ -202,9 +213,6 @@ export const saveAllFx = allowManualSave
     })
   : async () => {};
 
-export interface SaveAsOptions {
-  withLocalOptions?: boolean;
-}
 /**
  * Download current levelset file
  */
@@ -981,7 +989,8 @@ sample({
     driverName: $currentDriverName,
     level: $currentLevel,
   },
-}).watch(({ file, driverName, level }) => {
+  fn: (s, c) => ({ ...s, ...c }),
+}).watch(async ({ file, driverName, level, withLocalOptions }) => {
   if (file && driverName && level) {
     const {
       index,
@@ -994,14 +1003,28 @@ sample({
     if (format) {
       const { createLevelset, fileExtensionDefault, writeLevelset } = format;
       const dotExt = `.${fileExtensionDefault}`;
-      saveFileAs(
-        new Blob([writeLevelset(createLevelset([lvl]))]),
-        `${
-          file.toUpperCase().endsWith(dotExt.toUpperCase())
-            ? file.substring(0, file.length - dotExt.length)
-            : file
-        }.${fmtLevelForFilename(index, lvl.title)}${dotExt}`,
-      );
+      const levelAB = writeLevelset(createLevelset([lvl]));
+      const levelFileName = `${
+        file.toUpperCase().endsWith(dotExt.toUpperCase())
+          ? file.substring(0, file.length - dotExt.length)
+          : file
+      }.${fmtLevelForFilename(index, lvl.title)}${dotExt}`;
+
+      const localOptions = lvl.localOptions;
+      if (withLocalOptions && localOptions) {
+        const zip = new JSZip();
+        zip.file(levelFileName, levelAB);
+        zip.file(
+          `${levelFileName}.options.json`,
+          JSON.stringify(localOptions, null, 2) + "\n",
+        );
+        saveFileAs(
+          await zip.generateAsync({ type: "blob" }),
+          `${levelFileName}.zip`,
+        );
+      } else {
+        saveFileAs(new Blob([levelAB]), levelFileName);
+      }
     }
   }
 });

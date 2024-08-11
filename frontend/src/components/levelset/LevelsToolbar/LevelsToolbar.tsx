@@ -26,7 +26,8 @@ import {
   closeOtherLevels,
   deleteCurrentLevel,
   deleteRestLevels,
-  exportCurrentLevel,
+  exportCurrentLevelPlain,
+  exportCurrentLevelWithOptions,
   importCurrentLevel,
   insertAtCurrentLevel,
 } from "models/levelsets";
@@ -164,6 +165,9 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
     );
   }
   const exportLevelAsFileTitle = t("main:level.export.SaveLevelAsFile");
+  const exportLevelAsFileWithOptionsTitle = t(
+    "main:level.export.SaveLevelAsFileWithOptions",
+  );
   const exportSelectionAsImageTitle = t(
     "main:level.export.SaveSelectionAsImage",
   );
@@ -173,11 +177,19 @@ export const LevelsToolbar: FC<Props> = ({ isCompact = false }) => {
     <>
       <TextButton
         icon={<svgs.SaveLevelAsFile />}
-        onClick={exportCurrentLevel}
+        onClick={exportCurrentLevelPlain}
         uiColor={ColorType.DEFAULT}
         title={isCompact ? exportLevelAsFileTitle : undefined}
       >
         {isCompact ? undefined : exportLevelAsFileTitle}
+      </TextButton>
+      <TextButton
+        icon={<svgs.SaveLevelAsFile />}
+        onClick={exportCurrentLevelWithOptions}
+        uiColor={ColorType.DEFAULT}
+        title={isCompact ? exportLevelAsFileWithOptionsTitle : undefined}
+      >
+        {isCompact ? undefined : exportLevelAsFileWithOptionsTitle}
       </TextButton>
       <TextButton
         icon={<svgs.SaveAsImage />}
