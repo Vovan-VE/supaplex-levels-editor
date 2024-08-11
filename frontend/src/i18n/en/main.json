@@ -247,6 +247,7 @@
     "flip": {
       "HTitle": "Flip Horizontal",
       "Shuffle": "Shuffle",
+      "Transpose": "Transpose",
       "VTitle": "Flip Vertical"
     },
     "gradient": {

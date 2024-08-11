@@ -1,12 +1,12 @@
 import { clipRect, IBounds, inBounds, Point2D, Rect } from "utils/rect";
 import {
   DemoSeed,
-  FlipDirection,
   ILevelRegion,
   INewLevelOptions,
   IResizeLevelOptions,
   ITilesStreamItem,
   LocalOptions,
+  SwapTransform,
 } from "../types";
 import { AnyBox } from "./AnyBox";
 import { createLevelBody } from "./body";
@@ -307,11 +307,11 @@ class SupaplexLevel implements ISupaplexLevel {
     return next;
   }
 
-  swapTiles(a: Point2D, b: Point2D, flip?: FlipDirection) {
+  swapTiles(a: Point2D, b: Point2D, transform?: SwapTransform) {
     let prevA = this.#body.getTile(a.x, a.y);
     let prevB = this.#body.getTile(b.x, b.y);
-    if (flip) {
-      const s = symmetry[flip];
+    if (transform) {
+      const s = symmetry[transform];
       [prevA, prevB] = [s.get(prevA) ?? prevA, s.get(prevB) ?? prevB];
     }
     const spA = this.#specports.find(a.x, a.y);

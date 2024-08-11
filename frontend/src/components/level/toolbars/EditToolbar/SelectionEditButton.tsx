@@ -35,6 +35,7 @@ import {
   rnd,
   SelectionEditor,
   shuffle,
+  transpose,
 } from "./selection-editors";
 import cl from "./SelectionEditButton.module.scss";
 
@@ -58,9 +59,9 @@ const EDITORS: readonly EditorsGroup[] = [
     editors: {
       flipH,
       flipV,
+      transpose,
       shuffle,
     },
-    // rotate?
   },
 ];
 const editorsMap = new Map(
@@ -135,7 +136,7 @@ const $run = $selectionSize.map((size) =>
 interface HKItem {
   name: string;
   hotkeys: HotKeyShortcuts;
-  handler: () => any;
+  handler: () => void;
 }
 const $hotkeys = combine(
   $hasSelection,

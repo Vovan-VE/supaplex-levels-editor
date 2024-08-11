@@ -52,6 +52,7 @@ export { default as SaveLevelAsFile } from "./SaveLevelAsFile.svg?react";
 export { default as Selection } from "./Selection.svg?react";
 export { default as SwapVertical } from "./SwapVertical.svg?react";
 export { default as Trash } from "./Trash.svg?react";
+export { default as TransposeNW } from "./TransposeNW.svg?react";
 export { default as Undo } from "./Undo.svg?react";
 // export { default as Upload } from "./Upload.svg?react";
 export { default as Warning } from "./Warning.svg?react";

@@ -4,6 +4,7 @@
 
 - Add: Export current level as ZIP With Options.
 - Add: Seed in Demo Edit dialog.
+- Add: Transpose selection editor.
 - Fix: Hovered cell display didn't use Selection own Content.
 - Enh: Use level title in filename when exporting a level.
 

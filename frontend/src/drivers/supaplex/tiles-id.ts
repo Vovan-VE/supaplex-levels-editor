@@ -1,4 +1,4 @@
-import { FlipDirection } from "../types";
+import { FlipDirection, SwapTransform, TranspositionDirection } from "../types";
 
 /**
  * Chars map
@@ -178,8 +178,9 @@ export const isVariants = (a: number, b: number) =>
   a === b || portSpMap.get(a) === b;
 
 const symMap = (pairs: [number, number][]) =>
-  new Map([...pairs, ...pairs.map(([a, b]) => [b, a] as const)]);
-export const symmetry: Record<FlipDirection, ReadonlyMap<number, number>> = {
+  new Map(pairs.concat(pairs.map(([a, b]) => [b, a] as const)));
+
+export const symmetry: Record<SwapTransform, ReadonlyMap<number, number>> = {
   [FlipDirection.H]: symMap([
     [TILE_CHIP_L, TILE_CHIP_R],
     [TILE_PORT_L, TILE_PORT_R],
@@ -189,5 +190,14 @@ export const symmetry: Record<FlipDirection, ReadonlyMap<number, number>> = {
     [TILE_CHIP_T, TILE_CHIP_B],
     [TILE_PORT_U, TILE_PORT_D],
     [TILE_SP_PORT_U, TILE_SP_PORT_D],
+  ]),
+  [TranspositionDirection.NW]: symMap([
+    [TILE_CHIP_L, TILE_CHIP_T],
+    [TILE_CHIP_R, TILE_CHIP_B],
+    [TILE_PORT_L, TILE_PORT_U],
+    [TILE_PORT_R, TILE_PORT_D],
+    [TILE_PORT_H, TILE_PORT_V],
+    [TILE_SP_PORT_L, TILE_SP_PORT_U],
+    [TILE_SP_PORT_R, TILE_SP_PORT_D],
   ]),
 };

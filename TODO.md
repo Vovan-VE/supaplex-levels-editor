@@ -2,8 +2,6 @@
 
 ## Internal
 
-- Toasts.
-  - Internal editing exception from store manipulations.
 - End User Manual.
   - Find or create jekyll template.
 - Tools:
@@ -54,7 +52,6 @@
 - BIN demo export/import?
 - 100% offline with level testing and demo replay?
   - Need run game engine and own offline renderer
-- transpose/rotate
 
 ### Desktop
 
