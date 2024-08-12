@@ -423,6 +423,32 @@ export const pasteSelectionFx = createEffect(async (visibleRect?: Rect) => {
   }
 });
 
+export const selectAllFx = createEffect(
+  async ({ almost = false }: { almost?: boolean } = {}) => {
+    const q = $currentLevelUndoQueue.getState();
+    if (!q) return;
+    if ($openedSelectionEdit.getState()) return;
+    externalRollback();
+    let { width, height } = q.current;
+    let x = 0;
+    let y = 0;
+    if (almost) {
+      x++;
+      y++;
+      width -= 2;
+      height -= 2;
+      if (width <= 0 || height <= 0) return;
+    }
+    _setState({
+      op: Op.STABLE,
+      x,
+      y,
+      width,
+      height,
+    });
+  },
+);
+
 export const getSelectionContentFx = createEffect(() => {
   const d = $drawState.getState();
   if (d?.op === Op.STABLE) {

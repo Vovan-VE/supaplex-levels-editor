@@ -5,6 +5,8 @@
 - Add: Export current level as ZIP With Options.
 - Add: Seed in Demo Edit dialog.
 - Add: Transpose selection editor.
+- Add: `Ctrl+A` hotkey to select whole level body and `Ctrl+Shift+A` to select
+  almost whole without border. 
 - Fix: Hovered cell display didn't use Selection own Content.
 - Enh: Use level title in filename when exporting a level.
 
