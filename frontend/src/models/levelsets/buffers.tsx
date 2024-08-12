@@ -25,11 +25,13 @@ import {
 } from "backend";
 import { APP_TITLE } from "configs";
 import {
+  canResizeTo,
   detectDriverFormat,
   getDriver,
   getDriverFormat,
   IBaseLevel,
   IBaseLevelset,
+  ILevelRegion,
   levelSupportsDemo,
   LocalOptions,
   serializeLocalOptionsList,
@@ -173,6 +175,7 @@ const _deleteRestLevels = createEvent<_LevelRefStrict>();
  * Update current level in current levelset
  */
 export const updateCurrentLevel = createEvent<IBaseLevel>();
+export const updateCurrentLevelByRegion = createEvent<ILevelRegion>();
 export const updateLevel = createEvent<{
   key: FilesStorageKey;
   index: number;
@@ -401,6 +404,30 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
         ...b,
         undoQueue: b.undoQueue.done(level),
       })),
+  )
+  .on(
+    _withCurrentFile(updateCurrentLevelByRegion),
+    (map, { current: { key, driverName, driverFormat }, value: region }) =>
+      updateBufferLevel(map, key, undefined, (b) => {
+        const q = b.undoQueue;
+        let level = q.current;
+        const format = getDriverFormat(driverName, driverFormat);
+        if (format) {
+          const { resizable } = format;
+          if (level.resize && canResizeTo(resizable, region.tiles)) {
+            level = level.resize({
+              width: region.tiles.width,
+              height: region.tiles.height,
+              fillTile: 0,
+              borderTile: 0,
+            });
+          }
+        }
+        return {
+          ...b,
+          undoQueue: q.done(level.pasteRegion(0, 0, region)),
+        };
+      }),
   )
   .on(updateLevel, (map, { key, index, level }) =>
     updateBufferLevel(map, key, index, (b) => ({

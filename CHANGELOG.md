@@ -6,7 +6,10 @@
 - Add: Seed in Demo Edit dialog.
 - Add: Transpose selection editor.
 - Add: `Ctrl+A` hotkey to select whole level body and `Ctrl+Shift+A` to select
-  almost whole without border. 
+  almost whole without border.
+- Add: Selection Editors now can work with entire level body without selection.
+  - A new Transpose editor can autoresize level when necessary, if underlying
+    format support wanted size.
 - Fix: Hovered cell display didn't use Selection own Content.
 - Enh: Use level title in filename when exporting a level.
 
