@@ -1,9 +1,10 @@
 import { FOOTER_BYTE_LENGTH, LEVEL_WIDTH, TITLE_LENGTH } from "./formats/std";
 import { createLevelFooter } from "./footer";
+import { expect } from "vitest";
 
 describe("footer", () => {
   const testFooterData = Uint8Array.of(
-    ...[0, 0, 0, 0],
+    ...[10, 20, 30, 254],
     // G
     1,
     ...[0],
@@ -28,7 +29,7 @@ describe("footer", () => {
     // demo_seed_lo demo_seed_hi
     ...[0x34, 0x12],
   );
-  expect(testFooterData.length).toBe(96);
+  expect(testFooterData.length).toBe(FOOTER_BYTE_LENGTH);
 
   describe("constructor", () => {
     it("no params", () => {
@@ -55,6 +56,11 @@ describe("footer", () => {
       // and origin was not changed
       expect(testFooterData[6]).toBe("-".charCodeAt(0));
       expect(copy.title).toBe("".padEnd(TITLE_LENGTH));
+    });
+    it("raw", () => {
+      const footer = createLevelFooter(LEVEL_WIDTH, testFooterData);
+      const raw = footer.getRaw();
+      expect(raw).toEqual(testFooterData);
     });
   });
 
@@ -151,6 +157,7 @@ describe("footer", () => {
 
   describe("demo", () => {
     const srcMain = new Uint8Array(FOOTER_BYTE_LENGTH);
+    srcMain.set(Uint8Array.of(10, 20, 40, 254), 0);
     srcMain.set(
       ""
         .padEnd(23)
@@ -213,7 +220,9 @@ describe("footer", () => {
       footer = createLevelFooter(1);
       expect(footer.demo).toBe(null);
       expect(footer.length).toEqual(FOOTER_BYTE_LENGTH);
-      expect(footer.getRaw()).toEqual(srcMain);
+      const newMain = new Uint8Array(srcMain);
+      newMain.fill(0, 0, 4);
+      expect(footer.getRaw()).toEqual(newMain);
     });
 
     it("demo with signature", () => {
