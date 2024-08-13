@@ -27,13 +27,20 @@ func NewFileStorage(opt FileStorageOptions) (Storage, error) {
 		ctx:     opt.Ctx,
 		file:    f,
 		fileOld: opt.FilepathOld,
+		iowg:    opt.IOWG,
 	}, nil
+}
+
+type JobTracker interface {
+	Add(delta int)
+	Done()
 }
 
 type FileStorageOptions struct {
 	Ctx         context.Context
 	Filepath    string
 	FilepathOld string
+	IOWG        JobTracker
 }
 
 const fileVersion = "1.0"
@@ -49,6 +56,7 @@ type fileStorage struct {
 	data    *fileData
 	rw      sync.RWMutex
 	rwd     sync.RWMutex
+	iowg    JobTracker
 }
 
 func (f *fileStorage) HasFunc(match func(v json.RawMessage) (bool, error)) (bool, error) {
@@ -160,6 +168,8 @@ func (f *fileStorage) read() error {
 	//defer func() { runtime.LogDebugf(f.ctx, "fileStorage<%p>.read() -> %v", f, _1) }()
 	f.rwd.Lock()
 	defer f.rwd.Unlock()
+	f.iowg.Add(1)
+	defer f.iowg.Done()
 	if f.data != nil {
 		//runtime.LogDebugf(f.ctx, "fileStorage<%p>.read(): already was read", f)
 		return nil
@@ -238,6 +248,8 @@ func (f *fileStorage) readOld() (m map[string]string, err error) {
 func (f *fileStorage) write() error {
 	//runtime.LogDebugf(f.ctx, "fileStorage<%p>.write()", f)
 	//defer func() { runtime.LogDebugf(f.ctx, "fileStorage<%p>.write() -> %v", f, _1) }()
+	f.iowg.Add(1)
+	defer f.iowg.Done()
 	if f.data == nil {
 		//runtime.LogDebugf(f.ctx, "fileStorage<%p>.write(): no data, nothing to write", f)
 		return nil

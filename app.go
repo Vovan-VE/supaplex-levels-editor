@@ -46,6 +46,7 @@ type App struct {
 	frontConfig storage.Full[string]
 	chosenReg   files.ChosenRegistry
 	files       files.Storage
+	iowg        sync.WaitGroup
 
 	isDirty bool
 
@@ -83,6 +84,7 @@ func (a *App) startup(ctx context.Context) {
 		Ctx:         ctx,
 		Filepath:    filepath.Join(configDir, configFileConfig),
 		FilepathOld: filepath.Join(configDir, configFileConfigOld),
+		IOWG:        &a.iowg,
 	})
 	if err != nil {
 		runtime.LogErrorf(ctx, "front config: %v", err)
@@ -93,6 +95,7 @@ func (a *App) startup(ctx context.Context) {
 		Ctx:         ctx,
 		Filepath:    filepath.Join(configDir, configFileFront),
 		FilepathOld: filepath.Join(configDir, configFileFrontOld),
+		IOWG:        &a.iowg,
 	})
 	if err != nil {
 		runtime.LogErrorf(ctx, "front config: %v", err)
@@ -105,6 +108,7 @@ func (a *App) startup(ctx context.Context) {
 		Filepath:    filepath.Join(configDir, configFileFiles),
 		FilepathOld: filepath.Join(configDir, configFileFilesOld),
 		Chosen:      chosenReg,
+		IOWG:        &a.iowg,
 	})
 	if err != nil {
 		runtime.LogErrorf(ctx, "files registry: %v", err)
@@ -188,6 +192,8 @@ func (a *App) openFilesAtFront(absFiles []string) {
 
 func (a *App) checkUpdate() {
 	defer a.catchPanic()
+	a.iowg.Add(1)
+	defer a.iowg.Done()
 
 	lastKnownUpdateS, _, err := a.appConfig.GetItem(config.AppLatestRelease)
 	if err != nil {
@@ -196,26 +202,27 @@ func (a *App) checkUpdate() {
 	lastKnownUpdate := config.UpdateReleaseFromString(lastKnownUpdateS)
 
 	defer func() {
-		if lastKnownUpdate != nil {
-			select {
-			case <-a.ctx.Done():
-				return
-			default:
-			}
-
-			v := lastKnownUpdate.VersionNumber()
-
-			// if triggered after front init
-			a.triggerFront(backend.FEUpgradeAvailable, v)
-
-			// if triggered before front init
-			b, err := json.Marshal(v)
-			if err != nil {
-				runtime.LogErrorf(a.ctx, "json marshal: %v", err)
-				return
-			}
-			runtime.WindowExecJS(a.ctx, "window.spleLatestVersion="+string(b)+";")
+		if lastKnownUpdate == nil {
+			return
 		}
+		select {
+		case <-a.ctx.Done():
+			return
+		default:
+		}
+
+		v := lastKnownUpdate.VersionNumber()
+
+		// if triggered after front init
+		a.triggerFront(backend.FEUpgradeAvailable, v)
+
+		// if triggered before front init
+		b, err := json.Marshal(v)
+		if err != nil {
+			runtime.LogErrorf(a.ctx, "json marshal: %v", err)
+			return
+		}
+		runtime.WindowExecJS(a.ctx, "window.spleLatestVersion="+string(b)+";")
 	}()
 
 	latestRelease, err := config.UpdateReleaseFetch(a.ctx)
@@ -257,11 +264,13 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 }
 
 // shutdown is called at application termination
-//func (a *App) shutdown(ctx context.Context) {
-//	runtime.LogInfof(a.ctx, "shutdown")
-//	close(a.dropFiles)
-//	// TODO: wait flush files
-//}
+func (a *App) shutdown(ctx context.Context) {
+	runtime.LogInfo(a.ctx, "shutdown")
+	//close(a.dropFiles)
+	runtime.LogInfo(a.ctx, "wait pending I/O...")
+	a.iowg.Wait()
+	runtime.LogInfo(a.ctx, "wait pending I/O done")
+}
 
 func (a *App) configStorage() storage.Full[string] {
 	return a.frontConfig
