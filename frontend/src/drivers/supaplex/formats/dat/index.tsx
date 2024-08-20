@@ -1,3 +1,4 @@
+import { Trans } from "i18n/Trans";
 import { createNewLevel } from "../../level";
 import { createLevelset } from "../../levelset";
 import { ISupaplexFormat } from "../../types";
@@ -7,6 +8,7 @@ import { supportReport } from "./supportReport";
 
 export const DAT: ISupaplexFormat = {
   title: "DAT",
+  description: <Trans i18nKey="main:supaplex.format.dat.desc" />,
   fileExtensions: /(dat|d\d{2})/i,
   fileExtensionDefault: "dat",
   resizable: {

@@ -19,7 +19,6 @@
 - Tooltips with interactive content support.
 - footer info:
   - is std, why not
-- new file: format description: common and per format
 - tooltip for a tile/coords (in dialogs) to display part of level as context
 - Import/Open level compatibility report has text from "convert file" context
 - A `Dialog` don't block hotkeys behind

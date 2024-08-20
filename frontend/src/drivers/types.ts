@@ -218,6 +218,7 @@ export interface ISupportReport {
 
 export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
   readonly title: string;
+  readonly description?: ReactNode;
   readonly fileExtensions?: RegExp;
   readonly fileExtensionDefault: string;
   readonly resizable: ISizeLimit;

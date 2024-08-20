@@ -359,6 +359,17 @@
       "UseSerialPorts": "Use Serial Ports",
       "UseZonker": "Use Zonker"
     },
+    "format": {
+      "dat": {
+        "desc": "Fixed levels 60x24, no demos. Any number of levels."
+      },
+      "mpx": {
+        "desc": "Any level size, demo support, any number of levels."
+      },
+      "sp": {
+        "desc": "The only level 60x24 with demo support."
+      }
+    },
     "infotronsNeed": {
       "Actual": "= {n}",
       "All": "= all {n}",
