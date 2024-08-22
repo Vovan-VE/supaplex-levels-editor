@@ -36,7 +36,7 @@ export const writeLevelset = (levelset: ISupaplexLevelset): ArrayBuffer => {
     if (lvl.width < LEVEL_WIDTH || lvl.height < LEVEL_HEIGHT) {
       lvl = lvl.resize({ width: LEVEL_WIDTH, height: LEVEL_HEIGHT });
     }
-    lvl = lvl.setDemo(null);
+    lvl = lvl.setDemo(null).setSignature(null);
 
     result.set(lvl.raw, i * LEVEL_BYTES_LENGTH);
   }

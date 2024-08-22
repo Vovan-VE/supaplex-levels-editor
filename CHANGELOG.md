@@ -11,6 +11,7 @@
   - A new Transpose editor can autoresize level when necessary, if underlying
     format support wanted size.
 - Fix: Hovered cell display didn't use Selection own Content.
+- Fix: Cannot paste a level with demo signature from clipboard to DAT file.
 - Enh: Use level title in filename when exporting a level.
 
 ### Desktop
