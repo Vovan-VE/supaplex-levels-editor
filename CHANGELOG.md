@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.21.0 (DEV)
+## 0.21.0 (2024-08-23)
 
 - Add: Export current level as ZIP With Options.
 - Add: Seed in Demo Edit dialog.
