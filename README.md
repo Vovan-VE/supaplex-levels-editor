@@ -79,7 +79,7 @@ on your device, like other whatever desktop editors do.
 ### Supported platforms
 
 - Windows 10/11 AMD64: requires [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/);
-- Linux AMD64: requires `libwebkit`.
+- Linux AMD64: requires `libwebkit` 4.1 (`libwebkit2gtk-4.1-0`).
 
 ## Contribution, Development
 
@@ -89,7 +89,7 @@ Frontend common app is located in `./frontend/` subdirectory (see also
 [README](./frontend/README.md) there). Web [sple.me][sple.me] built from that.
 
 - To run SpLE in live development mode:
-  - Desktop: run `wails dev` in the project directory.
+  - Desktop: run `make dev` in the project directory.
   - Web: run `npm start` in `./frontend` subdirectory.
 - To build Desktop SpLE run `make` in the project directory with one of
   following targets:

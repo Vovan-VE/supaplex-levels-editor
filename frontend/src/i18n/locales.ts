@@ -13,8 +13,8 @@ export const locales = {
   ru,
 };
 
-const hasOwn = Object.prototype.hasOwnProperty;
-export const isValidLocale = (s: string) => hasOwn.call(locales, s);
+const hasOwn = Object.hasOwn;
+export const isValidLocale = (s: string) => hasOwn(locales, s);
 
 const defaultLang: keyof typeof locales = "en";
 export default defaultLang;

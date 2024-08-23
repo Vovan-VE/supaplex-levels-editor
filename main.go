@@ -58,7 +58,7 @@ func main() {
 		OnStartup:     app.startup,
 		OnDomReady:    app.domReady,
 		OnBeforeClose: app.beforeClose,
-		//OnShutdown:       app.shutdown,
+		OnShutdown:    app.shutdown,
 		Bind: []interface{}{
 			app,
 			&backend.ConfigStorage{
@@ -70,6 +70,15 @@ func main() {
 				Catch: app.catchPanic,
 			},
 		},
+		// https://github.com/wailsapp/wails/issues/3563
+		// on linux cause DomReady triggering
+		// on windows doesn't work at all
+		//DragAndDrop: &options.DragAndDrop{
+		//	EnableFileDrop: true,
+		//	DisableWebViewDrop: false,
+		//	CSSDropProperty:    "--drop-files",
+		//	CSSDropValue:       "drop",
+		//},
 		Windows: &windows.Options{
 			IsZoomControlEnabled: false,
 			Theme:                windows.Dark,

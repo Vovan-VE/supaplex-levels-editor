@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.21.0 (2024-08-23)
+
+- Add: Export current level as ZIP With Options.
+- Add: Seed in Demo Edit dialog.
+- Add: Transpose selection editor.
+- Add: `Ctrl+A` hotkey to select whole level body and `Ctrl+Shift+A` to select
+  almost whole without border.
+- Add: Selection Editors now can work with entire level body without selection.
+  - A new Transpose editor can autoresize level when necessary, if underlying
+    format support wanted size.
+- Fix: Hovered cell display didn't use Selection own Content.
+- Fix: Cannot paste a level with demo signature from clipboard to DAT file.
+- Enh: Use level title in filename when exporting a level.
+
+### Desktop
+
+- On Linux now `libwebkit` 4.1 is required (`libwebkit2gtk-4.1-0`).
+- Fix: Several issues potentially causing losing config and/or opened
+  files/levels state due to bad and/or unstable concurrent I/O.
+
 ## 0.20.0 (2024-03-24)
 
 - Add: Display demo duration in Demo/Signature edit dialog.

@@ -16,7 +16,7 @@ import { SELECTION } from "./_selection";
 
 export const setTool = createEvent<number>();
 export const setToolVariant = createEvent<number>();
-export const rollbackWork = createEvent<any>();
+export const rollbackWork = createEvent<unknown>();
 
 export const TOOLS: readonly Tool[] = [PEN, FLOOD, RECT, SELECTION];
 export const setToolO = createEvent<Tool>();

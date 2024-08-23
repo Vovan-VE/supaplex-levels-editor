@@ -1,12 +1,12 @@
 import { clipRect, IBounds, inBounds, Point2D, Rect } from "utils/rect";
 import {
   DemoSeed,
-  FlipDirection,
   ILevelRegion,
   INewLevelOptions,
   IResizeLevelOptions,
   ITilesStreamItem,
   LocalOptions,
+  SwapTransform,
 } from "../types";
 import { AnyBox } from "./AnyBox";
 import { createLevelBody } from "./body";
@@ -307,11 +307,11 @@ class SupaplexLevel implements ISupaplexLevel {
     return next;
   }
 
-  swapTiles(a: Point2D, b: Point2D, flip?: FlipDirection) {
+  swapTiles(a: Point2D, b: Point2D, transform?: SwapTransform) {
     let prevA = this.#body.getTile(a.x, a.y);
     let prevB = this.#body.getTile(b.x, b.y);
-    if (flip) {
-      const s = symmetry[flip];
+    if (transform) {
+      const s = symmetry[transform];
       [prevA, prevB] = [s.get(prevA) ?? prevA, s.get(prevB) ?? prevB];
     }
     const spA = this.#specports.find(a.x, a.y);
@@ -506,7 +506,8 @@ class SupaplexLevel implements ISupaplexLevel {
     if (!opt) {
       return this;
     }
-    const toInt = (v: any) => (Number.isInteger(v) ? (v as number) : undefined);
+    const toInt = (v: unknown) =>
+      Number.isInteger(v) ? (v as number) : undefined;
     return this.batch((l) => {
       l = l
         .setUsePlasma(Boolean(opt[LocalOpt.UsePlasma]))
@@ -517,7 +518,7 @@ class SupaplexLevel implements ISupaplexLevel {
         .setUseInfotronsNeeded(toInt(opt[LocalOpt.UseInfotronsNeeded]))
         .setInitialFreezeEnemies(Boolean(opt[LocalOpt.InitialFreezeEnemies]));
       const pdStr = opt[LocalOpt.PortsDatabase];
-      if (pdStr !== undefined) {
+      if (typeof pdStr === "string") {
         l = l.setSpecports(newSpecPortsDatabaseFromString(pdStr));
       }
       return l;

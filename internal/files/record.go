@@ -1,6 +1,7 @@
 package files
 
 import (
+	"bytes"
 	"encoding/json"
 
 	"github.com/pkg/errors"
@@ -11,17 +12,31 @@ type Record struct {
 	Key     string         `json:"key"`
 	Blob64  helpers.Blob64 `json:"blob64"`
 	Options string         `json:"options"`
+
+	// since 0.21.0: remove either after several versions, or since 1.0
+	needUpgrade bool
 }
 
 type entry struct {
 	File    string
-	Options string
+	Options json.RawMessage
+
+	// since 0.21.0: remove either after several versions, or since 1.0
+	needUpgrade bool
 }
 
 func entryFromString(s string) (*entry, error) {
 	e := new(entry)
 	if err := json.Unmarshal([]byte(s), e); err != nil {
 		return nil, errors.Wrap(err, "unmarshal")
+	}
+	if bytes.HasPrefix(e.Options, []byte(`"`)) {
+		var str string
+		if err := json.Unmarshal(e.Options, &str); err != nil {
+			return nil, errors.Wrap(err, "unmarshal backward compatibility")
+		}
+		e.Options = []byte(str)
+		e.needUpgrade = true
 	}
 	return e, nil
 }
@@ -47,14 +62,16 @@ func recordFromString(key, s string) (*Record, error) {
 	return &Record{
 		Key:     key,
 		Blob64:  helpers.B2A(b),
-		Options: e.Options,
+		Options: string(e.Options),
+
+		needUpgrade: e.needUpgrade,
 	}, nil
 }
 
 func createString(file string, r *Record) (opt string, err error) {
 	e := &entry{
 		File:    file,
-		Options: r.Options,
+		Options: []byte(r.Options),
 	}
 	opt, err = e.toString()
 	if err != nil {
@@ -71,7 +88,7 @@ func replaceOptionsInString(s string, r *Record) (opt, file string, err error) {
 		return
 	}
 
-	e.Options = r.Options
+	e.Options = []byte(r.Options)
 	opt, err = e.toString()
 	if err != nil {
 		err = errors.Wrap(err, "entry to string")

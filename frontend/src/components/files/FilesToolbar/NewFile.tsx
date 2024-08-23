@@ -246,7 +246,7 @@ export const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
             onChange={handleDriverChange}
           />
         </Field>
-        <Field label={t("main:files.new.FileFormat")}>
+        <Field label={t("main:files.new.FileFormat")} help={format.description}>
           <Select
             options={curFormatsOptions}
             value={

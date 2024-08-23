@@ -14,6 +14,7 @@ import {
   cutSelectionFx,
   deleteSelectionFx,
   pasteSelectionFx,
+  selectAllFx,
   SELECTION,
 } from "models/levels/tools/_selection";
 import { hintWithHotkey, useHotKey } from "models/ui/hotkeys";
@@ -23,6 +24,8 @@ import {
   HK_DEL,
   HK_PASTE,
   HK_REDO,
+  HK_SELECT_ALL,
+  HK_SELECT_ALMOST_ALL,
 } from "models/ui/hotkeys-defined";
 import { Button, ToolbarSeparator } from "ui/button";
 import { svgs } from "ui/icon";
@@ -60,6 +63,16 @@ const handleHotDelete = (e: UIEvent) => {
 const handleHotPaste = (e: UIEvent) => {
   e.preventDefault();
   handlePaste();
+};
+const handleHotSelectAll = (e: UIEvent) => {
+  e.preventDefault();
+  setToolO(SELECTION);
+  selectAllFx();
+};
+const handleHotSelectAlmostAll = (e: UIEvent) => {
+  e.preventDefault();
+  setToolO(SELECTION);
+  selectAllFx({ almost: true });
 };
 const noopHandler = (e: UIEvent) => {
   e.preventDefault();
@@ -100,6 +113,16 @@ export const EditToolbar: FC<Props> = ({ isCompact = false }) => {
     shortcut: HK_PASTE,
     handler: handleHotPaste,
     disabled: !clipboardSize || isRo,
+  });
+  // TODO: have no ideas where to display this as a hint
+  useHotKey({
+    shortcut: HK_SELECT_ALL,
+    handler: handleHotSelectAll,
+  });
+  // TODO: have no ideas where to display this as a hint
+  useHotKey({
+    shortcut: HK_SELECT_ALMOST_ALL,
+    handler: handleHotSelectAlmostAll,
   });
 
   return (

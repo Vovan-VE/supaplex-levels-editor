@@ -12,6 +12,7 @@ import JSZip from "jszip";
 import { flushDelayed, withPersistent } from "@cubux/effector-persistent";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
+import * as RoSet from "@cubux/readonly-set";
 import {
   $displayReadOnly,
   $instanceIsReadOnly,
@@ -24,11 +25,13 @@ import {
 } from "backend";
 import { APP_TITLE } from "configs";
 import {
+  canResizeTo,
   detectDriverFormat,
   getDriver,
   getDriverFormat,
   IBaseLevel,
   IBaseLevelset,
+  ILevelRegion,
   levelSupportsDemo,
   LocalOptions,
   serializeLocalOptionsList,
@@ -36,7 +39,11 @@ import {
   SupportReportType,
 } from "drivers";
 import { SupportReport } from "components/files/FileToolbar/SupportReport";
-import { fmtLevelNumber, fmtLevelShort } from "components/levelset/fmt";
+import {
+  fmtLevelForFilename,
+  fmtLevelNumber,
+  fmtLevelShort,
+} from "components/levelset/fmt";
 import { Trans } from "i18n/Trans";
 import { TranslationGetter } from "i18n/types";
 import { msgBox } from "ui/feedback";
@@ -52,6 +59,7 @@ import {
   $levelsets,
   currentKeyBeforeWillGone,
   fileDidOpen,
+  levelsetsDidWakeUp,
   removeCurrentLevelsetFile,
   removeOthersLevelsetFile,
   setCurrentLevelset,
@@ -74,44 +82,70 @@ import {
 type _LevelRef = readonly [FilesStorageKey, number | null];
 type _LevelRefStrict = readonly [FilesStorageKey, number];
 
-const _willSetCurrentLevelFx = createEffect((next: number | null) => {
-  const key = $currentKey.getState();
-  if (key) {
-    _unsetCurrentLevel();
-    _setCurrentLevel([key, next]);
-  }
+const _willSetCurrentLevelFx = createEffect((r: _LevelRef) => {
+  const [key] = r;
+  _unsetCurrentLevel(key);
+  _setCurrentLevel(r);
 });
-const _unsetCurrentLevel = createEvent();
+const _unsetCurrentLevel = createEvent<FilesStorageKey>();
 const _setCurrentLevel = createEvent<_LevelRef>();
+// _unsetCurrentLevel.watch((p) => console.log(">> _unsetCurrentLevel", p));
+// _setCurrentLevel.watch((p) => console.log(">> _setCurrentLevel", p));
 
-/**
- * Switch level with the given index in current levelset to opened state
- */
-export const openLevel = createEvent<number>();
+const openLevel = createEvent<_LevelRefStrict>();
 /**
  * Switch level with the given index in current levelset to closed state
  */
-export const closeCurrentLevel = createEvent<any>();
+export const closeCurrentLevel = createEvent<unknown>();
 const _closeLevel = createEvent<_LevelRefStrict>();
 /**
  * Switch all other levels but the given index in current levelset to closed state
  */
-export const closeOtherLevels = createEvent<any>();
+export const closeOtherLevels = createEvent<unknown>();
 const _closeOtherLevels = createEvent<_LevelRefStrict>();
 /**
  * Set current level with the given index (open it if not yet)
  */
 export const setCurrentLevel = createEvent<number>();
+const setCurrentLevelRef = createEvent<_LevelRefStrict>();
 sample({
-  source: setCurrentLevel,
+  clock: setCurrentLevel,
+  source: $currentKey,
+  filter: Boolean,
+  fn: (key, i): _LevelRefStrict => [key, i],
+  target: setCurrentLevelRef,
+});
+sample({
+  clock: setCurrentLevelRef,
   target: [openLevel, _willSetCurrentLevelFx],
 });
 // open first level after file created/opened
 fileDidOpen.watch((key) => {
+  // console.log(">> fileDidOpen", key);
   setCurrentLevelset(key);
-  setCurrentLevel(0);
+  setCurrentLevelRef([key, 0]);
+  // console.log(">> fileDidOpen end.", key);
 });
-export const exportCurrentLevel = createEvent<any>();
+// setCurrentLevelRef.watch((p) => console.log(">> setCurrentLevelRef", p));
+// openLevel.watch((p) => console.log(">> openLevel", p));
+// _willSetCurrentLevelFx.watch((p) =>
+//   console.log(">> _willSetCurrentLevelFx", p),
+// );
+// _willSetCurrentLevelFx.done.watch((p) =>
+//   console.log(">> _willSetCurrentLevelFx.done", p),
+// );
+
+export interface SaveAsOptions {
+  withLocalOptions?: boolean;
+}
+
+const exportCurrentLevel = createEvent<SaveAsOptions | undefined>();
+export const exportCurrentLevelPlain = exportCurrentLevel.prepend<unknown>(
+  () => undefined,
+);
+export const exportCurrentLevelWithOptions =
+  exportCurrentLevel.prepend<unknown>(() => ({ withLocalOptions: true }));
+
 interface ImportLevelParams {
   file: File;
   levelset?: IBaseLevelset<IBaseLevel>;
@@ -120,27 +154,28 @@ export const importCurrentLevel = createEvent<ImportLevelParams>();
 /**
  * Insert new level in current level index in current levelset
  */
-export const insertAtCurrentLevel = createEvent<any>();
+export const insertAtCurrentLevel = createEvent<unknown>();
 /**
  * Append new level in current levelset
  */
-export const appendLevel = createEvent<any>();
+export const appendLevel = createEvent<unknown>();
 /**
  * Delete current level in current levelset
  */
-export const deleteCurrentLevel = createEvent<any>();
+export const deleteCurrentLevel = createEvent<unknown>();
 const _deleteLevel = createEvent<_LevelRefStrict>();
 export const changeLevelsOrder =
   createEvent<readonly LevelBuffer<IBaseLevel>[]>();
 /**
  * Delete all the rest levels after the current
  */
-export const deleteRestLevels = createEvent<any>();
+export const deleteRestLevels = createEvent<unknown>();
 const _deleteRestLevels = createEvent<_LevelRefStrict>();
 /**
  * Update current level in current levelset
  */
 export const updateCurrentLevel = createEvent<IBaseLevel>();
+export const updateCurrentLevelByRegion = createEvent<ILevelRegion>();
 export const updateLevel = createEvent<{
   key: FilesStorageKey;
   index: number;
@@ -154,11 +189,11 @@ export const internalUpdateLevelDemo = createEvent<{
 /**
  * Undo in current level in current levelset
  */
-export const undoCurrentLevel = createEvent<any>();
+export const undoCurrentLevel = createEvent<unknown>();
 /**
  * Undo in current level in current levelset
  */
-export const redoCurrentLevel = createEvent<any>();
+export const redoCurrentLevel = createEvent<unknown>();
 
 /**
  * Flush changes for the given levelset to blob
@@ -167,7 +202,7 @@ const flushBuffer = createEvent<FilesStorageKey>();
 /**
  * Flush changes for all levelset to blob
  */
-const flushBuffers = createEvent<any>();
+const flushBuffers = createEvent<unknown>();
 if (onDeactivate) {
   sample({
     source: onDeactivate,
@@ -181,9 +216,6 @@ export const saveAllFx = allowManualSave
     })
   : async () => {};
 
-export interface SaveAsOptions {
-  withLocalOptions?: boolean;
-}
 /**
  * Download current levelset file
  */
@@ -254,7 +286,7 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
     },
   )
   // switch per-level "is opened" state
-  .on(_withCurrentKey(openLevel), (map, { current: key, value: index }) =>
+  .on(openLevel, (map, [key, index]) =>
     updateBufferLevel(map, key, index, (b) => ({ ...b, isOpened: true })),
   )
   // switch per-level "is opened" state
@@ -373,6 +405,30 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
         undoQueue: b.undoQueue.done(level),
       })),
   )
+  .on(
+    _withCurrentFile(updateCurrentLevelByRegion),
+    (map, { current: { key, driverName, driverFormat }, value: region }) =>
+      updateBufferLevel(map, key, undefined, (b) => {
+        const q = b.undoQueue;
+        let level = q.current;
+        const format = getDriverFormat(driverName, driverFormat);
+        if (format) {
+          const { resizable } = format;
+          if (level.resize && canResizeTo(resizable, region.tiles)) {
+            level = level.resize({
+              width: region.tiles.width,
+              height: region.tiles.height,
+              fillTile: 0,
+              borderTile: 0,
+            });
+          }
+        }
+        return {
+          ...b,
+          undoQueue: q.done(level.pasteRegion(0, 0, region)),
+        };
+      }),
+  )
   .on(updateLevel, (map, { key, index, level }) =>
     updateBufferLevel(map, key, index, (b) => ({
       ...b,
@@ -411,19 +467,16 @@ const _$buffersMap = createStore<LevelsetsBuffers>(new Map())
 
 export const currentLevelIndexWillGone = sample({
   clock: [_unsetCurrentLevel, currentKeyBeforeWillGone],
-  source: {
-    files: _$buffersMap,
-    key: $currentKey,
-  },
-  filter: ({ files, key }) =>
+  source: _$buffersMap,
+  filter: (files, key) =>
     Boolean(
       key && files.has(key) && files.get(key)!.currentIndex !== undefined,
     ),
-  fn: ({ files, key }) => files.get(key!)!.currentIndex!,
+  fn: (files, key) => files.get(key!)!.currentIndex!,
 });
 
 const _willCloseLevelFx = createEffect(async (ref: _LevelRefStrict) => {
-  await _willSetCurrentLevelFx(null);
+  await _willSetCurrentLevelFx([ref[0], null]);
   _closeLevel(ref);
 });
 sample({
@@ -485,7 +538,6 @@ const _insertAtCurrentLevel = sample({
 });
 sample({
   source: _insertAtCurrentLevel,
-  fn: ([, index]) => index,
   target: _willSetCurrentLevelFx,
 });
 sample({
@@ -495,9 +547,11 @@ sample({
     key: $currentKey,
   },
   filter: ({ files, key }) => Boolean(key && files.has(key)),
-  fn: ({ files, key }) =>
+  fn: ({ files, key }): _LevelRef => [
+    key!,
     // at this moment it already has new level in the end
     files.get(key!)!.levels.length - 1,
+  ],
   target: _willSetCurrentLevelFx,
 });
 
@@ -508,7 +562,7 @@ const _$currentDriverMinLevelsCount = combine(
 );
 
 const _willDeleteLevelFx = createEffect(async (ref: _LevelRefStrict) => {
-  await _willSetCurrentLevelFx(null);
+  await _willSetCurrentLevelFx([ref[0], null]);
   _deleteLevel(ref);
 });
 sample({
@@ -584,6 +638,22 @@ const _$keepOpenedIndices = combine(
   _$wakeUpOpenedIndices,
   RoMap.merge,
 );
+// _$openedIndices.watch((p) => console.log(">> _$openedIndices", p));
+// _$wakeUpOpenedIndices.watch((p) => console.log(">> _$wakeUpOpenedIndices", p));
+// _$keepOpenedIndices.watch((p) => console.log(">> _$keepOpenedIndices", p));
+
+const openedLevelsDidWakeUp = createEvent<void>();
+const _$wakeUpWait = createStore<ReadonlySet<1 | 2>>(new Set([1, 2]))
+  .on(levelsetsDidWakeUp, (s) => RoSet.remove(s, 1))
+  .on(openedLevelsDidWakeUp, (s) => RoSet.remove(s, 2));
+
+export const filesDidWakeUp = sample({
+  clock: _$wakeUpWait,
+  filter: (s) => !s.size,
+});
+
+// openedLevelsDidWakeUp.watch(() => console.warn("OPENED LEVELS WAKE UP END"));
+// filesDidWakeUp.watch(() => console.warn("DATA WAKE UP END"));
 
 // persistent store indices for opened levels
 type _OpenedIndicesSerialized = readonly [
@@ -597,8 +667,12 @@ withPersistent<string, _OpenedIndicesWakeUpMap, _OpenedIndicesSerializedList>(
   configStorage,
   "openedLevels",
   {
+    // Opening a file cause it first to appear with no current level,
+    // then the current level set to 0.
+    flushDelay: 5,
     wakeUp: _$wakeUpOpenedIndices,
     ...($instanceIsReadOnly ? { readOnly: $instanceIsReadOnly } : null),
+    onAfterWakeUp: openedLevelsDidWakeUp,
     serialize: (map: _OpenedIndicesWakeUpMap) =>
       [...map]
         .map<_OpenedIndicesSerialized>(([key, item]) => [
@@ -633,9 +707,9 @@ _$wakeUpOpenedIndices.on(
   (map, keys) => RoMap.filter(map, (_, k) => !keys.has(k)),
 );
 
-export const flushCurrentFile = createEvent<any>();
-export const saveAndClose = createEvent<any>();
-export const saveOthersAndClose = createEvent<any>();
+export const flushCurrentFile = createEvent<unknown>();
+export const saveAndClose = createEvent<unknown>();
+export const saveOthersAndClose = createEvent<unknown>();
 if (allowManualSave) {
   sample({
     clock: flushCurrentFile,
@@ -890,7 +964,7 @@ export const $playerPos = $currentLevelUndoQueue.map<
   }
   return next;
 });
-export const findPlayer = createEvent<any>();
+export const findPlayer = createEvent<unknown>();
 export const scrollToPlayer = sample({
   clock: findPlayer,
   source: $playerPos,
@@ -942,7 +1016,8 @@ sample({
     driverName: $currentDriverName,
     level: $currentLevel,
   },
-}).watch(({ file, driverName, level }) => {
+  fn: (s, c) => ({ ...s, ...c }),
+}).watch(async ({ file, driverName, level, withLocalOptions }) => {
   if (file && driverName && level) {
     const {
       index,
@@ -955,14 +1030,28 @@ sample({
     if (format) {
       const { createLevelset, fileExtensionDefault, writeLevelset } = format;
       const dotExt = `.${fileExtensionDefault}`;
-      saveFileAs(
-        new Blob([writeLevelset(createLevelset([lvl]))]),
-        `${
-          file.toUpperCase().endsWith(dotExt.toUpperCase())
-            ? file.substring(0, file.length - dotExt.length)
-            : file
-        }.${index + 1}${dotExt}`,
-      );
+      const levelAB = writeLevelset(createLevelset([lvl]));
+      const levelFileName = `${
+        file.toUpperCase().endsWith(dotExt.toUpperCase())
+          ? file.substring(0, file.length - dotExt.length)
+          : file
+      }.${fmtLevelForFilename(index, lvl.title)}${dotExt}`;
+
+      const localOptions = lvl.localOptions;
+      if (withLocalOptions && localOptions) {
+        const zip = new JSZip();
+        zip.file(levelFileName, levelAB);
+        zip.file(
+          `${levelFileName}.options.json`,
+          JSON.stringify(localOptions, null, 2) + "\n",
+        );
+        saveFileAs(
+          await zip.generateAsync({ type: "blob" }),
+          `${levelFileName}.zip`,
+        );
+      } else {
+        saveFileAs(new Blob([levelAB]), levelFileName);
+      }
     }
   }
 });
@@ -1069,10 +1158,10 @@ sample({
   );
 }
 
-export const cmpLevelToggle = createEvent<any>();
+export const cmpLevelToggle = createEvent<unknown>();
 const setCmpFirstLevelRef = createEvent<_LevelRefStrict | null>();
-export const closeCmpLevels = createEvent<any>();
-export const swapCmpLevels = createEvent<any>();
+export const closeCmpLevels = createEvent<unknown>();
+export const swapCmpLevels = createEvent<unknown>();
 const setCmpLevels = createEvent<[_LevelRefStrict, _LevelRefStrict]>();
 const $cmpLevelsRefs = restore(setCmpLevels, null)
   .reset(closeCmpLevels)

@@ -231,8 +231,8 @@ const selectFrame = (d: DrawState, level: IBounds): DrawLayerSelectRange => {
   };
 };
 
-const commitOnEnd = (target: EventCallable<any>) => {
-  const willEndWork = createEvent<any>();
+const commitOnEnd = (target: EventCallable<unknown>) => {
+  const willEndWork = createEvent<unknown>();
   const doEndWork = sample({
     clock: willEndWork,
     source: {
@@ -255,8 +255,8 @@ const commitOnEnd = (target: EventCallable<any>) => {
   return willEndWork;
 };
 
-const externalFree = createEvent<any>();
-const externalRollback = createEvent<any>();
+const externalFree = createEvent<unknown>();
+const externalRollback = createEvent<unknown>();
 sample({ source: externalFree, target: commitOnEnd(free) });
 sample({ source: externalRollback, target: commitOnEnd(rollback) });
 
@@ -321,12 +321,15 @@ const $selectionSizeHash = $selectionSize.map(
   (s) => s && (`${s.width}x${s.height}` as const),
 );
 
-export const $selectionRect = $drawState.map<Rect | null>((d) => {
+interface RectWithContent extends Rect {
+  content?: ILevelRegion;
+}
+export const $selectionRect = $drawState.map<RectWithContent | null>((d) => {
   if (!d || d.op !== Op.STABLE) {
     return null;
   }
-  const { x, y, width, height } = d;
-  return { x, y, width, height };
+  const { x, y, width, height, content } = d;
+  return { x, y, width, height, content };
 });
 export const $selectionFeedback = $drawState.map<Rect | null>((d) => {
   if (!d) {
@@ -357,7 +360,7 @@ export const deleteSelectionFx = createEffect(async () => {
   rollback();
 });
 
-export const copySelection = createEvent<any>();
+export const copySelection = createEvent<unknown>();
 // TODO: driver compatibility?
 export const $clipboardRegion = createStore<ILevelRegion | null>(null).on(
   sample({
@@ -420,6 +423,32 @@ export const pasteSelectionFx = createEffect(async (visibleRect?: Rect) => {
   }
 });
 
+export const selectAllFx = createEffect(
+  async ({ almost = false }: { almost?: boolean } = {}) => {
+    const q = $currentLevelUndoQueue.getState();
+    if (!q) return;
+    if ($openedSelectionEdit.getState()) return;
+    externalRollback();
+    let { width, height } = q.current;
+    let x = 0;
+    let y = 0;
+    if (almost) {
+      x++;
+      y++;
+      width -= 2;
+      height -= 2;
+      if (width <= 0 || height <= 0) return;
+    }
+    _setState({
+      op: Op.STABLE,
+      x,
+      y,
+      width,
+      height,
+    });
+  },
+);
+
 export const getSelectionContentFx = createEffect(() => {
   const d = $drawState.getState();
   if (d?.op === Op.STABLE) {
@@ -434,7 +463,7 @@ export const getSelectionContentFx = createEffect(() => {
   return null;
 });
 export const openSelectionEdit = createEvent<string>();
-export const cancelSelectionEdit = createEvent<any>();
+export const cancelSelectionEdit = createEvent<unknown>();
 export const submitSelectionEdit = createEvent<ILevelRegion>();
 export const $openedSelectionEdit = createStore<string | null>(null)
   .reset(cancelSelectionEdit, $selectionSizeHash.updates)
@@ -449,6 +478,11 @@ export const $openedSelectionEdit = createStore<string | null>(null)
 // REFACT: flush old content (if any) to level? then put new content to level?
 $drawState.on(submitSelectionEdit, (s, r) => {
   if (s?.op === Op.STABLE) {
-    return { ...s, content: r };
+    return {
+      ...s,
+      width: r.tiles.width,
+      height: r.tiles.height,
+      content: r,
+    };
   }
 });

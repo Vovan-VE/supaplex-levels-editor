@@ -3,14 +3,16 @@ import { useUnit } from "effector-react";
 import { FC } from "react";
 import { TileCoords } from "components/settings/display";
 import { $feedbackCell } from "models/levels/tools";
+import { $selectionRect } from "models/levels/tools/_selection";
 import { $currentLevelUndoQueue } from "models/levelsets";
 import { ContainerProps } from "ui/types";
-import { inBounds } from "utils/rect";
+import { inBounds, inRect } from "utils/rect";
 import cl from "./HoveredCell.module.scss";
 
 export const HoveredCell: FC<ContainerProps> = (props) => {
   const feedback = useUnit($feedbackCell);
   const level = useUnit($currentLevelUndoQueue)?.current;
+  const selRect = useUnit($selectionRect);
   if (!feedback) {
     return null;
   }
@@ -20,8 +22,13 @@ export const HoveredCell: FC<ContainerProps> = (props) => {
       <span>
         <TileCoords x={x} y={y} />
       </span>
-      {level && inBounds(x, y, level) && (
-        <DisplayTileHex tile={level.getTile(x, y)} />
+      {selRect?.content && inRect(x, y, selRect) ? (
+        <DisplayTileHex
+          tile={selRect.content.tiles.getTile(x - selRect.x, y - selRect.y)}
+        />
+      ) : (
+        level &&
+        inBounds(x, y, level) && <DisplayTileHex tile={level.getTile(x, y)} />
       )}
     </span>
   );

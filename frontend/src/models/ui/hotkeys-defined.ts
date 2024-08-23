@@ -11,8 +11,13 @@ export const HK_EDIT_MAZE: HotKeyShortcuts = [["M", HotKeyMask.SHIFT]];
 export const HK_EDIT_RANDOM: HotKeyShortcuts = [["N", HotKeyMask.SHIFT]];
 export const HK_EDIT_REPLACE: HotKeyShortcuts = [["R", HotKeyMask.SHIFT]];
 export const HK_EDIT_SHUFFLE: HotKeyShortcuts = [["S", HotKeyMask.SHIFT]];
+export const HK_EDIT_TRANSPOSE: HotKeyShortcuts = [["T", HotKeyMask.SHIFT]];
 export const HK_PASTE: HotKeyShortcuts = [["V", HotKeyMask.CTRL], ["Paste"]];
 export const HK_REDO: HotKeyShortcuts = [["Y", HotKeyMask.CTRL], ["Redo"]];
+export const HK_SELECT_ALL: HotKeyShortcuts = [["A", HotKeyMask.CTRL]];
+export const HK_SELECT_ALMOST_ALL: HotKeyShortcuts = [
+  ["A", HotKeyMask.CTRL | HotKeyMask.SHIFT],
+];
 export const HK_TOOL_FLOOD: HotKeyShortcuts = [["F"]];
 export const HK_TOOL_LINE: HotKeyShortcuts = [["L"]];
 export const HK_TOOL_PEN: HotKeyShortcuts = [["1"]];

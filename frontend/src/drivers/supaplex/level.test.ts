@@ -67,7 +67,7 @@ describe("level", () => {
       .map((s) => s.padEnd(60, "\x00").split(""))
       .flat()
       .map((c) => c.charCodeAt(0)),
-    ...[0, 0, 0, 0],
+    ...[10, 20, 40, 254],
     // G
     1,
     ...[0],
@@ -92,7 +92,7 @@ describe("level", () => {
   expect(testLevelData.length).toBe(1536);
 
   const testFooter3x2 = Uint8Array.of(
-    ...[0, 0, 0, 0],
+    ...[16, 32, 127, 254],
     // G
     1,
     ...[0],

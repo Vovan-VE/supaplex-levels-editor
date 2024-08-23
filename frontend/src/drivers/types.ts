@@ -89,8 +89,12 @@ export const enum FlipDirection {
   H = "H",
   V = "V",
 }
+export const enum TranspositionDirection {
+  NW = "\\",
+}
+export type SwapTransform = FlipDirection | TranspositionDirection;
 
-export type LocalOptions = Record<string, any>;
+export type LocalOptions = Record<string, unknown>;
 export type LocalOptionsList = readonly (LocalOptions | null | undefined)[];
 export type LocalOptionsTable = Record<`${number}`, LocalOptions>;
 
@@ -119,7 +123,7 @@ export const serializeLocalOptionsList = (
 export interface IBaseLevel extends ITilesRegion {
   readonly raw: Uint8Array;
   setTile(x: number, y: number, value: number, keepSameVariant?: boolean): this;
-  swapTiles(a: Point2D, b: Point2D, flip?: FlipDirection): this;
+  swapTiles(a: Point2D, b: Point2D, transform?: SwapTransform): this;
   batch(update: (b: this) => this): this;
   resize?(options: IResizeLevelOptions): this;
   readonly title: string;
@@ -214,6 +218,7 @@ export interface ISupportReport {
 
 export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
   readonly title: string;
+  readonly description?: ReactNode;
   readonly fileExtensions?: RegExp;
   readonly fileExtensionDefault: string;
   readonly resizable: ISizeLimit;
@@ -290,6 +295,7 @@ export interface IBaseDriver<
   // TODO: formats: optional separate display order
   defaultFormat?: string;
   detectExportFormat: (level: L) => string;
+  tempLevel: (size: IBounds) => L;
   tempLevelFromRegion: (region: ILevelRegion) => L;
   cmpLevels?: (a: L, b: L) => DiffItem[];
   DemoToTextConfig?: FC<DemoToTextConfigProps>;

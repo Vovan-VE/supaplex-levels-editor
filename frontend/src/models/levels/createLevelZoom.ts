@@ -55,8 +55,8 @@ export const unserializeZoomStep = (v: unknown) => {
 };
 
 export const createLevelZoom = () => {
-  const zoomIn = createEvent<any>();
-  const zoomOut = createEvent<any>();
+  const zoomIn = createEvent<unknown>();
+  const zoomOut = createEvent<unknown>();
   const $zoomStep = createStore(whichStep(SCALE_INIT_APPROX))
     .on(zoomIn, (n) => Math.min(n + 1, SCALE_STEP_MAX))
     .on(zoomOut, (n) => Math.max(n - 1, 0));

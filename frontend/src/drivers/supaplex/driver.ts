@@ -25,6 +25,8 @@ export const SupaplexDriver: ISupaplexDriver = {
   formats,
   detectExportFormat,
   defaultFormat,
+  tempLevel: ({ width, height }) =>
+    MPX.createLevel({ width, height, fillTile: 0, borderTile: 0 }),
   tempLevelFromRegion: (r) => MPX.createLevel(r.tiles).pasteRegion(0, 0, r),
   cmpLevels,
   DemoToTextConfig: DemoToTextConfig,

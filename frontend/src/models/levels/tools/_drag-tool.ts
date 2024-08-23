@@ -75,11 +75,11 @@ export const createDragTool = <DrawProps, DrawState>({
   type IStart = IDrawStart<DrawProps>;
   type IContinue = IDrawData<DrawProps>;
 
-  const free = createEvent<any>();
-  const rollback = createEvent<any>();
+  const free = createEvent<unknown>();
+  const rollback = createEvent<unknown>();
   sample({ source: free, target: rollback });
   const doCommit = createEvent<DrawEndCommit>();
-  const didCommit = createEvent<any>();
+  const didCommit = createEvent<unknown>();
   const doContinue = createEvent<DrawEndContinue<DrawState>>();
 
   const setVariant = createEvent<number>();
@@ -106,7 +106,7 @@ export const createDragTool = <DrawProps, DrawState>({
     .on(doDraw, drawReducer)
     .on(doContinue, (_, { drawState }) => drawState);
 
-  let didStart: Event<any> = doStart;
+  let didStart: Event<unknown> = doStart;
   if (drawStartReducer) {
     const temp = sample({
       clock: doStart,

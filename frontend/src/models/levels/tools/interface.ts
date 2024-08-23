@@ -92,7 +92,7 @@ export const PEN_SHAPES: Record<PenShape, PenShapePoint> = {
 };
 
 export interface ToolUI {
-  rollback?: Event<any>;
+  rollback?: Event<unknown>;
   // TODO: add optional "Undo" ability to apply `rollback` in "working" state
   //   but will it require "Redo" to work as expected?
   drawLayers?: readonly DrawLayer[];
@@ -110,8 +110,8 @@ export interface ToolVariantUI {
 
 export interface Tool {
   internalName: string;
-  init?: EventCallable<any>;
-  free?: EventCallable<any>;
+  init?: EventCallable<unknown>;
+  free?: EventCallable<unknown>;
   canRo?: boolean;
   variants: readonly ToolVariantUI[];
   setVariant?: EventCallable<number>;

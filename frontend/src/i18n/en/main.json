@@ -62,7 +62,9 @@
     }
   },
   "demoEdit": {
-    "DemoDuration": "Demo: <b>{frames}</b> frames, <b>{sec40}</b> sec@30, <b>{sec1000}</b> sec@1000",
+    "DemoDuration": "Demo: <b>{frames}</b> frames, <b>{sec40}</b> sec@40, <b>{sec1000}</b> sec@1000",
+    "DemoSeed": "Seed",
+    "DemoSeedHelp": "Integer from 0 to 65535. For example, 65280 is FF00, so hi=FF, lo=00",
     "DemoText": "Demo text representation",
     "DialogTitle": "Edit demo",
     "Signature": "Signature"
@@ -149,6 +151,7 @@
       "CopyLevelAsTestUrl": "Copy level as Test Link",
       "CopySelectionAsImage": "Copy level/selection as Image",
       "SaveLevelAsFile": "Save level as File",
+      "SaveLevelAsFileWithOptions": "Save level as ZIP With Options",
       "SaveSelectionAsImage": "Save level/selection as Image"
     },
     "import": {
@@ -244,6 +247,7 @@
     "flip": {
       "HTitle": "Flip Horizontal",
       "Shuffle": "Shuffle",
+      "Transpose": "Transpose",
       "VTitle": "Flip Vertical"
     },
     "gradient": {
@@ -354,6 +358,17 @@
       "UsePlasmaTime": "Plasma Time",
       "UseSerialPorts": "Use Serial Ports",
       "UseZonker": "Use Zonker"
+    },
+    "format": {
+      "dat": {
+        "desc": "Fixed levels 60x24, no demos. Any number of levels."
+      },
+      "mpx": {
+        "desc": "Any level size, demo support, any number of levels."
+      },
+      "sp": {
+        "desc": "The only level 60x24 with demo support."
+      }
     },
     "infotronsNeed": {
       "Actual": "= {n}",

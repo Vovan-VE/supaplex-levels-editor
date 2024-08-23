@@ -1,3 +1,4 @@
+import { IBounds } from "../utils/rect";
 import { SupaplexDriver } from "./supaplex";
 import {
   IBaseDriver,
@@ -80,10 +81,10 @@ interface GetDriverFormatFn {
     driverName: T,
     formatName: string,
   ): TDrivers[T]["formats"][string];
-  (driverName: string, formatName: string): GetProp<
-    GetProp<(typeof DriversHash)[string], "formats">,
-    string
-  >;
+  (
+    driverName: string,
+    formatName: string,
+  ): GetProp<GetProp<(typeof DriversHash)[string], "formats">, string>;
 }
 export const getDriverFormat: GetDriverFormatFn = (
   driverName: string,
@@ -104,6 +105,16 @@ export const canResizeHeight = ({
 
 export const canResize = (r: ISizeLimit): boolean =>
   canResizeWidth(r) || canResizeHeight(r);
+
+export const canResizeTo = (limit: ISizeLimit, want: IBounds): boolean => {
+  const { minWidth = 1, minHeight = 1, maxWidth, maxHeight } = limit;
+  const { width, height } = want;
+  if (width < minWidth || height < minHeight) return false;
+  if (maxWidth !== undefined && width > maxWidth) return false;
+  if (maxHeight !== undefined && height > maxHeight) return false;
+  //
+  return true;
+};
 
 const getFileExt = (filename: string) => filename.match(/.\.([^.]*)$/)?.[1];
 

@@ -4,7 +4,6 @@ import { FC, Fragment, ReactElement } from "react";
 import * as RoMap from "@cubux/readonly-map";
 import { ILevelRegion } from "drivers";
 import {
-  $hasSelection,
   $openedSelectionEdit,
   $selectionSize,
   cancelSelectionEdit,
@@ -12,7 +11,12 @@ import {
   openSelectionEdit,
   submitSelectionEdit,
 } from "models/levels/tools/_selection";
-import { $currentFileRo } from "models/levelsets";
+import {
+  $currentFileRo,
+  $currentLevelSize,
+  $currentLevelUndoQueue,
+  updateCurrentLevelByRegion,
+} from "models/levelsets";
 import { displayHotKey, HotKey, HotKeyShortcuts } from "models/ui/hotkeys";
 import {
   ButtonDropdown,
@@ -35,6 +39,7 @@ import {
   rnd,
   SelectionEditor,
   shuffle,
+  transpose,
 } from "./selection-editors";
 import cl from "./SelectionEditButton.module.scss";
 
@@ -58,9 +63,9 @@ const EDITORS: readonly EditorsGroup[] = [
     editors: {
       flipH,
       flipV,
+      transpose,
       shuffle,
     },
-    // rotate?
   },
 ];
 const editorsMap = new Map(
@@ -70,7 +75,12 @@ const editorsMap = new Map(
   ),
 );
 
-const $cannotWork = $selectionSize.map((size) =>
+const _$workSize = combine(
+  $selectionSize,
+  $currentLevelSize,
+  (sel, lvl) => sel || lvl,
+);
+const $cannotWork = _$workSize.map((size) =>
   size
     ? RoMap.filter(
         RoMap.map(
@@ -82,79 +92,82 @@ const $cannotWork = $selectionSize.map((size) =>
     : EMPTY_MAP,
 );
 
-const $run = $selectionSize.map((size) =>
-  size
-    ? RoMap.map(
-        editorsMap,
-        ({ title, instant, Component, dialogSize }, name) =>
-          async () => {
-            const region = await getSelectionContentFx();
-            if (region) {
-              let result: ILevelRegion | null | undefined = undefined;
-              if (Component) {
-                openSelectionEdit(name);
-                let unwatch: (() => void) | undefined;
-                try {
-                  result = await renderPrompt<ILevelRegion>((props) => {
-                    const { show, onSubmit, onCancel } = props;
-                    unwatch = $openedSelectionEdit.updates.watch(
-                      (v) => v || onCancel(),
-                    );
-                    return (
-                      <Dialog
-                        open={show}
-                        onClose={onCancel}
-                        title={title}
-                        size={dialogSize ?? "small"}
-                      >
-                        <Component
-                          region={region}
-                          onSubmit={onSubmit}
-                          onCancel={onCancel}
-                        />
-                      </Dialog>
-                    );
-                  });
-                } finally {
-                  unwatch?.();
-                  cancelSelectionEdit();
-                }
-              } else if (instant) {
-                result = instant(region);
-              }
-
-              if (result) {
-                submitSelectionEdit(result);
-              }
-            }
-          },
-      )
-    : EMPTY_MAP,
+const runs = RoMap.map(
+  editorsMap,
+  ({ title, instant, Component, dialogSize }, name) =>
+    async () => {
+      let region = await getSelectionContentFx();
+      const isSelection = !!region;
+      if (!region) {
+        const q = $currentLevelUndoQueue.getState();
+        if (q) {
+          const level = q.current;
+          region = level.copyRegion({
+            x: 0,
+            y: 0,
+            width: level.width,
+            height: level.height,
+          });
+        }
+      }
+      if (!region) return;
+      let result: ILevelRegion | null | undefined = undefined;
+      if (Component) {
+        openSelectionEdit(name);
+        let unwatch: (() => void) | undefined;
+        try {
+          result = await renderPrompt<ILevelRegion>((props) => {
+            const { show, onSubmit, onCancel } = props;
+            unwatch = $openedSelectionEdit.updates.watch(
+              (v) => v || onCancel(),
+            );
+            return (
+              <Dialog
+                open={show}
+                onClose={onCancel}
+                title={title}
+                size={dialogSize ?? "small"}
+              >
+                <Component
+                  region={region}
+                  onSubmit={onSubmit}
+                  onCancel={onCancel}
+                />
+              </Dialog>
+            );
+          });
+        } finally {
+          unwatch?.();
+          cancelSelectionEdit();
+        }
+      } else if (instant) {
+        result = instant(region);
+      }
+      if (!result) return;
+      if (isSelection) {
+        submitSelectionEdit(result);
+      } else {
+        updateCurrentLevelByRegion(result);
+      }
+    },
 );
 
 interface HKItem {
   name: string;
   hotkeys: HotKeyShortcuts;
-  handler: () => any;
+  handler: () => void;
 }
-const $hotkeys = combine(
-  $hasSelection,
-  $cannotWork,
-  $run,
-  (hasSelection, cannotWork, run) => {
-    const items: HKItem[] = [];
-    if (hasSelection) {
-      for (const { editors } of EDITORS) {
-        for (const [name, { hotkeys }] of Object.entries(editors)) {
-          if (hotkeys && !cannotWork.has(name) && run.has(name)) {
-            items.push({ name, hotkeys, handler: run.get(name)! });
-          }
-        }
+const $hotkeys = $cannotWork.map((cannotWork) => {
+  const items: HKItem[] = [];
+  for (const { editors } of EDITORS) {
+    for (const [name, { hotkeys }] of Object.entries(editors)) {
+      if (hotkeys && !cannotWork.has(name) && runs.has(name)) {
+        items.push({ name, hotkeys, handler: runs.get(name)! });
       }
     }
-    return items;
-  },
-);
+  }
+  return items;
+});
 
 export const SelectionEditHotKeys: FC = () => (
   <>
@@ -165,10 +178,7 @@ export const SelectionEditHotKeys: FC = () => (
 );
 
 export const SelectionEditMenu: FC = () => {
-  const hasSelection = useUnit($hasSelection);
-
   const cannotWork = useUnit($cannotWork);
-  const run = useUnit($run);
 
   return (
     <Toolbar isMenu>
@@ -180,15 +190,12 @@ export const SelectionEditMenu: FC = () => {
               key={name}
               uiColor={ColorType.DEFAULT}
               icon={icon}
-              disabled={!hasSelection || cannotWork.has(name)}
-              onClick={run.get(name)}
+              disabled={cannotWork.has(name)}
+              onClick={runs.get(name)}
               className={cl.btnItem}
             >
               <span className={cl.text}>
-                {title}{" "}
-                <Reason
-                  reason={(hasSelection && cannotWork.get(name)) || null}
-                />
+                {title} <Reason reason={cannotWork.get(name) || null} />
               </span>
               {hotkeys && (
                 <kbd className={cl.hotkey}>{displayHotKey(hotkeys)}</kbd>
@@ -211,7 +218,7 @@ export const SelectionEditButton: FC = () => {
       {isRo || <SelectionEditHotKeys />}
       <ButtonDropdown
         triggerIcon={<svgs.EditSelection />}
-        buttonProps={{ disabled: !useUnit($hasSelection) || isRo }}
+        buttonProps={{ disabled: isRo }}
       >
         {isRo || <SelectionEditMenu />}
       </ButtonDropdown>

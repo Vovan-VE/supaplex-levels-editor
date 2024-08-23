@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/pkg/errors"
@@ -20,6 +21,20 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+const (
+	// since 0.21.0: remove either after several versions, or since 1.0
+	configFileConfigOld = "config.json"
+	configFileConfig    = "config.v1.json"
+
+	// since 0.21.0: remove either after several versions, or since 1.0
+	configFileFrontOld = "front.json"
+	configFileFront    = "front.v1.json"
+
+	// since 0.21.0: remove either after several versions, or since 1.0
+	configFileFilesOld = "files.json"
+	configFileFiles    = "files.v1.json"
+)
+
 type AppOptions struct {
 	Logger logger.Logger
 }
@@ -31,10 +46,16 @@ type App struct {
 	frontConfig storage.Full[string]
 	chosenReg   files.ChosenRegistry
 	files       files.Storage
+	iowg        sync.WaitGroup
 
 	isDirty bool
 
 	opt *AppOptions
+
+	// DomReady keep triggering with every drag-n-drop
+	// https://github.com/wailsapp/wails/issues/3563
+	onceDomReady sync.Once
+	//dropFiles    chan []string
 }
 
 // NewApp creates a new App application struct
@@ -44,6 +65,7 @@ func NewApp(opt *AppOptions) *App {
 	}
 	return &App{
 		opt: opt,
+		//dropFiles: make(chan []string, 1),
 	}
 }
 
@@ -58,21 +80,36 @@ func (a *App) startup(ctx context.Context) {
 		return
 	}
 
-	appConfig, err := config.NewFileStorage(filepath.Join(configDir, "config.json"))
+	appConfig, err := config.NewFileStorage(config.FileStorageOptions{
+		Ctx:         ctx,
+		Filepath:    filepath.Join(configDir, configFileConfig),
+		FilepathOld: filepath.Join(configDir, configFileConfigOld),
+		IOWG:        &a.iowg,
+	})
 	if err != nil {
 		runtime.LogErrorf(ctx, "front config: %v", err)
 		return
 	}
 
-	front, err := config.NewFileStorage(filepath.Join(configDir, "front.json"))
+	front, err := config.NewFileStorage(config.FileStorageOptions{
+		Ctx:         ctx,
+		Filepath:    filepath.Join(configDir, configFileFront),
+		FilepathOld: filepath.Join(configDir, configFileFrontOld),
+		IOWG:        &a.iowg,
+	})
 	if err != nil {
 		runtime.LogErrorf(ctx, "front config: %v", err)
 		return
 	}
 
-	filesRegPath := filepath.Join(configDir, "files.json")
-	chosenReg := files.NewChosenRegistry()
-	fs, err := files.NewStorage(ctx, filesRegPath, chosenReg)
+	chosenReg := files.NewChosenRegistry(ctx)
+	fs, err := files.NewStorage(files.StorageOptions{
+		Ctx:         ctx,
+		Filepath:    filepath.Join(configDir, configFileFiles),
+		FilepathOld: filepath.Join(configDir, configFileFilesOld),
+		Chosen:      chosenReg,
+		IOWG:        &a.iowg,
+	})
 	if err != nil {
 		runtime.LogErrorf(ctx, "files registry: %v", err)
 		return
@@ -82,22 +119,36 @@ func (a *App) startup(ctx context.Context) {
 	a.frontConfig = front
 	a.chosenReg = chosenReg
 	a.files = fs
+
+	//runtime.OnFileDrop(ctx, a.onFileDrop)
 }
 
 // domReady is called after front-end resources have been loaded
 func (a *App) domReady(ctx context.Context) {
-	// Add your action here
+	//runtime.LogInfof(a.ctx, "dom ready")
+	// https://github.com/wailsapp/wails/issues/3563
+	a.onceDomReady.Do(a.domReadyHandler)
 
+	//go func() {
+	//	select {
+	//	case paths := <-a.dropFiles:
+	//		a.openFilesAtFront(paths)
+	//	default:
+	//	}
+	//}()
+}
+
+func (a *App) domReadyHandler() {
 	winPl, _, err := a.appConfig.GetItem(config.AppWindowPlacement)
 	if err != nil {
-		runtime.LogErrorf(ctx, "cannot read %s: %v", config.AppWindowPlacement, err)
+		runtime.LogErrorf(a.ctx, "cannot read %s: %v", config.AppWindowPlacement, err)
 	}
 	p := config.WindowPlacementFromString(winPl)
 	if p.IsMax {
-		runtime.WindowMaximise(ctx)
+		runtime.WindowMaximise(a.ctx)
 	} else {
-		runtime.WindowSetPosition(ctx, p.X, p.Y)
-		runtime.WindowSetSize(ctx, p.W, p.H)
+		runtime.WindowSetPosition(a.ctx, p.X, p.Y)
+		runtime.WindowSetSize(a.ctx, p.W, p.H)
 	}
 
 	absFiles, err := files.NormalizeArgs(os.Args[1:])
@@ -117,6 +168,16 @@ func (a *App) secondInstance(data options.SecondInstanceData) {
 	go a.activateWindow()
 }
 
+//func (a *App) onFileDrop(x, y int, paths []string) {
+//	runtime.LogInfof(a.ctx, "drop files: %#v", paths)
+//	// First drag-n-drop cause some strange bug with access at frontend.
+//	// Also, every drop cause DomReady to trigger again.
+//	// And so, I delay opening files until next fake DomReady will run.
+//	go func() {
+//		a.dropFiles <- paths
+//	}()
+//}
+
 func (a *App) openFilesAtFront(absFiles []string) {
 	if len(absFiles) == 0 {
 		return
@@ -131,6 +192,8 @@ func (a *App) openFilesAtFront(absFiles []string) {
 
 func (a *App) checkUpdate() {
 	defer a.catchPanic()
+	a.iowg.Add(1)
+	defer a.iowg.Done()
 
 	lastKnownUpdateS, _, err := a.appConfig.GetItem(config.AppLatestRelease)
 	if err != nil {
@@ -139,26 +202,27 @@ func (a *App) checkUpdate() {
 	lastKnownUpdate := config.UpdateReleaseFromString(lastKnownUpdateS)
 
 	defer func() {
-		if lastKnownUpdate != nil {
-			select {
-			case <-a.ctx.Done():
-				return
-			default:
-			}
-
-			v := lastKnownUpdate.VersionNumber()
-
-			// if triggered after front init
-			a.triggerFront(backend.FEUpgradeAvailable, v)
-
-			// if triggered before front init
-			b, err := json.Marshal(v)
-			if err != nil {
-				runtime.LogErrorf(a.ctx, "json marshal: %v", err)
-				return
-			}
-			runtime.WindowExecJS(a.ctx, "window.spleLatestVersion="+string(b)+";")
+		if lastKnownUpdate == nil {
+			return
 		}
+		select {
+		case <-a.ctx.Done():
+			return
+		default:
+		}
+
+		v := lastKnownUpdate.VersionNumber()
+
+		// if triggered after front init
+		a.triggerFront(backend.FEUpgradeAvailable, v)
+
+		// if triggered before front init
+		b, err := json.Marshal(v)
+		if err != nil {
+			runtime.LogErrorf(a.ctx, "json marshal: %v", err)
+			return
+		}
+		runtime.WindowExecJS(a.ctx, "window.spleLatestVersion="+string(b)+";")
 	}()
 
 	latestRelease, err := config.UpdateReleaseFetch(a.ctx)
@@ -199,10 +263,14 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 	return
 }
 
-//// shutdown is called at application termination
-//func (a *App) shutdown(ctx context.Context) {
-//	// Perform your teardown here
-//}
+// shutdown is called at application termination
+func (a *App) shutdown(ctx context.Context) {
+	runtime.LogInfo(a.ctx, "shutdown")
+	//close(a.dropFiles)
+	runtime.LogInfo(a.ctx, "wait pending I/O...")
+	a.iowg.Wait()
+	runtime.LogInfo(a.ctx, "wait pending I/O done")
+}
 
 func (a *App) configStorage() storage.Full[string] {
 	return a.frontConfig
@@ -220,6 +288,7 @@ func (a *App) showError(pErr *error) {
 }
 
 func (a *App) triggerFront(event string, data any) {
+	//runtime.LogDebugf(a.ctx, "App.triggerFront(%v, %v)", event, data)
 	runtime.EventsEmit(a.ctx, event, data)
 }
 

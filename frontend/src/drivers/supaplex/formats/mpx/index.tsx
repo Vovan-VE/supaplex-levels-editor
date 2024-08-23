@@ -1,3 +1,4 @@
+import { Trans } from "i18n/Trans";
 import { createNewLevel } from "../../level";
 import { createLevelset } from "../../levelset";
 import { ISupaplexFormat } from "../../types";
@@ -7,6 +8,7 @@ import { supportReport } from "./supportReport";
 
 export const MPX: ISupaplexFormat = {
   title: "MPX",
+  description: <Trans i18nKey="main:supaplex.format.mpx.desc" />,
   fileExtensionDefault: "mpx",
   resizable: {
     maxWidth: 0x7fff,

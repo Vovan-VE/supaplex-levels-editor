@@ -1,8 +1,8 @@
-const hasOwn = Object.prototype.hasOwnProperty;
+const hasOwn = Object.hasOwn;
 
 export const isEmptyObject = (o: object): boolean => {
   for (const key in o) {
-    if (hasOwn.call(o, key)) {
+    if (hasOwn(o, key)) {
       return false;
     }
   }

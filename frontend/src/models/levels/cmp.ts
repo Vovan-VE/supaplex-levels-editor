@@ -19,7 +19,7 @@ export const {
   $canZoomOut: $diffCanZoomOut,
 } = diffZoom;
 
-export const diffFancyToggle = createEvent<any>();
+export const diffFancyToggle = createEvent<unknown>();
 export const $diffFancyIgnore = withPersistent(
   createStore(false),
   configStorage,

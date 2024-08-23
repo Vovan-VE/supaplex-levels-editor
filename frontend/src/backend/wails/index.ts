@@ -25,3 +25,5 @@ export { VersionTag } from "./VersionTag";
 export { InfoDetails } from "./InfoDetails";
 
 export { onUpgradeAvailable } from "./trigger";
+
+export { default as Classes } from "./Backend.module.scss";

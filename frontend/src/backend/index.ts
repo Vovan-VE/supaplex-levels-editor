@@ -33,6 +33,9 @@ export const createFile: B.CreateFile | undefined = IS_WAILS
   ? wails.createFile
   : web.createFile;
 export const openFile: B.OpenFile = IS_WAILS ? wails.openFile : web.openFile;
+// export const onOpenFile: B.OnOpenFile = IS_WAILS
+//   ? wails.onOpenFile
+//   : web.onOpenFile;
 export const onOpenFile: B.OnOpenFile | undefined = IS_WAILS
   ? wails.onOpenFile
   : undefined;
@@ -70,3 +73,5 @@ export const InfoDetails = IS_WAILS ? wails.InfoDetails : web.InfoDetails;
 export const onUpgradeAvailable: B.OnUpgradeAvailable | undefined = IS_WAILS
   ? wails.onUpgradeAvailable
   : web.onUpgradeAvailable;
+
+export const Classes = IS_WAILS ? wails.Classes : web.Classes;

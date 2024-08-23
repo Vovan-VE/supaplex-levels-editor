@@ -11,7 +11,7 @@ interface _Confirm {
   title: ReactNode;
 }
 
-const not = (b: any) => !b;
+const not = (b: boolean) => !b;
 
 const invert = ({ state, update, ...rest }: _Confirm): _Confirm => ({
   ...rest,

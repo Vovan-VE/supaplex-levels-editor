@@ -2,8 +2,6 @@
 
 ## Internal
 
-- Toasts.
-  - Internal editing exception from store manipulations.
 - End User Manual.
   - Find or create jekyll template.
 - Tools:
@@ -14,23 +12,23 @@
 - Convert format config: SP: Which level to take.
 - Drag-n-drop open files
   - Desktop: cannot handle from backend to get real file path
+  - https://github.com/wailsapp/wails/issues/3563
 - Demo path visualization
   - Impossible without gameplay simulation. Only if SO will provide a path
     actually walked.
 - Tooltips with interactive content support.
 - footer info:
   - is std, why not
-- new file: format description: common and per format
 - tooltip for a tile/coords (in dialogs) to display part of level as context
 - Import/Open level compatibility report has text from "convert file" context
 - A `Dialog` don't block hotkeys behind
 - Open ZIP with options
   - Entire ZIP
   - Add options.json to opened files
-- Hovered cell hex don't use selection content
 - `class UserError extends Error {}`
 - Own file format, editor specific: JSON + schema
   - Problem: users will use it in levels upload request instead of exported
+- an SP level was exported as "*.zip" just renamed
 
 ### Desktop
 
