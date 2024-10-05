@@ -96,9 +96,6 @@ Frontend common app is located in `./frontend/` subdirectory (see also
   - `make` or `make all`: This will build all possible binaries under you OS.
   - `make linux`, `make windows` or `make darwin`: This will try to build
     binaries for the given OS. Not every cross-OS build is possible.
-    - When building NSIS for Windows with "dev" app version, a `VERSION` must be
-      added with simple `X.Y.Z` version, or NSIS will fail otherwise:
-      `make VERSION=0.1.2 windows`
 
   That will build binaries and packages in `./build/bin/` directory. Notice the
   following variables in root `Makefile`:
