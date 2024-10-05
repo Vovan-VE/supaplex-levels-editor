@@ -55,7 +55,7 @@ type App struct {
 	// DomReady keep triggering with every drag-n-drop
 	// https://github.com/wailsapp/wails/issues/3563
 	onceDomReady sync.Once
-	//dropFiles    chan []string
+	dropFiles    chan []string
 }
 
 // NewApp creates a new App application struct
@@ -64,8 +64,8 @@ func NewApp(opt *AppOptions) *App {
 		opt = &AppOptions{}
 	}
 	return &App{
-		opt: opt,
-		//dropFiles: make(chan []string, 1),
+		opt:       opt,
+		dropFiles: make(chan []string, 1),
 	}
 }
 
@@ -120,22 +120,22 @@ func (a *App) startup(ctx context.Context) {
 	a.chosenReg = chosenReg
 	a.files = fs
 
-	//runtime.OnFileDrop(ctx, a.onFileDrop)
+	runtime.OnFileDrop(ctx, a.onFileDrop)
 }
 
 // domReady is called after front-end resources have been loaded
 func (a *App) domReady(ctx context.Context) {
-	//runtime.LogInfof(a.ctx, "dom ready")
+	runtime.LogInfof(a.ctx, "dom ready")
 	// https://github.com/wailsapp/wails/issues/3563
 	a.onceDomReady.Do(a.domReadyHandler)
 
-	//go func() {
-	//	select {
-	//	case paths := <-a.dropFiles:
-	//		a.openFilesAtFront(paths)
-	//	default:
-	//	}
-	//}()
+	go func() {
+		select {
+		case paths := <-a.dropFiles:
+			a.openFilesAtFront(paths)
+		default:
+		}
+	}()
 }
 
 func (a *App) domReadyHandler() {
@@ -168,15 +168,15 @@ func (a *App) secondInstance(data options.SecondInstanceData) {
 	go a.activateWindow()
 }
 
-//func (a *App) onFileDrop(x, y int, paths []string) {
-//	runtime.LogInfof(a.ctx, "drop files: %#v", paths)
-//	// First drag-n-drop cause some strange bug with access at frontend.
-//	// Also, every drop cause DomReady to trigger again.
-//	// And so, I delay opening files until next fake DomReady will run.
-//	go func() {
-//		a.dropFiles <- paths
-//	}()
-//}
+func (a *App) onFileDrop(x, y int, paths []string) {
+	runtime.LogInfof(a.ctx, "drop files: %#v", paths)
+	// First drag-n-drop cause some strange bug with access at frontend.
+	// Also, every drop cause DomReady to trigger again.
+	// And so, I delay opening files until next fake DomReady will run.
+	go func() {
+		a.dropFiles <- paths
+	}()
+}
 
 func (a *App) openFilesAtFront(absFiles []string) {
 	if len(absFiles) == 0 {
@@ -266,7 +266,7 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 // shutdown is called at application termination
 func (a *App) shutdown(ctx context.Context) {
 	runtime.LogInfo(a.ctx, "shutdown")
-	//close(a.dropFiles)
+	close(a.dropFiles)
 	runtime.LogInfo(a.ctx, "wait pending I/O...")
 	a.iowg.Wait()
 	runtime.LogInfo(a.ctx, "wait pending I/O done")
@@ -288,7 +288,7 @@ func (a *App) showError(pErr *error) {
 }
 
 func (a *App) triggerFront(event string, data any) {
-	//runtime.LogDebugf(a.ctx, "App.triggerFront(%v, %v)", event, data)
+	runtime.LogDebugf(a.ctx, "App.triggerFront(%v, %v)", event, data)
 	runtime.EventsEmit(a.ctx, event, data)
 }
 

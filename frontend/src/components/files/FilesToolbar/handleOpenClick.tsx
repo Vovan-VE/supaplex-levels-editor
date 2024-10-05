@@ -67,24 +67,24 @@ const openFiles = async (items: readonly OpenFileItem[]) => {
 };
 
 const _onOpenFile = onOpenFile;
-if (_onOpenFile) {
-  const initFiles: OpenFileItem[] = [];
-  const $didInit = createStore(false).on(filesDidWakeUp, () => true);
-  filesDidWakeUp.watch(() => {
-    // console.log(">>>> onOpenFile from init");
-    openFiles(initFiles);
-  });
-  _onOpenFile.watch((f) => {
-    // console.log(">>>> onOpenFile", f);
-    if ($didInit.getState()) {
-      // console.log(">>>> onOpenFile after init", f);
-      openFiles(f);
-    } else {
-      // console.log(">>>> onOpenFile before init", f);
-      initFiles.push(...f);
-    }
-  });
-}
+// if (_onOpenFile) {
+const initFiles: OpenFileItem[] = [];
+const $didInit = createStore(false).on(filesDidWakeUp, () => true);
+filesDidWakeUp.watch(() => {
+  console.log(">>>> onOpenFile from init");
+  openFiles(initFiles);
+});
+_onOpenFile.watch((f) => {
+  console.log(">>>> onOpenFile", f);
+  if ($didInit.getState()) {
+    console.log(">>>> onOpenFile after init", f);
+    openFiles(f);
+  } else {
+    console.log(">>>> onOpenFile before init", f);
+    initFiles.push(...f);
+  }
+});
+// }
 
 export const handleOpenClick = () =>
   openFile({

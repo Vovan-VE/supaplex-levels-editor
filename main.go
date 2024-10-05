@@ -73,12 +73,12 @@ func main() {
 		// https://github.com/wailsapp/wails/issues/3563
 		// on linux cause DomReady triggering
 		// on windows doesn't work at all
-		//DragAndDrop: &options.DragAndDrop{
-		//	EnableFileDrop: true,
-		//	DisableWebViewDrop: false,
-		//	CSSDropProperty:    "--drop-files",
-		//	CSSDropValue:       "drop",
-		//},
+		DragAndDrop: &options.DragAndDrop{
+			EnableFileDrop:     true,
+			DisableWebViewDrop: false,
+			CSSDropProperty:    "--drop-files",
+			CSSDropValue:       "drop",
+		},
 		Windows: &windows.Options{
 			IsZoomControlEnabled: false,
 			Theme:                windows.Dark,

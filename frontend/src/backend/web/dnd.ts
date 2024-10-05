@@ -1,8 +1,6 @@
 import { createEvent } from "effector";
 import { OpenFiles } from "../internal";
 
-// unused for a while
-
 export const onOpenFile = createEvent<OpenFiles>();
 
 export function init() {

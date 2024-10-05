@@ -33,12 +33,12 @@ export const createFile: B.CreateFile | undefined = IS_WAILS
   ? wails.createFile
   : web.createFile;
 export const openFile: B.OpenFile = IS_WAILS ? wails.openFile : web.openFile;
-// export const onOpenFile: B.OnOpenFile = IS_WAILS
-//   ? wails.onOpenFile
-//   : web.onOpenFile;
-export const onOpenFile: B.OnOpenFile | undefined = IS_WAILS
+export const onOpenFile: B.OnOpenFile = IS_WAILS
   ? wails.onOpenFile
-  : undefined;
+  : web.onOpenFile;
+// export const onOpenFile: B.OnOpenFile | undefined = IS_WAILS
+//   ? wails.onOpenFile
+//   : undefined;
 export const saveFileAs: B.SaveFileAs = IS_WAILS
   ? wails.saveFileAs
   : web.saveFileAs;

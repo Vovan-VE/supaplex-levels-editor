@@ -8,7 +8,7 @@ export { filesStorage } from "./filesStorage";
 export const allowManualSave = false;
 export const createFile = undefined;
 export { openFile } from "./openFile";
-// export { onOpenFile } from "./dnd";
+export { onOpenFile } from "./dnd";
 export { saveAs as saveFileAs } from "file-saver";
 export { getClipboardText, setClipboardText } from "./clipboard";
 
