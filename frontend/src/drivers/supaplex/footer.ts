@@ -61,6 +61,8 @@ class LevelFooter implements ILevelFooter {
   #useSerialPorts = false;
   #useInfotronsNeeded: number | undefined;
   #initialFreezeEnemies = false;
+  #useGreenDisk = false;
+  #useScrew = false;
 
   constructor(width: number, data?: Uint8Array) {
     this.#width = width;
@@ -121,6 +123,8 @@ class LevelFooter implements ILevelFooter {
     copy.#useSerialPorts = this.#useSerialPorts;
     copy.#useInfotronsNeeded = this.#useInfotronsNeeded;
     copy.#initialFreezeEnemies = this.#initialFreezeEnemies;
+    copy.#useGreenDisk = this.#useGreenDisk;
+    copy.#useScrew = this.#useScrew;
     return copy;
   }
 
@@ -406,6 +410,30 @@ class LevelFooter implements ILevelFooter {
     }
     const next = this.copy();
     next.#initialFreezeEnemies = on;
+    return next;
+  }
+
+  get useGreenDisk() {
+    return this.#useGreenDisk;
+  }
+  setUseGreenDisk(on: boolean): this {
+    if (on === this.#useGreenDisk) {
+      return this;
+    }
+    const next = this.copy();
+    next.#useGreenDisk = on;
+    return next;
+  }
+
+  get useScrew() {
+    return this.#useScrew;
+  }
+  setUseScrew(on: boolean): this {
+    if (on === this.#useScrew) {
+      return this;
+    }
+    const next = this.copy();
+    next.#useScrew = on;
     return next;
   }
 }

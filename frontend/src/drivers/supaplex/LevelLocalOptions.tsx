@@ -5,7 +5,12 @@ import { Checkbox, IntegerInput } from "ui/input";
 import { constElement } from "utils/react";
 import { LevelLocalOptionsProps } from "../types";
 import { InlineTile } from "./InlineTile";
-import { TILE_HW_LAMP_R, TILE_HW_STRIPES, TILE_INFOTRON } from "./tiles-id";
+import {
+  TILE_HW_LAMP_G,
+  TILE_HW_LAMP_R,
+  TILE_HW_STRIPES,
+  TILE_INFOTRON,
+} from "./tiles-id";
 import { ISupaplexLevel } from "./types";
 import cl from "./LevelLocalOptions.module.scss";
 
@@ -17,6 +22,12 @@ const compUseZonker = {
 };
 const compUseInfotrons = {
   tile: constElement(<InlineTile tile={TILE_INFOTRON} />),
+};
+const compUseGreenDisk = {
+  tile: constElement(<InlineTile tile={TILE_HW_LAMP_G} />),
+};
+const compUseScrew = {
+  tile: constElement(<InlineTile tile={TILE_HW_LAMP_R} />),
 };
 
 export const LevelLocalOptions = <L extends ISupaplexLevel>({
@@ -32,6 +43,8 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
     useZonker,
     useSerialPorts,
     useInfotronsNeeded,
+    useGreenDisk,
+    useScrew,
   } = level;
 
   const handlePlasmaChange = useMemo(
@@ -67,6 +80,17 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
       onChange &&
       ((v: number | null) =>
         onChange(level.setUseInfotronsNeeded(v ?? undefined))),
+    [level, onChange],
+  );
+  const handleGreenDiskChange = useMemo(
+    () =>
+      onChange &&
+      ((checked: boolean) => onChange(level.setUseGreenDisk(checked))),
+    [level, onChange],
+  );
+  const handleScrewChange = useMemo(
+    () =>
+      onChange && ((checked: boolean) => onChange(level.setUseScrew(checked))),
     [level, onChange],
   );
 
@@ -127,6 +151,30 @@ export const LevelLocalOptions = <L extends ISupaplexLevel>({
           disabled={isRo}
         >
           {t("main:supaplex.localOptions.UseSerialPorts")}
+        </Checkbox>
+      </div>
+      <div>
+        <Checkbox
+          checked={useGreenDisk}
+          onChange={handleGreenDiskChange}
+          disabled={isRo}
+        >
+          <Trans
+            i18nKey="main:supaplex.localOptions.UseGreenDisk"
+            components={compUseGreenDisk}
+          />
+        </Checkbox>
+      </div>
+      <div>
+        <Checkbox
+          checked={useScrew}
+          onChange={handleScrewChange}
+          disabled={isRo}
+        >
+          <Trans
+            i18nKey="main:supaplex.localOptions.UseScrew"
+            components={compUseScrew}
+          />
         </Checkbox>
       </div>
       <div className={cl.notCheckbox}>

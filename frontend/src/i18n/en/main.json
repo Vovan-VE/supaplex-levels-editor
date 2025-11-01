@@ -352,12 +352,14 @@
       "SpecialPorts": "Special Ports",
       "SpecPortInList": "Spec Port #{n}",
       "UnusedByte": "Unused Byte",
+      "UseGreenDisk": "Green Disk",
       "UseInfotronsNeed": "Custom Infotrons Needed",
       "UsePlasma": "Use Plasma",
       "UsePlasmaLimit": "Plasma Limit",
       "UsePlasmaTime": "Plasma Time",
-      "UseSerialPorts": "Use Serial Ports",
-      "UseZonker": "Use Zonker"
+      "UseScrew": "Screw",
+      "UseSerialPorts": "Serial Ports",
+      "UseZonker": "Zonker"
     },
     "format": {
       "dat": {
@@ -387,9 +389,11 @@
       "PlasmaLimitUnits": "tiles",
       "PlasmaTimeLabel": "Fast growth phase starts after",
       "PlasmaTimeUnits": "frames",
+      "UseGreenDisk": "Replace <tile/> with Green Disk",
       "UseInfotronsNeed": "Override <tile/> Needed",
       "UseInfotronsNeedHint": "(can be more then <code>255</code> or exactly <code>0</code>)",
       "UsePlasma": "Replace <tile/> with Plasma",
+      "UseScrew": "Replace <tile/> with Screw",
       "UseSerialPorts": "Allow serial ports",
       "UseZonker": "Replace <tile/> 2x2 with Zonker"
     },

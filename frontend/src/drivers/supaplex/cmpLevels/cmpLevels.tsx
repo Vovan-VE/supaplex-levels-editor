@@ -121,6 +121,20 @@ export const cmpLevels = (a: ISupaplexLevel, b: ISupaplexLevel) => {
       b: b.useSerialPorts,
     });
   }
+  if (a.useGreenDisk !== b.useGreenDisk) {
+    diff.push({
+      label: <Trans i18nKey="main:supaplex.features.UseGreenDisk" />,
+      a: a.useGreenDisk,
+      b: b.useGreenDisk,
+    });
+  }
+  if (a.useScrew !== b.useScrew) {
+    diff.push({
+      label: <Trans i18nKey="main:supaplex.features.UseScrew" />,
+      a: a.useScrew,
+      b: b.useScrew,
+    });
+  }
 
   return diff;
 };

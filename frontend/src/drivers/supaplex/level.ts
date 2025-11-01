@@ -494,6 +494,12 @@ class SupaplexLevel implements ISupaplexLevel {
     if (this.initialFreezeEnemies) {
       o[LocalOpt.InitialFreezeEnemies] = 1;
     }
+    if (this.useGreenDisk) {
+      o[LocalOpt.UseGreenDisk] = 1;
+    }
+    if (this.useScrew) {
+      o[LocalOpt.UseScrew] = 1;
+    }
     if (!this.#specports.isStdCompatible(this)) {
       o[LocalOpt.PortsDatabase] = this.#specports.toString();
     }
@@ -516,7 +522,9 @@ class SupaplexLevel implements ISupaplexLevel {
         .setUseZonker(Boolean(opt[LocalOpt.UseZonker]))
         .setUseSerialPorts(Boolean(opt[LocalOpt.UseSerialPorts]))
         .setUseInfotronsNeeded(toInt(opt[LocalOpt.UseInfotronsNeeded]))
-        .setInitialFreezeEnemies(Boolean(opt[LocalOpt.InitialFreezeEnemies]));
+        .setInitialFreezeEnemies(Boolean(opt[LocalOpt.InitialFreezeEnemies]))
+        .setUseGreenDisk(Boolean(opt[LocalOpt.UseGreenDisk]))
+        .setUseScrew(Boolean(opt[LocalOpt.UseScrew]));
       const pdStr = opt[LocalOpt.PortsDatabase];
       if (typeof pdStr === "string") {
         l = l.setSpecports(newSpecPortsDatabaseFromString(pdStr));
@@ -572,5 +580,19 @@ class SupaplexLevel implements ISupaplexLevel {
   }
   setInitialFreezeEnemies(on: boolean): this {
     return this.#withFooter(this.#footer.setInitialFreezeEnemies(on));
+  }
+
+  get useGreenDisk() {
+    return this.#footer.useGreenDisk;
+  }
+  setUseGreenDisk(on: boolean): this {
+    return this.#withFooter(this.#footer.setUseGreenDisk(on));
+  }
+
+  get useScrew() {
+    return this.#footer.useScrew;
+  }
+  setUseScrew(on: boolean): this {
+    return this.#withFooter(this.#footer.setUseScrew(on));
   }
 }

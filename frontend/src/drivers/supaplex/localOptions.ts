@@ -37,6 +37,12 @@ const P_USE_INFOTRONS_NEEDED = "use-infotrons-needed";
 const P_FREEZE_ENEMIES = "fe";
 const P_PORTS_DB = "pd";
 
+const P_GREEN_DISK = "gd";
+const P_USE_GREEN_DISK = "use-green-disk";
+
+const P_SCREW = "us";
+const P_USE_SCREW = "use-screw";
+
 export const applyLocalOptions = <L extends ISupaplexLevel>(
   level: L,
   url: URL,
@@ -61,6 +67,12 @@ export const applyLocalOptions = <L extends ISupaplexLevel>(
   if (level.initialFreezeEnemies) {
     // TODO: byte
     p.set(P_FREEZE_ENEMIES, "1");
+  }
+  if (level.useGreenDisk) {
+    p.set(P_GREEN_DISK, "");
+  }
+  if (level.useScrew) {
+    p.set(P_SCREW, "");
   }
   if (!level.specports.isStdCompatible(level)) {
     p.set(P_PORTS_DB, level.specports.toString());
@@ -96,6 +108,8 @@ export const parseLocalOptions = <L extends ISupaplexLevel>(
 
   const useZonker = p.has(P_ZONKER) || p.has(P_USE_ZONKER);
   const useSerialPorts = p.has(P_SERIAL_PORTS) || p.has(P_USE_SERIAL_PORTS);
+  const useGreenDisk = p.has(P_GREEN_DISK) || p.has(P_USE_GREEN_DISK);
+  const useScrew = p.has(P_SCREW) || p.has(P_USE_SCREW);
 
   let useInfotronsNeed: number | undefined;
   {
@@ -126,6 +140,8 @@ export const parseLocalOptions = <L extends ISupaplexLevel>(
       .setUseInfotronsNeeded(useInfotronsNeed)
       // TODO: byte
       .setInitialFreezeEnemies(useFreezeEnemies)
+      .setUseGreenDisk(useGreenDisk)
+      .setUseScrew(useScrew)
       .updateSpecports((prev) => useSPDB ?? prev)
   );
 };
