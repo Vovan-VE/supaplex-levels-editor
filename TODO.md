@@ -29,6 +29,8 @@
 - Own file format, editor specific: JSON + schema
   - Problem: users will use it in levels upload request instead of exported
 - an SP level was exported as "*.zip" just renamed
+- File with Options can be saved as regular without Options, so Options are lost
+- Trash for deleted levels.
 
 ### Desktop
 
