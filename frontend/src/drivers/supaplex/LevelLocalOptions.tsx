@@ -6,6 +6,7 @@ import { constElement } from "utils/react";
 import { LevelLocalOptionsProps } from "../types";
 import { InlineTile } from "./InlineTile";
 import {
+  TILE_HW_LAMP_B,
   TILE_HW_LAMP_G,
   TILE_HW_LAMP_R,
   TILE_HW_STRIPES,
@@ -27,7 +28,7 @@ const compUseGreenDisk = {
   tile: constElement(<InlineTile tile={TILE_HW_LAMP_G} />),
 };
 const compUseScrew = {
-  tile: constElement(<InlineTile tile={TILE_HW_LAMP_R} />),
+  tile: constElement(<InlineTile tile={TILE_HW_LAMP_B} />),
 };
 
 export const LevelLocalOptions = <L extends ISupaplexLevel>({
