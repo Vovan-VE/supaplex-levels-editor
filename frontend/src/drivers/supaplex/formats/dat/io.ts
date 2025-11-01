@@ -8,6 +8,16 @@ function* levelsFromBuffer(buffer: ArrayBuffer): Iterable<ISupaplexLevel> {
     throw new Error("Invalid file size: not a module of level size");
   }
 
+  // REFACT: separate detect function
+  // Edge case: *.SP with length mod 1536 is read as *.DAT
+  // [1536 bytes one level] [1 byte level index] [*bytes demo] FF ([*bytes signature] FF)?
+  if (
+    buffer.byteLength > LEVEL_BYTES_LENGTH + 2 &&
+    looksLikeDemo(buffer.slice(LEVEL_BYTES_LENGTH))
+  ) {
+    throw new Error("An *.SP demo detected");
+  }
+
   const count = Math.floor(buffer.byteLength / LEVEL_BYTES_LENGTH);
   for (let i = 0; i < count; i++) {
     yield createLevel(
@@ -42,3 +52,16 @@ export const writeLevelset = (levelset: ISupaplexLevelset): ArrayBuffer => {
   }
   return result.buffer;
 };
+
+function looksLikeDemo(buffer: ArrayBuffer): boolean {
+  const bytes = new Uint8Array(buffer);
+  const p1 = bytes.indexOf(0xff, 1);
+  // absent or not far enough => not a demo
+  if (p1 < 2) return false;
+  const p2 = bytes.indexOf(0xff, p1 + 1);
+  // no signature, ok
+  if (p2 < 0) return true;
+  // signature FF <end>, ok
+  return p2 === bytes.length - 1;
+  // TODO: demo body bytes check
+}

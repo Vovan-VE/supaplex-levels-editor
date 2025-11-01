@@ -3,6 +3,7 @@
 ## 0.22.0 (DEV)
 
 - Add: Support for SO Green Disk and Screw custom tiles replacement.
+- Fix: An *.SP files was read as *.DAT when file size is MOD 1536.
 
 ## 0.21.0 (2024-08-23)
 

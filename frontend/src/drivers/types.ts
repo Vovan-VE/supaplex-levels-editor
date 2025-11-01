@@ -232,6 +232,7 @@ export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
   createLevelset(levels?: readonly L[] | Iterable<L>): S;
   createLevel(options?: INewLevelOptions): L;
   // TODO: createLevelset config
+  // TODO: isValid(file: ArrayBufferLike): invalid=0|maybe=1|valid=2
 }
 
 export interface TileRenderProps {
