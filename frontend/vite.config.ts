@@ -13,8 +13,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        // loadPaths: ["./src/"],
-        includePaths: ["src"],
+        loadPaths: ["./src/"],
       },
     },
   },
