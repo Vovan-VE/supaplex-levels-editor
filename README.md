@@ -118,10 +118,10 @@ See also [frontend/README.md](./frontend/README.md).
 ### Requirements
 
 - Common:
-  - Node JS >= 18
-  - NPM >= 9
+  - Node JS >= 24
+  - NPM >= 11
 - Desktop:
-  - Go >= 1.20
+  - Go >= 1.24
   - Wails v2 ([Installation](https://wails.io/docs/gettingstarted/installation))
 
 [sple.me]: https://sple.me
