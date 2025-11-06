@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { usePopupContainer } from "./usePopupContainer";
 
 export interface PopupPortalOptions {
@@ -6,18 +6,17 @@ export interface PopupPortalOptions {
 }
 
 export const usePopupPortal = ({ className }: PopupPortalOptions = {}) => {
-  const [element, setElement] = useState<HTMLElement>();
   const getContainer = usePopupContainer();
-  useEffect(() => {
-    const container = getContainer();
+  const container = getContainer();
+  const element = useMemo(() => {
     const doc = container.ownerDocument;
-    const element = container.appendChild(doc.createElement("div"));
-    setElement(element);
+    return container.appendChild(doc.createElement("div"));
+  }, [container]);
+  useEffect(() => {
     return () => {
-      setElement(undefined);
-      container.removeChild(element);
+      element.parentElement?.removeChild(element);
     };
-  }, [getContainer]);
+  }, [element]);
 
   useEffect(() => {
     if (element && className) {

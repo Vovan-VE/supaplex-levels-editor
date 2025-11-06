@@ -68,6 +68,7 @@ const useGridPointerEventHandler = (
   handler: GridPointerEventHandler | undefined,
   calcSnapshot: (event: PointerEvent) => CellEventSnapshot,
   prevSnapshot: MutableRefObject<CellEventSnapshot | undefined>,
+  setPrevSnapshot: (s: CellEventSnapshot) => void,
 ) =>
   useMemo(
     () =>
@@ -76,12 +77,12 @@ const useGridPointerEventHandler = (
         if (e.isPrimary) {
           const snapshot = calcSnapshot(e);
           if (!equal(prevSnapshot.current, snapshot)) {
-            prevSnapshot.current = snapshot;
+            setPrevSnapshot(snapshot);
             handler(e, snapshot);
           }
         }
       }),
-    [handler, calcSnapshot, prevSnapshot],
+    [handler, calcSnapshot, prevSnapshot, setPrevSnapshot],
   );
 
 interface Props extends ContainerProps, GridEventsProps {
@@ -123,6 +124,9 @@ export const CoverGrid: FC<Props> = ({
     [cols, rows],
   );
   const prev = useRef<CellEventSnapshot>();
+  const setPrevSnapshot = useCallback((s: CellEventSnapshot) => {
+    prev.current = s;
+  }, []);
   const [touchPhase, setTouchPhase] = useState(TouchPhase.NO);
 
   const cursor = useUnit($cursor);
@@ -147,6 +151,7 @@ export const CoverGrid: FC<Props> = ({
     ),
     calc,
     prev,
+    setPrevSnapshot,
   );
   const _onMove = touchPhase === TouchPhase.SCROLL ? undefined : onPointerMove;
   const handleMove = useGridPointerEventHandler(
@@ -159,6 +164,7 @@ export const CoverGrid: FC<Props> = ({
     ),
     calc,
     prev,
+    setPrevSnapshot,
   );
   const handleUp = useGridPointerEventHandler(
     useCallback<GridPointerEventHandler>(
@@ -174,6 +180,7 @@ export const CoverGrid: FC<Props> = ({
     ),
     calc,
     prev,
+    setPrevSnapshot,
   );
   const handleCancel = useGridPointerEventHandler(
     useCallback<GridPointerEventHandler>(
@@ -187,6 +194,7 @@ export const CoverGrid: FC<Props> = ({
     ),
     calc,
     prev,
+    setPrevSnapshot,
   );
   const handleEnter = useGridPointerEventHandler(
     useCallback<GridPointerEventHandler>(
@@ -198,6 +206,7 @@ export const CoverGrid: FC<Props> = ({
     ),
     calc,
     prev,
+    setPrevSnapshot,
   );
   const handleLeave = useGridPointerEventHandler(
     useCallback<GridPointerEventHandler>(
@@ -209,6 +218,7 @@ export const CoverGrid: FC<Props> = ({
     ),
     calc,
     prev,
+    setPrevSnapshot,
   );
   const handleClick = useMemo(
     () => onClick && ((e: GridPointerEvent) => onClick(e, calc(e))),

@@ -1,6 +1,7 @@
 import cn from "classnames";
 import { useUnit } from "effector-react";
 import { FC, memo, ReactElement } from "react";
+import { TileRenderProps } from "drivers";
 import { $drvTileRender } from "models/levels";
 import {
   $feedbackCell,
@@ -33,40 +34,60 @@ export const DrawLayers: FC<ListProps> = ({
   visibleRect,
   className,
   ...rest
-}) => (
-  <>
-    {drawLayers?.map((layer, i) => (
-      <div
-        {...rest}
-        key={i}
-        className={cn(className, TYPE_CLASSES[layer.type])}
-      >
-        <DrawLayerItem layer={layer} visibleRect={visibleRect} />
-      </div>
-    ))}
-    <FeedbackLayer {...rest} className={className} />
-  </>
-);
+}) => {
+  const TileRender = useUnit($drvTileRender)!;
+  return (
+    <>
+      {drawLayers?.map((layer, i) => (
+        <div
+          {...rest}
+          key={i}
+          className={cn(className, TYPE_CLASSES[layer.type])}
+        >
+          <DrawLayerItem
+            layer={layer}
+            visibleRect={visibleRect}
+            TileRender={TileRender}
+          />
+        </div>
+      ))}
+      <FeedbackLayer {...rest} className={className} />
+    </>
+  );
+};
 
 interface LayerProps {
   layer: DrawLayer;
   visibleRect: Rect;
+  TileRender: FC<TileRenderProps>;
 }
-const DrawLayerItem: FC<LayerProps> = ({ layer, visibleRect }) => {
+const DrawLayerItem: FC<LayerProps> = ({ layer, visibleRect, TileRender }) => {
   const { x: LX, y: LY } = layer;
 
   switch (layer.type) {
     case DrawLayerType.TILES:
-      return <DrawLayerTiles {...layer} visibleRect={visibleRect} />;
+      return (
+        <DrawLayerTiles
+          {...layer}
+          visibleRect={visibleRect}
+          TileRender={TileRender}
+        />
+      );
 
     case DrawLayerType.TILE_FILL:
-      return <DrawLayerTileFill {...layer} />;
+      return <DrawLayerTileFill {...layer} TileRender={TileRender} />;
 
     case DrawLayerType.SELECT_RANGE:
       return <DrawLayerSelectRange {...layer} />;
 
     case DrawLayerType.TILES_REGION:
-      return <DrawLayerTilesRegion {...layer} visibleRect={visibleRect} />;
+      return (
+        <DrawLayerTilesRegion
+          {...layer}
+          visibleRect={visibleRect}
+          TileRender={TileRender}
+        />
+      );
 
     case DrawLayerType.CUSTOM: {
       const { Component } = layer;
@@ -79,41 +100,37 @@ const DrawLayerItem: FC<LayerProps> = ({ layer, visibleRect }) => {
 };
 
 type VR = { visibleRect: Rect };
+type TR = { TileRender: FC<TileRenderProps> };
 
-const DrawLayerTiles: FC<DrawLayerProps<DrawLayerType.TILES> & VR> = ({
+const DrawLayerTiles: FC<DrawLayerProps<DrawLayerType.TILES> & VR & TR> = ({
   x: LX,
   y: LY,
   tiles,
   visibleRect,
+  TileRender,
 }) => {
-  const TileRender = useUnit($drvTileRender)!;
-  return (
-    <>
-      {[...tiles.values()].reduce<ReactElement[]>((nodes, { x, y, tile }) => {
-        if (inRect(x, y, visibleRect)) {
-          nodes.push(
-            <TileRender
-              key={`${x}:${y}`}
-              tile={tile}
-              style={
-                {
-                  "--x": LX + x,
-                  "--y": LY + y,
-                } as object
-              }
-            />,
-          );
+  const nodes: ReactElement[] = [];
+  tiles.forEach(({ x, y, tile }) => {
+    if (!inRect(x, y, visibleRect)) return;
+    nodes.push(
+      <TileRender
+        key={`${x}:${y}`}
+        tile={tile}
+        style={
+          {
+            "--x": LX + x,
+            "--y": LY + y,
+          } as object
         }
-        return nodes;
-      }, [])}
-    </>
-  );
+      />,
+    );
+  });
+  return <>{nodes}</>;
 };
 
 const DrawLayerTilesRegion: FC<
-  DrawLayerProps<DrawLayerType.TILES_REGION> & VR
-> = ({ x: LX, y: LY, tiles, visibleRect }) => {
-  const TileRender = useUnit($drvTileRender)!;
+  DrawLayerProps<DrawLayerType.TILES_REGION> & VR & TR
+> = ({ x: LX, y: LY, tiles, visibleRect, TileRender }) => {
   // -----------------------------------> canvas
   //     ----------------------           layer region
   //        ----------------              visible
@@ -147,23 +164,20 @@ const DrawLayerTilesRegion: FC<
   return <>{nodes}</>;
 };
 
-const DrawLayerTileFill = memo<DrawLayerProps<DrawLayerType.TILE_FILL>>(
-  ({ x, y, width, height, tile }) => {
-    const TileRender = useUnit($drvTileRender)!;
-    return (
-      <TileRender
-        tile={tile}
-        style={
-          {
-            "--x": x,
-            "--y": y,
-            "--w": width,
-            "--h": height,
-          } as object
-        }
-      />
-    );
-  },
+const DrawLayerTileFill = memo<DrawLayerProps<DrawLayerType.TILE_FILL> & TR>(
+  ({ x, y, width, height, tile, TileRender }) => (
+    <TileRender
+      tile={tile}
+      style={
+        {
+          "--x": x,
+          "--y": y,
+          "--w": width,
+          "--h": height,
+        } as object
+      }
+    />
+  ),
 );
 
 const DrawLayerSelectRange = memo<DrawLayerProps<DrawLayerType.SELECT_RANGE>>(

@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import cn from "classnames";
-import { useRefHandlers } from "utils/react";
+import { useIsChanged, useRefHandlers } from "utils/react";
 import { HotKeyShortcuts, useHotKey } from "models/ui/hotkeys";
 import { AdaptiveRange, useMediaQuery } from "../../adaptive";
 import {
@@ -56,11 +56,10 @@ export const ButtonDropdown: FC<Props> = ({
   const handleShow = useCallback(() => setVisible(true), []);
   const handleHide = useCallback(() => setVisible(false), []);
   {
-    useEffect(() => {
-      if (undefined !== isOpened) {
-        setVisible(isOpened);
-      }
-    }, [isOpened]);
+    const isIsOpenedChanged = useIsChanged(isOpened);
+    if (isIsOpenedChanged && isOpened !== undefined) {
+      setVisible(isOpened);
+    }
     const refShow = useRefHandlers(onShow);
     const refHide = useRefHandlers(onHide);
     useEffect(() => {

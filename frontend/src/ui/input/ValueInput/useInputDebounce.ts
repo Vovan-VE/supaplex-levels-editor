@@ -77,7 +77,9 @@ export const useInputDebounce = <V>({
   );
 
   return {
-    value: latestV.current !== undefined ? latestV.current : value,
+    get value() {
+      return latestV.current !== undefined ? latestV.current : value;
+    },
     onChange: handleChange,
     onBlur: handleBlur,
   } as const;

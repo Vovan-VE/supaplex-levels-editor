@@ -3,7 +3,6 @@ import {
   FC,
   FormEvent,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -28,6 +27,7 @@ import { Dialog, intRangeError, msgBox, RenderPromptProps } from "ui/feedback";
 import { Field, Input, IntegerInput, Select, SelectOption } from "ui/input";
 import { ColorType } from "ui/types";
 import { minmax } from "utils/number";
+import { useIsChanged } from "utils/react";
 import { strCmp } from "utils/strings";
 import cl from "./NewFile.module.scss";
 
@@ -66,12 +66,10 @@ export const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
 
   const [driverName, setDriverName] = useState<DriverName>(DISPLAY_ORDER[0]);
   const curFormatsOptions = formatOptions.get(driverName)!;
-  const [driverFormat, setDriverFormat] = useState(
-    getDefaultFormat(curFormatsOptions).value,
-  );
-  useEffect(
-    () => setDriverFormat(getDefaultFormat(curFormatsOptions).value),
-    [curFormatsOptions],
+  const [_driverFormat, setDriverFormat] = useState<string>();
+  const driverFormat = useMemo(
+    () => _driverFormat ?? getDefaultFormat(curFormatsOptions).value,
+    [_driverFormat, curFormatsOptions],
   );
 
   const [filename, setFilename] = useState("new");
@@ -83,22 +81,25 @@ export const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const [borderTile, setBorderTile] = useState(TILE_HARDWARE);
   const [fillTile, setFillTile] = useState(0);
 
-  const format = getDriverFormat(driverName, driverFormat)!;
-  const { resizable, minLevelsCount, maxLevelsCount } = format;
-  useEffect(
-    () =>
-      setLevelsCount((n) =>
-        n === null
-          ? null
-          : minmax(
-              n,
-              minLevelsCount,
-              maxLevelsCount ?? Number.MAX_SAFE_INTEGER,
-            ),
-      ),
-    [minLevelsCount, maxLevelsCount],
+  const format = useMemo(
+    () => getDriverFormat(driverName, driverFormat)!,
+    [driverName, driverFormat],
   );
-  const level = useMemo(() => format.createLevel(), [format]);
+  const { resizable, minLevelsCount, maxLevelsCount } = format;
+  const isMinLevelsCountChanged = useIsChanged(minLevelsCount);
+  const isMaxLevelsCountChanged = useIsChanged(maxLevelsCount);
+  if (isMinLevelsCountChanged || isMaxLevelsCountChanged) {
+    setLevelsCount((n) =>
+      n === null
+        ? null
+        : minmax(n, minLevelsCount, maxLevelsCount ?? Number.MAX_SAFE_INTEGER),
+    );
+  }
+
+  const level = useMemo(() => {
+    const { createLevel } = format;
+    return createLevel();
+  }, [format]);
   const { maxTitleLength, width: defaultWidth, height: defaultHeight } = level;
 
   const titleError = useMemo(() => {

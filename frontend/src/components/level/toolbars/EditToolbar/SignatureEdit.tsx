@@ -4,7 +4,6 @@ import {
   FC,
   FormEventHandler,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -29,6 +28,7 @@ import { svgs } from "ui/icon";
 import { Field, IntegerInput, Textarea } from "ui/input";
 import { ColorType } from "ui/types";
 import { round } from "utils/number";
+import { useIsChanged } from "utils/react";
 import cl from "./SignatureEdit.module.scss";
 
 interface Props extends RenderPromptProps<undefined> {}
@@ -54,7 +54,10 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const [signature, setSignature] = useState(() =>
     levelSupportSignature(level) ? level.signatureString : "",
   );
-  useEffect(() => {
+
+  const isLevelChanged = useIsChanged(level);
+  const isDemoToTextChanged = useIsChanged(demoToText);
+  if (isLevelChanged || isDemoToTextChanged) {
     if (levelSupportsDemo(level)) {
       setDemo(level.demo);
       if (demoToText) {
@@ -65,10 +68,10 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
       const seed = level.demoSeed;
       setDemoSeed((seed.hi << 8) | seed.lo);
     }
-    if (levelSupportSignature(level)) {
-      setSignature(level.signatureString);
-    }
-  }, [level, demoToText]);
+  }
+  if (isLevelChanged && levelSupportSignature(level)) {
+    setSignature(level.signatureString);
+  }
 
   const handleDemoChange = useCallback<_TC>(
     ({ target: { value } }) => {

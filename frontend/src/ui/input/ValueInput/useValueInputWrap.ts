@@ -4,9 +4,9 @@ import {
   ForwardedRef,
   RefAttributes,
   useCallback,
-  useEffect,
   useState,
 } from "react";
+import { useIsChanged } from "utils/react";
 import { InputProps } from "../Input";
 import { ValueInputWrapProps } from "./types";
 
@@ -23,33 +23,23 @@ export const useValueInputWrap = <V>(
   }: ValueInputWrapProps<V>,
   ref?: ForwardedRef<HTMLInputElement>,
 ): InputProps & RefAttributes<HTMLInputElement> => {
-  const [isFocused, setIsFocused] = useState(false);
   const [ownValue, setOwnValue] = useState(
     value === undefined ? emptyValue : value,
   );
   const [input, setInput] = useState(formatValue(ownValue));
 
-  const updateInput = useCallback(
-    (value: V) => setInput(formatValue(value)),
-    [formatValue],
-  );
-
-  useEffect(() => {
+  const isValueChanged = useIsChanged(value);
+  const isFormatterChanged = useIsChanged(formatValue);
+  if (isValueChanged || isFormatterChanged) {
     if (undefined !== value) {
       setOwnValue(value);
-      if (!isFocused) {
-        updateInput(value);
-      }
     }
-  }, [value, updateInput, isFocused]);
+  }
 
   // update input on format change (by locale or props)
-  useEffect(() => {
-    setOwnValue((ownValue) => {
-      setInput(formatValue(ownValue));
-      return ownValue;
-    });
-  }, [formatValue]);
+  if (isFormatterChanged) {
+    setInput(formatValue(ownValue));
+  }
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +56,9 @@ export const useValueInputWrap = <V>(
 
   const handleFocus = useCallback(
     (e: FocusEvent<HTMLInputElement>) => {
-      setIsFocused(true);
+      // if (undefined !== value) {
+      //   setOwnValue(value);
+      // }
       onFocus?.(e);
     },
     [onFocus],
@@ -74,16 +66,16 @@ export const useValueInputWrap = <V>(
 
   const handleBlur = useCallback(
     (e: FocusEvent<HTMLInputElement>) => {
-      // const string = ownValue === null ? '' : nFormat.format(ownValue);
-      // if (string !== input) {
-      //   setInput(string);
-      // }
-      setIsFocused(false);
-      updateInput(ownValue);
+      if (undefined !== value) {
+        setOwnValue(value);
+        setInput(formatValue(value));
+      } else {
+        setInput(formatValue(ownValue));
+      }
 
       onBlur?.(e);
     },
-    [ownValue, onBlur, updateInput],
+    [value, formatValue, ownValue, onBlur],
   );
 
   return {

@@ -279,7 +279,7 @@ const ConfirmSO: FC<
           message: t("main:common.toasts.Copied"),
           color: ColorType.SUCCESS,
         });
-      } catch (e) {
+      } catch {
         await msgBox(
           <>
             <p>{t("main:levelTest.CannotCopyHereCode")}</p>

@@ -15,7 +15,7 @@ export const enum DrawLayerType {
   TILE_FILL = "tf",
   SELECT_RANGE = "sel",
   TILES_REGION = "tr",
-  CUSTOM = "c",
+  CUSTOM = "c", // REFACT: unused
 }
 interface BaseDrawLayer extends Point2D {
   type: DrawLayerType;

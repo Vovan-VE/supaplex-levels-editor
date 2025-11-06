@@ -191,9 +191,9 @@ const CmpBodies: FC<_P> = ({ first, second }) => {
   const [result, setResult] = useState<RectDiffResult>();
   const [error, setError] = useState<Error>();
   useEffect(() => {
-    setPending(true);
     let p: Promise<unknown> | null = new Promise<RectDiffResult>(
       (resolve, reject) => {
+        setPending(true);
         const a = first.file;
         const b = second.file;
         if (a.driverName !== b.driverName) {
