@@ -3,7 +3,7 @@ import { createNewLevel } from "../../level";
 import { createLevelset } from "../../levelset";
 import { ISupaplexFormat } from "../../types";
 import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../std";
-import { readLevelset, writeLevelset } from "./io";
+import { isReadableBuffer, readLevelset, writeLevelset } from "./io";
 import { supportReport } from "./supportReport";
 
 export const DAT: ISupaplexFormat = {
@@ -20,6 +20,7 @@ export const DAT: ISupaplexFormat = {
   minLevelsCount: 1,
   maxLevelsCount: null,
   supportReport,
+  isReadableBuffer,
   readLevelset,
   writeLevelset,
   createLevelset: (levels) => createLevelset(levels ?? 111),

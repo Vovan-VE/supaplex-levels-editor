@@ -227,12 +227,12 @@ export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
   readonly demoSupport?: boolean;
   readonly signatureMaxLength?: number;
   supportReport(levelset: S): Iterable<ISupportReportMessage>;
+  isReadableBuffer(buffer: ArrayBuffer): boolean;
   readLevelset(file: ArrayBufferLike): S;
   writeLevelset(levelset: S): ArrayBuffer;
   createLevelset(levels?: readonly L[] | Iterable<L>): S;
   createLevel(options?: INewLevelOptions): L;
   // TODO: createLevelset config
-  // TODO: isValid(file: ArrayBufferLike): invalid=0|maybe=1|valid=2
 }
 
 export interface TileRenderProps {
