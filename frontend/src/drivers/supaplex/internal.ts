@@ -109,6 +109,8 @@ export interface ILevelFooter extends IWithDemo, IWithSignature {
   readonly useSerialPorts: boolean;
   readonly useInfotronsNeeded: number | undefined;
   readonly initialFreezeEnemies: boolean;
+  readonly useGreenDisk: boolean;
+  readonly useScrew: boolean;
   setUsePlasma(on: boolean): this;
   setUsePlasmaLimit(n: number | undefined): this;
   setUsePlasmaTime(n: number | undefined): this;
@@ -116,6 +118,8 @@ export interface ILevelFooter extends IWithDemo, IWithSignature {
   setUseSerialPorts(on: boolean): this;
   setUseInfotronsNeeded(n: number | undefined): this;
   setInitialFreezeEnemies(on: boolean): this;
+  setUseGreenDisk(on: boolean): this;
+  setUseScrew(on: boolean): this;
 }
 
 export const enum LocalOpt {
@@ -127,4 +131,6 @@ export const enum LocalOpt {
   UseInfotronsNeeded = "useInfotronsNeeded",
   PortsDatabase = "portsDB",
   InitialFreezeEnemies = "initialFreezeEnemies",
+  UseGreenDisk = "useGreenDisk",
+  UseScrew = "useScrew",
 }

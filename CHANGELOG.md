@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.22.0 (2025-11-07)
+
+- Add: Support for SO Green Disk and Screw custom tiles replacement.
+
 ## 0.21.0 (2024-08-23)
 
 - Add: Export current level as ZIP With Options.

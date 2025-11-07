@@ -352,12 +352,14 @@
       "SpecialPorts": "Специальные порты",
       "SpecPortInList": "Спец. Порт #{n}",
       "UnusedByte": "Неиспользуемый байт",
+      "UseGreenDisk": "Зелёный Диск",
       "UseInfotronsNeed": "Другое кол-во необходимых инфотронов",
       "UsePlasma": "Использовать Плазму",
       "UsePlasmaLimit": "Предел Плазмы (limit)",
       "UsePlasmaTime": "Срок Плазмы (time)",
-      "UseSerialPorts": "Использовать Последовательные Порты",
-      "UseZonker": "Использовать большие камни (Zonker)"
+      "UseScrew": "Шуруп",
+      "UseSerialPorts": "Последовательные Порты",
+      "UseZonker": "Большие камни (Zonker)"
     },
     "format": {
       "dat": {
@@ -387,9 +389,11 @@
       "PlasmaLimitUnits": "клеток",
       "PlasmaTimeLabel": "Фаза быстрого роста начинается с",
       "PlasmaTimeUnits": "кадров",
+      "UseGreenDisk": "Заменить <tile/> на Зелёный Диск",
       "UseInfotronsNeed": "Заменить количество необходимых <tile/>",
       "UseInfotronsNeedHint": "(может быть более <code>255</code> или ровно <code>0</code>)",
       "UsePlasma": "Заменить <tile/> на Плазму",
+      "UseScrew": "Заменить <tile/> на Шуруп",
       "UseSerialPorts": "Разрешить Последовательные Порты",
       "UseZonker": "Заменить <tile/> 2x2 на большие камни (Zonker)"
     },

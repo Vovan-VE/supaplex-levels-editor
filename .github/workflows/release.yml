@@ -33,7 +33,7 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 24.x
           cache: npm
           cache-dependency-path: ./frontend/package-lock.json
 
@@ -89,7 +89,7 @@ jobs:
       matrix:
         platform: [ ubuntu-latest ]
         #platform: [ ubuntu-latest, macos-latest ]
-        go-version: [ 1.20.3 ]
+        go-version: [ 1.24.9 ]
     runs-on: ${{ matrix.platform }}
     needs: build_front
     steps:

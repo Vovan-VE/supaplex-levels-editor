@@ -50,13 +50,32 @@ const setInt32LE = (buffer: Uint8Array, byteOffset: number, value: number) => {
   new DataView(buffer.buffer).setInt32(byteOffset, value, true);
 };
 
-export const readLevelset = (file: ArrayBuffer): ISupaplexLevelset => {
-  if (file.byteLength < MIN_FILE_SIZE || !cmpUint8Array(file, 0, MPX_SIGN)) {
-    throw new Error("Unrecognized file format");
+function validateBuffer(buffer: ArrayBuffer): Error | null {
+  if (
+    buffer.byteLength < MIN_FILE_SIZE ||
+    !cmpUint8Array(buffer, 0, MPX_SIGN)
+  ) {
+    return new Error("Unrecognized file format");
   }
+  return null;
+}
 
-  const ver = getInt16LE(file, 4);
-  let levelsCount = getInt16LE(file, 6);
+export function isReadableBuffer(buffer: ArrayBuffer): boolean {
+  const err = validateBuffer(buffer);
+  if (err) return false;
+
+  const ver = getInt16LE(buffer, 4);
+  const levelsCount = getInt16LE(buffer, 6);
+  if (ver === 0x2020 && levelsCount === 0x2020) return true;
+  return ver === 1 && levelsCount > 0 && levelsCount < 0x7fff;
+}
+
+export const readLevelset = (buffer: ArrayBuffer): ISupaplexLevelset => {
+  const err = validateBuffer(buffer);
+  if (err) throw err;
+
+  const ver = getInt16LE(buffer, 4);
+  let levelsCount = getInt16LE(buffer, 6);
   const widths: number[] = [];
   const heights: number[] = [];
   const offsets: number[] = [];
@@ -65,8 +84,8 @@ export const readLevelset = (file: ArrayBuffer): ISupaplexLevelset => {
     // 4 spaces
     //ver = 1;
     levelsCount = 1;
-    widths.push(getInt16LE(file, 8));
-    heights.push(getInt16LE(file, 10));
+    widths.push(getInt16LE(buffer, 8));
+    heights.push(getInt16LE(buffer, 10));
     offsets.push(20);
     sizes.push(widths[0] * heights[0] + FOOTER_BYTE_LENGTH);
   } else {
@@ -74,10 +93,10 @@ export const readLevelset = (file: ArrayBuffer): ISupaplexLevelset => {
       throw new Error(`Unsupported format version ${ver}`);
     }
     for (let i = 0, at = 8; i < levelsCount; i++, at += 12) {
-      widths.push(getInt16LE(file, at));
-      heights.push(getInt16LE(file, at + 2));
-      offsets.push(getInt32LE(file, at + 4) - 1);
-      sizes.push(getInt32LE(file, at + 8));
+      widths.push(getInt16LE(buffer, at));
+      heights.push(getInt16LE(buffer, at + 2));
+      offsets.push(getInt32LE(buffer, at + 4) - 1);
+      sizes.push(getInt32LE(buffer, at + 8));
     }
   }
 
@@ -87,7 +106,7 @@ export const readLevelset = (file: ArrayBuffer): ISupaplexLevelset => {
       createLevel(
         widths[i],
         heights[i],
-        new Uint8Array(file, offsets[i], sizes[i]),
+        new Uint8Array(buffer, offsets[i], sizes[i]),
       ),
     );
   }

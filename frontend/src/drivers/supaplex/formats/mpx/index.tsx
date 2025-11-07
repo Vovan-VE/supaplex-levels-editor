@@ -3,7 +3,7 @@ import { createNewLevel } from "../../level";
 import { createLevelset } from "../../levelset";
 import { ISupaplexFormat } from "../../types";
 import { SIGNATURE_MAX_LENGTH } from "../std";
-import { readLevelset, writeLevelset } from "./io";
+import { isReadableBuffer, readLevelset, writeLevelset } from "./io";
 import { supportReport } from "./supportReport";
 
 export const MPX: ISupaplexFormat = {
@@ -19,6 +19,7 @@ export const MPX: ISupaplexFormat = {
   demoSupport: true,
   signatureMaxLength: SIGNATURE_MAX_LENGTH,
   supportReport,
+  isReadableBuffer,
   readLevelset,
   writeLevelset,
   createLevelset: (levels) => createLevelset(levels ?? 1),

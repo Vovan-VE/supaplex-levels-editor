@@ -1,7 +1,7 @@
 import { Trans } from "i18n/Trans";
 import { ISupaplexFormat } from "../../types";
 import { DAT } from "../dat";
-import { readLevelset, writeLevelset } from "./io";
+import { isReadableBuffer, readLevelset, writeLevelset } from "./io";
 import { createLevelset } from "../../levelset";
 import { SIGNATURE_MAX_LENGTH } from "../std";
 import { supportReport } from "./supportReport";
@@ -16,6 +16,7 @@ export const SP: ISupaplexFormat = {
   demoSupport: true,
   signatureMaxLength: SIGNATURE_MAX_LENGTH,
   supportReport,
+  isReadableBuffer,
   readLevelset,
   writeLevelset,
   createLevelset: (levels) => createLevelset(levels ?? 1),

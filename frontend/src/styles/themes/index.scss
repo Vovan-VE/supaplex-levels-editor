@@ -1,9 +1,10 @@
+@use "sass:map";
 @use "./themes";
 @use "./vars";
 
 @mixin _apply-vars($theme) {
-  @each $name in map-keys($theme) {
-    --#{$name}: #{map-get($theme, $name)};
+  @each $name in map.keys($theme) {
+    --#{$name}: #{map.get($theme, $name)};
   }
 }
 

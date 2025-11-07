@@ -11,8 +11,8 @@
   "info": {
     "companyName": "Vovan-VE",
     "productName": "SpLE",
-    "productVersion": "0.21.0",
-    "copyright": "Copyright (C) 2021-2024 Vovan-VE",
+    "productVersion": "0.22.0",
+    "copyright": "Copyright (C) 2021-2025 Vovan-VE",
     "comments": "Desktop version of https://sple.me/ (repo: https://github.com/Vovan-VE/supaplex-levels-editor) built using Wails (https://wails.io)"
   },
   "author": {

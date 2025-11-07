@@ -625,6 +625,8 @@ describe("level", () => {
           [LocalOpt.UseSerialPorts]: "",
           [LocalOpt.UseInfotronsNeeded]: undefined,
           [LocalOpt.PortsDatabase]: undefined,
+          [LocalOpt.UseGreenDisk]: "",
+          [LocalOpt.UseScrew]: "",
         }),
       ).toBe(level);
     });
@@ -691,6 +693,24 @@ describe("level", () => {
       expect(e.localOptions).toEqual({ [LocalOpt.InitialFreezeEnemies]: 1 });
       expect(level.setInitialFreezeEnemies(true).localOptions).toEqual({
         [LocalOpt.InitialFreezeEnemies]: 1,
+      });
+    });
+
+    it("green disk", () => {
+      const s = level.setLocalOptions({ [LocalOpt.UseGreenDisk]: true });
+      expect(s.useGreenDisk).toBe(true);
+      expect(s.localOptions).toEqual({ [LocalOpt.UseGreenDisk]: 1 });
+      expect(level.setUseGreenDisk(true).localOptions).toEqual({
+        [LocalOpt.UseGreenDisk]: 1,
+      });
+    });
+
+    it("screw", () => {
+      const s = level.setLocalOptions({ [LocalOpt.UseScrew]: true });
+      expect(s.useScrew).toBe(true);
+      expect(s.localOptions).toEqual({ [LocalOpt.UseScrew]: 1 });
+      expect(level.setUseScrew(true).localOptions).toEqual({
+        [LocalOpt.UseScrew]: 1,
       });
     });
 
@@ -764,6 +784,8 @@ describe("level", () => {
         [LocalOpt.UseSerialPorts]: "lol",
         [LocalOpt.UseInfotronsNeeded]: 257,
         [LocalOpt.InitialFreezeEnemies]: 23,
+        [LocalOpt.UseGreenDisk]: "foo",
+        [LocalOpt.UseScrew]: "bar",
         [LocalOpt.PortsDatabase]: "x10y20g1z-2e-1,x5y6g0z-1u97",
       });
       expect(all.usePlasma).toBe(true);
@@ -773,6 +795,8 @@ describe("level", () => {
       expect(all.useSerialPorts).toBe(true);
       expect(all.useInfotronsNeeded).toBe(257);
       expect(all.initialFreezeEnemies).toBe(true);
+      expect(all.useGreenDisk).toBe(true);
+      expect(all.useScrew).toBe(true);
       expect(all.localOptions).toEqual({
         [LocalOpt.UsePlasma]: 1,
         [LocalOpt.UsePlasmaLimit]: 42,
@@ -781,6 +805,8 @@ describe("level", () => {
         [LocalOpt.UseSerialPorts]: 1,
         [LocalOpt.UseInfotronsNeeded]: 257,
         [LocalOpt.InitialFreezeEnemies]: 1,
+        [LocalOpt.UseGreenDisk]: 1,
+        [LocalOpt.UseScrew]: 1,
         [LocalOpt.PortsDatabase]: "x10y20g1z-2e-1,x5y6z-1u97",
       });
     });

@@ -45,6 +45,8 @@ export interface ISupaplexLevel extends IBaseLevel, IWithDemo, IWithSignature {
   readonly useSerialPorts: boolean;
   readonly useInfotronsNeeded: number | undefined;
   readonly initialFreezeEnemies: boolean;
+  readonly useGreenDisk: boolean;
+  readonly useScrew: boolean;
   setUsePlasma(on: boolean): this;
   setUsePlasmaLimit(n: number | undefined): this;
   setUsePlasmaTime(n: number | undefined): this;
@@ -53,6 +55,8 @@ export interface ISupaplexLevel extends IBaseLevel, IWithDemo, IWithSignature {
   // REFACT: merge into common
   setUseInfotronsNeeded(n: number | undefined): this;
   setInitialFreezeEnemies(on: boolean): this;
+  setUseGreenDisk(on: boolean): this;
+  setUseScrew(on: boolean): this;
 }
 
 export interface ISupaplexTile extends IBaseTile<ISupaplexLevel> {}

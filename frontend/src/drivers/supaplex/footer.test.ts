@@ -390,4 +390,30 @@ describe("footer", () => {
 
     expect(footer.initialFreezeEnemies).toBe(false);
   });
+
+  it("useGreenDisk", () => {
+    const footer = createLevelFooter(LEVEL_WIDTH);
+
+    expect(footer.useGreenDisk).toBe(false);
+    expect(footer.setUseGreenDisk(false)).toBe(footer);
+
+    const next = footer.setUseGreenDisk(true);
+    expect(next.useGreenDisk).toBe(true);
+    expect(next.setUseGreenDisk(true)).toBe(next);
+
+    expect(footer.useGreenDisk).toBe(false);
+  });
+
+  it("useScrew", () => {
+    const footer = createLevelFooter(LEVEL_WIDTH);
+
+    expect(footer.useScrew).toBe(false);
+    expect(footer.setUseScrew(false)).toBe(footer);
+
+    const next = footer.setUseScrew(true);
+    expect(next.useScrew).toBe(true);
+    expect(next.setUseScrew(true)).toBe(next);
+
+    expect(footer.useScrew).toBe(false);
+  });
 });
