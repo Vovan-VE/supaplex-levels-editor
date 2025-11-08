@@ -391,7 +391,7 @@
       "PlasmaTimeUnits": "frames",
       "UseGreenDisk": "Replace <tile/> with Green Disk",
       "UseInfotronsNeed": "Override <tile/> Needed",
-      "UseInfotronsNeedHint": "(can be more then <code>255</code> or exactly <code>0</code>)",
+      "UseInfotronsNeedHint": "(can be more than <code>255</code> or exactly <code>0</code>)",
       "UsePlasma": "Replace <tile/> with Plasma",
       "UseScrew": "Replace <tile/> with Screw",
       "UseSerialPorts": "Allow serial ports",
