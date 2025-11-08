@@ -50,15 +50,13 @@ export const detectDriverFormat = (
     const matches: { format: string; extensionOk: boolean }[] = [];
 
     for (const [format, f] of Object.entries(Drivers[name].formats)) {
-      try {
-        if (f.readLevelset(file)) {
-          const ext = getFileExt(filename);
-          matches.push({
-            format,
-            extensionOk: Boolean(ext && isExtValid(ext, name, format)),
-          });
-        }
-      } catch {}
+      if (f.isReadableBuffer(file)) {
+        const ext = getFileExt(filename);
+        matches.push({
+          format,
+          extensionOk: Boolean(ext && isExtValid(ext, name, format)),
+        });
+      }
     }
 
     if (matches.length) {
