@@ -3,17 +3,12 @@ import { ErrorPage } from "../ErrorPage";
 
 // https://reactjs.org/docs/error-boundaries.html
 
-interface P {}
-
 interface State {
   hasError: boolean;
   error?: unknown;
 }
 
-export class ErrorBoundaryReal extends PureComponent<
-  PropsWithChildren<P>,
-  State
-> {
+export class ErrorBoundaryReal extends PureComponent<PropsWithChildren, State> {
   state: State = {
     hasError: false,
   };

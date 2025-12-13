@@ -54,7 +54,7 @@ export const LevelBody: FC<ContainerProps> = ({ className, ...rest }) => {
             "--tiles-x": width,
             "--tiles-y": height,
             "--tile-size": `${bodyScale.toFixed(0)}px`,
-          } as {}
+          } as object
         }
       >
         <div ref={refCanvas} className={cl.canvas}>
