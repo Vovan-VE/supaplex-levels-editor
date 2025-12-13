@@ -7,7 +7,14 @@ import ts from "typescript-eslint";
 
 export default defineConfig([
   {
-    ignores: ["dist/", "dist-wails/", "wailsjs/", "eslint.config.mjs"],
+    ignores: [
+      "dist/",
+      "dist-wails/",
+      "src/backend/wails/go/",
+      "src/backend/wails/runtime/",
+      "wailsjs/",
+      "eslint.config.mjs",
+    ],
   },
   {
     plugins: {
