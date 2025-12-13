@@ -16,9 +16,7 @@ const useDisplayRO = displayReadOnly
   ? () => useUnit($displayReadOnly!)
   : () => false;
 
-interface Props extends ContainerProps {}
-
-export const FlushIndicator: FC<Props> = ({ className, ...rest }) => {
+export const FlushIndicator: FC<ContainerProps> = ({ className, ...rest }) => {
   const { t } = useTranslation();
   const readOnly = useDisplayRO();
   const isPending = useUnit($isFlushPending);

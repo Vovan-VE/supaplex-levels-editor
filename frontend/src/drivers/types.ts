@@ -254,9 +254,7 @@ export interface LevelConfiguratorEnvProps {
 }
 export interface LevelConfiguratorProps<L extends IBaseLevel>
   extends LevelEditProps<L>, LevelConfiguratorEnvProps {}
-export interface LevelLocalOptionsProps<
-  L extends IBaseLevel,
-> extends LevelEditProps<L> {}
+export type LevelLocalOptionsProps<L extends IBaseLevel> = LevelEditProps<L>;
 
 export type DiffItemValue = null | boolean | number | string | ReactElement;
 export interface DiffItem {

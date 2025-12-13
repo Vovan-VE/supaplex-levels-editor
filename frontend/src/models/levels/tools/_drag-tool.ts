@@ -29,7 +29,7 @@ interface IDrawStart<P> {
   drawProps: P;
   isRo: boolean;
 }
-interface IDrawData<P> extends IDrawStart<P> {}
+type IDrawData<P> = IDrawStart<P>;
 
 interface DrawStartState<S> {
   drawState: S;

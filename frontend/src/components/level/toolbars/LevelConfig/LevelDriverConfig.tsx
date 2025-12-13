@@ -8,9 +8,7 @@ import {
   updateCurrentLevel,
 } from "models/levelsets";
 
-interface Props extends LevelConfiguratorEnvProps {}
-
-export const LevelDriverConfig: FC<Props> = (props) => {
+export const LevelDriverConfig: FC<LevelConfiguratorEnvProps> = (props) => {
   const driverName = useUnit($currentDriverName)!;
   const { LevelConfigurator } = getDriver(driverName)!;
   const undoQueue = useUnit($currentLevelUndoQueue)!;

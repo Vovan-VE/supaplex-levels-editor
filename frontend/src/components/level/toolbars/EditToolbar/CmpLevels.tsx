@@ -42,7 +42,8 @@ import { IconContainer, svgs } from "ui/icon";
 import { Checkbox, Range } from "ui/input";
 import { ColorType, ContainerProps } from "ui/types";
 import { clipRect, IBounds, Rect } from "utils/rect";
-import { rectDiff, RectDiffResult } from "utils/rect-diff/rectDiff";
+import { FindBestMatchResult } from "utils/rect-diff/findBestMatch";
+import { rectDiff } from "utils/rect-diff/rectDiff";
 import cl from "./CmpLevels.module.scss";
 
 export const CmpLevelsButton: FC = () => {
@@ -188,10 +189,10 @@ const CmpHeading: FC<_P> = ({ first, second }) => {
 const CmpBodies: FC<_P> = ({ first, second }) => {
   const { t } = useTranslation();
   const [pending, setPending] = useState(false);
-  const [result, setResult] = useState<RectDiffResult>();
+  const [result, setResult] = useState<FindBestMatchResult>();
   const [error, setError] = useState<Error>();
   useEffect(() => {
-    let p: Promise<unknown> | null = new Promise<RectDiffResult>(
+    let p: Promise<unknown> | null = new Promise<FindBestMatchResult>(
       (resolve, reject) => {
         setPending(true);
         const a = first.file;
@@ -275,7 +276,7 @@ const Result = memo<{
   first: IBaseLevel;
   second: IBaseLevel;
   driverName: string;
-  result: RectDiffResult;
+  result: FindBestMatchResult;
   zoom: number;
   ignoreFancy: boolean;
   tileShape: DiffTileShape;

@@ -9,8 +9,8 @@ import {
 import { ContainerProps } from "../../types";
 import cl from "./Range.module.scss";
 
-interface IPropsRequired extends Pick<IProps, "min" | "max"> {}
-interface IPropsOptional extends Partial<Pick<IProps, "step" | "disabled">> {}
+type IPropsRequired = Pick<IProps, "min" | "max">;
+type IPropsOptional = Partial<Pick<IProps, "step" | "disabled">>;
 
 interface Props extends IPropsRequired, IPropsOptional, ContainerProps {
   value: number;

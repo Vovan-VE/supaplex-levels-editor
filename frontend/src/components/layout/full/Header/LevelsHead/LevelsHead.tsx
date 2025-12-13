@@ -13,9 +13,7 @@ import { Select, SelectOption } from "ui/input";
 import { ContainerProps } from "ui/types";
 import cl from "./LevelsHead.module.scss";
 
-interface Props extends ContainerProps {}
-
-export const LevelsHead: FC<Props> = ({ className, ...rest }) => {
+export const LevelsHead: FC<ContainerProps> = ({ className, ...rest }) => {
   const levelset = useUnit($currentBuffer)!;
 
   const levelsCount = levelset.levels.length;

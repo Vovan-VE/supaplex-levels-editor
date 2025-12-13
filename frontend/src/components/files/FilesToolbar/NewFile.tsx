@@ -59,7 +59,7 @@ const formatOptions = new Map<DriverName, readonly FormatOption[]>(
 const getDefaultFormat = (o: readonly FormatOption[]) =>
   o.find((o) => o._default) || o[0];
 
-interface Props extends RenderPromptProps<true> {}
+type Props = RenderPromptProps<true>;
 
 export const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const { t } = useTranslation();

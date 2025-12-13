@@ -5,10 +5,10 @@ import {
 } from "react";
 import { keysTuple } from "utils/types";
 
-export interface BaseProps extends HTMLAttributes<HTMLElement> {}
+export type BaseProps = HTMLAttributes<HTMLElement>;
 
-export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {}
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
+export type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement>;
+export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 
 type LinkExtraProps = Omit<LinkProps, keyof BaseProps>;
 type ButtonExtraProps = Omit<ButtonProps, keyof BaseProps>;
@@ -31,10 +31,7 @@ type LinkUniqProps = Omit<LinkExtraProps, CommonExtraPropKeys>;
 type ButtonUniqProps = Omit<ButtonExtraProps, CommonExtraPropKeys>;
 
 export interface AttributesProps
-  extends BaseProps,
-    LinkUniqProps,
-    ButtonUniqProps,
-    CommonExtraProp {}
+  extends BaseProps, LinkUniqProps, ButtonUniqProps, CommonExtraProp {}
 
 const hasOwn = Object.hasOwn;
 

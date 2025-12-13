@@ -32,7 +32,7 @@ import { round } from "utils/number";
 import { useIsChanged } from "utils/react";
 import cl from "./SignatureEdit.module.scss";
 
-interface Props extends RenderPromptProps<undefined> {}
+type Props = RenderPromptProps<undefined>;
 
 type _TC = ChangeEventHandler<HTMLTextAreaElement>;
 

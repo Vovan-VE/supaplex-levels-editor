@@ -17,7 +17,7 @@ import { ColorType } from "ui/types";
 import { strCmp } from "utils/strings";
 import cl from "./SelectFormat.module.scss";
 
-interface Props extends RenderPromptProps<string> {}
+type Props = RenderPromptProps<string>;
 
 export const SelectFormat: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const { t } = useTranslation();

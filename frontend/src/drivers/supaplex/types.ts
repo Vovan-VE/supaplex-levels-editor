@@ -59,12 +59,7 @@ export interface ISupaplexLevel extends IBaseLevel, IWithDemo, IWithSignature {
   setUseScrew(on: boolean): this;
 }
 
-export interface ISupaplexTile extends IBaseTile<ISupaplexLevel> {}
-
-export interface ISupaplexLevelset extends IBaseLevelset<ISupaplexLevel> {}
-
-export interface ISupaplexFormat
-  extends IBaseFormat<ISupaplexLevel, ISupaplexLevelset> {}
-
-export interface ISupaplexDriver
-  extends IBaseDriver<ISupaplexLevel, ISupaplexLevelset> {}
+export type ISupaplexTile = IBaseTile<ISupaplexLevel>;
+export type ISupaplexLevelset = IBaseLevelset<ISupaplexLevel>;
+export type ISupaplexFormat = IBaseFormat<ISupaplexLevel, ISupaplexLevelset>;
+export type ISupaplexDriver = IBaseDriver<ISupaplexLevel, ISupaplexLevelset>;

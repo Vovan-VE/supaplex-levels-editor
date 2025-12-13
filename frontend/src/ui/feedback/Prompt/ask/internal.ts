@@ -1,4 +1,3 @@
 import { DialogProps } from "../../Dialog";
 
-export interface BaseOptions
-  extends Omit<DialogProps, "open" | "buttons" | "onClose"> {}
+export type BaseOptions = Omit<DialogProps, "open" | "buttons" | "onClose">;

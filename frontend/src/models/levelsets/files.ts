@@ -65,7 +65,7 @@ const fulfillFileLevels = async (
   };
 };
 
-interface AddFileParams extends PartialSome<LevelsetFile, "key" | "levelset"> {}
+type AddFileParams = PartialSome<LevelsetFile, "key" | "levelset">;
 
 const prepareCreateFileAborted = createFile ? new Error() : undefined;
 const prepareCreateFileFx = createFile
@@ -253,8 +253,7 @@ const _removeOthersLevelsetFile = sample({
 });
 
 interface _DbLevelsetFile
-  extends Omit<LevelsetFileData, "file" | "driverFormat">,
-    FilesStorageItem {
+  extends Omit<LevelsetFileData, "file" | "driverFormat">, FilesStorageItem {
   // since 0.6, absent earlier
   driverFormat?: string;
   fileBuffer: ArrayBuffer;

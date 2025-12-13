@@ -3,7 +3,7 @@ import { LevelEditProps } from "../types";
 import { SpecPortsDbDialog } from "./SpecPortsDbDialog";
 import { ISupaplexLevel } from "./types";
 
-interface Options<L extends ISupaplexLevel> extends LevelEditProps<L> {}
+type Options<L extends ISupaplexLevel> = LevelEditProps<L>;
 
 export const showSpecPortsDbDialog = <L extends ISupaplexLevel>(
   o: Options<L>,

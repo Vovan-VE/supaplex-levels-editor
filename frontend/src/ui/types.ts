@@ -9,7 +9,7 @@ export const enum ColorType {
   DANGER = "d",
 }
 
-export interface ContainerProps extends Pick<
+export type ContainerProps = Pick<
   HTMLAttributes<unknown>,
   "className" | "draggable" | "style" | "tabIndex" | "role"
-> {}
+>;

@@ -22,11 +22,10 @@ import { CLevel } from "./context";
 import { Item } from "./Item";
 import cl from "./SpecPortsDbDialog.module.scss";
 
-interface Options<L extends ISupaplexLevel> extends LevelEditProps<L> {}
+type Options<L extends ISupaplexLevel> = LevelEditProps<L>;
 
 interface Props<L extends ISupaplexLevel>
-  extends Options<L>,
-    RenderPromptProps<void> {}
+  extends Options<L>, RenderPromptProps<void> {}
 
 export const SpecPortsDbDialog = <L extends ISupaplexLevel>({
   show,

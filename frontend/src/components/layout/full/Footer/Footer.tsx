@@ -13,9 +13,7 @@ import cl from "./Footer.module.scss";
 
 const UpgradeLinkC = UpgradeLink;
 
-interface Props extends ContainerProps {}
-
-export const Footer: FC<Props> = ({ className, ...rest }) => {
+export const Footer: FC<ContainerProps> = ({ className, ...rest }) => {
   const { t } = useTranslation();
   return (
     <footer {...rest} className={cn(cl.root, className)}>

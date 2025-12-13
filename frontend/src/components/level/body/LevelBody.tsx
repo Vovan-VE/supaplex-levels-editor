@@ -25,9 +25,7 @@ import { useVisibleBodyRect } from "./useVisibleBodyRect";
 import { useVisibleTiles } from "./useVisibleTiles";
 import cl from "./LevelBody.module.scss";
 
-interface Props extends ContainerProps {}
-
-export const LevelBody: FC<Props> = ({ className, ...rest }) => {
+export const LevelBody: FC<ContainerProps> = ({ className, ...rest }) => {
   const TileRender = useUnit($drvTileRender)!;
   const { width, height } = useUnit($currentLevelSize)!;
   const bodyScale = useUnit($bodyScale);

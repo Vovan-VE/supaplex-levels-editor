@@ -13,9 +13,7 @@ import { Toolbar } from "ui/button";
 import { ContainerProps } from "ui/types";
 import cl from "./Header.module.scss";
 
-interface Props extends ContainerProps {}
-
-export const Header: FC<Props> = (props) => {
+export const Header: FC<ContainerProps> = (props) => {
   const key = useUnit($currentKey);
   const levelsetReady = useUnit($currentBufferSelected);
   const levelIndex = useUnit($currentLevelIndex);

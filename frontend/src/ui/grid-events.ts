@@ -30,7 +30,7 @@ export type GridPointerCancelEventHandler = (
   cell?: CellEventSnapshot,
 ) => void;
 
-export interface CellContextEventSnapshot extends CellBaseEventProps {}
+export type CellContextEventSnapshot = CellBaseEventProps;
 export type GridContextEventHandler = (cell: CellContextEventSnapshot) => void;
 
 export type GridPickTileEventHandler = (at: Point2D) => void;

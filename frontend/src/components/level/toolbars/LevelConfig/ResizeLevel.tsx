@@ -17,7 +17,7 @@ import { ColorType } from "ui/types";
 import { NoticeSizeLags } from "./NoticeSizeLags";
 import cl from "./ResizeLevel.module.scss";
 
-interface Props extends RenderPromptProps<true> {}
+type Props = RenderPromptProps<true>;
 
 export const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const { t } = useTranslation();

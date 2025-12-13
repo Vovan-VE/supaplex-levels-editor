@@ -7,7 +7,7 @@ import { LevelConfig } from "./LevelConfig";
 import { LevelDriverConfig } from "./LevelDriverConfig";
 import cl from "./LevelConfigDialog.module.scss";
 
-interface Props extends RenderPromptProps<true | undefined> {}
+type Props = RenderPromptProps<true | undefined>;
 
 export const LevelConfigDialog: FC<Props> = ({ show, onSubmit }) => {
   const { t } = useTranslation();

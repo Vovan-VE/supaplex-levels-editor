@@ -4,7 +4,7 @@ import { ColorType } from "../../types";
 import { ButtonCoreProps, buttonCoreRender } from "../core";
 import cl from "./Button.module.scss";
 
-interface Props extends ButtonCoreProps {}
+type Props = ButtonCoreProps;
 
 const CL_COLOR: Partial<Record<ColorType, string>> = {
   [ColorType.PRIMARY]: cl._primary,
@@ -58,8 +58,6 @@ export const Button = forwardRef(
     }),
   ),
 );
-
-export interface TextButtonProps extends Props {}
 
 export const TextButton = forwardRef(makeButtonRender(cl.textButton));
 

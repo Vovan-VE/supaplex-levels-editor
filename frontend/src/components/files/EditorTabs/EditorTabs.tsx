@@ -14,13 +14,11 @@ import { TabItem, TabsButtons } from "ui/button";
 import { ColorType, ContainerProps } from "ui/types";
 import cl from "./EditorTabs.module.scss";
 
-interface Props extends ContainerProps {}
-
 const $files = $levelsets.map((m) =>
   Array.from(m.values()).sort(cmpLevelsetFiles),
 );
 
-export const EditorTabs: FC<Props> = ({ className, ...rest }) => {
+export const EditorTabs: FC<ContainerProps> = ({ className, ...rest }) => {
   const levelsets = useUnit($files);
   const currentKey = useUnit($currentKey);
   const dirtyKeys = useUnit($dirtyKeys);

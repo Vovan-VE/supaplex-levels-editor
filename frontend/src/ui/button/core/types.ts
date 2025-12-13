@@ -17,5 +17,4 @@ export interface OwnProps {
   uiColor?: ColorType;
 }
 
-export interface ButtonCoreProps
-  extends DenyOverlappedKeys<AttributesProps, OwnProps> {}
+export type ButtonCoreProps = DenyOverlappedKeys<AttributesProps, OwnProps>;

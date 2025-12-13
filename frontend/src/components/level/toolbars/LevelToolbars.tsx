@@ -8,9 +8,7 @@ import { LevelConfig, LevelDriverConfig } from "./LevelConfig";
 import { TilesToolbar } from "./TilesToolbar";
 import cl from "./LevelToolbars.module.scss";
 
-interface Props extends ContainerProps {}
-
-export const LevelToolbars: FC<Props> = ({ className, ...rest }) => (
+export const LevelToolbars: FC<ContainerProps> = ({ className, ...rest }) => (
   <div {...rest} className={cn(cl.root, className)}>
     <Toolbar className={cl.edit}>
       <EditToolbar />

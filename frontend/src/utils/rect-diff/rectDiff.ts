@@ -9,14 +9,13 @@ export interface RectDiffOptions {
   similarTiles?: SimilarTilesMap;
   borderTiles?: ReadonlySet<number>;
 }
-export interface RectDiffResult extends FindBestMatchResult {}
 
 export const rectDiff = ({
   first,
   second,
   similarTiles,
   borderTiles,
-}: RectDiffOptions): RectDiffResult =>
+}: RectDiffOptions): FindBestMatchResult =>
   findBestMatch({
     first,
     second,

@@ -9,9 +9,7 @@ import { TextButton, Toolbar } from "ui/button";
 import { ColorType, ContainerProps } from "ui/types";
 import cl from "./TilesToolbar.module.scss";
 
-interface Props extends ContainerProps {}
-
-export const TilesToolbar: FC<Props> = ({ className, ...rest }) => {
+export const TilesToolbar: FC<ContainerProps> = ({ className, ...rest }) => {
   const { t } = useTranslation();
   const isRo = useUnit($currentFileRo);
   const TileRender = useUnit($drvTileRender)!;

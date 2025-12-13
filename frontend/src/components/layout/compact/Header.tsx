@@ -37,9 +37,7 @@ import cl from "./Header.module.scss";
 
 const MUTE = ColorType.MUTE;
 
-interface Props extends ContainerProps {}
-
-export const Header: FC<Props> = (props) => {
+export const Header: FC<ContainerProps> = (props) => {
   const { t } = useTranslation();
   const key = useUnit($currentKey);
   const levelsetReady = useUnit($currentBufferSelected);

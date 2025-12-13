@@ -104,7 +104,7 @@ const ActionSelect: FC<{
 
 // ----------------------------
 
-interface Props<T extends ISupaplexLevel> extends InteractionDialogProps<T> {}
+type Props<T extends ISupaplexLevel> = InteractionDialogProps<T>;
 
 export const SpecPortDialog = <T extends ISupaplexLevel>({
   cell,
