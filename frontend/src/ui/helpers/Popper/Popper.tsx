@@ -7,8 +7,6 @@ interface VisibilityEvents {
   onVisibleChange: (visible: boolean) => void;
 }
 
-// export interface PopperVisibilityEvents extends Partial<VisibilityEvents> {}
-
 export interface PopperVisibilityProps extends VisibilityEvents {
   visible: boolean;
 }
@@ -36,8 +34,6 @@ type Middlewares = F.UseFloatingOptions["middleware"];
 
 const ARROW_SIZE = 8;
 const noop = () => {};
-
-// TODO: aria-* attributes
 
 export const Popper: FC<PopperProps> = ({
   trigger,
@@ -110,18 +106,6 @@ export const Popper: FC<PopperProps> = ({
           </div>
         </F.FloatingFocusManager>
       )}
-
-      {/*/!* https://github.com/popperjs/popper-core/issues/1219 *!/*/}
-      {/*/!* https://github.com/popperjs/popper-core/issues/413 *!/*/}
-      {/*/!* Don't play with `display: none` or you will hit the bugs above *!/*/}
-      {/*{visible && (*/}
-      {/*  <div*/}
-      {/*    ref={setPopupElement}*/}
-      {/*    className={cn(cl.popper, popperClassName)}*/}
-      {/*    style={styles["popper"]}*/}
-      {/*    {...attributes["popper"]}*/}
-      {/*  ></div>*/}
-      {/*)}*/}
     </>
   );
 };

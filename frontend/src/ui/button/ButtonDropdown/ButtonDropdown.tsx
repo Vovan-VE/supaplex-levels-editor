@@ -21,11 +21,8 @@ interface Props extends PopperBaseProps {
   standalone?: ReactElement;
   // onlyAt?: AdaptiveRange;
   isOpened?: boolean;
-  // closeOnClickOutside?: boolean;
   children?: ReactNode;
 }
-
-// const HK_ESCAPE: HotKeyShortcuts = [["Escape"], ["Cancel"]];
 
 export const ButtonDropdown: FC<Props> = ({
   trigger,
@@ -36,7 +33,6 @@ export const ButtonDropdown: FC<Props> = ({
   standalone,
   // onlyAt,
   isOpened,
-  // closeOnClickOutside = true,
   children,
   ...options
 }) => {
@@ -88,17 +84,6 @@ export const ButtonDropdown: FC<Props> = ({
     }
   }, []);
 
-  // const watchClickOutside = closeOnClickOutside && visible;
-  // useHotKey({
-  //   shortcut: HK_ESCAPE,
-  //   handler: useCallback((e: UIEvent) => {
-  //     e.preventDefault();
-  //     setVisible(false);
-  //   }, []),
-  //   prepend: true,
-  //   disabled: !watchClickOutside,
-  // });
-
   return (
     <div className={cl.container}>
       <Popper
@@ -109,18 +94,7 @@ export const ButtonDropdown: FC<Props> = ({
         popperClassName={cn(cl.popup, options.popperClassName)}
         onVisibleChange={setVisible}
       >
-        {/*<ClickOutside watch={watchClickOutside} onClickOutside={handleHide}>*/}
-        {/*  {({ getClickProps }) => (*/}
-        <div
-          //{...getClickProps()}
-          onClick={handleClickInside}
-        >
-          {/*<div ref={foo}>*/}
-          {children}
-          {/*</div>*/}
-        </div>
-        {/*  )}*/}
-        {/*</ClickOutside>*/}
+        <div onClick={handleClickInside}>{children}</div>
       </Popper>
     </div>
   );
