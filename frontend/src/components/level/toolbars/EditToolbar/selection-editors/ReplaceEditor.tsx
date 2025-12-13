@@ -4,7 +4,7 @@ import { ChangeEvent, FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import * as RoSet from "@cubux/readonly-set";
 import { TileSelect, TileSelectMulti } from "components/driver/TileSelect";
-import { getDriver, getTilesVariantsMap } from "drivers";
+import { DriverName, getDriver, getTilesVariantsMap } from "drivers";
 import { Trans } from "i18n/Trans";
 import { $currentDriverName } from "models/levelsets";
 import { Button } from "ui/button";
@@ -128,7 +128,7 @@ export const ReplaceEditor: FC<SelectionEditorProps> = ({
             help={t("main:selectionEditors.replace.SearchWhatHelp")}
           >
             <TileSelectMulti
-              driverName={driverName as any}
+              driverName={driverName as DriverName}
               tile={searchTiles}
               onChange={setSearchTiles}
             />
@@ -152,7 +152,7 @@ export const ReplaceEditor: FC<SelectionEditorProps> = ({
         <div>
           <Field label={t("main:selectionEditors.replace.ReplaceWith")}>
             <TileSelect
-              driverName={driverName as any}
+              driverName={driverName as DriverName}
               tile={replaceTile}
               onChange={setReplaceTile}
             />

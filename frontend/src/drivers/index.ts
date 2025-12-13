@@ -2,6 +2,7 @@ import { IBounds } from "../utils/rect";
 import { SupaplexDriver } from "./supaplex";
 import {
   IBaseDriver,
+  IBaseLevel,
   IBaseTile,
   ISizeLimit,
   ISupportReport,
@@ -27,7 +28,9 @@ export const FALLBACK_FORMAT: Partial<Record<string, string>> = {
   mpx: "mpx",
 };
 
-const DriversHash: Partial<Record<string, IBaseDriver>> = Drivers as any;
+const DriversHash = { ...Drivers } as unknown as Partial<
+  Record<string, IBaseDriver>
+>;
 for (const [old, actual] of Object.entries(ReplacedDrivers)) {
   DriversHash[old] = DriversHash[actual];
 }
@@ -69,9 +72,9 @@ export const detectDriverFormat = (
 
 interface GetDriverFn {
   <T extends DriverName>(name: T): TDrivers[T];
-  (name: string): (typeof DriversHash)[string];
+  (name: string): IBaseDriver;
 }
-export const getDriver: GetDriverFn = (name: string) => DriversHash[name];
+export const getDriver = ((name: string) => DriversHash[name]) as GetDriverFn;
 
 type GetProp<T, K> = T extends object ? (K extends keyof T ? T[K] : T) : T;
 interface GetDriverFormatFn {
@@ -180,7 +183,7 @@ export const summarySupportReport = (
   };
 };
 
-export const getTilesForToolbar = <T extends IBaseTile<any>>(
+export const getTilesForToolbar = <T extends IBaseTile<IBaseLevel>>(
   tiles: readonly T[],
 ): readonly (readonly [number, T])[] =>
   tiles
@@ -193,7 +196,7 @@ export const getTilesForToolbar = <T extends IBaseTile<any>>(
     );
 
 export const getTilesVariantsMap = (
-  tiles: readonly IBaseTile<any>[],
+  tiles: readonly IBaseTile<IBaseLevel>[],
 ): ReadonlyMap<number, number> => {
   const map = new Map<number, number>();
   for (const { value, metaTile } of tiles) {

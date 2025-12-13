@@ -1,7 +1,7 @@
 import type { StoreDriver, StoreDriverSingle } from "@cubux/storage-driver";
 import { CodeOf } from "@cubux/types";
 
-export type ConfigStorage = StoreDriverSingle<string, any>;
+export type ConfigStorage = StoreDriverSingle<string, unknown>;
 
 export type FilesStorageKey = CodeOf<"FilesStorageItem">;
 export interface FilesStorageItem {

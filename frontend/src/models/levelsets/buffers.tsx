@@ -13,6 +13,7 @@ import { flushDelayed, withPersistent } from "@cubux/effector-persistent";
 import * as RoArray from "@cubux/readonly-array";
 import * as RoMap from "@cubux/readonly-map";
 import * as RoSet from "@cubux/readonly-set";
+import { StoreDriverSingle } from "@cubux/storage-driver";
 import {
   $displayReadOnly,
   $instanceIsReadOnly,
@@ -604,9 +605,9 @@ sample({
       const f = files.get(key);
       return Boolean(
         f &&
-          f.currentIndex !== undefined &&
-          f.currentIndex + 1 < f.levels.length &&
-          f.levels.length > _minCount,
+        f.currentIndex !== undefined &&
+        f.currentIndex + 1 < f.levels.length &&
+        f.levels.length > _minCount,
       );
     }
     return false;
@@ -664,7 +665,7 @@ type _OpenedIndicesSerialized = readonly [
 type _OpenedIndicesSerializedList = readonly _OpenedIndicesSerialized[];
 withPersistent<string, _OpenedIndicesWakeUpMap, _OpenedIndicesSerializedList>(
   _$keepOpenedIndices,
-  configStorage,
+  configStorage as StoreDriverSingle<string, _OpenedIndicesSerializedList>,
   "openedLevels",
   {
     // Opening a file cause it first to appear with no current level,
@@ -920,8 +921,8 @@ export const $currentBufferLevelsCount = $currentBuffer.map(
 export const $currentBufferHasOtherOpened = $currentBuffer.map((b) =>
   Boolean(
     b &&
-      b.currentIndex !== undefined &&
-      b.levels.some((l, i) => l.isOpened && i !== b.currentIndex),
+    b.currentIndex !== undefined &&
+    b.levels.some((l, i) => l.isOpened && i !== b.currentIndex),
   ),
 );
 

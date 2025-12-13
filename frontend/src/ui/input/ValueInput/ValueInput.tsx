@@ -9,5 +9,5 @@ interface IValueInput {
 
 export const ValueInput = forwardRef<
   HTMLInputElement,
-  ValueInputWrapProps<any>
+  ValueInputWrapProps<unknown>
 >((props, ref) => <Input {...useValueInputWrap(props, ref)} />) as IValueInput;

@@ -31,11 +31,11 @@ export interface IWithDemo extends IWithDemoSeed {
   setDemo(demo: Uint8Array | null): this;
 }
 
-export const levelSupportsDemo = (level: any): level is IWithDemo =>
+export const levelSupportsDemo = (level: unknown): level is IWithDemo =>
   typeof level === "object" &&
   level !== null &&
-  typeof level.setDemo === "function" &&
-  typeof level.setDemoSeed === "function";
+  typeof (level as Record<string, unknown>).setDemo === "function" &&
+  typeof (level as Record<string, unknown>).setDemoSeed === "function";
 
 export type ITilesStreamItem = readonly [
   x: number,
@@ -51,10 +51,12 @@ export interface IWithSignature {
   setSignature(signature: Uint8Array | string | null): this;
 }
 
-export const levelSupportSignature = (level: any): level is IWithSignature =>
+export const levelSupportSignature = (
+  level: unknown,
+): level is IWithSignature =>
   typeof level === "object" &&
   level !== null &&
-  typeof level.setSignature === "function";
+  typeof (level as Record<string, unknown>).setSignature === "function";
 
 export interface ITilesGrid extends IBounds {
   getTile(x: number, y: number): number;
@@ -165,8 +167,9 @@ interface InteractionBase {
   type: InteractionType;
   cell?: CellContextEventSnapshot;
 }
-export interface InteractionDialog<L extends IBaseLevel>
-  extends InteractionBase {
+export interface InteractionDialog<
+  L extends IBaseLevel,
+> extends InteractionBase {
   type: InteractionType.DIALOG;
   cell: CellContextEventSnapshot;
   Component: FC<InteractionDialogProps<L>>;
@@ -250,10 +253,10 @@ export interface LevelConfiguratorEnvProps {
   compact?: boolean;
 }
 export interface LevelConfiguratorProps<L extends IBaseLevel>
-  extends LevelEditProps<L>,
-    LevelConfiguratorEnvProps {}
-export interface LevelLocalOptionsProps<L extends IBaseLevel>
-  extends LevelEditProps<L> {}
+  extends LevelEditProps<L>, LevelConfiguratorEnvProps {}
+export interface LevelLocalOptionsProps<
+  L extends IBaseLevel,
+> extends LevelEditProps<L> {}
 
 export type DiffItemValue = null | boolean | number | string | ReactElement;
 export interface DiffItem {

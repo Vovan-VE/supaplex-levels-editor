@@ -9,7 +9,7 @@ export type AdaptiveRange =
   | `${"=" | "<="}${AdaptiveRangeEdge}`;
 
 type _ToRangeEdges<U> = U extends readonly [infer C, ...infer Rest]
-  ? Rest extends readonly [any, ...any]
+  ? Rest extends readonly [unknown, ...unknown[]]
     ? readonly [C, Rest] | _ToRangeEdges<Rest>
     : readonly [C]
   : never;

@@ -5,7 +5,7 @@ import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import * as RoMap from "@cubux/readonly-map";
 import { TileSelectMulti } from "components/driver/TileSelect";
-import { getDriver, getTilesForToolbar } from "drivers";
+import { DriverName, getDriver, getTilesForToolbar } from "drivers";
 import { $currentDriverName } from "models/levelsets";
 import { Button, TextButton } from "ui/button";
 import { Field, IntegerInput } from "ui/input";
@@ -168,7 +168,7 @@ export const RndEditor: FC<SelectionEditorProps> = ({
         help={t("main:selectionEditors.rnd.ReplaceWhatHelp")}
       >
         <TileSelectMulti
-          driverName={driverName as any}
+          driverName={driverName as DriverName}
           tile={searchTiles}
           onChange={setSearchTiles}
         />

@@ -18,7 +18,7 @@ export class ErrorBoundaryReal extends PureComponent<
     hasError: false,
   };
 
-  static getDerivedStateFromError = (error: any): Partial<State> => ({
+  static getDerivedStateFromError = (error: unknown): Partial<State> => ({
     hasError: true,
     error,
   });

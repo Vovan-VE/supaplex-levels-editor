@@ -3,7 +3,7 @@ import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { TileSelect } from "components/driver/TileSelect";
-import { getDriver } from "drivers";
+import { DriverName, getDriver } from "drivers";
 import { Trans } from "i18n/Trans";
 import { $currentDriverName } from "models/levelsets";
 import { Button } from "ui/button";
@@ -118,7 +118,7 @@ export const MazeEditor: FC<SelectionEditorProps> = ({
       <div className={clC.row2}>
         <Field label={t("main:selectionEditors.maze.WallTile")}>
           <TileSelect
-            driverName={driverName as any}
+            driverName={driverName as DriverName}
             tile={wallTile}
             onChange={setWallTile}
             canClear
@@ -127,7 +127,7 @@ export const MazeEditor: FC<SelectionEditorProps> = ({
         </Field>
         <Field label={t("main:selectionEditors.maze.WayTile")}>
           <TileSelect
-            driverName={driverName as any}
+            driverName={driverName as DriverName}
             tile={wayTile}
             onChange={setWayTile}
             canClear

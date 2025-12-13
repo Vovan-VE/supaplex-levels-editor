@@ -2,7 +2,7 @@ import { useUnit } from "effector-react";
 import { FC, FormEventHandler, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TileSelect } from "components/driver/TileSelect";
-import { canResize, getDriverFormat } from "drivers";
+import { canResize, DriverName, getDriverFormat } from "drivers";
 import { TILE_HARDWARE } from "drivers/supaplex/tiles-id";
 import {
   $currentDriverFormat,
@@ -21,9 +21,9 @@ interface Props extends RenderPromptProps<true> {}
 
 export const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const { t } = useTranslation();
-  const driverName = useUnit($currentDriverName);
+  const driverName = useUnit($currentDriverName)!;
   const { resizable } = getDriverFormat(
-    driverName!,
+    driverName,
     useUnit($currentDriverFormat)!,
   )!;
   const undoQueue = useUnit($currentLevelUndoQueue)!;
@@ -129,14 +129,14 @@ export const ResizeLevel: FC<Props> = ({ show, onSubmit, onCancel }) => {
             <div className={cl.row}>
               <Field label={t("main:level.resize.labels.Border")}>
                 <TileSelect
-                  driverName={driverName as any}
+                  driverName={driverName as DriverName}
                   tile={borderTile}
                   onChange={setBorderTile}
                 />
               </Field>
               <Field label={t("main:level.resize.labels.FillBody")}>
                 <TileSelect
-                  driverName={driverName as any}
+                  driverName={driverName as DriverName}
                   tile={fillTile}
                   onChange={setFillTile}
                 />

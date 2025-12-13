@@ -31,15 +31,18 @@ const hasOwn = Object.hasOwn;
 
 export type IdGetter<T, ID extends ValidKey> = (item: T) => ID;
 export const defaultIdGetter = <ID extends ValidKey = ValidKey>(
-  item: any,
+  item: unknown,
 ): ID => {
   if (isValidKey(item)) {
     return item as ID;
   }
   if (typeof item === "object" && item) {
-    for (const k of ["key", "id"]) {
-      if (hasOwn(item, k) && isValidKey(item[k])) {
-        return item[k] as ID;
+    for (const k of ["key", "id"] as const) {
+      if (hasOwn(item, k)) {
+        const v = (item as Record<typeof k, unknown>)[k];
+        if (isValidKey(v)) {
+          return v as ID;
+        }
       }
     }
   }

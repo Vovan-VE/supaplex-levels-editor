@@ -68,7 +68,7 @@ export const init = () => {
   const DEBUG: boolean = false;
   const _log =
     import.meta.env.DEV && DEBUG
-      ? (...args: any) => console.log("[SEM]", Date.now(), id, ...args)
+      ? (...args: unknown[]) => console.log("[SEM]", Date.now(), id, ...args)
       : null;
   _log?.("Created");
   const ATTEMPT_TIMEOUT_MIN = 500;
@@ -87,13 +87,13 @@ export const init = () => {
   }
 
   const postMsg = (msg: _Msg) => bc.postMessage(msg);
-  const isMyMsg = (v: any): v is _Msg =>
+  const isMyMsg = (v: unknown): v is _Msg =>
     v !== null &&
     typeof v === "object" &&
     hasOwn(v, "msg") &&
     hasOwn(v, "from") &&
-    typeof v.msg === "string" &&
-    typeof v.from === "string";
+    typeof (v as { msg: unknown }).msg === "string" &&
+    typeof (v as { from: unknown }).from === "string";
 
   class Attempt {
     readonly #action;

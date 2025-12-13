@@ -8,7 +8,6 @@ import {
 } from "./trigger";
 
 export const init = () => {
-  const w: any = window;
   for (const [name, handler] of Object.entries(frontEventsHandlers)) {
     EventsOn(name, handler);
   }
@@ -33,6 +32,7 @@ export const init = () => {
     }
   });
 
+  const w = window as { spleLatestVersion?: unknown };
   if (typeof w.spleLatestVersion === "string") {
     onUpgradeAvailable(w.spleLatestVersion);
   }

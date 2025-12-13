@@ -3,7 +3,7 @@ import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { TileSelect } from "components/driver/TileSelect";
-import { FlipDirection, getDriver } from "drivers";
+import { DriverName, FlipDirection, getDriver } from "drivers";
 import { Trans } from "i18n/Trans";
 import { $currentDriverName } from "models/levelsets";
 import { Button } from "ui/button";
@@ -91,7 +91,7 @@ export const GradientEditor: FC<SelectionEditorProps> = ({
       <div className={clC.row2}>
         <Field label={t("main:selectionEditors.gradient.FromTile")}>
           <TileSelect
-            driverName={driverName as any}
+            driverName={driverName as DriverName}
             tile={fromTile}
             onChange={setFromTile}
             canClear
@@ -100,7 +100,7 @@ export const GradientEditor: FC<SelectionEditorProps> = ({
         </Field>
         <Field label={t("main:selectionEditors.gradient.ToTile")}>
           <TileSelect
-            driverName={driverName as any}
+            driverName={driverName as DriverName}
             tile={toTile}
             onChange={setToTile}
             canClear

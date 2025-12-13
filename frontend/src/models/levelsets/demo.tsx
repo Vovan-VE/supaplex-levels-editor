@@ -27,7 +27,7 @@ export const $fileSupportsDemo = combine(
 
 const hasOwn = Object.hasOwn;
 
-const decodeDemoMessage = (data: any): DemoData | null => {
+const decodeDemoMessage = (data: unknown): DemoData | null => {
   if (typeof data === "string") {
     try {
       data = JSON.parse(data);
@@ -36,20 +36,24 @@ const decodeDemoMessage = (data: any): DemoData | null => {
         data &&
         hasOwn(data, "data") &&
         hasOwn(data, "seed_hi") &&
-        hasOwn(data, "seed_lo") &&
-        typeof data.data === "string" &&
-        typeof data.seed_hi === "number" &&
-        typeof data.seed_lo === "number" &&
-        isOffsetInRange(data.seed_hi, 0, 256) &&
-        isOffsetInRange(data.seed_lo, 0, 256)
+        hasOwn(data, "seed_lo")
       ) {
-        return {
-          data: Uint8Array.from(
-            Array.from(window.atob(data.data)).map((s) => s.charCodeAt(0)),
-          ),
-          seed_hi: data.seed_hi,
-          seed_lo: data.seed_lo,
-        };
+        const dataP = data as Record<"data" | "seed_hi" | "seed_lo", unknown>;
+        if (
+          typeof dataP.data === "string" &&
+          typeof dataP.seed_hi === "number" &&
+          typeof dataP.seed_lo === "number" &&
+          isOffsetInRange(dataP.seed_hi, 0, 256) &&
+          isOffsetInRange(dataP.seed_lo, 0, 256)
+        ) {
+          return {
+            data: Uint8Array.from(
+              Array.from(window.atob(dataP.data)).map((s) => s.charCodeAt(0)),
+            ),
+            seed_hi: dataP.seed_hi,
+            seed_lo: dataP.seed_lo,
+          };
+        }
       }
     } catch {}
   }
@@ -66,7 +70,8 @@ const _receivedDemo = sample({
 if (import.meta.env.DEV) {
   // since we cannot receive `postMessage()` sent to production origin,
   // we can "proxy" it manually
-  (window as any).__DEV__receivedDemoFromTest = receivedDemoFromTest;
+  const w = window as unknown as Record<string, unknown>;
+  w.__DEV__receivedDemoFromTest = receivedDemoFromTest;
 }
 
 interface _DemoTargetNullable {

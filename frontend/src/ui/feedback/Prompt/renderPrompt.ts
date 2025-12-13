@@ -27,7 +27,7 @@ export const renderPrompt = async <V = true | undefined>(
       container.render(
         renderPrompt({
           show: true,
-          onSubmit: (value = true as const as any) => resolve(value),
+          onSubmit: (value = true as const as V) => resolve(value),
           onCancel: () => resolve(undefined),
         }),
       );

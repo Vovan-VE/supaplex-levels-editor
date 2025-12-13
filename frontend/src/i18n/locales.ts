@@ -12,9 +12,11 @@ export const locales = {
   en,
   ru,
 };
+type LocaleName = keyof typeof locales;
 
 const hasOwn = Object.hasOwn;
-export const isValidLocale = (s: string) => hasOwn(locales, s);
+export const isValidLocale = (s: unknown): s is LocaleName =>
+  typeof s === "string" && hasOwn(locales, s);
 
 const defaultLang: keyof typeof locales = "en";
 export default defaultLang;

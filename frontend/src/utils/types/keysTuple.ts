@@ -1,38 +1,32 @@
 // https://github.com/microsoft/TypeScript/issues/13298#issuecomment-596068031
-type TupleToUnionWithoutDuplicated<A extends ReadonlyArray<any>> = {
+type TupleToUnionWithoutDuplicated<A extends ReadonlyArray<unknown>> = {
   [I in keyof A]: unknown extends {
     [J in keyof A]: J extends I ? never : A[J] extends A[I] ? unknown : never;
   }[number]
     ? never
     : A[I];
 }[number];
-type TupleToUnionOnlyDuplicated<A extends ReadonlyArray<any>> = Exclude<
+type TupleToUnionOnlyDuplicated<A extends ReadonlyArray<unknown>> = Exclude<
   A[number],
   TupleToUnionWithoutDuplicated<A>
 >;
-type HasUnionMissing<Desired, Actual> = Exclude<Desired, Actual> extends never
-  ? false
-  : true;
-type Missing<Desired, Actual> = Exclude<Desired, Actual> extends never
-  ? never
-  : Exclude<Desired, Actual>;
-type HasUnionExtra<Desired, Actual> = Exclude<Actual, Desired> extends never
-  ? false
-  : true;
-type Extra<Desired, Actual> = Exclude<Actual, Desired> extends never
-  ? never
-  : Exclude<Actual, Desired>;
+type HasUnionMissing<Desired, Actual> =
+  Exclude<Desired, Actual> extends never ? false : true;
+type Missing<Desired, Actual> =
+  Exclude<Desired, Actual> extends never ? never : Exclude<Desired, Actual>;
+type HasUnionExtra<Desired, Actual> =
+  Exclude<Actual, Desired> extends never ? false : true;
+type Extra<Desired, Actual> =
+  Exclude<Actual, Desired> extends never ? never : Exclude<Actual, Desired>;
 type Error<Union, Msg> = [...string[], Union, "is/are", Msg];
-type AllUnionTuple<K, T extends ReadonlyArray<any>> = HasUnionExtra<
-  K,
-  T[number]
-> extends true
-  ? Error<Extra<K, T[number]>, "extra">
-  : HasUnionMissing<K, T[number]> extends true
-  ? Error<Missing<K, T[number]>, "missing">
-  : T[number] extends TupleToUnionWithoutDuplicated<T>
-  ? T
-  : Error<TupleToUnionOnlyDuplicated<T>, "duplicated">;
+type AllUnionTuple<K, T extends ReadonlyArray<unknown>> =
+  HasUnionExtra<K, T[number]> extends true
+    ? Error<Extra<K, T[number]>, "extra">
+    : HasUnionMissing<K, T[number]> extends true
+      ? Error<Missing<K, T[number]>, "missing">
+      : T[number] extends TupleToUnionWithoutDuplicated<T>
+        ? T
+        : Error<TupleToUnionOnlyDuplicated<T>, "duplicated">;
 
 /**
  * Cast a constant array to a tuple
@@ -55,5 +49,5 @@ type AllUnionTuple<K, T extends ReadonlyArray<any>> = HasUnionExtra<
  */
 export const keysTuple =
   <T>() =>
-  <U extends ReadonlyArray<any>>(cc: AllUnionTuple<T, U>) =>
+  <U extends ReadonlyArray<unknown>>(cc: AllUnionTuple<T, U>) =>
     cc;

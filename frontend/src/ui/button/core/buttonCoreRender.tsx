@@ -37,14 +37,22 @@ export const buttonCoreRender = (
 
   if (isLinkProps(props) && !props.disabled) {
     return (
-      <a {...deleteButtonProps(props)} ref={ref as any} className={className}>
+      <a
+        {...deleteButtonProps(props)}
+        ref={ref as ForwardedRef<HTMLAnchorElement>}
+        className={className}
+      >
         {content}
       </a>
     );
   }
 
   return (
-    <button {...deleteLinkProps(props)} ref={ref as any} className={className}>
+    <button
+      {...deleteLinkProps(props)}
+      ref={ref as ForwardedRef<HTMLButtonElement>}
+      className={className}
+    >
       {content}
     </button>
   );

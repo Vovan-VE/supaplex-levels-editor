@@ -1,4 +1,4 @@
-import { combine, createEffect, Effect } from "effector";
+import { combine, createEffect } from "effector";
 import { allowManualSave, exitApp, onExitDirty, setIsDirty } from "backend";
 import { Trans } from "i18n/Trans";
 import { ask, YesNoCancel } from "ui/feedback";
@@ -19,8 +19,8 @@ import {
   removeOthersLevelsetFile,
 } from "./files";
 
-export const closeCurrentFileFx: Effect<any, void> = allowManualSave
-  ? createEffect(async () => {
+export const closeCurrentFileFx = allowManualSave
+  ? createEffect<unknown, void>(async () => {
       if (!$currentFileIsDirty.getState()) {
         removeCurrentLevelsetFile();
         return;
@@ -54,7 +54,7 @@ export const closeCurrentFileFx: Effect<any, void> = allowManualSave
           return;
       }
     })
-  : createEffect(async () => {
+  : createEffect<unknown, void>(async () => {
       const filename = $currentFileName.getState();
       const values = { filename };
       if (
@@ -80,8 +80,8 @@ export const closeCurrentFileFx: Effect<any, void> = allowManualSave
       }
     });
 
-export const closeOtherFilesFx: Effect<any, void> = allowManualSave
-  ? createEffect(async () => {
+export const closeOtherFilesFx = allowManualSave
+  ? createEffect<unknown, void>(async () => {
       if (!$otherIsDirty.getState()) {
         removeOthersLevelsetFile();
         return;
@@ -108,7 +108,7 @@ export const closeOtherFilesFx: Effect<any, void> = allowManualSave
           return;
       }
     })
-  : createEffect(async () => {
+  : createEffect<unknown, void>(async () => {
       const filename = $currentFileName.getState();
       const values = { filename };
       if (

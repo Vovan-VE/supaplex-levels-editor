@@ -3,7 +3,7 @@ import { useUnit } from "effector-react";
 import { FC, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { TileSelect } from "components/driver/TileSelect";
-import { getDriver } from "drivers";
+import { DriverName, getDriver } from "drivers";
 import { $currentDriverName } from "models/levelsets";
 import { Button } from "ui/button";
 import { Field } from "ui/input";
@@ -57,7 +57,7 @@ export const ChessEditor: FC<SelectionEditorProps> = ({
       <div className={clC.row2}>
         <Field label={t("main:selectionEditors.chess.FirstTile")}>
           <TileSelect
-            driverName={driverName as any}
+            driverName={driverName as DriverName}
             tile={firstTile}
             onChange={setFirstTile}
             canClear
@@ -66,7 +66,7 @@ export const ChessEditor: FC<SelectionEditorProps> = ({
         </Field>
         <Field label={t("main:selectionEditors.chess.SecondTile")}>
           <TileSelect
-            driverName={driverName as any}
+            driverName={driverName as DriverName}
             tile={secondTile}
             onChange={setSecondTile}
             canClear

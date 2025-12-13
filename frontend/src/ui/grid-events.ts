@@ -1,24 +1,24 @@
-import { IBounds, Point2D } from "../utils/rect";
 import { PointerEvent } from "react";
+import { IBounds, Point2D } from "../utils/rect";
 
 export interface CellEventProps extends IBounds {
   inBounds: boolean;
 }
 
 type ModifiersEventProps = Pick<
-  PointerEvent<any>,
+  PointerEvent<unknown>,
   "altKey" | "ctrlKey" | "metaKey" | "shiftKey"
 >;
-type ButtonsEventProps = Pick<PointerEvent<any>, "type" | "button" | "buttons">;
+type ButtonsEventProps = Pick<
+  PointerEvent<unknown>,
+  "type" | "button" | "buttons"
+>;
 
 interface CellBaseEventProps
-  extends Point2D,
-    CellEventProps,
-    ModifiersEventProps {}
+  extends Point2D, CellEventProps, ModifiersEventProps {}
 
 export interface CellEventSnapshot
-  extends CellBaseEventProps,
-    ButtonsEventProps {}
+  extends CellBaseEventProps, ButtonsEventProps {}
 
 export type GridPointerEvent = PointerEvent<HTMLDivElement>;
 export type GridPointerEventHandler = (

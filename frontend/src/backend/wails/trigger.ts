@@ -12,7 +12,7 @@ export const onOpenFile = onOpenFileRefs.map<OpenFiles>((files) =>
   files.map(fileRefToOpenFile),
 );
 
-export const frontEventsHandlers: Record<string, (data?: any) => void> = {
+export const frontEventsHandlers: Record<string, <T>(data?: T) => void> = {
   exitDirty: onExitDirty,
   openFiles: onOpenFileRefs,
   showError: onShowError,

@@ -125,7 +125,7 @@ export const ClickOutside: FC<Props> = ({
       const { target } = event;
       if (target) {
         const node = nodeRef.current;
-        if (node && !node.contains(target as any)) {
+        if (node && !node.contains(target as Node)) {
           event.preventDefault();
           event.stopPropagation();
           if (triggerOnDown) {
