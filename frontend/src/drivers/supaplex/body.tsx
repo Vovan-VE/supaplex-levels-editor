@@ -1,3 +1,5 @@
+import { Trans } from "i18n/Trans";
+import { UseT } from "i18n/UseT";
 import { clipRect, Rect } from "utils/rect";
 import { IsPlayableResult } from "../types";
 import { AnyBox } from "./AnyBox";
@@ -104,11 +106,15 @@ class LevelBody implements ILevelBody {
     }
     return [
       false,
-      [...leftToRequire].map((tile) => (
-        <>
-          There is no <InlineTile tile={tile} /> {tiles[tile].title} in the
-          level.
-        </>
+      Array.from(leftToRequire, (tile) => (
+        <Trans
+          i18nKey="main:supaplex.test.MissingRequiredTile"
+          components={{
+            tile: <InlineTile tile={tile} />,
+            name: <UseT get={tiles[tile].title} />,
+          }}
+          defaults="<tile/> <name/>"
+        />
       )),
     ];
   }

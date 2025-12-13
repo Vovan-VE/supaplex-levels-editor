@@ -428,6 +428,9 @@
       "DialogIntroText": "All special ports in the level. Both \"new line\" and <code>&</code> can be used to separate records.",
       "DialogTitle": "Special Ports Database"
     },
+    "test": {
+      "MissingRequiredTile": "There is no <tile/> <name/> in the level."
+    },
     "tiles": {
       "Base": "Base",
       "Bug": "Bug",
