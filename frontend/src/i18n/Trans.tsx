@@ -1,7 +1,7 @@
+import i18next from "i18next";
 import { FC } from "react";
 import { Trans as OrigTrans, TransProps, useTranslation } from "react-i18next";
 import { APP_TITLE, TEST_LEVEL_URL, VERSION_URL } from "configs";
-import i18next from "i18next";
 import { constElement } from "utils/react";
 
 const components = {
