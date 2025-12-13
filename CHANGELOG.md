@@ -2,7 +2,7 @@
 
 ## 0.23.0 (DEV)
 
-- ...
+- Fix: File id Read-Only mode still allows to edit Demo/Signature.
 
 ## 0.22.0 (2025-11-07)
 

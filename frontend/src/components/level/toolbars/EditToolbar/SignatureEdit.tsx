@@ -18,6 +18,7 @@ import { Trans } from "i18n/Trans";
 import {
   $currentDriverFormat,
   $currentDriverName,
+  $currentFileRo,
   $currentLevelUndoQueue,
   updateCurrentLevel,
 } from "models/levelsets";
@@ -44,6 +45,7 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
     driverName,
     useUnit($currentDriverFormat)!,
   )!;
+  const isRo = useUnit($currentFileRo);
   const level = useUnit($currentLevelUndoQueue)!.current;
   const [demo, setDemo] = useState<Uint8Array | null>(null);
   const [demoDuration, setDemoDuration] = useState(0);
@@ -131,7 +133,7 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const handleOk = useCallback<FormEventHandler>(
     (e) => {
       e.preventDefault();
-      if (hasError || !levelSupportsDemo(level)) {
+      if (isRo || hasError || !levelSupportsDemo(level)) {
         return;
       }
       try {
@@ -151,7 +153,7 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
         showToastError(e);
       }
     },
-    [hasError, demo, demoSeed, signature, level, onSubmit],
+    [hasError, demo, demoSeed, signature, level, isRo, onSubmit],
   );
 
   return (
@@ -161,9 +163,15 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
       wrapForm={{ onSubmit: handleOk }}
       buttons={
         <>
-          <Button uiColor={ColorType.SUCCESS} type="submit" disabled={hasError}>
-            {t("main:common.buttons.OK")}
-          </Button>
+          {isRo || (
+            <Button
+              uiColor={ColorType.SUCCESS}
+              type="submit"
+              disabled={hasError}
+            >
+              {t("main:common.buttons.OK")}
+            </Button>
+          )}
           <Button type="button" onClick={onCancel}>
             {t("main:common.buttons.Cancel")}
           </Button>
@@ -198,6 +206,7 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
           >
             <Textarea
               value={demoText}
+              readOnly={isRo}
               onChange={handleDemoChange}
               className={cl.demoText}
             />
@@ -213,7 +222,11 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
             label={t("main:demoEdit.DemoSeed")}
             help={t("main:demoEdit.DemoSeedHelp")}
           >
-            <IntegerInput value={demoSeed} onChange={setDemoSeed} />
+            <IntegerInput
+              value={demoSeed}
+              readOnly={isRo}
+              onChange={setDemoSeed}
+            />
           </Field>
         </>
       )}
@@ -223,6 +236,7 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
             value={signature}
             maxLength={signatureMaxLength}
             onChange={handleSignatureChange}
+            readOnly={isRo}
             className={cl.signature}
           />
         </Field>
