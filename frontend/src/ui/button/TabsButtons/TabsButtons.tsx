@@ -33,6 +33,7 @@ const Item = forwardRef<HTMLButtonElement, SortableItemProps<P>>(
     ref,
   ) => (
     <Button
+      key={key}
       ref={useMergeRefs(ref, curRef)}
       {...props}
       {...itemProps}

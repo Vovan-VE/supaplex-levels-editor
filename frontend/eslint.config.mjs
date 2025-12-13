@@ -38,7 +38,7 @@ export default defineConfig([
 
     rules: {
       "no-empty": [
-        "warn",
+        "error",
         {
           allowEmptyCatch: true,
         },
@@ -51,9 +51,9 @@ export default defineConfig([
         },
       ],
 
-      "@typescript-eslint/no-explicit-any": ["warn"],
-      "@typescript-eslint/no-namespace": ["warn"],
-      "@typescript-eslint/no-empty-object-type": ["warn"],
+      // "@typescript-eslint/no-explicit-any": ["warn"],
+      // "@typescript-eslint/no-namespace": ["warn"],
+      // "@typescript-eslint/no-empty-object-type": ["warn"],
 
       "@typescript-eslint/no-unused-vars": [
         "error",
