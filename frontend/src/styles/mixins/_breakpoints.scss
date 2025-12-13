@@ -22,21 +22,26 @@ $_breakpoint-names: map.keys($_breakpoints);
 
 @function _breakpoint-next($name) {
   $n: list.index($_breakpoint-names, $name);
-  @return if(
-    $n != null and $n < list.length($_breakpoint-names),
-    list.nth($_breakpoint-names, $n + 1),
-    null
-  );
+  @if $n != null and $n < list.length($_breakpoint-names) {
+    @return list.nth($_breakpoint-names, $n + 1);
+  }
+  @return null;
 }
 
 @function _breakpoint-min($name) {
   $min: map.get($_breakpoints, $name);
-  @return if($min != 0, $min, null);
+  @if $min != 0 {
+    @return $min;
+  }
+  @return null;
 }
 
 @function _breakpoint-max($name) {
   $next: _breakpoint-next($name);
-  @return if($next, _breakpoint-min($next) - 0.02, null);
+  @if $next {
+    @return _breakpoint-min($next) - 0.02;
+  }
+  @return null;
 }
 
 @mixin media-breakpoint-up($name) {

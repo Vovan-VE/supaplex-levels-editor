@@ -26,7 +26,7 @@ export const useInputDebounce = <V>({
   onBlur,
   debounceTimeout = 750,
 }: Options<V>) => {
-  const latestV = useRef<V>();
+  const latestV = useRef<V>(undefined);
   useEffect(() => {
     if (value !== undefined) {
       latestV.current = undefined;

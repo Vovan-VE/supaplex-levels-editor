@@ -2,7 +2,7 @@ import {
   FC,
   FormHTMLAttributes,
   PropsWithChildren,
-  ReactNode,
+  ReactElement,
   Suspense,
   useCallback,
 } from "react";
@@ -35,9 +35,9 @@ export interface DialogProps {
   closeSetAutoFocus?: boolean;
   unmountOnClose?: boolean;
   size?: DialogSize;
-  title?: ReactNode;
+  title?: ReactElement | string;
   wrapForm?: FormProps;
-  buttons?: ReactNode;
+  buttons?: ReactElement | null;
   onClose?: () => void;
   className?: string;
   bodyClassName?: string;

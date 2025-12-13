@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactElement } from "react";
 import { Trans } from "i18n/Trans";
 import { Button } from "ui/button";
 import { ColorType } from "ui/types";
@@ -37,7 +37,7 @@ const createDefaultButtonsRenderer =
   );
 
 function ask_<V = true, P = object>(
-  content: ReactNode,
+  content: ReactElement | string,
   { buttons, buttonsProps, ...options }: AskOptions<V, P> = {},
 ) {
   return renderPrompt(({ show, onSubmit, onCancel }) => {

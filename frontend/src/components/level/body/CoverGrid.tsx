@@ -123,7 +123,7 @@ export const CoverGrid: FC<Props> = ({
     (e: PointerEvent) => snapshotEvent(e, cols, rows),
     [cols, rows],
   );
-  const prev = useRef<CellEventSnapshot>();
+  const prev = useRef<CellEventSnapshot>(undefined);
   const setPrevSnapshot = useCallback((s: CellEventSnapshot) => {
     prev.current = s;
   }, []);

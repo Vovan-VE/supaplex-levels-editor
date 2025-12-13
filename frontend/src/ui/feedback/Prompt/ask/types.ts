@@ -1,4 +1,4 @@
-import { FC, ReactElement, ReactNode } from "react";
+import { ReactElement, ReactNode } from "react";
 import { ButtonProps } from "ui/button";
 import { RenderPromptProps } from "../renderPrompt";
 import { BaseOptions } from "./internal";
@@ -16,7 +16,7 @@ export interface AskButtonsRenderProps<V>
 }
 
 export interface AskButtonsRender<V, P = object> {
-  (props: AskButtonsRenderProps<V> & P): ReturnType<FC>;
+  (props: AskButtonsRenderProps<V> & P): ReactElement | null;
 }
 
 export interface AskOptions<V = true, P = object> extends BaseOptions {
@@ -34,8 +34,8 @@ interface CustomOpts<V, P = object> extends BaseOptions {
 
 export interface AskFunction {
   <V, P = object>(
-    content: ReactNode,
+    content: ReactElement | string,
     o: CustomOpts<V, P>,
   ): Promise<V | undefined>;
-  (content: ReactNode, o?: DefaultOpts): Promise<true | undefined>;
+  (content: ReactElement | string, o?: DefaultOpts): Promise<true | undefined>;
 }

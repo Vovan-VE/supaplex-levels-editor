@@ -3,6 +3,7 @@ import {
   FC,
   FormEvent,
   InputHTMLAttributes,
+  ReactElement,
   ReactNode,
   useCallback,
   useMemo,
@@ -29,9 +30,9 @@ export interface PromptStringOptions
     | "children"
   > {
   /** Prompt dialog title. Default: absent. */
-  title?: ReactNode;
+  title?: ReactElement | string;
   /** Label above input. Default: absent. */
-  label?: ReactNode;
+  label?: ReactElement | string;
 
   /** Default value in input. */
   defaultValue?: string;

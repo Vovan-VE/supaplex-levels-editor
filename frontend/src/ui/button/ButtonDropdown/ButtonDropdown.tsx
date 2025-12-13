@@ -4,38 +4,28 @@ import {
   ReactNode,
   SyntheticEvent,
   useCallback,
-  useEffect,
   useState,
 } from "react";
 import cn from "classnames";
-import { useIsChanged, useRefHandlers } from "utils/react";
-import { HotKeyShortcuts, useHotKey } from "models/ui/hotkeys";
-import { AdaptiveRange, useMediaQuery } from "../../adaptive";
-import {
-  ClickOutside,
-  Popper,
-  PopperBaseProps,
-  PopperTriggerProps,
-  PopperVisibilityEvents,
-} from "../../helpers";
+import { Popper, PopperBaseProps, PopperTriggerProps } from "../../helpers";
 import { svgs } from "../../icon";
 import { Button, ButtonProps } from "../Button";
 import cl from "./ButtonDropdown.module.scss";
 
-interface Props extends PopperBaseProps, PopperVisibilityEvents {
+interface Props extends PopperBaseProps {
   trigger?: ReactNode;
   triggerIcon?: ReactElement;
   buttonClassName?: string;
   buttonProps?: ButtonProps;
   noArrow?: boolean;
   standalone?: ReactElement;
-  onlyAt?: AdaptiveRange;
+  // onlyAt?: AdaptiveRange;
   isOpened?: boolean;
-  closeOnClickOutside?: boolean;
+  // closeOnClickOutside?: boolean;
   children?: ReactNode;
 }
 
-const HK_ESCAPE: HotKeyShortcuts = [["Escape"], ["Cancel"]];
+// const HK_ESCAPE: HotKeyShortcuts = [["Escape"], ["Cancel"]];
 
 export const ButtonDropdown: FC<Props> = ({
   trigger,
@@ -44,37 +34,18 @@ export const ButtonDropdown: FC<Props> = ({
   buttonProps,
   noArrow = false,
   standalone,
-  onlyAt,
+  // onlyAt,
   isOpened,
-  closeOnClickOutside = true,
+  // closeOnClickOutside = true,
   children,
-  onShow,
-  onHide,
   ...options
 }) => {
   const [visible, setVisible] = useState(isOpened ?? false);
-  const handleShow = useCallback(() => setVisible(true), []);
-  const handleHide = useCallback(() => setVisible(false), []);
-  {
-    const isIsOpenedChanged = useIsChanged(isOpened);
-    if (isIsOpenedChanged && isOpened !== undefined) {
-      setVisible(isOpened);
-    }
-    const refShow = useRefHandlers(onShow);
-    const refHide = useRefHandlers(onHide);
-    useEffect(() => {
-      if (visible) {
-        refShow.current?.();
-      } else {
-        refHide.current?.();
-      }
-    }, [visible, refShow, refHide]);
-  }
 
-  useMediaQuery({ adaptive: onlyAt, onMismatch: handleHide });
+  // useMediaQuery({ adaptive: onlyAt, onMismatch: handleHide });
 
   const renderTrigger = useCallback(
-    ({ ref, visible }: PopperTriggerProps) => {
+    ({ ref, props, visible }: PopperTriggerProps) => {
       const triggerButton = (
         <Button
           icon={triggerIcon}
@@ -86,7 +57,7 @@ export const ButtonDropdown: FC<Props> = ({
             buttonProps?.className,
             trigger === undefined && cl._noTrigger,
           )}
-          onClick={handleShow}
+          {...props}
         >
           {trigger}
           {noArrow || (
@@ -108,15 +79,7 @@ export const ButtonDropdown: FC<Props> = ({
         </div>
       );
     },
-    [
-      trigger,
-      triggerIcon,
-      buttonProps,
-      buttonClassName,
-      handleShow,
-      noArrow,
-      standalone,
-    ],
+    [trigger, triggerIcon, buttonProps, buttonClassName, noArrow, standalone],
   );
 
   const handleClickInside = useCallback((e: SyntheticEvent) => {
@@ -125,16 +88,16 @@ export const ButtonDropdown: FC<Props> = ({
     }
   }, []);
 
-  const watchClickOutside = closeOnClickOutside && visible;
-  useHotKey({
-    shortcut: HK_ESCAPE,
-    handler: useCallback((e: UIEvent) => {
-      e.preventDefault();
-      setVisible(false);
-    }, []),
-    prepend: true,
-    disabled: !watchClickOutside,
-  });
+  // const watchClickOutside = closeOnClickOutside && visible;
+  // useHotKey({
+  //   shortcut: HK_ESCAPE,
+  //   handler: useCallback((e: UIEvent) => {
+  //     e.preventDefault();
+  //     setVisible(false);
+  //   }, []),
+  //   prepend: true,
+  //   disabled: !watchClickOutside,
+  // });
 
   return (
     <div className={cl.container}>
@@ -144,16 +107,20 @@ export const ButtonDropdown: FC<Props> = ({
         placement="bottom-start"
         {...options}
         popperClassName={cn(cl.popup, options.popperClassName)}
+        onVisibleChange={setVisible}
       >
-        <ClickOutside watch={watchClickOutside} onClickOutside={handleHide}>
-          {({ getClickProps }) => (
-            <div {...getClickProps()} onClick={handleClickInside}>
-              {/*<div ref={foo}>*/}
-              {children}
-              {/*</div>*/}
-            </div>
-          )}
-        </ClickOutside>
+        {/*<ClickOutside watch={watchClickOutside} onClickOutside={handleHide}>*/}
+        {/*  {({ getClickProps }) => (*/}
+        <div
+          //{...getClickProps()}
+          onClick={handleClickInside}
+        >
+          {/*<div ref={foo}>*/}
+          {children}
+          {/*</div>*/}
+        </div>
+        {/*  )}*/}
+        {/*</ClickOutside>*/}
       </Popper>
     </div>
   );

@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactHTML, ReactNode } from "react";
+import { FC, JSX, PropsWithChildren, ReactNode } from "react";
 import cn from "classnames";
 import { ContainerProps } from "ui/types";
 import cl from "./Field.module.scss";
@@ -6,7 +6,7 @@ import cl from "./Field.module.scss";
 interface Props extends ContainerProps {
   label?: ReactNode;
   labelFor?: string;
-  labelElement?: keyof ReactHTML;
+  labelElement?: keyof JSX.IntrinsicElements;
   labelClassName?: string;
   /**
    * Notice: It has different behaviour when it's absent vs it's set to

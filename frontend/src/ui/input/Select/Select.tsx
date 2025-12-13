@@ -40,6 +40,7 @@ const SingleValue = <V extends AnyKey>({
     {props.data.labelSelected ?? children}
   </components.SingleValue>
 );
+
 const MultiValue = <V extends AnyKey>({
   children,
   ...props
@@ -113,7 +114,7 @@ export const Select: ISelect = <
           <RSelect<SelectOption<V>, boolean>
             {...(props as RSelectProps<SelectOption<V>, boolean>)}
             ref={ref}
-            components={componentsOverride as any}
+            components={componentsOverride as object}
             classNamePrefix="app-react-select"
             onMenuOpen={handleOpen}
             onMenuClose={handleClose}

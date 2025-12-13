@@ -62,12 +62,12 @@ export const Range: FC<Props> = ({
       </div>
     )}
     renderThumb={({
-      props,
-    }: // value,
-    // index,
-    // isDragged,
-    IRenderThumbParams) => (
-      <button {...props} className={cl.thumb} disabled={disabled} />
+      props: { key, ...props },
+      // value,
+      // index,
+      // isDragged,
+    }: IRenderThumbParams) => (
+      <button key={key} {...props} className={cl.thumb} disabled={disabled} />
     )}
   />
 );

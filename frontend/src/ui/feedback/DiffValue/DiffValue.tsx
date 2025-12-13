@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactHTML } from "react";
+import { FC, JSX, PropsWithChildren } from "react";
 
 interface Props extends PropsWithChildren<object> {
   different: boolean;
@@ -6,6 +6,10 @@ interface Props extends PropsWithChildren<object> {
 }
 
 export const DiffValue: FC<Props> = ({ different, side, children }) => {
-  const Element: keyof ReactHTML = different ? (side ? "ins" : "del") : "span";
+  const Element: keyof JSX.IntrinsicElements = different
+    ? side
+      ? "ins"
+      : "del"
+    : "span";
   return <Element>{children}</Element>;
 };
