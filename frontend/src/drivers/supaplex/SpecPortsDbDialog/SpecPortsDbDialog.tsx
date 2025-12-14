@@ -126,7 +126,7 @@ export const SpecPortsDbDialog = <L extends ISupaplexLevel>({
             : t("main:supaplex.specportsDB.BtnToText")}
         </Button>
       </p>
-      <CLevel.Provider value={level}>
+      <CLevel value={level}>
         {isText ? (
           <Textarea
             value={text}
@@ -147,7 +147,7 @@ export const SpecPortsDbDialog = <L extends ISupaplexLevel>({
             />
           </div>
         )}
-      </CLevel.Provider>
+      </CLevel>
     </Dialog>
   );
 };

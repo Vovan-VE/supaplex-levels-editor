@@ -18,9 +18,7 @@ export const PopupContainer: FC<Props> = ({ children, id, ...rest }) => {
 
   return (
     <>
-      {element && (
-        <Context.Provider value={getElement}>{children}</Context.Provider>
-      )}
+      {element && <Context value={getElement}>{children}</Context>}
       <div
         {...rest}
         ref={setElement}
