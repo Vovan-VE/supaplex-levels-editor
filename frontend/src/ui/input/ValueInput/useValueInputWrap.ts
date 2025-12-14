@@ -14,6 +14,7 @@ export const useValueInputWrap = <V>({
   onBlur,
   ...rest
 }: ValueInputWrapProps<V>): InputProps => {
+  const [isFocused, setIsFocused] = useState(false);
   const [ownValue, setOwnValue] = useState(
     value === undefined ? emptyValue : value,
   );
@@ -24,6 +25,9 @@ export const useValueInputWrap = <V>({
   if (isValueChanged || isFormatterChanged) {
     if (undefined !== value) {
       setOwnValue(value);
+      if (!isFocused) {
+        setInput(formatValue(value));
+      }
     }
   }
 
@@ -47,6 +51,7 @@ export const useValueInputWrap = <V>({
 
   const handleFocus = useCallback(
     (e: FocusEvent<HTMLInputElement>) => {
+      setIsFocused(true);
       // if (undefined !== value) {
       //   setOwnValue(value);
       // }
@@ -57,6 +62,7 @@ export const useValueInputWrap = <V>({
 
   const handleBlur = useCallback(
     (e: FocusEvent<HTMLInputElement>) => {
+      setIsFocused(false);
       if (undefined !== value) {
         setOwnValue(value);
         setInput(formatValue(value));
