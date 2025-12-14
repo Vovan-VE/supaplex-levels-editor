@@ -141,7 +141,7 @@ sample({
   clock: _receivedDemo,
   source: $demoTarget,
   filter: Boolean,
-  fn: (ref, demoData) => ({ ...ref, demoData }),
+  fn: (lref, demoData) => ({ ...lref, demoData }),
 }).watch(async ({ fileKey, levelIndex, demoData }) => {
   let filename = "";
   let levelName = "";

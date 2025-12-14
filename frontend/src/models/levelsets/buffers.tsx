@@ -476,9 +476,9 @@ export const currentLevelIndexWillGone = sample({
   fn: (files, key) => files.get(key!)!.currentIndex!,
 });
 
-const _willCloseLevelFx = createEffect(async (ref: _LevelRefStrict) => {
-  await _willSetCurrentLevelFx([ref[0], null]);
-  _closeLevel(ref);
+const _willCloseLevelFx = createEffect(async (lref: _LevelRefStrict) => {
+  await _willSetCurrentLevelFx([lref[0], null]);
+  _closeLevel(lref);
 });
 sample({
   clock: closeCurrentLevel,
@@ -562,9 +562,9 @@ const _$currentDriverMinLevelsCount = combine(
   (drv, fmt) => (drv && fmt && getDriverFormat(drv, fmt)?.minLevelsCount) || 1,
 );
 
-const _willDeleteLevelFx = createEffect(async (ref: _LevelRefStrict) => {
-  await _willSetCurrentLevelFx([ref[0], null]);
-  _deleteLevel(ref);
+const _willDeleteLevelFx = createEffect(async (lref: _LevelRefStrict) => {
+  await _willSetCurrentLevelFx([lref[0], null]);
+  _deleteLevel(lref);
 });
 sample({
   clock: deleteCurrentLevel,
@@ -1194,18 +1194,18 @@ export const $cmpLevels = combine(
 );
 const $cmpFirstLevelRef = restore(setCmpFirstLevelRef, null)
   .reset(setCmpLevels, closeCmpLevels)
-  .on($levelsets.updates, (ref, files) => {
-    if (ref) {
-      const [key] = ref;
+  .on($levelsets.updates, (lref, files) => {
+    if (lref) {
+      const [key] = lref;
       if (!files.has(key)) {
         return null;
       }
     }
-    return ref;
+    return lref;
   })
-  .on(_deleteLevel, (ref, del) => {
-    if (ref) {
-      const [key, index] = ref;
+  .on(_deleteLevel, (lref, del) => {
+    if (lref) {
+      const [key, index] = lref;
       const [delKey, delIndex] = del;
       if (delKey === key) {
         if (delIndex === index) {
@@ -1216,27 +1216,27 @@ const $cmpFirstLevelRef = restore(setCmpFirstLevelRef, null)
         }
       }
     }
-    return ref;
+    return lref;
   })
-  .on(_deleteRestLevels, (ref, del) => {
-    if (ref) {
-      const [key, index] = ref;
+  .on(_deleteRestLevels, (lref, del) => {
+    if (lref) {
+      const [key, index] = lref;
       const [delKey, delIndex] = del;
       if (delKey === key && index > delIndex) {
         return null;
       }
     }
-    return ref;
+    return lref;
   })
-  .on(_insertAtCurrentLevel, (ref, ins) => {
-    if (ref) {
-      const [key, index] = ref;
+  .on(_insertAtCurrentLevel, (lref, ins) => {
+    if (lref) {
+      const [key, index] = lref;
       const [insKey, insIndex] = ins;
       if (key === insKey && index >= insIndex) {
         return [key, index + 1];
       }
     }
-    return ref;
+    return lref;
   });
 export const $cmpLevelHasFirst = $cmpFirstLevelRef.map(Boolean);
 export const $cmpLevelFirstTitle = combine(
@@ -1244,11 +1244,11 @@ export const $cmpLevelFirstTitle = combine(
   $levelsets,
   $currentKey,
   _$buffersMap,
-  (ref, levelsets, currentKey, files): TranslationGetter | null => {
-    if (!ref) {
+  (lref, levelsets, currentKey, files): TranslationGetter | null => {
+    if (!lref) {
       return (t) => t("main:cmpLevels.button.SetCurrentAsFirst");
     }
-    const [key, index] = ref;
+    const [key, index] = lref;
     const buffer = files.get(key);
     if (currentKey && key === currentKey && buffer?.currentIndex === index) {
       return (t) => t("main:cmpLevels.button.SelectAnotherLevel");
@@ -1285,14 +1285,14 @@ sample({
     [key!, files.get(key!)!.currentIndex!],
     prev,
   ],
-}).watch(([ref, prev]) => {
+}).watch(([lref, prev]) => {
   if (!prev) {
-    setCmpFirstLevelRef(ref);
+    setCmpFirstLevelRef(lref);
     return;
   }
-  if (prev[0] === ref[0] && prev[1] === ref[1]) {
+  if (prev[0] === lref[0] && prev[1] === lref[1]) {
     setCmpFirstLevelRef(null);
     return;
   }
-  setCmpLevels([prev, ref]);
+  setCmpLevels([prev, lref]);
 });
