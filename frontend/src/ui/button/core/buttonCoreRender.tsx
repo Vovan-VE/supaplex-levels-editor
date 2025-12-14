@@ -1,22 +1,23 @@
-import { ForwardedRef, ReactElement } from "react";
+import { ReactElement, Ref, RefAttributes } from "react";
 import cn from "classnames";
 import { deleteButtonProps, deleteLinkProps, isLinkProps } from "./attributes";
 import { renderContent } from "./renderContent";
 import { ButtonCoreProps } from "./types";
 import cl from "./ButtonCore.module.scss";
 
-export const buttonCoreRender = (
-  {
-    icon,
-    iconPosition,
-    iconStack,
-    loading,
-    uiColor,
-    children,
-    ...props
-  }: ButtonCoreProps,
-  ref: ForwardedRef<HTMLAnchorElement | HTMLButtonElement>,
-): ReactElement | null => {
+export const buttonCoreRender = ({
+  ref,
+  icon,
+  iconPosition,
+  iconStack,
+  loading,
+  uiColor,
+  children,
+  ...props
+}: ButtonCoreProps &
+  RefAttributes<
+    HTMLAnchorElement | HTMLButtonElement
+  >): ReactElement | null => {
   const content = renderContent(
     { icon, iconPosition, iconStack, loading, uiColor },
     children,
@@ -39,7 +40,7 @@ export const buttonCoreRender = (
     return (
       <a
         {...deleteButtonProps(props)}
-        ref={ref as ForwardedRef<HTMLAnchorElement>}
+        ref={ref as Ref<HTMLAnchorElement>}
         className={className}
       >
         {content}
@@ -50,7 +51,7 @@ export const buttonCoreRender = (
   return (
     <button
       {...deleteLinkProps(props)}
-      ref={ref as ForwardedRef<HTMLButtonElement>}
+      ref={ref as Ref<HTMLButtonElement>}
       className={className}
     >
       {content}

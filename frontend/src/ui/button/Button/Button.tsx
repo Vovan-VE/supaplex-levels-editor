@@ -1,4 +1,4 @@
-import { forwardRef, ForwardRefRenderFunction } from "react";
+import { FC, RefAttributes } from "react";
 import cn from "classnames";
 import { ColorType } from "../../types";
 import { ButtonCoreProps, buttonCoreRender } from "../core";
@@ -17,27 +17,24 @@ const CL_COLOR: Partial<Record<ColorType, string>> = {
 type RefElement = HTMLAnchorElement | HTMLButtonElement;
 
 const makeButtonRender =
-  (rootClassName?: string): ForwardRefRenderFunction<RefElement, Props> =>
-  (props, ref) =>
-    buttonCoreRender(
-      {
-        ...props,
-        className: cn(
-          rootClassName,
-          CL_COLOR[props.uiColor ?? ColorType.PRIMARY],
-          props.className,
-        ),
-      },
-      ref,
-    );
+  (rootClassName?: string): FC<Props & RefAttributes<RefElement>> =>
+  (props) =>
+    buttonCoreRender({
+      ...props,
+      ref: props.ref,
+      className: cn(
+        rootClassName,
+        CL_COLOR[props.uiColor ?? ColorType.PRIMARY],
+        props.className,
+      ),
+    });
 
 const withOptions =
   <T,>(
-    renderer: ForwardRefRenderFunction<RefElement, Props>,
+    Btn: FC<Props & RefAttributes<RefElement>>,
     handle: (props: Props & T) => Props,
-  ): ForwardRefRenderFunction<RefElement, Props & T> =>
-  (props, ref) =>
-    renderer(handle(props), ref);
+  ): FC<Props & T & RefAttributes<RefElement>> =>
+  ({ ref, ...props }) => <Btn ref={ref} {...handle(props as Props & T)} />;
 
 interface ButtonOptions {
   /**
@@ -49,17 +46,15 @@ interface ButtonOptions {
 
 export interface ButtonProps extends Props, ButtonOptions {}
 
-export const Button = forwardRef(
-  withOptions(
-    makeButtonRender(cl.button),
-    ({ asLink = false, className, ...props }: ButtonProps) => ({
-      ...props,
-      className: cn(className, asLink && cl._asLink),
-    }),
-  ),
+export const Button = withOptions(
+  makeButtonRender(cl.button),
+  ({ asLink = false, className, ...props }: ButtonProps) => ({
+    ...props,
+    className: cn(className, asLink && cl._asLink),
+  }),
 );
 
-export const TextButton = forwardRef(makeButtonRender(cl.textButton));
+export const TextButton = makeButtonRender(cl.textButton);
 
 if (import.meta.env.DEV) {
   Button.displayName = "Button";

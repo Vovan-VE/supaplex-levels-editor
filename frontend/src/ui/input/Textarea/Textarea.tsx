@@ -1,11 +1,12 @@
 import cn from "classnames";
-import { forwardRef, TextareaHTMLAttributes } from "react";
+import { FC, RefAttributes, TextareaHTMLAttributes } from "react";
 import cl from "./Textarea.module.scss";
 
-type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
+interface TextareaProps
+  extends
+    TextareaHTMLAttributes<HTMLTextAreaElement>,
+    RefAttributes<HTMLTextAreaElement> {}
 
-export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, ...rest }, ref) => (
-    <textarea {...rest} ref={ref} className={cn(cl.root, className)} />
-  ),
+export const Textarea: FC<TextareaProps> = ({ ref, className, ...rest }) => (
+  <textarea {...rest} ref={ref} className={cn(cl.root, className)} />
 );

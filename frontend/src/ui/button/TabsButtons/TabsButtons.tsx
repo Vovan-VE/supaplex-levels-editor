@@ -1,7 +1,6 @@
 import cn from "classnames";
 import {
   FC,
-  forwardRef,
   MutableRefObject,
   PropsWithChildren,
   ReactNode,
@@ -12,7 +11,7 @@ import {
 } from "react";
 import { AnyKey } from "@cubux/types";
 import { useMergeRefs } from "utils/react";
-import { SortableItemProps, SortableList } from "../../list";
+import { SortableItemComponent, SortableList } from "../../list";
 import { ColorType, ContainerProps } from "../../types";
 import { Button, ButtonProps } from "../Button";
 import { Toolbar } from "../Toolbar";
@@ -22,27 +21,23 @@ type P = PropsWithChildren<ButtonProps> & {
   key: string;
   curRef?: MutableRefObject<HTMLButtonElement | null>;
 };
-const Item = forwardRef<HTMLButtonElement, SortableItemProps<P>>(
-  (
-    {
-      item: { key, curRef, className, children, ...props },
-      isDragging,
-      itemProps,
-      handleProps,
-    },
-    ref,
-  ) => (
-    <Button
-      key={key}
-      ref={useMergeRefs(ref, curRef)}
-      {...props}
-      {...itemProps}
-      {...handleProps}
-      className={cn(className, isDragging && cl._dragging)}
-    >
-      {children}
-    </Button>
-  ),
+const Item: SortableItemComponent<P, HTMLButtonElement> = ({
+  ref,
+  item: { key, curRef, className, children, ...props },
+  isDragging,
+  itemProps,
+  handleProps,
+}) => (
+  <Button
+    key={key}
+    ref={useMergeRefs(ref, curRef)}
+    {...props}
+    {...itemProps}
+    {...handleProps}
+    className={cn(className, isDragging && cl._dragging)}
+  >
+    {children}
+  </Button>
 );
 
 export interface TabItem<K extends AnyKey = AnyKey> {

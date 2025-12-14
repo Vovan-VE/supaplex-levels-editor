@@ -1,17 +1,17 @@
-import { forwardRef, useContext } from "react";
+import { useContext } from "react";
 import { TileCoords } from "components/settings/display";
 import { TextButton } from "ui/button";
 import { svgs } from "ui/icon";
-import { SortableItemProps } from "ui/list";
+import { SortableItemComponent } from "ui/list";
 import { InlineTile } from "../InlineTile";
 import { ISupaplexSpecPortRecord } from "../internal";
 import { CLevel } from "./context";
 import cl from "./Item.module.scss";
 
-export const Item = forwardRef<
-  HTMLDivElement,
-  SortableItemProps<ISupaplexSpecPortRecord>
->(({ item, itemProps, handleProps, index }, ref) => {
+export const Item: SortableItemComponent<
+  ISupaplexSpecPortRecord,
+  HTMLDivElement
+> = ({ ref, item, itemProps, handleProps, index }) => {
   const level = useContext(CLevel)!;
   // TODO: level.getTileVariant()
   const [[, , , tile, variant]] = level.tilesRenderStream(item.x, item.y, 1, 1);
@@ -36,4 +36,4 @@ export const Item = forwardRef<
       />
     </div>
   );
-});
+};

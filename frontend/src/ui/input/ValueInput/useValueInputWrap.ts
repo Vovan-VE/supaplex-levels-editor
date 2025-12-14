@@ -1,28 +1,19 @@
-import {
-  ChangeEvent,
-  FocusEvent,
-  ForwardedRef,
-  RefAttributes,
-  useCallback,
-  useState,
-} from "react";
+import { ChangeEvent, FocusEvent, useCallback, useState } from "react";
 import { useIsChanged } from "utils/react";
 import { InputProps } from "../Input";
 import { ValueInputWrapProps } from "./types";
 
-export const useValueInputWrap = <V>(
-  {
-    value,
-    onChange,
-    parseInput,
-    formatValue,
-    emptyValue,
-    onFocus,
-    onBlur,
-    ...rest
-  }: ValueInputWrapProps<V>,
-  ref?: ForwardedRef<HTMLInputElement>,
-): InputProps & RefAttributes<HTMLInputElement> => {
+export const useValueInputWrap = <V>({
+  ref,
+  value,
+  onChange,
+  parseInput,
+  formatValue,
+  emptyValue,
+  onFocus,
+  onBlur,
+  ...rest
+}: ValueInputWrapProps<V>): InputProps => {
   const [ownValue, setOwnValue] = useState(
     value === undefined ? emptyValue : value,
   );
@@ -80,7 +71,6 @@ export const useValueInputWrap = <V>(
 
   return {
     ...rest,
-    ref,
     value: input,
     onChange: handleChange,
     onFocus: handleFocus,

@@ -14,7 +14,7 @@ const setRef = <T>(ref: AnyRef<T>, value: T | null) => {
  * Merge multiple refs into one
  *
  * ```tsx
- * const C = forwardRef<T | null, P>((props, ref) => {
+ * const C: FC<P & RefAttributes<T | null>> = ({ ref, ...props }) => {
  *   const myRef = useRef<T | null>(null);
  *   const setRef = useMergeRefs(ref, myRef);
  *
@@ -23,7 +23,7 @@ const setRef = <T>(ref: AnyRef<T>, value: T | null) => {
  *   //}, []);
  *
  *   return <E ref={setRef} />;
- * });
+ * };
  *
  * console.log(<C ref={...} />);
  * ```

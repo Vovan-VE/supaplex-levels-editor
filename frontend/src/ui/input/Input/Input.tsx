@@ -1,11 +1,12 @@
 import cn from "classnames";
-import { forwardRef, InputHTMLAttributes } from "react";
+import { FC, InputHTMLAttributes, RefAttributes } from "react";
 import cl from "./Input.module.scss";
 
-export type InputProps = InputHTMLAttributes<HTMLInputElement>;
+export interface InputProps
+  extends
+    InputHTMLAttributes<HTMLInputElement>,
+    RefAttributes<HTMLInputElement> {}
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, ...rest }, ref) => (
-    <input {...rest} ref={ref} className={cn(cl.root, className)} />
-  ),
+export const Input: FC<InputProps> = ({ ref, className, ...rest }) => (
+  <input {...rest} ref={ref} className={cn(cl.root, className)} />
 );

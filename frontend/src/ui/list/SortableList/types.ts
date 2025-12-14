@@ -1,4 +1,4 @@
-import { ForwardRefExoticComponent, RefAttributes } from "react";
+import { FC, RefAttributes } from "react";
 import { isValidKey, SortDirection, ValidKey } from "./internal";
 
 export interface SortableListProps<
@@ -13,13 +13,16 @@ export interface SortableListProps<
    * Item render component
    *
    * ```ts
-   * const Item = forwardRef<HTMLDivElement, SortableItemProps<T>>(
-   *   ({item, itemProps, handleProps}, ref) => (
-   *     <div ref={ref} {...itemProps} {...handleProps}>
-   *       // or: <div {...handleProps}>handle</div>
-   *       ...render `item`...
-   *     </div>
-   *   ),
+   * const Item: SortableItemComponent<T, HTMLDivElement> = ({
+   *   ref,
+   *   item,
+   *   itemProps,
+   *   handleProps,
+   * }) => (
+   *   <div ref={ref} {...itemProps} {...handleProps}>
+   *     // or: <div {...handleProps}>handle</div>
+   *     ...render `item`...
+   *   </div>
    * );
    * ```
    */
@@ -66,16 +69,19 @@ export interface SortableItemProps<T> {
  * Item render component
  *
  * ```ts
- * const Item = forwardRef<HTMLDivElement, SortableItemProps<T>>(
- *   ({item, itemProps, handleProps}, ref) => (
- *     <div ref={ref} {...itemProps} {...handleProps}>
- *       // or: <div {...handleProps}>handle</div>
- *       ...render `item`...
- *     </div>
- *   ),
+ * const Item: SortableItemComponent<T, HTMLDivElement> = ({
+ *   ref,
+ *   item,
+ *   itemProps,
+ *   handleProps,
+ * }) => (
+ *   <div ref={ref} {...itemProps} {...handleProps}>
+ *     // or: <div {...handleProps}>handle</div>
+ *     ...render `item`...
+ *   </div>
  * );
  * ```
  */
-export type SortableItemComponent<T, E> = ForwardRefExoticComponent<
+export type SortableItemComponent<T, E> = FC<
   SortableItemProps<T> & RefAttributes<E>
 >;
