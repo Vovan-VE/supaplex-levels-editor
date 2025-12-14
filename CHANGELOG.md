@@ -2,7 +2,8 @@
 
 ## 0.23.0 (DEV)
 
-- Fix: File id Read-Only mode still allows to edit Demo/Signature.
+- Fix: File in Read-Only mode still allows to edit Demo/Signature.
+- Fix: Demo/Signature edit triggers "OK" by "Help" button.
 
 ## 0.22.0 (2025-11-07)
 

@@ -196,7 +196,11 @@ export const SignatureEdit: FC<Props> = ({ show, onSubmit, onCancel }) => {
             label={t("main:demoEdit.DemoText")}
             help={
               handleDemoHelp && (
-                <TextButton icon={<svgs.Info />} onClick={handleDemoHelp}>
+                <TextButton
+                  type="button"
+                  icon={<svgs.Info />}
+                  onClick={handleDemoHelp}
+                >
                   {t("main:common.buttons.Help")}
                 </TextButton>
               )
