@@ -7,12 +7,13 @@ export interface ValueInputWrap<V> {
   emptyValue: V;
 }
 
-export interface ValueInputProps<V>
-  extends Omit<InputProps, "value" | "onChange"> {
+export interface ValueInputProps<V> extends Omit<
+  InputProps,
+  "value" | "onChange"
+> {
   value?: V | undefined;
   onChange?: (value: V, e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export interface ValueInputWrapProps<V>
-  extends ValueInputProps<V>,
-    ValueInputWrap<V> {}
+  extends ValueInputProps<V>, ValueInputWrap<V> {}

@@ -1,10 +1,25 @@
-import { FC, ReactElement, Suspense, useEffect, useRef, useState } from "react";
+import {
+  FC,
+  ReactElement,
+  Suspense,
+  useEffect,
+  useReducer,
+  useRef,
+} from "react";
 import * as RoMap from "@cubux/readonly-map";
 import { setContainer, unsetContainer } from "./container";
 
+type _Instances = ReadonlyMap<number, ReactElement>;
+interface SetInstance {
+  id: number;
+  node?: ReactElement;
+}
+
 export const PromptContainer: FC = () => {
   const refId = useRef(0);
-  const [instances, setInstances] = useState<ReadonlyMap<number, ReactElement>>(
+  const [instances, dispatchInstance] = useReducer(
+    (map: _Instances, { id, node }: SetInstance) =>
+      node ? RoMap.set(map, id, node) : RoMap.remove(map, id),
     new Map(),
   );
 
@@ -14,8 +29,8 @@ export const PromptContainer: FC = () => {
         const id = ++refId.current;
         return {
           index: id,
-          render: (node) => setInstances((map) => RoMap.set(map, id, node)),
-          delete: () => setInstances((map) => RoMap.remove(map, id)),
+          render: (node) => dispatchInstance({ id, node }),
+          delete: () => dispatchInstance({ id }),
         };
       },
     });

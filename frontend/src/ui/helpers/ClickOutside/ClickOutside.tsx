@@ -130,7 +130,7 @@ function setup(
   const _onPointerDown = (event: Event) => {
     const { target } = event;
     if (target) {
-      if (node && !node.contains(target as Node)) {
+      if (!node.contains(target as Node)) {
         event.preventDefault();
         event.stopPropagation();
         if (triggerOnDown) {

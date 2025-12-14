@@ -1,9 +1,10 @@
 import {
-  ChangeEventHandler,
+  ChangeEvent,
   FC,
   FormEvent,
   useCallback,
   useMemo,
+  useReducer,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
@@ -59,12 +60,19 @@ const formatOptions = new Map<DriverName, readonly FormatOption[]>(
 const getDefaultFormat = (o: readonly FormatOption[]) =>
   o.find((o) => o._default) || o[0];
 
+const reducerTextInput = (_: unknown, e: ChangeEvent<HTMLInputElement>) =>
+  e.target.value;
+
 type Props = RenderPromptProps<true>;
 
 export const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
   const { t } = useTranslation();
 
-  const [driverName, setDriverName] = useState<DriverName>(DISPLAY_ORDER[0]);
+  const [driverName, handleDriverChange] = useReducer(
+    (prev, o: SelectOption<DriverName> | null): DriverName =>
+      o ? o.value : prev,
+    DISPLAY_ORDER[0],
+  );
   const curFormatsOptions = formatOptions.get(driverName)!;
   const [_driverFormat, setDriverFormat] = useState<string>();
   const driverFormat = useMemo(
@@ -72,9 +80,9 @@ export const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     [_driverFormat, curFormatsOptions],
   );
 
-  const [filename, setFilename] = useState("new");
+  const [filename, handleFilenameChange] = useReducer(reducerTextInput, "new");
   const [levelsCount, setLevelsCount] = useState<number | null>(111);
-  const [title, setTitle] = useState("EMPTY");
+  const [title, handleTitleChange] = useReducer(reducerTextInput, "EMPTY");
   const [width, setWidth] = useState<number | null>(null);
   const [height, setHeight] = useState<number | null>(null);
   // TODO: define defaults in driver
@@ -111,26 +119,11 @@ export const NewFile: FC<Props> = ({ show, onSubmit, onCancel }) => {
     }
   }, [level, title]);
 
-  const handleDriverChange = useCallback(
-    (o: SelectOption<DriverName> | null) => {
-      if (o) {
-        setDriverName(o.value);
-      }
-    },
-    [],
-  );
   const handleFormatChange = useCallback((o: FormatOption | null) => {
     if (o) {
       setDriverFormat(o.value);
     }
   }, []);
-  const handleFilenameChange = useCallback<
-    ChangeEventHandler<HTMLInputElement>
-  >(({ target: { value } }) => setFilename(value), []);
-  const handleTitleChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
-    ({ target: { value } }) => setTitle(value),
-    [],
-  );
 
   const fileExt = parseFormatFilename(filename, driverName, driverFormat);
 

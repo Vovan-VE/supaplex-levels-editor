@@ -1,13 +1,11 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useId } from "react";
 
 interface Props {
   name: string;
 }
 
-let id = 0;
-
 export const DebugMount: FC<Props> = ({ name }) => {
-  const [iid] = useState(() => ++id);
+  const iid = useId();
   useEffect(() => {
     console.log(">> Mount  ", [name, iid]);
     return () => console.log(">> Unmount", [name, iid]);

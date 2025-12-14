@@ -1,13 +1,12 @@
 import { useUnit } from "effector-react";
 import {
-  ChangeEventHandler,
+  ChangeEvent,
   FC,
   RefCallback,
-  useCallback,
   useEffect,
   useMemo,
+  useReducer,
   useRef,
-  useState,
 } from "react";
 import { useTranslation } from "react-i18next";
 import { fmtLevelFull } from "components/levelset";
@@ -52,10 +51,9 @@ export const LevelsListDialog: FC<Props> = ({ show, onSubmit }) => {
   const levelsCount = levels ? levels.length : 0;
   const maxDigits = String(levelsCount).length;
 
-  const [filter, setFilter] = useState("");
-  const handleFilterChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
-    ({ target: { value } }) => setFilter(value),
-    [],
+  const [filter, handleFilterChange] = useReducer(
+    (_, e: ChangeEvent<HTMLInputElement>) => e.target.value,
+    "",
   );
   const handleSelect = useMemo(
     () =>

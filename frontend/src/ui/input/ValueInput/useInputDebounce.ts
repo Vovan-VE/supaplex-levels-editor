@@ -3,8 +3,8 @@ import {
   FocusEventHandler,
   useCallback,
   useEffect,
+  useReducer,
   useRef,
-  useState,
 } from "react";
 
 interface Options<V> {
@@ -14,6 +14,8 @@ interface Options<V> {
   onBlur?: FocusEventHandler<HTMLInputElement>;
   debounceTimeout?: number;
 }
+
+type TimeoutId = ReturnType<typeof setTimeout>;
 
 /**
  * triggers `onChangeEnd` with debounce when typing finished and right with
@@ -45,14 +47,14 @@ export const useInputDebounce = <V>({
     }
   });
 
-  const [T, setT] = useState<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => {
-    if (T) {
-      return () => {
-        clearTimeout(T);
-      };
-    }
-  }, [T]);
+  const [, setT] = useReducer(
+    (prev: TimeoutId | null, next: TimeoutId | null) => {
+      if (prev) clearTimeout(prev);
+      return next;
+    },
+    null,
+  );
+  useEffect(() => () => setT(null), []);
 
   const handleChange = useCallback(
     (value: V, e: ChangeEvent<HTMLInputElement>) => {

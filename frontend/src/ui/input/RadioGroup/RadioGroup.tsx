@@ -1,6 +1,5 @@
 import cn from "classnames";
-import { FC, ReactNode, useMemo, useState } from "react";
-import { generateKey } from "utils/strings";
+import { FC, ReactNode, useId, useMemo } from "react";
 import { ContainerProps } from "../../types";
 import { CheckboxRender } from "../Checkbox/CheckboxRender";
 import cl from "./RadioGroup.module.scss";
@@ -30,7 +29,7 @@ export const RadioGroup = <V,>({
   className,
   ...rest
 }: Props<V>): ReturnType<FC> => {
-  const [fallbackName] = useState(generateKey);
+  const fallbackName = useId();
   const _name = name ?? fallbackName;
 
   const handleChange = useMemo(

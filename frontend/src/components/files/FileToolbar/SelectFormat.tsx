@@ -5,7 +5,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useState,
+  useReducer,
 } from "react";
 import { useTranslation } from "react-i18next";
 import { getDriver } from "drivers";
@@ -42,10 +42,9 @@ export const SelectFormat: FC<Props> = ({ show, onSubmit, onCancel }) => {
     [formats],
   );
 
-  const [newFormat, setNewFormat] = useState(file?.driverFormat ?? null);
-  const handleFormatChange = useCallback(
-    (o: SelectOption<string> | null) => setNewFormat(o ? o.value : null),
-    [],
+  const [newFormat, handleFormatChange] = useReducer(
+    (_, o: SelectOption<string> | null) => (o ? o.value : null),
+    file?.driverFormat ?? null,
   );
   const handleOk = useCallback<FormEventHandler>(
     (e) => {

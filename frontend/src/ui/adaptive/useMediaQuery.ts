@@ -25,7 +25,7 @@ export interface QueryOptions {
   watch?: boolean;
 }
 const getActualQuery = ({ query, adaptive, watch }: QueryOptions) =>
-  watch ? query ?? adaptiveRangeToString(adaptive ?? []) : null;
+  watch ? (query ?? adaptiveRangeToString(adaptive ?? [])) : null;
 
 interface EventsOptions {
   onChange?: (match: boolean) => void;
@@ -92,7 +92,7 @@ export const useMediaQuery = ({
 export const useMediaQueryState = (options: QueryOptions) => {
   const [match, setMatch] = useState(() => {
     const _query = getActualQuery(options);
-    return Boolean(_query && window.matchMedia(_query).matches);
+    return !!_query && window.matchMedia(_query).matches;
   });
   useMediaQuery({ ...options, onChange: setMatch, fireOnInit: true });
   return match;
