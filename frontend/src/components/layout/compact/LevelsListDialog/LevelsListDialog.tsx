@@ -2,6 +2,7 @@ import { useUnit } from "effector-react";
 import {
   ChangeEventHandler,
   FC,
+  RefCallback,
   useCallback,
   useEffect,
   useMemo,
@@ -71,19 +72,22 @@ export const LevelsListDialog: FC<Props> = ({ show, onSubmit }) => {
     [filterRE, allTitles],
   );
 
-  const [refList, setRefList] = useState<HTMLDivElement | null>(null);
   const scrollDone = useRef(false);
-  useEffect(() => {
-    if (show && index !== undefined && !scrollDone.current && refList) {
-      const item = refList.querySelector(`[value="${index}"]`);
-      if (item) {
-        item.scrollIntoView({
-          block: "center",
-        });
-        scrollDone.current = true;
+  const refList = useMemo<RefCallback<HTMLDivElement> | undefined>(() => {
+    if (!show) return;
+    if (index === undefined) return;
+    return (refList) => {
+      if (!scrollDone.current && refList) {
+        const item = refList.querySelector(`[value="${index}"]`);
+        if (item) {
+          item.scrollIntoView({
+            block: "center",
+          });
+          scrollDone.current = true;
+        }
       }
-    }
-  }, [index, refList, show]);
+    };
+  }, [index, show]);
 
   return (
     <Dialog
@@ -100,7 +104,7 @@ export const LevelsListDialog: FC<Props> = ({ show, onSubmit }) => {
           onChange={handleFilterChange}
         />
       </Field>
-      <div ref={setRefList} className={cl.list}>
+      <div ref={refList} className={cl.list}>
         {allTitles?.map(
           (title, i) =>
             (!showIndices || showIndices.has(i)) && (

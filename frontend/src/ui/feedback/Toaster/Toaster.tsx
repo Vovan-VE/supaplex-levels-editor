@@ -1,6 +1,6 @@
 import cn from "classnames";
 import { useUnit } from "effector-react";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, RefCallback, useEffect, useMemo, useState } from "react";
 import {
   $toasts,
   toastDidShown,
@@ -40,12 +40,12 @@ const Toast: FC<ToastInstance> = ({
 }) => {
   useEffect(() => void toastDidShown(id), [id]);
 
-  const ref = useRef<HTMLDivElement | null>(null);
   const [origHeight, setOrigHeight] = useState(0);
   const trackHeight = phase === ToastPhase.APPEAR;
-  useEffect(() => {
-    const div = ref.current;
-    if (trackHeight && div) {
+  const ref = useMemo<RefCallback<HTMLDivElement> | undefined>(() => {
+    if (!trackHeight) return;
+    return (div) => {
+      if (!div) return;
       setOrigHeight(div.getBoundingClientRect().height);
       const ob = new ResizeObserver((entries) => {
         for (const en of entries) {
@@ -55,7 +55,7 @@ const Toast: FC<ToastInstance> = ({
       ob.observe(div, { box: "content-box" });
 
       return () => ob.disconnect();
-    }
+    };
   }, [trackHeight]);
 
   return (

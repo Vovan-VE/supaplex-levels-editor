@@ -1,11 +1,4 @@
-import {
-  FC,
-  ReactElement,
-  RefCallback,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
+import { FC, ReactElement, RefCallback, useCallback } from "react";
 
 interface ChildrenExtraProps {
   ref: RefCallback<HTMLElement>;
@@ -77,8 +70,8 @@ export const ClickOutside: FC<Props> = ({
   triggerOnDown = false,
   onClickOutside,
 }) => {
-  const nodeRef = useRef<HTMLElement | null>(null);
-
+  const hasChildrenCallback = !!children;
+  const enabled = hasChildrenCallback && watch;
   const getClickProps = useCallback(
     <P extends Partial<ChildrenExtraProps>>(
       props?: P,
@@ -86,74 +79,23 @@ export const ClickOutside: FC<Props> = ({
       const { ref, ...rest } = props ?? {};
       return {
         ...(rest as P),
-        ref: (instance: HTMLElement | null) => {
-          ref?.(instance);
-          nodeRef.current = instance;
+        ref: (div: HTMLElement | null) => {
+          const cleanup = ref?.(div);
+
+          const cleanup2 =
+            enabled && onClickOutside && div
+              ? setup(div, triggerOnDown, onClickOutside)
+              : null;
+
+          return () => {
+            cleanup2?.();
+            cleanup?.();
+          };
         },
       };
     },
-    [],
+    [enabled, onClickOutside, triggerOnDown],
   );
-
-  const hasChildrenCallback = Boolean(children);
-  useEffect(() => {
-    if (!watch || !onClickOutside || !hasChildrenCallback) {
-      // nothing to init
-      // nothing to free
-      return;
-    }
-
-    const _onPointerUpOnce = (event: Event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      document.removeEventListener("pointerup", _onPointerUpOnce, true);
-    };
-    const _onClickOnce = (event: Event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      document.removeEventListener("click", _onClickOnce, true);
-      onClickOutside();
-    };
-
-    const _onPointerCancel = () => {
-      document.removeEventListener("pointerup", _onPointerUpOnce, true);
-      document.removeEventListener("click", _onClickOnce, true);
-      document.removeEventListener("pointercancel", _onPointerCancel, true);
-    };
-
-    const _onPointerDown = (event: Event) => {
-      const { target } = event;
-      if (target) {
-        const node = nodeRef.current;
-        if (node && !node.contains(target as Node)) {
-          event.preventDefault();
-          event.stopPropagation();
-          if (triggerOnDown) {
-            onClickOutside();
-          } else {
-            document.addEventListener("pointerup", _onPointerUpOnce, true);
-            document.addEventListener("click", _onClickOnce, true);
-            document.addEventListener("pointercancel", _onPointerCancel, true);
-          }
-        }
-      }
-    };
-
-    document.addEventListener("pointerdown", _onPointerDown, true);
-
-    return () => {
-      document.removeEventListener("pointerdown", _onPointerDown, true);
-
-      if (!triggerOnDown) {
-        // At this version `onClickOutside` callback is triggered only after
-        // `pointerup` & `click` handlers, so it should be safe to remove that
-        // handlers here.
-        document.removeEventListener("pointerup", _onPointerUpOnce, true);
-        document.removeEventListener("click", _onClickOnce, true);
-        document.removeEventListener("pointercancel", _onPointerCancel, true);
-      }
-    };
-  }, [onClickOutside, watch, triggerOnDown, hasChildrenCallback]);
 
   if (!children) {
     return null;
@@ -161,3 +103,59 @@ export const ClickOutside: FC<Props> = ({
 
   return children({ getClickProps }) || null;
 };
+
+function setup(
+  node: HTMLElement,
+  triggerOnDown: boolean,
+  onClickOutside: () => void,
+) {
+  const _onPointerUpOnce = (event: Event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    document.removeEventListener("pointerup", _onPointerUpOnce, true);
+  };
+  const _onClickOnce = (event: Event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    document.removeEventListener("click", _onClickOnce, true);
+    onClickOutside();
+  };
+
+  const _onPointerCancel = () => {
+    document.removeEventListener("pointerup", _onPointerUpOnce, true);
+    document.removeEventListener("click", _onClickOnce, true);
+    document.removeEventListener("pointercancel", _onPointerCancel, true);
+  };
+
+  const _onPointerDown = (event: Event) => {
+    const { target } = event;
+    if (target) {
+      if (node && !node.contains(target as Node)) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (triggerOnDown) {
+          onClickOutside();
+        } else {
+          document.addEventListener("pointerup", _onPointerUpOnce, true);
+          document.addEventListener("click", _onClickOnce, true);
+          document.addEventListener("pointercancel", _onPointerCancel, true);
+        }
+      }
+    }
+  };
+
+  document.addEventListener("pointerdown", _onPointerDown, true);
+
+  return () => {
+    document.removeEventListener("pointerdown", _onPointerDown, true);
+
+    if (!triggerOnDown) {
+      // At this version `onClickOutside` callback is triggered only after
+      // `pointerup` & `click` handlers, so it should be safe to remove that
+      // handlers here.
+      document.removeEventListener("pointerup", _onPointerUpOnce, true);
+      document.removeEventListener("click", _onClickOnce, true);
+      document.removeEventListener("pointercancel", _onPointerCancel, true);
+    }
+  };
+}

@@ -1,5 +1,12 @@
 import cn from "classnames";
-import { FC, ReactElement, ReactNode, useMemo, useState } from "react";
+import {
+  FC,
+  ReactElement,
+  ReactNode,
+  RefCallback,
+  useMemo,
+  useState,
+} from "react";
 import * as F from "@floating-ui/react";
 import cl from "./Popper.module.scss";
 
@@ -12,7 +19,7 @@ export interface PopperVisibilityProps extends VisibilityEvents {
 }
 
 export interface PopperTriggerProps extends PopperVisibilityProps {
-  ref: (el: HTMLElement | null) => void;
+  ref: RefCallback<HTMLElement>;
   props: object;
 }
 
@@ -23,8 +30,7 @@ export interface PopperBaseProps {
 }
 
 export interface PopperProps
-  extends Partial<PopperVisibilityProps>,
-    PopperBaseProps {
+  extends Partial<PopperVisibilityProps>, PopperBaseProps {
   trigger: (props: PopperTriggerProps) => ReactElement;
   children?: ReactNode;
   arrow?: boolean;

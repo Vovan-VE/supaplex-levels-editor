@@ -1,12 +1,8 @@
-import { ComponentProps, FC, useCallback, useState } from "react";
+import { ComponentProps, FC, useCallback, useId, useState } from "react";
+import { useRefBySetState } from "../useRefBySetState";
 import { Context } from "./context";
 
 type Props = ComponentProps<"div">;
-
-const nextIndex = (() => {
-  let lastIndex = 0;
-  return () => ++lastIndex;
-})();
 
 export const PopupContainer: FC<Props> = ({ children, id, ...rest }) => {
   const [element, setElement] = useState<HTMLDivElement | null>(null);
@@ -14,16 +10,16 @@ export const PopupContainer: FC<Props> = ({ children, id, ...rest }) => {
     (): HTMLElement => element || document.body,
     [element],
   );
-  const [index] = useState(nextIndex);
+  const localId = useId();
 
   return (
     <>
       {element && <Context value={getElement}>{children}</Context>}
       <div
         {...rest}
-        ref={setElement}
+        ref={useRefBySetState(setElement)}
         // for using with portals
-        id={id ?? `popup-container_${index}`}
+        id={id ?? `popup-container_${localId}`}
       />
     </>
   );
