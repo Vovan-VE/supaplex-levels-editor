@@ -1,7 +1,6 @@
 import cn from "classnames";
 import {
   FC,
-  MutableRefObject,
   PropsWithChildren,
   ReactNode,
   useCallback,
@@ -19,26 +18,39 @@ import cl from "./TabsButtons.module.scss";
 
 type P = PropsWithChildren<ButtonProps> & {
   key: string;
-  curRef?: MutableRefObject<HTMLButtonElement | null>;
+  isCur: boolean;
 };
 const Item: SortableItemComponent<P, HTMLButtonElement> = ({
   ref,
-  item: { key, curRef, className, children, ...props },
+  item: { key, isCur, className, children, ...props },
   isDragging,
   itemProps,
   handleProps,
-}) => (
-  <Button
-    key={key}
-    ref={useMergeRefs(ref, curRef)}
-    {...props}
-    {...itemProps}
-    {...handleProps}
-    className={cn(className, isDragging && cl._dragging)}
-  >
-    {children}
-  </Button>
-);
+}) => {
+  const myRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (isCur) {
+      myRef.current?.scrollIntoView({
+        block: "nearest",
+        inline: "nearest",
+        behavior: "smooth",
+      });
+    }
+  }, [isCur]);
+
+  return (
+    <Button
+      key={key}
+      ref={useMergeRefs(ref, myRef)}
+      {...props}
+      {...itemProps}
+      {...handleProps}
+      className={cn(className, isDragging && cl._dragging)}
+    >
+      {children}
+    </Button>
+  );
+};
 
 export interface TabItem<K extends AnyKey = AnyKey> {
   key: K;
@@ -61,16 +73,6 @@ export const TabsButtons = <K extends AnyKey = AnyKey>({
   className,
   ...rest
 }: Props<K>): ReturnType<FC> => {
-  const refCur = useRef<HTMLButtonElement | null>(null);
-  useEffect(() => {
-    // FIXME: doesn't work with sortable
-    refCur.current?.scrollIntoView({
-      block: "nearest",
-      inline: "nearest",
-      behavior: "smooth",
-    });
-  }, [current]);
-
   const handleSort = useCallback(
     // REFACT: key is `string` here, not `K`
     (items: readonly P[]) => onSort?.(items.map(({ key }) => key as K)),
@@ -81,7 +83,7 @@ export const TabsButtons = <K extends AnyKey = AnyKey>({
     () =>
       tabs.map<P>(({ key, text, uiColor }) => ({
         key: String(key),
-        curRef: key === current ? refCur : undefined,
+        isCur: key === current,
         asLink: key !== current,
         uiColor,
         onClick: onClick && (() => onClick(key)),

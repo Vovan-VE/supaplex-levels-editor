@@ -3,8 +3,8 @@ import { useUnit } from "effector-react";
 import equal from "fast-deep-equal";
 import {
   FC,
-  MutableRefObject,
   PointerEvent,
+  RefObject,
   TouchEventHandler,
   useCallback,
   useMemo,
@@ -67,7 +67,7 @@ const snapshotEvent = (
 const useGridPointerEventHandler = (
   handler: GridPointerEventHandler | undefined,
   calcSnapshot: (event: PointerEvent) => CellEventSnapshot,
-  prevSnapshot: MutableRefObject<CellEventSnapshot | undefined>,
+  prevSnapshot: RefObject<CellEventSnapshot | undefined>,
   setPrevSnapshot: (s: CellEventSnapshot) => void,
 ) =>
   useMemo(

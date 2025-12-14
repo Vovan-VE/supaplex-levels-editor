@@ -1,12 +1,13 @@
-import { MutableRefObject, Ref, RefCallback, useMemo } from "react";
+import { Ref, RefCallback, useMemo } from "react";
 
-type AnyRef<T> = Ref<T> | MutableRefObject<T | null> | undefined;
+type AnyRef<T> = Ref<T> | undefined;
+type RefsTuple<T> = readonly [ref1: AnyRef<T>, ref2: AnyRef<T>, ...AnyRef<T>[]];
 
 const setRef = <T>(ref: AnyRef<T>, value: T | null) => {
   if (typeof ref === "function") {
     ref(value);
   } else if (ref) {
-    (ref as MutableRefObject<T | null>).current = value;
+    ref.current = value;
   }
 };
 
@@ -14,8 +15,8 @@ const setRef = <T>(ref: AnyRef<T>, value: T | null) => {
  * Merge multiple refs into one
  *
  * ```tsx
- * const C: FC<P & RefAttributes<T | null>> = ({ ref, ...props }) => {
- *   const myRef = useRef<T | null>(null);
+ * const C: FC<P & RefAttributes<T>> = ({ ref, ...props }) => {
+ *   const myRef = useRef<T>(null);
  *   const setRef = useMergeRefs(ref, myRef);
  *
  *   // useEffect(() => {
@@ -28,7 +29,9 @@ const setRef = <T>(ref: AnyRef<T>, value: T | null) => {
  * console.log(<C ref={...} />);
  * ```
  */
-export const useMergeRefs = <T>(...refs: AnyRef<T>[]): RefCallback<T> | null =>
+export const useMergeRefs = <T, Args extends RefsTuple<T>>(
+  ...refs: Args
+): RefCallback<T> | null =>
   useMemo(
     () =>
       refs.some(Boolean)
