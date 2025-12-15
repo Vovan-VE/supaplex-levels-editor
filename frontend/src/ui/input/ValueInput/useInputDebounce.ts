@@ -3,9 +3,10 @@ import {
   FocusEventHandler,
   useCallback,
   useEffect,
-  useReducer,
   useRef,
+  useState,
 } from "react";
+import { useIsChanged } from "utils/react";
 
 interface Options<V> {
   value?: V;
@@ -16,6 +17,10 @@ interface Options<V> {
 }
 
 type TimeoutId = ReturnType<typeof setTimeout>;
+const resetT = (prev: TimeoutId | null): null => {
+  if (prev) clearTimeout(prev);
+  return null;
+};
 
 /**
  * triggers `onChangeEnd` with debounce when typing finished and right with
@@ -28,60 +33,50 @@ export const useInputDebounce = <V>({
   onBlur,
   debounceTimeout = 750,
 }: Options<V>) => {
-  const latestV = useRef<V>(undefined);
-  useEffect(() => {
-    if (value !== undefined) {
-      latestV.current = undefined;
-    }
-  }, [value]);
+  const [input, setInput] = useState(value);
+  const isValueChanged = useIsChanged(value);
+
+  const [, setT] = useState<TimeoutId | null>(null);
+  useEffect(() => () => setT(resetT), []);
+
+  if (isValueChanged) {
+    setT(resetT);
+    setInput(value);
+  }
 
   const refChangeEnd = useRef(onChangeEnd);
   useEffect(() => {
     refChangeEnd.current = onChangeEnd;
   }, [onChangeEnd]);
 
-  const flushRef = useRef(() => {
-    if (latestV.current !== undefined) {
-      refChangeEnd.current?.(latestV.current);
-      latestV.current = undefined;
-    }
-  });
-
-  const [, setT] = useReducer(
-    (prev: TimeoutId | null, next: TimeoutId | null) => {
-      if (prev) clearTimeout(prev);
-      return next;
-    },
-    null,
-  );
-  useEffect(() => () => setT(null), []);
-
   const handleChange = useCallback(
     (value: V, e: ChangeEvent<HTMLInputElement>) => {
-      latestV.current = value;
-      // if (debounceTimeout > 0) {
-      setT(setTimeout(flushRef.current, debounceTimeout));
-      // }
-      // or fire it first and check `e.isDefaultPrevented()` and/or
-      // `e.isPropagationStopped()`? Ignore cancelled input.
+      setInput(value);
+      setT((prev) => {
+        if (prev) clearTimeout(prev);
+        return setTimeout(() => {
+          refChangeEnd.current?.(value);
+        }, debounceTimeout);
+      });
       onChange?.(value, e);
     },
     [onChange, debounceTimeout],
   );
 
+  const inputIfDiffers = Object.is(input, value) ? undefined : input;
   const handleBlur = useCallback<FocusEventHandler<HTMLInputElement>>(
     (e) => {
-      setT(null);
-      flushRef.current();
+      setT(resetT);
+      if (inputIfDiffers !== undefined) {
+        refChangeEnd.current?.(inputIfDiffers);
+      }
       onBlur?.(e);
     },
-    [onBlur],
+    [onBlur, inputIfDiffers],
   );
 
   return {
-    get value() {
-      return latestV.current !== undefined ? latestV.current : value;
-    },
+    value: input !== undefined ? input : value,
     onChange: handleChange,
     onBlur: handleBlur,
   } as const;
