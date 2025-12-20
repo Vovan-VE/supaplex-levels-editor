@@ -4,6 +4,7 @@
 
 - Fix: File in Read-Only mode still allows to edit Demo/Signature.
 - Fix: Demo/Signature edit triggers "OK" by "Help" button.
+- Fix: Double Chips Style option now applies everywhere.
 
 ## 0.22.0 (2025-11-07)
 

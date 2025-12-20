@@ -52,9 +52,6 @@ export const useValueInputWrap = <V>({
   const handleFocus = useCallback(
     (e: FocusEvent<HTMLInputElement>) => {
       setIsFocused(true);
-      // if (undefined !== value) {
-      //   setOwnValue(value);
-      // }
       onFocus?.(e);
     },
     [onFocus],

@@ -21,7 +21,7 @@
   - is std, why not
 - tooltip for a tile/coords (in dialogs) to display part of level as context
 - Import/Open level compatibility report has text from "convert file" context
-- A `Dialog` don't block hotkeys behind
+- A `Dialog` don't block hotkeys behind, focus management
 - Open ZIP with options
   - Entire ZIP
   - Add options.json to opened files
@@ -30,7 +30,6 @@
   - Problem: users will use it in levels upload request instead of exported
 - an SP level was exported as "*.zip" just renamed
 - File with Options can be saved as regular without Options, so Options are lost
-- Trash for deleted levels.
 
 ### Desktop
 
@@ -53,6 +52,7 @@
 - BIN demo export/import?
 - 100% offline with level testing and demo replay?
   - Need run game engine and own offline renderer
+- Trash for deleted levels.
 
 ### Desktop
 
