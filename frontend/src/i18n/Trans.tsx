@@ -20,7 +20,7 @@ const components = {
   linkVer: <a href={VERSION_URL} target="_blank" rel="noopener noreferrer" />,
   linkSo: (
     <a
-      href="https://www.supaplex.online/"
+      href="https://www.megaplex.website/"
       target="_blank"
       rel="noopener noreferrer"
     />
