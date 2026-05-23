@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.23.0 (DEV)
+
+- ..
+
 ## 0.22.0 (2025-11-07)
 
 - Add: Support for SO Green Disk and Screw custom tiles replacement.
