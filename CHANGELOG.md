@@ -1,8 +1,12 @@
 # Changelog
 
+## 0.23.0 (2026-05-24)
+
+- Upgraded to new Megaplex.Online name and URL.
+
 ## 0.22.0 (2025-11-07)
 
-- Add: Support for SO Green Disk and Screw custom tiles replacement.
+- Add: Support for MO Green Disk and Screw custom tiles replacement.
 
 ## 0.21.0 (2024-08-23)
 
@@ -69,7 +73,7 @@
 
 ## 0.18.0 (2023-12-01)
 
-- Add: New SO Special Ports Database support. This brings the following changes:
+- Add: New MO Special Ports Database support. This brings the following changes:
   - More than 10 special ports can be defined in a level.
   - No limit for special port position in big MPX level.
   - Any Port can now be defined as Special.
@@ -108,7 +112,7 @@
 
 ### Desktop
 
-- Fix: Test SO iframe collapsed to small size.
+- Fix: Test MO iframe collapsed to small size.
 
 ## 0.16.0 (2023-09-15)
 
@@ -122,10 +126,10 @@
 
 ## 0.15.0 (2023-07-22)
 
-- Add: Option to SO Test Page to override number of infotrons needed.
+- Add: Option to MO Test Page to override number of infotrons needed.
 - Fix: Produced MPX files now should work better in Megaplex. Dropped support of
   incorrect MPX header (with spaces) when saving MPX file with 1 level.
-- Enh: Short options to SO Test Page
+- Enh: Short options to MO Test Page
 
 ### Desktop
 
@@ -146,7 +150,7 @@
 - Add: Files buttons can be reordered by drag-n-drop.
 - Add: Export current level body (or selection) as PNG image to a file or to
   clipboard.
-- Add: Export current level as Test or Demo Link to SO test page.
+- Add: Export current level as Test or Demo Link to MO test page.
 
 ### sple.me
 
@@ -257,10 +261,10 @@ device.
 
 ## 0.9.0 (2023-03-25)
 
-- Add: options for SO test page:
+- Add: options for MO test page:
   - Plasma limit and Plasma time;
   - Use Serial ports.
-- Add: Button to copy SO level options to clipboard to use in level upload
+- Add: Button to copy MO level options to clipboard to use in level upload
   requests.
 - Add: "Save with options" button to download levelset as `*.zip`.
 - Add: "Remove Other files" button.
@@ -272,7 +276,7 @@ device.
 
 ## 0.8.0 (2023-01-30)
 
-- Add: experimental options to use Plasma and/or Zonkers on SO test page.
+- Add: experimental options to use Plasma and/or Zonkers on MO test page.
   - Options live in editor only, because there are no new file format for that
     yet.
   - While options are prompted right before sending to test page, "ask
@@ -325,7 +329,7 @@ device.
 
 ## 0.4.0 (2022-10-24)
 
-- Add: Experimental recording and replay embedded demo with Supaplex.Online test
+- Add: Experimental recording and replay embedded demo with Megaplex.Online test
   page (when supported by file format, like MPX).
 - Add: Compact UI for mobile devices. Any feedback for it will be helpful.
   - UI is adaptive by default, but can be changed in new Settings dialog.
@@ -335,7 +339,7 @@ device.
 
 ## 0.3.0 (2022-10-16)
 
-- Add: Experimental "test level" with Supaplex.Online test page.
+- Add: Experimental "test level" with Megaplex.Online test page.
 
 ## 0.2.0 (2022-10-15)
 

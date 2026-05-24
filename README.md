@@ -9,7 +9,7 @@
 [![Development version](https://img.shields.io/github/package-json/v/vovan-ve/supaplex-levels-editor/devel?filename=frontend%2Fpackage.json&label=in+dev)](https://github.com/Vovan-VE/supaplex-levels-editor/blob/devel/CHANGELOG.md)
 [![Last commit in devel](https://img.shields.io/github/last-commit/vovan-ve/supaplex-levels-editor/devel)](https://github.com/Vovan-VE/supaplex-levels-editor/compare/devel)
 
-SpLE is **Supaplex Levels Editor**. Inspired by [Supaplex.Online][spo] and its
+SpLE is **Supaplex Levels Editor**. Inspired by [Megaplex.Online][mpo] and its
 community.
 
 My previous editor (Winplex Collection Editor — WpColEd) is stuck in far 2010 on
@@ -57,7 +57,7 @@ Also:
   browser. Neither external storages, nor cross-device sync are implied, nor
   planned.
 
-  [sple.me][sple.me] uses [Supaplex.Online test page][spo.test] to test your
+  [sple.me][sple.me] uses [Megaplex.Online test page][mpo.test] to test your
   level when you request that.
 
 - DON'T rely much on browser storage to remember your modified in-memory files
@@ -125,6 +125,6 @@ See also [frontend/README.md](./frontend/README.md).
   - Wails v2 ([Installation](https://wails.io/docs/gettingstarted/installation))
 
 [sple.me]: https://sple.me
-[spo]: https://www.supaplex.online/
-[spo.test]: https://www.supaplex.online/test/
+[mpo]: https://www.megaplex.website/
+[mpo.test]: https://www.megaplex.website/test/
 [wails]: https://wails.io
