@@ -28,7 +28,7 @@ export const base64Encode = (ab: ArrayBufferLike) => {
   return b64;
 };
 
-export const base64Decode = (blob64: string): ArrayBufferLike => {
+export const base64Decode = (blob64: string): ArrayBuffer => {
   const b = window.atob(blob64);
   return Uint8Array.from({ length: b.length }, (_, i) => b.charCodeAt(i))
     .buffer;

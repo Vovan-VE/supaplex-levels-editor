@@ -23,7 +23,7 @@ export interface ISupaplexLevelRegion extends ILevelRegion {
 export interface ISupaplexLevel extends IBaseLevel, IWithDemo, IWithSignature {
   copyRegion(rect: Rect): ISupaplexLevelRegion;
   readonly length: number;
-  readonly raw: Uint8Array;
+  readonly raw: Uint8Array<ArrayBuffer>;
   readonly body: ILevelBody;
   resize(options: IResizeLevelOptions): this;
   readonly initialGravity: boolean;

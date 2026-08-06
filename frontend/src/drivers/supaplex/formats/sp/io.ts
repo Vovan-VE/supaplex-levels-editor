@@ -3,19 +3,19 @@ import { createLevelset } from "../../levelset";
 import { ISupaplexLevelset } from "../../types";
 import { LEVEL_BYTES_LENGTH, LEVEL_HEIGHT, LEVEL_WIDTH } from "../std";
 
-function validateBuffer(buffer: ArrayBuffer): Error | null {
+function validateBuffer(buffer: ArrayBufferLike): Error | null {
   if (buffer.byteLength < LEVEL_BYTES_LENGTH) {
     return new Error("Invalid file size: less then level size");
   }
   return null;
 }
 
-export function isReadableBuffer(buffer: ArrayBuffer): boolean {
+export function isReadableBuffer(buffer: ArrayBufferLike): boolean {
   const err = validateBuffer(buffer);
   return !err;
 }
 
-export const readLevelset = (buffer: ArrayBuffer): ISupaplexLevelset => {
+export const readLevelset = (buffer: ArrayBufferLike): ISupaplexLevelset => {
   const err = validateBuffer(buffer);
   if (err) throw err;
 

@@ -3,19 +3,19 @@ import { createLevelset } from "../../levelset";
 import { ISupaplexLevel, ISupaplexLevelset } from "../../types";
 import { LEVEL_BYTES_LENGTH, LEVEL_HEIGHT, LEVEL_WIDTH } from "../std";
 
-function validateBuffer(buffer: ArrayBuffer): Error | null {
+function validateBuffer(buffer: ArrayBufferLike): Error | null {
   if (buffer.byteLength % LEVEL_BYTES_LENGTH) {
     return new Error("Invalid file size: not a module of level size");
   }
   return null;
 }
 
-export function isReadableBuffer(buffer: ArrayBuffer): boolean {
+export function isReadableBuffer(buffer: ArrayBufferLike): boolean {
   const err = validateBuffer(buffer);
   return !err;
 }
 
-function* levelsFromBuffer(buffer: ArrayBuffer): Iterable<ISupaplexLevel> {
+function* levelsFromBuffer(buffer: ArrayBufferLike): Iterable<ISupaplexLevel> {
   const err = validateBuffer(buffer);
   if (err) throw err;
 
@@ -38,7 +38,7 @@ function* levelsFromBuffer(buffer: ArrayBuffer): Iterable<ISupaplexLevel> {
   }
 }
 
-export const readLevelset = (file: ArrayBuffer): ISupaplexLevelset =>
+export const readLevelset = (file: ArrayBufferLike): ISupaplexLevelset =>
   createLevelset(levelsFromBuffer(file));
 
 export const writeLevelset = (levelset: ISupaplexLevelset): ArrayBuffer => {

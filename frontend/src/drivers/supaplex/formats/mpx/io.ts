@@ -28,7 +28,7 @@ const MPX_SIGN = new Uint8Array("MPX ".split("").map((ch) => ch.charCodeAt(0)));
 const MIN_FILE_SIZE = 8 + 12 + 1 + FOOTER_BYTE_LENGTH;
 
 const cmpUint8Array = (
-  buffer: ArrayBuffer,
+  buffer: ArrayBufferLike,
   byteOffset: number,
   match: Uint8Array,
 ) =>
@@ -36,10 +36,10 @@ const cmpUint8Array = (
     (b, i) => b === match[i],
   );
 
-const getInt16LE = (file: ArrayBuffer, byteOffset: number) =>
+const getInt16LE = (file: ArrayBufferLike, byteOffset: number) =>
   new DataView(file, byteOffset, 2).getInt16(0, true);
 
-const getInt32LE = (file: ArrayBuffer, byteOffset: number) =>
+const getInt32LE = (file: ArrayBufferLike, byteOffset: number) =>
   new DataView(file, byteOffset, 4).getInt32(0, true);
 
 const setInt16LE = (buffer: Uint8Array, byteOffset: number, value: number) => {
@@ -50,7 +50,7 @@ const setInt32LE = (buffer: Uint8Array, byteOffset: number, value: number) => {
   new DataView(buffer.buffer).setInt32(byteOffset, value, true);
 };
 
-function validateBuffer(buffer: ArrayBuffer): Error | null {
+function validateBuffer(buffer: ArrayBufferLike): Error | null {
   if (
     buffer.byteLength < MIN_FILE_SIZE ||
     !cmpUint8Array(buffer, 0, MPX_SIGN)
@@ -60,7 +60,7 @@ function validateBuffer(buffer: ArrayBuffer): Error | null {
   return null;
 }
 
-export function isReadableBuffer(buffer: ArrayBuffer): boolean {
+export function isReadableBuffer(buffer: ArrayBufferLike): boolean {
   const err = validateBuffer(buffer);
   if (err) return false;
 
@@ -70,7 +70,7 @@ export function isReadableBuffer(buffer: ArrayBuffer): boolean {
   return ver === 1 && levelsCount > 0 && levelsCount < 0x7fff;
 }
 
-export const readLevelset = (buffer: ArrayBuffer): ISupaplexLevelset => {
+export const readLevelset = (buffer: ArrayBufferLike): ISupaplexLevelset => {
   const err = validateBuffer(buffer);
   if (err) throw err;
 

@@ -230,7 +230,7 @@ export interface IBaseFormat<L extends IBaseLevel, S extends IBaseLevelset<L>> {
   readonly demoSupport?: boolean;
   readonly signatureMaxLength?: number;
   supportReport(levelset: S): Iterable<ISupportReportMessage>;
-  isReadableBuffer(buffer: ArrayBuffer): boolean;
+  isReadableBuffer(buffer: ArrayBufferLike): boolean;
   readLevelset(file: ArrayBufferLike): S;
   writeLevelset(levelset: S): ArrayBuffer;
   createLevelset(levels?: readonly L[] | Iterable<L>): S;
