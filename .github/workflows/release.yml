@@ -28,10 +28,10 @@ jobs:
       version: ${{ steps.extract_version.outputs.current-version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24.x
           cache: npm
@@ -57,7 +57,7 @@ jobs:
           ./frontend/scripts/get-release-notes.sh < ./CHANGELOG.md > ./THIS-CHANGELOG.md
 
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v6
 
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
@@ -66,18 +66,18 @@ jobs:
           destination: ./frontend/dist/docs
 
       - name: Upload web artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./frontend/dist
 
       - name: Upload desktop artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: desktop-front
           path: ./frontend/dist-wails/
 
       - name: Upload release artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-data
           path: ./THIS-CHANGELOG.md
@@ -89,14 +89,14 @@ jobs:
       matrix:
         platform: [ ubuntu-latest ]
         #platform: [ ubuntu-latest, macos-latest ]
-        go-version: [ 1.24.9 ]
+        go-version: [ 1.24.13 ]
     runs-on: ${{ matrix.platform }}
     needs: build_front
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version: ${{ matrix.go-version }}
 
@@ -107,7 +107,7 @@ jobs:
           sudo apt install -y libgtk-3-dev libwebkit2gtk-4.1-dev nsis
 
       - name: Download desktop front artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: desktop-front
           path: frontend/dist-wails
@@ -125,7 +125,7 @@ jobs:
           VERSION: ${{ needs.build_front.outputs.version }}
 
       - name: Upload desktop artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: desktop-bin-${{ matrix.platform }}
           path: ./build/bin/*
@@ -140,13 +140,13 @@ jobs:
       - build_desktop
     steps:
       - name: Download app artifacts from linux
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: desktop-bin-ubuntu-latest
           path: ./release-files
 
 #      - name: Download app artifacts from mac
-#        uses: actions/download-artifact@v4
+#        uses: actions/download-artifact@v8
 #        with:
 #          name: desktop-bin-macos-latest
 #          #path: ./release-files
@@ -162,13 +162,13 @@ jobs:
           cat *.txt
 
       - name: Download release artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release-data
           path: .
 
       - name: Draft release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           draft: true
@@ -194,4 +194,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
