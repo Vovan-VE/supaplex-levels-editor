@@ -47,10 +47,10 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@floating-ui/react": "^0.27.16",
     "@types/file-saver": "^2.0.7",
-    "@types/node": "^24.10.3",
+    "@types/node": "^24.13.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.2",
+    "@vitejs/plugin-react": "^6.0.5",
     "classnames": "^2.5.1",
     "effector": "^23.2.2",
     "effector-react": "^23.3.0",
@@ -70,10 +70,9 @@
     "sass": "^1.96.0",
     "typescript": "^5.2.2",
     "typescript-eslint": "^8.49.0",
-    "vite": "^7.2.7",
-    "vite-plugin-svgr": "^4.5.0",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^4.0.15"
+    "vite": "^8.2.0",
+    "vite-plugin-svgr": "^5.2.0",
+    "vitest": "^4.1.10"
   },
   "devDependencies": {
     "husky": "^9.1.7",
