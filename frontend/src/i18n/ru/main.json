@@ -4,7 +4,7 @@
   },
   "about": {
     "content": {
-      "B010": "<b>{APP_TITLE}</b> — это редактор уровней <b>Supaplex</b> (Supaplex Levels Editor). Вдохновлён <linkSo>Supaplex.Online</linkSo> и его сообществом."
+      "B010": "<b>{APP_TITLE}</b> — это редактор уровней <b>Supaplex</b> (Supaplex Levels Editor). Вдохновлён <linkSo>Megaplex.Online</linkSo> и его сообществом."
     }
   },
   "app": {

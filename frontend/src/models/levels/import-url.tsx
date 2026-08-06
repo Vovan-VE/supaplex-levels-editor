@@ -13,7 +13,13 @@ const isSubUrl = (subject: URL, target: URL) => {
   return true;
 };
 
-const targetUrls = [new URL(TEST_DEMO_URL), new URL(TEST_LEVEL_URL)];
+const targetUrls = [
+  new URL(TEST_DEMO_URL),
+  new URL(TEST_LEVEL_URL),
+  // backward compatibility
+  new URL("https://www.supaplex.online/test/?demo"),
+  new URL("https://www.supaplex.online/test/"),
+];
 
 export const importLevelAsLink = async (url: string) => {
   const u = new URL(url);
