@@ -177,7 +177,7 @@ export const demoFromText = (text: string): DemoFromTextResult => {
     at = to;
 
     const wasAt = at;
-    let frames = 0;
+    let frames: number;
     const int1 = parseInt();
     if (int1) {
       at = int1.next;

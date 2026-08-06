@@ -2,7 +2,7 @@ import { useUnit } from "effector-react";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { InlineTile } from "drivers/supaplex/InlineTile";
-import { SpChipClassic, SpChipWinplex } from "drivers/supaplex/Tile";
+import { SpChipClassic, SpChipWinplex } from "drivers/supaplex/tile-classes";
 import { TILE_CHIP_L, TILE_CHIP_R } from "drivers/supaplex/tiles-id";
 import { Trans } from "i18n/Trans";
 import { $spChip, setSpChip } from "models/settings";

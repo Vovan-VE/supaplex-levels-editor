@@ -57,6 +57,7 @@ const fulfillFileLevels = async (
     throw new Error(
       "Could not read data from blob: " +
         (e instanceof Error ? e.message : "unknown error"),
+      { cause: e },
     );
   }
   return {

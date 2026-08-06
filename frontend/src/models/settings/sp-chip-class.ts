@@ -1,5 +1,5 @@
 import { useUnit } from "effector-react";
-import { SpChipClassic, SpChipWinplex } from "drivers/supaplex/Tile";
+import { SpChipClassic, SpChipWinplex } from "drivers/supaplex/tile-classes";
 import { $spChip } from "./index";
 
 const CL_SP_CHIP = [SpChipClassic, SpChipWinplex];
