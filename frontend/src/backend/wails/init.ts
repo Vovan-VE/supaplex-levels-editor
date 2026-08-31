@@ -1,6 +1,6 @@
 import { sample } from "effector";
+import { Browser, Events } from "@wailsio/runtime";
 import { showToastError } from "models/ui/toasts";
-import { BrowserOpenURL, EventsOn } from "./runtime";
 import {
   frontEventsHandlers,
   onShowError,
@@ -9,7 +9,7 @@ import {
 
 export const init = () => {
   for (const [name, handler] of Object.entries(frontEventsHandlers)) {
-    EventsOn(name, handler);
+    Events.On(name, handler);
   }
 
   sample({
@@ -23,7 +23,7 @@ export const init = () => {
       if (tr instanceof HTMLElement) {
         for (let el: HTMLElement | null = tr; el; el = el.parentElement) {
           if (el.matches("a[href]")) {
-            BrowserOpenURL(el.getAttribute("href")!);
+            Browser.OpenURL(el.getAttribute("href")!);
             e.preventDefault();
             return;
           }

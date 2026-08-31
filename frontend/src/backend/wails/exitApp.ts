@@ -1,10 +1,10 @@
-import { SetIsDirty } from "./go/main/App";
-import { Quit } from "./runtime";
+import { Application } from "@wailsio/runtime";
+import { SetIsDirty } from "./bindings/github.com/vovan-ve/sple-desktop/app";
 
 export const exitApp = (ignoreDirty?: boolean) => {
   if (ignoreDirty) {
-    SetIsDirty(false).then(() => Quit());
+    SetIsDirty(false).then(() => Application.Quit());
   } else {
-    Quit();
+    Application.Quit();
   }
 };

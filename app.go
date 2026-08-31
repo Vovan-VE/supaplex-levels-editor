@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -16,9 +15,7 @@ import (
 	"github.com/vovan-ve/sple-desktop/internal/files"
 	"github.com/vovan-ve/sple-desktop/internal/helpers"
 	"github.com/vovan-ve/sple-desktop/internal/storage"
-	"github.com/wailsapp/wails/v2/pkg/logger"
-	"github.com/wailsapp/wails/v2/pkg/options"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 const (
@@ -35,13 +32,10 @@ const (
 	configFileFiles    = "files.v1.json"
 )
 
-type AppOptions struct {
-	Logger logger.Logger
-}
-
 // App struct
 type App struct {
-	ctx         context.Context
+	app         *application.App
+	window      *application.WebviewWindow
 	appConfig   storage.Full[string]
 	frontConfig storage.Full[string]
 	chosenReg   files.ChosenRegistry
@@ -50,8 +44,6 @@ type App struct {
 
 	isDirty bool
 
-	opt *AppOptions
-
 	// DomReady keep triggering with every drag-n-drop
 	// https://github.com/wailsapp/wails/issues/3563
 	onceDomReady sync.Once
@@ -59,59 +51,57 @@ type App struct {
 }
 
 // NewApp creates a new App application struct
-func NewApp(opt *AppOptions) *App {
-	if opt == nil {
-		opt = &AppOptions{}
-	}
+func NewApp() *App {
 	return &App{
-		opt: opt,
 		//dropFiles: make(chan []string, 1),
 	}
 }
 
-// startup is called at application startup
-func (a *App) startup(ctx context.Context) {
-	// Perform your setup here
-	a.ctx = ctx
+func (a *App) connect(app *application.App, win *application.WebviewWindow) {
+	a.app = app
+	a.window = win
+}
 
+func (a *App) startup(event *application.ApplicationEvent) {
+	a.app.Logger.Info("startup")
 	configDir := config.GetConfigsDir()
 	if err := config.EnsureDir(configDir, "config dir"); err != nil {
-		runtime.LogErrorf(ctx, "%v", err)
+		a.app.Logger.Error("%v", err)
 		return
 	}
 
 	appConfig, err := config.NewFileStorage(config.FileStorageOptions{
-		Ctx:         ctx,
+		Logger:      a.app.Logger,
 		Filepath:    filepath.Join(configDir, configFileConfig),
 		FilepathOld: filepath.Join(configDir, configFileConfigOld),
 		IOWG:        &a.iowg,
 	})
 	if err != nil {
-		runtime.LogErrorf(ctx, "front config: %v", err)
+		a.app.Logger.Error("front config: %v", err)
 		return
 	}
 
 	front, err := config.NewFileStorage(config.FileStorageOptions{
-		Ctx:         ctx,
+		Logger:      a.app.Logger,
 		Filepath:    filepath.Join(configDir, configFileFront),
 		FilepathOld: filepath.Join(configDir, configFileFrontOld),
 		IOWG:        &a.iowg,
 	})
 	if err != nil {
-		runtime.LogErrorf(ctx, "front config: %v", err)
+		a.app.Logger.Error("front config: %v", err)
 		return
 	}
 
-	chosenReg := files.NewChosenRegistry(ctx)
+	chosenReg := files.NewChosenRegistry(a.app.Logger)
 	fs, err := files.NewStorage(files.StorageOptions{
-		Ctx:         ctx,
+		Logger:      a.app.Logger,
 		Filepath:    filepath.Join(configDir, configFileFiles),
 		FilepathOld: filepath.Join(configDir, configFileFilesOld),
 		Chosen:      chosenReg,
 		IOWG:        &a.iowg,
 	})
 	if err != nil {
-		runtime.LogErrorf(ctx, "files registry: %v", err)
+		a.app.Logger.Error("files registry: %v", err)
 		return
 	}
 
@@ -124,8 +114,8 @@ func (a *App) startup(ctx context.Context) {
 }
 
 // domReady is called after front-end resources have been loaded
-func (a *App) domReady(ctx context.Context) {
-	//runtime.LogInfof(a.ctx, "dom ready")
+func (a *App) domReady(event *application.WindowEvent) {
+	a.app.Logger.Info("dom ready")
 	// https://github.com/wailsapp/wails/issues/3563
 	a.onceDomReady.Do(a.domReadyHandler)
 
@@ -141,14 +131,14 @@ func (a *App) domReady(ctx context.Context) {
 func (a *App) domReadyHandler() {
 	winPl, _, err := a.appConfig.GetItem(config.AppWindowPlacement)
 	if err != nil {
-		runtime.LogErrorf(a.ctx, "cannot read %s: %v", config.AppWindowPlacement, err)
+		a.app.Logger.Error("cannot read %s: %v", config.AppWindowPlacement, err)
 	}
 	p := config.WindowPlacementFromString(winPl)
 	if p.IsMax {
-		runtime.WindowMaximise(a.ctx)
+		a.window.Maximise()
 	} else {
-		runtime.WindowSetPosition(a.ctx, p.X, p.Y)
-		runtime.WindowSetSize(a.ctx, p.W, p.H)
+		a.window.SetPosition(p.X, p.Y)
+		a.window.SetSize(p.W, p.H)
 	}
 
 	absFiles, err := files.NormalizeArgs(os.Args[1:])
@@ -158,10 +148,10 @@ func (a *App) domReadyHandler() {
 	go a.checkUpdate()
 }
 
-func (a *App) secondInstance(data options.SecondInstanceData) {
-	runtime.LogInfof(a.ctx, "secondInstance: %#v", data)
+func (a *App) secondInstance(data application.SecondInstanceData) {
+	a.app.Logger.Info("secondInstance: %#v", data)
 
-	absFiles, err := files.ResolveArgs(data.WorkingDirectory, data.Args)
+	absFiles, err := files.ResolveArgs(data.WorkingDir, data.Args)
 	a.showError(&err)
 	a.openFilesAtFront(absFiles)
 
@@ -191,13 +181,12 @@ func (a *App) openFilesAtFront(absFiles []string) {
 }
 
 func (a *App) checkUpdate() {
-	defer a.catchPanic()
 	a.iowg.Add(1)
 	defer a.iowg.Done()
 
 	lastKnownUpdateS, _, err := a.appConfig.GetItem(config.AppLatestRelease)
 	if err != nil {
-		runtime.LogErrorf(a.ctx, "cannot read %s: %v", config.AppLatestRelease, err)
+		a.app.Logger.Error("cannot read %s: %v", config.AppLatestRelease, err)
 	}
 	lastKnownUpdate := config.UpdateReleaseFromString(lastKnownUpdateS)
 
@@ -206,7 +195,7 @@ func (a *App) checkUpdate() {
 			return
 		}
 		select {
-		case <-a.ctx.Done():
+		case <-a.app.Context().Done():
 			return
 		default:
 		}
@@ -219,15 +208,15 @@ func (a *App) checkUpdate() {
 		// if triggered before front init
 		b, err := json.Marshal(v)
 		if err != nil {
-			runtime.LogErrorf(a.ctx, "json marshal: %v", err)
+			a.app.Logger.Error("json marshal: %v", err)
 			return
 		}
-		runtime.WindowExecJS(a.ctx, "window.spleLatestVersion="+string(b)+";")
+		a.window.ExecJS("window.spleLatestVersion=" + string(b) + ";")
 	}()
 
-	latestRelease, err := config.UpdateReleaseFetch(a.ctx)
+	latestRelease, err := config.UpdateReleaseFetch(a.app.Context())
 	if err != nil {
-		runtime.LogErrorf(a.ctx, "check update: %v", err)
+		a.app.Logger.Error("check update: %v", err)
 		return
 	}
 	if latestRelease == nil {
@@ -239,37 +228,37 @@ func (a *App) checkUpdate() {
 	// have new release
 	lastKnownUpdate = latestRelease
 	if err = a.appConfig.SetItem(config.AppLatestRelease, latestRelease.String()); err != nil {
-		runtime.LogErrorf(a.ctx, "remember latest release: %v", err)
+		a.app.Logger.Error("remember latest release: %v", err)
 	}
 }
 
-// beforeClose is called when the application is about to quit,
-// either by clicking the window close button or calling runtime.Quit.
-// Returning true will cause the application to continue, false will continue shutdown as normal.
-func (a *App) beforeClose(ctx context.Context) (prevent bool) {
-	prevent = a.isDirty
-	if prevent {
+func (a *App) shouldQuit() (should bool) {
+	should = !a.isDirty
+	if a.isDirty {
 		a.triggerFront(backend.FEExitDirty, nil)
-	} else if !runtime.WindowIsMinimised(ctx) {
-		p := config.WindowPlacement{}
-		p.X, p.Y = runtime.WindowGetPosition(ctx)
-		p.W, p.H = runtime.WindowGetSize(ctx)
-		p.IsMax = runtime.WindowIsMaximised(ctx)
-
-		if err := a.appConfig.SetItem(config.AppWindowPlacement, p.String()); err != nil {
-			runtime.LogErrorf(ctx, "cannot save window placement: %v", err)
-		}
 	}
 	return
 }
 
 // shutdown is called at application termination
-func (a *App) shutdown(ctx context.Context) {
-	runtime.LogInfo(a.ctx, "shutdown")
+func (a *App) shutdown() {
+	a.app.Logger.Info("shutdown")
+
 	//close(a.dropFiles)
-	runtime.LogInfo(a.ctx, "wait pending I/O...")
+	if !a.window.IsMinimised() {
+		p := config.WindowPlacement{}
+		p.X, p.Y = a.window.Position()
+		p.W, p.H = a.window.Size()
+		p.IsMax = a.window.IsMaximised()
+
+		if err := a.appConfig.SetItem(config.AppWindowPlacement, p.String()); err != nil {
+			a.app.Logger.Error("cannot save window placement: %v", err)
+		}
+	}
+
+	a.app.Logger.Info("wait pending I/O...")
 	a.iowg.Wait()
-	runtime.LogInfo(a.ctx, "wait pending I/O done")
+	a.app.Logger.Info("wait pending I/O done")
 }
 
 func (a *App) configStorage() storage.Full[string] {
@@ -288,24 +277,19 @@ func (a *App) showError(pErr *error) {
 }
 
 func (a *App) triggerFront(event string, data any) {
-	//runtime.LogDebugf(a.ctx, "App.triggerFront(%v, %v)", event, data)
-	runtime.EventsEmit(a.ctx, event, data)
+	//a.app.Logger.Debug("App.triggerFront(%v, %v)", event, data)
+	a.window.EmitEvent(event, data)
 }
 
-func (a *App) catchPanic() {
-	p := recover()
-	if p == nil {
-		return
-	}
-	runtime.LogFatalf(a.ctx, "panic: %+v", p)
+func (a *App) handlePanic(p *application.PanicDetails) {
+	a.app.Logger.Error("panic: %+v", p.Error)
 }
 
 func (a *App) CreateFile(key string, baseFileName string) (actualName string, err error) {
-	defer a.catchPanic()
-	fPath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
-		DefaultFilename: baseFileName,
-		Title:           "Create File",
-	})
+	fPath, err := a.app.Dialog.SaveFile().
+		AttachToWindow(a.window).
+		SetFilename(baseFileName).
+		PromptForSingleSelection()
 	if err != nil || fPath == "" {
 		return
 	}
@@ -323,23 +307,23 @@ func (a *App) CreateFile(key string, baseFileName string) (actualName string, er
 }
 
 func (a *App) OpenFile(multiple bool) (ret []*backend.WebFileRef) {
-	defer a.catchPanic()
 	var err error
 	defer a.showError(&err)
 
 	var filenames []string
+	dialog := a.app.Dialog.OpenFile().AttachToWindow(a.window)
 	if multiple {
-		filenames, err = runtime.OpenMultipleFilesDialog(a.ctx, runtime.OpenDialogOptions{
-			Title: "Open files",
-		})
+		filenames, err = dialog.
+			SetTitle("Open files").
+			PromptForMultipleSelection()
 		if err != nil || filenames == nil {
 			return nil
 		}
 	} else {
 		var fn string
-		fn, err = runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
-			Title: "Open file",
-		})
+		fn, err = dialog.
+			SetTitle("Open file").
+			PromptForSingleSelection()
 		if err != nil || fn == "" {
 			return nil
 		}
@@ -354,7 +338,7 @@ func (a *App) openFiles(filenames []string) (ret []*backend.WebFileRef, _ error)
 	var failed []string
 	for _, filename := range filenames {
 		if has, err := a.files.HasFile(filename); err != nil {
-			runtime.LogErrorf(a.ctx, "check if file already opened: %v", err)
+			a.app.Logger.Error("check if file already opened: %v", err)
 		} else if has {
 			continue
 		}
@@ -385,16 +369,15 @@ func (a *App) openFiles(filenames []string) (ret []*backend.WebFileRef, _ error)
 
 func (a *App) activateWindow() {
 	// TODO: better activate window
-	runtime.LogDebugf(a.ctx, "%v activating window", time.Now())
-	//runtime.WindowHide(a.ctx)
-	runtime.WindowUnminimise(a.ctx)
+	a.app.Logger.Debug("%v activating window", time.Now())
+	//a.window.Hide()
+	a.window.UnMinimise()
 	time.Sleep(10 * time.Millisecond)
-	//runtime.WindowShow(a.ctx)
-	runtime.Show(a.ctx)
+	//a.window.Show()
+	a.app.Show()
 }
 
 func (a *App) SaveFileAs(blob64 helpers.Blob64, baseFileName string) {
-	defer a.catchPanic()
 	var err error
 	defer a.showError(&err)
 
@@ -403,10 +386,10 @@ func (a *App) SaveFileAs(blob64 helpers.Blob64, baseFileName string) {
 		return
 	}
 
-	path, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
-		DefaultFilename: baseFileName,
-		Title:           "Save As",
-	})
+	path, err := a.app.Dialog.SaveFile().
+		AttachToWindow(a.window).
+		SetFilename(baseFileName).
+		PromptForSingleSelection()
 	if err != nil || path == "" {
 		return
 	}
@@ -415,11 +398,9 @@ func (a *App) SaveFileAs(blob64 helpers.Blob64, baseFileName string) {
 }
 
 func (a *App) SetIsDirty(isDirty bool) {
-	defer a.catchPanic()
 	a.isDirty = isDirty
 }
 
 func (a *App) GetAppInfo() string {
-	defer a.catchPanic()
 	return config.ReportInfo()
 }

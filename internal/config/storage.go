@@ -1,16 +1,15 @@
 package config
 
 import (
-	"context"
 	"encoding/json"
 	"io"
+	"log/slog"
 	"os"
 	"sync"
 
 	"github.com/pkg/errors"
 	"github.com/vovan-ve/sple-desktop/internal/helpers"
 	"github.com/vovan-ve/sple-desktop/internal/storage"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type Storage interface {
@@ -24,7 +23,7 @@ func NewFileStorage(opt FileStorageOptions) (Storage, error) {
 		return nil, errors.Wrap(err, "open file")
 	}
 	return &fileStorage{
-		ctx:     opt.Ctx,
+		logger:  opt.Logger,
 		file:    f,
 		fileOld: opt.FilepathOld,
 		iowg:    opt.IOWG,
@@ -37,7 +36,7 @@ type JobTracker interface {
 }
 
 type FileStorageOptions struct {
-	Ctx         context.Context
+	Logger      *slog.Logger
 	Filepath    string
 	FilepathOld string
 	IOWG        JobTracker
@@ -50,7 +49,7 @@ type fileData struct {
 	Data    map[string]json.RawMessage `json:"data"`
 }
 type fileStorage struct {
-	ctx     context.Context
+	logger  *slog.Logger
 	file    *os.File
 	fileOld string
 	data    *fileData
@@ -207,7 +206,7 @@ func (f *fileStorage) read() error {
 	f.data = data
 
 	if writeBack {
-		runtime.LogInfof(f.ctx, "fileStorage<%p>.read(): write new file from old file", f)
+		f.logger.Info("fileStorage<%p>.read(): write new file from old file", f)
 		if err = f.write(); err != nil {
 			return errors.Wrap(err, "write new file read from old file")
 		}

@@ -3,7 +3,7 @@ import { createGate, useUnit } from "effector-react";
 import { FC } from "react";
 import { APP_TITLE } from "configs";
 import { Trans } from "i18n/Trans";
-import { GetAppInfo } from "./go/main/App";
+import { GetAppInfo } from "./bindings/github.com/vovan-ve/sple-desktop/app";
 
 const fetchFx = createEffect(GetAppInfo);
 const $appInfo = restore(fetchFx.doneData, "");

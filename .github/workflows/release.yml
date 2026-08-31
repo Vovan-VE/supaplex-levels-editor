@@ -114,7 +114,7 @@ jobs:
 
       - name: Install Wails
         run: |
-          go install github.com/wailsapp/wails/v2/cmd/wails@"$( go list -f "{{.Module.Version}}" github.com/wailsapp/wails/v2 )"
+          go install github.com/wailsapp/wails/v3/cmd/wails@"$( go list -f "{{.Module.Version}}" github.com/wailsapp/wails/v3 )"
           wails doctor
 
       - name: Build

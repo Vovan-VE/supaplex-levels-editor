@@ -1,9 +1,9 @@
 import { combine, createEffect, createEvent, restore, sample } from "effector";
 import { useUnit } from "effector-react";
 import { FC, useEffect } from "react";
-import { Environment } from "./runtime";
+import { System } from "@wailsio/runtime";
 
-const fetchFx = createEffect(Environment);
+const fetchFx = createEffect(System.Environment);
 const $info = restore(fetchFx.doneData, null);
 const fetch = createEvent<void>();
 sample({
@@ -17,7 +17,8 @@ export const VersionTag: FC = () => {
   const info = useUnit($info);
   return info ? (
     <>
-      {info.platform} {info.arch} {info.buildType}
+      {info.OS} {info.Arch} ({info.OSInfo.Name} {info.OSInfo.Version})
+      {info.Debug && " (debug)"}
     </>
   ) : (
     <>...</>

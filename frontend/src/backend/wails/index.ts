@@ -7,15 +7,14 @@ export const $displayReadOnly = undefined;
 
 export { filesStorage } from "./filesStorage";
 export const allowManualSave = true;
-export { CreateFile as createFile } from "./go/main/App";
+export { CreateFile as createFile } from "./bindings/github.com/vovan-ve/sple-desktop/app";
 export { openFile } from "./openFile";
 export { onOpenFile } from "./trigger";
 export { saveFileAs } from "./saveFileAs";
-export { ClipboardGetText as getClipboardText } from "./runtime";
-export { ClipboardSetText as setClipboardText } from "./runtime";
+export { getClipboardText, setClipboardText } from "./clipboard";
 
-export { WindowSetTitle as setTitle } from "./runtime";
-export { SetIsDirty as setIsDirty } from "./go/main/App";
+export { setTitle } from "./window";
+export { SetIsDirty as setIsDirty } from "./bindings/github.com/vovan-ve/sple-desktop/app";
 export { onExitDirty } from "./trigger";
 export { exitApp } from "./exitApp";
 

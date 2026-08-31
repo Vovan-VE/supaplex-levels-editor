@@ -53,6 +53,7 @@
 - 100% offline with level testing and demo replay?
   - Need run game engine and own offline renderer
 - Trash for deleted levels.
+- `sd` = number of Murphies to skip
 
 ### Desktop
 

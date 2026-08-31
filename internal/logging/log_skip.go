@@ -1,9 +1,11 @@
-//go:build !(production || debug)
+//go:build !(production || debug) && !ios && !android
 
 package logging
 
 import (
-	"github.com/wailsapp/wails/v2/pkg/logger"
+	"log/slog"
+
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
-func GetLogger(_ Scope) logger.Logger { return logger.NewDefaultLogger() }
+func GetLogger(_ Scope) *slog.Logger { return application.DefaultLogger(level) }

@@ -1,5 +1,9 @@
 import * as i from "../internal";
-import { GetItem, RemoveItem, SetItem } from "./go/backend/ConfigStorage";
+import {
+  GetItem,
+  RemoveItem,
+  SetItem,
+} from "./bindings/github.com/vovan-ve/sple-desktop/internal/backend/configstorage";
 
 export const configStorage: i.ConfigStorage = {
   getItem: async (key: string): Promise<unknown> => {

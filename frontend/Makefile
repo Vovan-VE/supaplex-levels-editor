@@ -26,6 +26,10 @@ test:
 clean-wails-map:
 	find $(BUILD_WAILS)/assets -type f -name "*.map" -delete
 
+.PHONY: bindings-pretty
+bindings-pretty:
+	$(NPM) exec prettier -- --write ./src/backend/wails/bindings
+
 .PHONY: get-version
 get-version:
 	$(NODE) -e "console.log(require('./package.json').version)"

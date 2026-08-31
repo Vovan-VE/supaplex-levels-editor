@@ -51,6 +51,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.0.5",
+    "@wailsio/runtime": "^3.0.0-beta.8",
     "classnames": "^2.5.1",
     "effector": "^23.4.4",
     "effector-react": "^23.3.0",

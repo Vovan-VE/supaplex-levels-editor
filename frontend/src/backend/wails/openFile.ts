@@ -1,13 +1,14 @@
+import { isNotNull } from "utils/fn";
 import { OpenFileOptions } from "../internal";
 import { fileRefToOpenFile } from "./fileRefToOpenFile";
-import { OpenFile } from "./go/main/App";
-import { files } from "./go/models";
+import { OpenFile } from "./bindings/github.com/vovan-ve/sple-desktop/app";
+import { WebFileRef } from "./bindings/github.com/vovan-ve/sple-desktop/internal/files/models";
 
 export const openFile = async ({ multiple = false, done }: OpenFileOptions) => {
   try {
-    const files: files.WebFileRef[] | null = await OpenFile(multiple);
+    const files: (WebFileRef | null)[] | null = await OpenFile(multiple);
     if (files?.length) {
-      done(files.map(fileRefToOpenFile));
+      done(files.filter(isNotNull).map(fileRefToOpenFile));
     }
   } catch {}
 };

@@ -1,12 +1,15 @@
 {
-  "$schema": "https://wails.io/schemas/config.v2.json",
   "name": "SpLE",
+  "frontend": {
+    "dir": "./frontend",
+    "install": "npm ci",
+    "build": "npm run build:wails",
+    "dev": "npm start",
+    "devServerUrl": "http://localhost:3017"
+  },
+
   "outputfilename": "sple",
-  "frontend:dir": "./frontend",
-  "frontend:install": "npm ci",
-  "frontend:build": "npm run build:wails",
   "frontend:dev:watcher": "npm run start:wails",
-  "frontend:dev:serverUrl": "http://localhost:3017",
   "wailsjsdir": "./frontend",
   "info": {
     "companyName": "Vovan-VE",

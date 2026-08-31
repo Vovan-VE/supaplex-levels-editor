@@ -2,17 +2,14 @@ package main
 
 import (
 	"embed"
-	"fmt"
+	"os"
 
 	"github.com/vovan-ve/sple-desktop/internal/backend"
 	"github.com/vovan-ve/sple-desktop/internal/config"
+	"github.com/vovan-ve/sple-desktop/internal/helpers"
 	"github.com/vovan-ve/sple-desktop/internal/logging"
-	"github.com/wailsapp/wails/v2"
-	"github.com/wailsapp/wails/v2/pkg/logger"
-	"github.com/wailsapp/wails/v2/pkg/options"
-	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
-	"github.com/wailsapp/wails/v2/pkg/options/linux"
-	"github.com/wailsapp/wails/v2/pkg/options/windows"
+	"github.com/wailsapp/wails/v3/pkg/application"
+	"github.com/wailsapp/wails/v3/pkg/events"
 )
 
 const appTitle = "SpLE"
@@ -27,73 +24,64 @@ func main() {
 		if r == nil {
 			return
 		}
-		lg.Fatal(fmt.Sprintf("PANIC recovery: %+v\n", r))
+		lg.Error("PANIC recovery: %+v\n", r)
+		os.Exit(1)
 	}()
 
 	lg = logging.GetLogger(logging.ScopeMain)
+	service := NewApp()
 
-	// Create an instance of the app structure
-	app := NewApp(&AppOptions{
+	app := application.New(application.Options{
+		Name: appTitle,
+		Assets: application.AssetOptions{
+			Handler: application.AssetFileServerFS(assets),
+		},
 		Logger: lg,
+		SingleInstance: &application.SingleInstanceOptions{
+			UniqueID:               "e692d42c-1713-46ba-b48e-85a34829d654",
+			OnSecondInstanceLaunch: service.secondInstance,
+		},
+		PanicHandler: service.handlePanic,
+		ShouldQuit:   service.shouldQuit,
+		OnShutdown:   service.shutdown,
+		Windows: application.WindowsOptions{
+			WebviewUserDataPath: config.GetConfigsDir(),
+		},
 	})
 
-	// Create application with options
-	err := wails.Run(&options.App{
-		Title:                    appTitle,
-		Width:                    1024,
-		Height:                   768,
-		EnableDefaultContextMenu: true,
-		//WindowStartState: options.Maximised,
-		AssetServer: &assetserver.Options{
-			Assets: assets,
-		},
-		BackgroundColour:   options.NewRGB(64, 64, 64),
-		Logger:             lg,
-		LogLevel:           logger.DEBUG,
-		LogLevelProduction: logger.WARNING,
-		SingleInstanceLock: &options.SingleInstanceLock{
-			UniqueId:               "e692d42c-1713-46ba-b48e-85a34829d654",
-			OnSecondInstanceLaunch: app.secondInstance,
-		},
-		OnStartup:     app.startup,
-		OnDomReady:    app.domReady,
-		OnBeforeClose: app.beforeClose,
-		OnShutdown:    app.shutdown,
-		Bind: []interface{}{
-			app,
-			&backend.ConfigStorage{
-				F:     app.configStorage,
-				Catch: app.catchPanic,
-			},
-			&backend.FilesStorage{
-				F:     app.filesStorage,
-				Catch: app.catchPanic,
-			},
-		},
-		// https://github.com/wailsapp/wails/issues/3563
-		// on linux cause DomReady triggering
-		// on windows doesn't work at all
-		//DragAndDrop: &options.DragAndDrop{
-		//	EnableFileDrop: true,
-		//	DisableWebViewDrop: false,
-		//	CSSDropProperty:    "--drop-files",
-		//	CSSDropValue:       "drop",
-		//},
-		Windows: &windows.Options{
-			IsZoomControlEnabled: false,
-			Theme:                windows.Dark,
-			WebviewUserDataPath:  config.GetConfigsDir(),
+	win := app.Window.NewWithOptions(application.WebviewWindowOptions{
+		Title:            appTitle,
+		Width:            1024,
+		Height:           768,
+		BackgroundColour: application.NewRGB(64, 64, 64),
+		//EnableFileDrop: true,
+		ZoomControlEnabled: false,
+		Windows: application.WindowsWindow{
+			Theme: application.Dark,
 			// TODO: needed? EnableSwipeGestures: true,
 		},
-		Linux: &linux.Options{
-			ProgramName: appTitle,
-		},
-		//Mac: &mac.Options{},
-		Debug: options.Debug{
-			OpenInspectorOnStartup: true,
-		},
+		//Linux: application.LinuxWindow{},
+		OpenInspectorOnStartup: helpers.IsDebug,
+		//Permissions: map[application.PermissionType]application.Permission{
+		//	application.PermissionClipboardRead: application.PermissionAllow,
+		//},
 	})
+
+	service.connect(app, win)
+	app.RegisterService(application.NewService(service))
+	app.RegisterService(application.NewService(&backend.ConfigStorage{
+		F: service.configStorage,
+	}))
+	app.RegisterService(application.NewService(&backend.FilesStorage{
+		F: service.filesStorage,
+	}))
+
+	app.Event.OnApplicationEvent(events.Common.ApplicationStarted, service.startup)
+	win.OnWindowEvent(events.Common.WindowRuntimeReady, service.domReady)
+
+	err := app.Run()
 	if err != nil {
-		lg.Fatal(err.Error())
+		lg.Error("%+v\n", err.Error())
+		os.Exit(1)
 	}
 }

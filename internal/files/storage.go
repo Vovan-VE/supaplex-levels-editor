@@ -1,15 +1,14 @@
 package files
 
 import (
-	"context"
 	"encoding/json"
+	"log/slog"
 	"os"
 
 	"github.com/pkg/errors"
 	"github.com/vovan-ve/sple-desktop/internal/config"
 	"github.com/vovan-ve/sple-desktop/internal/helpers"
 	"github.com/vovan-ve/sple-desktop/internal/storage"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 var (
@@ -23,7 +22,7 @@ type Storage interface {
 
 func NewStorage(options StorageOptions) (Storage, error) {
 	opt, err := config.NewFileStorage(config.FileStorageOptions{
-		Ctx:         options.Ctx,
+		Logger:      options.Logger,
 		Filepath:    options.Filepath,
 		FilepathOld: options.FilepathOld,
 		IOWG:        options.IOWG,
@@ -32,7 +31,7 @@ func NewStorage(options StorageOptions) (Storage, error) {
 		return nil, errors.Wrap(err, "options storage")
 	}
 	return &fullStorage{
-		ctx:    options.Ctx,
+		logger: options.Logger,
 		opt:    opt,
 		chosen: options.Chosen,
 		iowg:   options.IOWG,
@@ -40,7 +39,7 @@ func NewStorage(options StorageOptions) (Storage, error) {
 }
 
 type StorageOptions struct {
-	Ctx         context.Context
+	Logger      *slog.Logger
 	Filepath    string
 	FilepathOld string
 	Chosen      ChosenPicker
@@ -48,7 +47,7 @@ type StorageOptions struct {
 }
 
 type fullStorage struct {
-	ctx    context.Context
+	logger *slog.Logger
 	opt    config.Storage
 	chosen ChosenPicker
 	iowg   config.JobTracker
@@ -168,12 +167,12 @@ func (f *fullStorage) GetAll() (map[string]*Record, error) {
 	for k, s := range ms {
 		r, err := recordFromString(k, s)
 		if err != nil {
-			runtime.LogErrorf(f.ctx, "Cannot read file item: %v", err)
+			f.logger.Error("Cannot read file item: %v", err)
 			var pe *os.PathError
 			if errors.As(err, &pe) {
-				runtime.LogWarningf(f.ctx, "Remove bad item for file %s", pe.Path)
+				f.logger.Warn("Remove bad item for file %s", pe.Path)
 				if err = f.opt.RemoveItem(k); err != nil {
-					runtime.LogErrorf(f.ctx, "Cannot remove file item from files registry: %v", err)
+					f.logger.Error("Cannot remove file item from files registry: %v", err)
 				}
 			}
 			continue
@@ -183,13 +182,13 @@ func (f *fullStorage) GetAll() (map[string]*Record, error) {
 		if r.needUpgrade {
 			s, _, err = replaceOptionsInString(s, r)
 			if err != nil {
-				runtime.LogErrorf(f.ctx, "entry to string: %v", err)
+				f.logger.Error("entry to string: %v", err)
 				continue
 			}
 
 			err = f.opt.SetItem(k, s)
 			if err != nil {
-				runtime.LogErrorf(f.ctx, "write options storage: %v", err)
+				f.logger.Error("write options storage: %v", err)
 				continue
 			}
 		}

@@ -1,7 +1,7 @@
 package files
 
 import (
-	"context"
+	"log/slog"
 
 	"github.com/pkg/errors"
 )
@@ -20,17 +20,17 @@ type ChosenRegistry interface {
 }
 
 type chosenRegistry struct {
-	ctx   context.Context
-	files map[string]string
+	logger *slog.Logger
+	files  map[string]string
 }
 
-func NewChosenRegistry(ctx context.Context) ChosenRegistry {
-	return &chosenRegistry{ctx: ctx}
+func NewChosenRegistry(logger *slog.Logger) ChosenRegistry {
+	return &chosenRegistry{logger: logger}
 }
 
 func (c *chosenRegistry) AddFile(path string) (key string) {
-	//runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.AddFile(%v)", c, path)
-	//defer func() { runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.AddFile(%v) -> %v", c, path, key) }()
+	//c.logger.Debug("chosenRegistry<%p>.AddFile(%v)", c, path)
+	//defer func() { c.logger.Debug("chosenRegistry<%p>.AddFile(%v) -> %v", c, path, key) }()
 	key = newKey()
 	if c.files == nil {
 		c.files = make(map[string]string)
@@ -39,8 +39,8 @@ func (c *chosenRegistry) AddFile(path string) (key string) {
 	return
 }
 func (c *chosenRegistry) AddFileWithKey(key, path string) error {
-	//runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.AddFileWithKey(%v, %v)", c, key, path)
-	//defer func() { runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.AddFileWithKey(%v, %v) -> %v", c, key, path, _1) }()
+	//c.logger.Debug("chosenRegistry<%p>.AddFileWithKey(%v, %v)", c, key, path)
+	//defer func() { c.logger.Debug("chosenRegistry<%p>.AddFileWithKey(%v, %v) -> %v", c, key, path, _1) }()
 	if c.files == nil {
 		c.files = make(map[string]string)
 	} else {
@@ -56,13 +56,13 @@ func (c *chosenRegistry) AddFileWithKey(key, path string) error {
 }
 
 func (c *chosenRegistry) Get(key string) (path string, ok bool) {
-	//runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.Get(%v)", c, key)
-	//defer func() { runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.Get(%v) -> %v, %v", c, key, path, ok) }()
+	//c.logger.Debug("chosenRegistry<%p>.Get(%v)", c, key)
+	//defer func() { c.logger.Debug("chosenRegistry<%p>.Get(%v) -> %v, %v", c, key, path, ok) }()
 	path, ok = c.files[key]
 	return
 }
 
 func (c *chosenRegistry) Remove(key string) {
-	//runtime.LogDebugf(c.ctx, "chosenRegistry<%p>.Remove(%v);", c, key)
+	//c.logger.Debug("chosenRegistry<%p>.Remove(%v);", c, key)
 	delete(c.files, key)
 }

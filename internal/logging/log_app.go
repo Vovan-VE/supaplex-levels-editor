@@ -1,18 +1,19 @@
-//go:build production || debug
+//go:build (production || debug) && !ios && !android
 
 package logging
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 
 	"github.com/pkg/errors"
 	"github.com/vovan-ve/sple-desktop/internal/config"
-	"github.com/wailsapp/wails/v2/pkg/logger"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
-func GetLogger(scope Scope) logger.Logger {
+func GetLogger(scope Scope) *slog.Logger {
 	lg, err := prepareLogFile(scope)
 	if err != nil {
 		println("Error: get logger:", err)
@@ -38,7 +39,7 @@ func getFileName(name string, index int) string {
 	return name
 }
 
-func prepareLogFile(scope Scope) (logger.Logger, error) {
+func prepareLogFile(scope Scope) (*slog.Logger, error) {
 	dir := config.GetLogsDir()
 	if err := config.EnsureDir(dir, "logs dir"); err != nil {
 		return nil, err
@@ -74,5 +75,10 @@ func prepareLogFile(scope Scope) (logger.Logger, error) {
 	}
 	f.Close()
 
-	return NewMultipleLogger(logger.NewDefaultLogger(), logger.NewFileLogger(prev)), nil
+	return slog.New(slog.NewMultiHandler(
+		application.DefaultLogger(level).Handler(),
+		slog.NewTextHandler(FileWriter{Filename: prev}, &slog.HandlerOptions{
+			Level: level,
+		}),
+	)), nil
 }

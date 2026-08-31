@@ -1,13 +1,13 @@
 import { createEvent } from "effector";
 import { OpenFiles } from "../internal";
 import { fileRefToOpenFile } from "./fileRefToOpenFile";
-import { files } from "./go/models";
+import { WebFileRef } from "./bindings/github.com/vovan-ve/sple-desktop/internal/files/models";
 
 export const onExitDirty = createEvent<unknown>();
 export const onShowError = createEvent<string>();
 export const onUpgradeAvailable = createEvent<string>();
 
-const onOpenFileRefs = createEvent<readonly files.WebFileRef[]>();
+const onOpenFileRefs = createEvent<readonly WebFileRef[]>();
 export const onOpenFile = onOpenFileRefs.map<OpenFiles>((files) =>
   files.map(fileRefToOpenFile),
 );
